@@ -1,5 +1,6 @@
 package com.example.cooked.hb2;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -14,12 +15,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.GlobalUtils.MyPermission;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener
 {
+    public static Context context;
+    
     
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -28,18 +33,16 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         try
         {
-            if (!com.example.cooked.hb2.GlobalUtils.MyPermission.checkIfAlreadyhavePermission(this))
-            {
-                com.example.cooked.hb2.GlobalUtils.MyPermission.requestForSpecificPermission(this);
-                while (!com.example.cooked.hb2.GlobalUtils.MyPermission.checkIfAlreadyhavePermission(this))
-                {
-            
-                }
-            }
+            context = this;
+            if (!MyPermission.checkIfAlreadyhavePermission(this))
+                MyPermission.requestForSpecificPermission(this);
+
             MyLog.RemoveLog();
             MyLog.SetContext(this);
             MyLog.WriteLogMessage("Starting");
     
+            MyDatabase.MyDB().Check();
+            
             setContentView(R.layout.activity_main);
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
