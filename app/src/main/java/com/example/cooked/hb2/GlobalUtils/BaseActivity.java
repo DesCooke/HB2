@@ -1,6 +1,5 @@
 package com.example.cooked.hb2.GlobalUtils;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 

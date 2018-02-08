@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.MainActivity;
+import com.example.cooked.hb2.R;
 
 // derived from SQLiteOpenHelper because it give lots of features like - upgrade/downgrade
 // automatically handles the creation and recreation of the database
@@ -18,9 +19,6 @@ public class MyDatabase extends SQLiteOpenHelper
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
     private static final int DATABASE_VERSION = 1;
-
-    // the name of the database file (including path)
-    private static final String DATABASE_NAME = "myHB";
 
     private static MyDatabase myDB;
     
@@ -35,10 +33,10 @@ public class MyDatabase extends SQLiteOpenHelper
     //endregion
 
     //region Database functions
-    public MyDatabase(Context context)
+    private MyDatabase(Context context)
     {
         // super has to be the first command - can't put anything before it
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, context.getResources().getString(R.string.database_filename), null, DATABASE_VERSION);
         try
         {
             tableTransaction = new TableTransaction();
@@ -47,11 +45,6 @@ public class MyDatabase extends SQLiteOpenHelper
         {
             ErrorDialog.Show("Error in MyDatabase::MyDatabase", e.getMessage());
         }
-    }
-    
-    public void Check()
-    {
-    
     }
 
     // called when the current database version is 0
@@ -82,7 +75,7 @@ public class MyDatabase extends SQLiteOpenHelper
         }
     }
 
-    // called when the versino number decreases
+    // called when the version number decreases
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {

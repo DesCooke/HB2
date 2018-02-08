@@ -8,7 +8,7 @@ import android.support.v4.content.ContextCompat;
 
 public class MyPermission
 {
-    public static boolean checkIfAlreadyhavePermission(Activity activity)
+    public static boolean checkIfAlreadyHavePermission(Activity activity)
     {
         int read_permission = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
         int write_permission = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -21,7 +21,7 @@ public class MyPermission
     }
 
     public static void requestForSpecificPermission(Activity activity) {
-        while (!com.example.cooked.hb2.GlobalUtils.MyPermission.checkIfAlreadyhavePermission(activity))
+        while (!com.example.cooked.hb2.GlobalUtils.MyPermission.checkIfAlreadyHavePermission(activity))
         {
             ActivityCompat.requestPermissions
             (

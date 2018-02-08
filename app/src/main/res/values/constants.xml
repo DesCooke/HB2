@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="database_filename">/storage/emulated/0/HB/hb.db</string>
     <string name="home_directory">/storage/emulated/0/HB</string>
     <string name="log_filename">hb.txt</string>
 </resources>

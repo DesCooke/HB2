@@ -1,6 +1,5 @@
 package com.example.cooked.hb2.GlobalUtils;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 

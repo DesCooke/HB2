@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HB2.iml" filepath="$PROJECT_DIR$/HB2.iml" />
+      <module fileurl="file://D:\Me At Home\Personal\My Android Studio\AndroidStudioProjects\HB2_git\HB2.iml" filepath="D:\Me At Home\Personal\My Android Studio\AndroidStudioProjects\HB2_git\HB2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HB2_git.iml" filepath="$PROJECT_DIR$/HB2_git.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\Me At Home\Personal\My Android Studio\AndroidStudioProjects\HB2_git\app\app.iml" filepath="D:\Me At Home\Personal\My Android Studio\AndroidStudioProjects\HB2_git\app\app.iml" />
     </modules>
   </component>
 </project>

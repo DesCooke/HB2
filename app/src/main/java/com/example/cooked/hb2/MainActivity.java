@@ -1,6 +1,7 @@
 package com.example.cooked.hb2;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -34,14 +35,14 @@ public class MainActivity extends AppCompatActivity
         try
         {
             context = this;
-            if (!MyPermission.checkIfAlreadyhavePermission(this))
+            if (!MyPermission.checkIfAlreadyHavePermission(this))
                 MyPermission.requestForSpecificPermission(this);
 
             MyLog.RemoveLog();
             MyLog.SetContext(this);
             MyLog.WriteLogMessage("Starting");
-    
-            MyDatabase.MyDB().Check();
+
+            SQLiteDatabase db = MyDatabase.MyDB().getWritableDatabase();
             
             setContentView(R.layout.activity_main);
             Toolbar toolbar = findViewById(R.id.toolbar);

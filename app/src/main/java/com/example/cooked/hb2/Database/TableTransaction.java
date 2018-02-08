@@ -1,28 +1,21 @@
 package com.example.cooked.hb2.Database;
 
-import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 
-/**
- * Created by cooked on 14/06/2017.
- */
-
-public class TableTransaction extends TableBase
+class TableTransaction extends TableBase
 {
-    public TableTransaction()
+    TableTransaction()
     {
     }
     
-    public void dropTableIfExists(SQLiteDatabase db)
+    private void dropTableIfExists(SQLiteDatabase db)
     {
         try
         {
             String lSql =
-                "DROP TABLE IF EXISTS Transaction";
+                "DROP TABLE IF EXISTS tblTransaction";
     
             db.execSQL(lSql);
         }
@@ -32,14 +25,14 @@ public class TableTransaction extends TableBase
         }
     }
  
-    public void onCreate(SQLiteDatabase db)
+    void onCreate(SQLiteDatabase db)
     {
         try
         {
             dropTableIfExists(db);
     
             String lSql =
-                "CREATE TABLE Transaction " +
+                "CREATE TABLE tblTransaction " +
                     " (" +
                     "   TxSeqNo INTEGER PRIMARY KEY, " +
                     "   TxAdded INTEGER, " +
@@ -63,11 +56,11 @@ public class TableTransaction extends TableBase
         }
     }
     
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
     }
 
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
     }
 }
