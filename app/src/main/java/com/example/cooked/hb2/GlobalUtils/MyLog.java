@@ -11,12 +11,16 @@ import java.io.FileWriter;
 import java.text.DateFormat;
 import java.util.Date;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 //
 // Simple class containing File Utility functions
 //
 public class MyLog
 {
     private static Resources res;
+    private static Boolean firstTime=TRUE;
     
     public static void SetContext(Context context)
     {
@@ -44,7 +48,10 @@ public class MyLog
 
             String timeStamp=DateFormat.getDateTimeInstance().format(new Date());
 
-            FileWriter fw=new FileWriter(file, true);
+            FileWriter fw = new FileWriter(file, !firstTime);
+            
+            firstTime=FALSE;
+            
             BufferedWriter bw=new BufferedWriter(fw);
             bw.write(timeStamp + ":" + argString + "\n");
             bw.flush();
@@ -53,25 +60,6 @@ public class MyLog
         catch(Exception e)
         {
             ErrorDialog.Show("Error in MyLog::WriteLogMessage", e.getMessage());
-        }
-    }
-
-    public static void RemoveLog()
-    {
-        try
-        {
-            String homeDirectory=res.getString(R.string.home_directory);
-            String logfilename=res.getString(R.string.log_filename);
-
-            // create a File object from it
-            File file=new File(homeDirectory + '/' + logfilename);
-            if(file.exists())
-                if(!file.delete())
-                    throw new Exception("file.delete() returned false");
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in MyLog::RemoveLog", e.getMessage());
         }
     }
 }

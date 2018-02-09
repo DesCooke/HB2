@@ -18,6 +18,7 @@ import android.view.MenuItem;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyDownloads;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyPermission;
 
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity
             if (!MyPermission.checkIfAlreadyHavePermission(this))
                 MyPermission.requestForSpecificPermission(this);
 
-            MyLog.RemoveLog();
+            //MyLog.RemoveLog();
             MyLog.SetContext(this);
             MyLog.WriteLogMessage("Starting");
 
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
     
+            MyDownloads.MyDL().CollectFiles();
+            
             FloatingActionButton fab = findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener()
             {
