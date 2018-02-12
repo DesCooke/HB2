@@ -1,6 +1,7 @@
 package com.example.cooked.hb2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -138,6 +139,7 @@ final TabWidget tw = (TabWidget)host.findViewById(android.R.id.tabs);
             toggle.syncState();
     
             NavigationView navigationView = findViewById(R.id.nav_view);
+            navigationView.setItemIconTintList(null);
             navigationView.setNavigationItemSelectedListener(this);
 
             mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840");
@@ -256,9 +258,10 @@ final TabWidget tw = (TabWidget)host.findViewById(android.R.id.tabs);
             // Handle navigation view item clicks here.
             int id = item.getItemId();
     
-            if (id == R.id.nav_camera)
+            if (id == R.id.nav_category)
             {
-                // Handle the camera action
+                Intent intent = new Intent(this, activityCategory.class);
+                startActivity(intent);
             } else if (id == R.id.nav_gallery)
             {
         
