@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,17 +19,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.cooked.hb2.Database.MyDatabase;
+import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyDownloads;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyPermission;
+import com.example.cooked.hb2.TransactionUI.TransactionAdapter;
+
+import java.util.ArrayList;
+
+import static java.lang.Boolean.FALSE;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener
 {
     public static Context context;
-    
-    
+
+    private RecyclerView mTransactionList;
+    private ArrayList<RecordTransaction> mDataset;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private TransactionAdapter mTransactionAdapter;
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,7 +61,8 @@ public class MainActivity extends AppCompatActivity
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
     
-            MyDownloads.MyDL().CollectFiles();
+            if(MyDownloads.MyDL().CollectFiles()==FALSE)
+                return;
             
             FloatingActionButton fab = findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener()
@@ -70,6 +83,23 @@ public class MainActivity extends AppCompatActivity
     
             NavigationView navigationView = findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
+
+            mDataset = MyDatabase.MyDB().getTransactionList();
+
+            mTransactionList = (RecyclerView) findViewById(R.id.transactionList);
+
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the RecyclerView
+            mTransactionList.setHasFixedSize(true);
+
+            // use a linear layout manager
+            mLayoutManager = new LinearLayoutManager(this);
+            mTransactionList.setLayoutManager(mLayoutManager);
+
+            // specify an adapter (see also next example)
+            mTransactionAdapter = new TransactionAdapter(mDataset);
+            mTransactionList.setAdapter(mTransactionAdapter);
+
         }
         catch(Exception e)
         {

@@ -8,6 +8,9 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 // derived from SQLiteOpenHelper because it give lots of features like - upgrade/downgrade
 // automatically handles the creation and recreation of the database
 public class MyDatabase extends SQLiteOpenHelper
@@ -39,7 +42,7 @@ public class MyDatabase extends SQLiteOpenHelper
         super(context, context.getResources().getString(R.string.database_filename), null, DATABASE_VERSION);
         try
         {
-            tableTransaction = new TableTransaction();
+            tableTransaction = new TableTransaction(this);
         }
         catch(Exception e)
         {
@@ -89,7 +92,25 @@ public class MyDatabase extends SQLiteOpenHelper
         }
     }
     //endregion
-        
+
+    //region Transaction Functions
+    public void addTransaction(RecordTransaction rt)
+    {
+        tableTransaction.addTransaction(rt);
+    }
+
+    public ArrayList<RecordTransaction> getTransactionList()
+    {
+        return tableTransaction.getTransactionList();
+    }
+
+    public ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode, String lAccountNumber)
+    {
+        return tableTransaction.getTxDateRange(lFrom, lTo, lSortCode, lAccountNumber);
+    }
+
+
+    //endregion
  }
 
  

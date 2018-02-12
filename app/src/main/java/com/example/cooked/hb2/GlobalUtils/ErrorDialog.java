@@ -19,6 +19,8 @@ public class ErrorDialog
         if (myContext == null)
             return;
 
+        MyLog.WriteLogMessage("Error:" + title + ", " + description);
+
         AlertDialog.Builder messageBox = new AlertDialog.Builder(myContext);
         messageBox.setTitle(title);
         messageBox.setMessage(description);

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="18dp">
+
+    <TextView
+        android:id="@+id/celltx_TxFilename"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxFilename"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/celltx_TxLineNo"
+        android:layout_width="62dp"
+        android:layout_height="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxLineNo"
+        android:textSize="8sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename" />
+
+    <TextView
+        android:id="@+id/celltx_TxAdded"
+        android:layout_width="78dp"
+        android:layout_height="13dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxAdded"
+        android:textSize="8sp"
+        app:layout_constraintStart_toEndOf="@+id/celltx_TxLineNo"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename" />
+
+    <TextView
+        android:id="@+id/celltx_TxSeqNo"
+        android:layout_width="50dp"
+        android:layout_height="10dp"
+        android:layout_weight="1"
+        android:text="celltx_TxSeqNo"
+        android:textSize="8sp"
+        app:layout_constraintStart_toEndOf="@+id/celltx_TxAdded"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename" />
+
+    <TextView
+        android:id="@+id/celltx_TxSortCode"
+        android:layout_width="141dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxSortCode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSeqNo" />
+
+    <TextView
+        android:id="@+id/celltx_TxAccountNumber"
+        android:layout_width="219dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxAccountNumber"
+        app:layout_constraintStart_toEndOf="@+id/celltx_TxSortCode"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSeqNo" />
+
+    <TextView
+        android:id="@+id/celltx_TxDate"
+        android:layout_width="91dp"
+        android:layout_height="17dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSortCode" />
+
+    <TextView
+        android:id="@+id/celltx_TxType"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxType"
+        app:layout_constraintStart_toEndOf="@+id/celltx_TxDate"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSortCode" />
+
+    <TextView
+        android:id="@+id/celltx_TxDescription"
+        android:layout_width="187dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDate" />
+
+    <TextView
+        android:id="@+id/celltx_TxAmount"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxAmount"
+        app:layout_constraintEnd_toStartOf="@+id/celltx_TxBalance"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDescription" />
+
+    <TextView
+        android:id="@+id/celltx_TxBalance"
+        android:layout_width="103dp"
+        android:layout_height="19dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="celltx_TxBalance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDescription" />
+
+</android.support.constraint.ConstraintLayout>
