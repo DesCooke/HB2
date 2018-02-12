@@ -128,7 +128,39 @@ class TableTransaction extends TableBase
         }
     }
 
-    public ArrayList<RecordTransaction> getTransactionList()
+    public void updateFilenameLineNo(RecordTransaction dbRec, RecordTransaction fileRec)
+    {
+        try
+        {
+            MyLog.WriteLogMessage("Updating transaction." +
+              "TxDate: " + dbRec.TxDate.toString() + ", " +
+                    "TxDate: " + dbRec.TxDate.toString() + ", " +
+                    "TxType: " + dbRec.TxType + ", " +
+                    "TxSortCode: " + dbRec.TxSortCode + ", " +
+                    "TxAccountNumber: " + dbRec.TxAccountNumber + ", " +
+                    "TxDescription: " + dbRec.TxDescription + ", " +
+                    "TxAmount: " + dbRec.TxAmount.toString() + ".  " +
+                "TxFilename: from " + dbRec.TxFilename + " to " + fileRec.TxFilename + ", " +
+                "TxLineNo: from " + dbRec.TxLineNo.toString() + " to " + fileRec.TxLineNo.toString()
+            );
+
+            String lSql =
+                    "UPDATE tblTransaction " +
+                    " SET TxFilename = '" + fileRec.TxFilename + "', " +
+                        " TxLineNo = " + fileRec.TxLineNo + " " +
+                    "WHERE TxSeqNo = " + dbRec.TxSeqNo.toString();
+
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            db.execSQL(lSql);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in TableTransaction::updateFilenameLineNo", e.getMessage());
+        }
+    }
+
+    public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
         int cnt;
         ArrayList<RecordTransaction> list;
@@ -139,7 +171,7 @@ class TableTransaction extends TableBase
                             "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
                             "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance"},
                     "TxSortCode=? AND TxAccountNumber=?",
-                    new String[]{"11-03-95", "00038840"}, null, null, "TxDate desc, TxLineNo", null);
+                    new String[]{sortCode, accountNum}, null, null, "TxDate desc, TxLineNo", null);
             cnt = cursor.getCount();
             list = new ArrayList<RecordTransaction>();
             cnt = 0;

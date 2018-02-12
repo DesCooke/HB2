@@ -28,8 +28,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         public TextView mTxLineNo;
         public TextView mTxDate;
         public TextView mTxType;
-        public TextView mTxSortCode;
-        public TextView mTxAccountNumber;
+        public TextView mBankAccount;
         public TextView mTxDescription;
         public TextView mTxAmount;
         public TextView mTxBalance;
@@ -44,8 +43,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             mTxLineNo = (TextView) v.findViewById(R.id.celltx_TxLineNo);
             mTxDate = (TextView) v.findViewById(R.id.celltx_TxDate);
             mTxType = (TextView) v.findViewById(R.id.celltx_TxType);
-            mTxSortCode = (TextView) v.findViewById(R.id.celltx_TxSortCode);
-            mTxAccountNumber = (TextView) v.findViewById(R.id.celltx_TxAccountNumber);
+            mBankAccount = (TextView) v.findViewById(R.id.celltx_BankAccount);
             mTxDescription = (TextView) v.findViewById(R.id.celltx_TxDescription);
             mTxAmount = (TextView) v.findViewById(R.id.celltx_TxAmount);
             mTxBalance = (TextView) v.findViewById(R.id.celltx_TxBalance);
@@ -81,17 +79,32 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         try {
+            
+            
             holder.mTxSeqNo.setText(rec.TxSeqNo.toString());
             holder.mTxAdded.setText(rec.TxAdded.toString());
             holder.mTxFilename.setText(rec.TxFilename);
             holder.mTxLineNo.setText(rec.TxLineNo.toString());
-            holder.mTxDate.setText(rec.TxDate.toString());
+            holder.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rec.TxDate));
             holder.mTxType.setText(rec.TxType);
-            holder.mTxSortCode.setText(rec.TxSortCode);
-            holder.mTxAccountNumber.setText(rec.TxAccountNumber);
+            holder.mBankAccount.setText(rec.TxSortCode + " " + rec.TxAccountNumber);
             holder.mTxDescription.setText(rec.TxDescription);
-            holder.mTxAmount.setText(rec.TxAmount.toString());
-            holder.mTxBalance.setText(rec.TxBalance.toString());
+            if(rec.TxAmount < 0.00)
+            {
+                holder.mTxAmount.setText("-£" + String.format("%.2f", rec.TxAmount*-1));
+            }
+            else
+            {
+                holder.mTxAmount.setText("£" + String.format("%.2f", rec.TxAmount));
+            }
+            if(rec.TxBalance < 0.00)
+            {
+                holder.mTxBalance.setText("-£" + String.format("%.2f", rec.TxBalance*-1));
+            }
+            else
+            {
+                holder.mTxBalance.setText("£" + String.format("%.2f", rec.TxBalance));
+            }
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in NounAdapter.onBindViewHolder", e.getMessage());

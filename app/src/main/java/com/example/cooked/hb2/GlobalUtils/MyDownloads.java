@@ -29,6 +29,7 @@ public class MyDownloads
 {
     private static MyDownloads myDL;
     private String downloadDirectory;
+    private String txArchiveDirectory;
     private Context _context;
     private Pattern pattern;
     private ArrayList<String> mylist = new ArrayList<String>();
@@ -45,6 +46,10 @@ public class MyDownloads
         try
         {
             downloadDirectory = context.getResources().getString(R.string.download_directory);
+            txArchiveDirectory = context.getResources().getString(R.string.tx_archive_directory);
+            File f = new File(txArchiveDirectory);
+            if(!f.isDirectory())
+                f.mkdir();
             String expression = "\\d{8}_\\d{8}_\\d{4}.csv";
             pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
             mylist = new ArrayList<String>();
@@ -64,13 +69,18 @@ public class MyDownloads
 
     public Boolean loadFile(String filename)
     {
+        String inputFile;
+        String archiveFile;
         int l_LineNo=1;
         try
         {
             MyLog.WriteLogMessage("Reading file " + downloadDirectory + "/" + filename);
             
+            inputFile = downloadDirectory + "/" + filename;
+            archiveFile = txArchiveDirectory + "/" + filename;
+            
             List resultList = new ArrayList();
-            BufferedReader reader = new BufferedReader(new FileReader(downloadDirectory + "/" + filename));
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             String csvLine;
             csvLine = reader.readLine();
             while ((csvLine = reader.readLine()) != null)
@@ -127,6 +137,13 @@ public class MyDownloads
                     if(DBrec.Equals(Filerec))
                     {
                         lFound=TRUE;
+                        if( (Filerec.TxFilename.compareTo(DBrec.TxFilename)!=0) ||
+                            (Filerec.TxLineNo != DBrec.TxLineNo) )
+                        {
+                            MyDB().updateFilenameLineNo(DBrec, Filerec);
+                            DBrec.TxFilename = Filerec.TxFilename;
+                            DBrec.TxLineNo = Filerec.TxLineNo;
+                        }
                         break;
                     }
                 }
@@ -136,6 +153,13 @@ public class MyDownloads
                 }
                 FileIndex++;
             }
+            
+            File f1 = new File(inputFile);
+            File f2 = new File(archiveFile);
+            if(f2.exists())
+                f2.delete();
+            
+            f1.renameTo(f2);
         }
         catch(Exception e)
         {

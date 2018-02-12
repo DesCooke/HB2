@@ -15,9 +15,10 @@
         android:layout_weight="1"
         android:text="celltx_TxFilename"
         android:textSize="8sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/celltx_TxLineNo"
@@ -27,8 +28,9 @@
         android:layout_weight="1"
         android:text="celltx_TxLineNo"
         android:textSize="8sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename" />
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename"/>
 
     <TextView
         android:id="@+id/celltx_TxAdded"
@@ -38,8 +40,9 @@
         android:layout_weight="1"
         android:text="celltx_TxAdded"
         android:textSize="8sp"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/celltx_TxLineNo"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename" />
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename"/>
 
     <TextView
         android:id="@+id/celltx_TxSeqNo"
@@ -48,84 +51,74 @@
         android:layout_weight="1"
         android:text="celltx_TxSeqNo"
         android:textSize="8sp"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/celltx_TxAdded"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename" />
-
-    <TextView
-        android:id="@+id/celltx_TxSortCode"
-        android:layout_width="141dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="celltx_TxSortCode"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSeqNo" />
-
-    <TextView
-        android:id="@+id/celltx_TxAccountNumber"
-        android:layout_width="219dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="celltx_TxAccountNumber"
-        app:layout_constraintStart_toEndOf="@+id/celltx_TxSortCode"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSeqNo" />
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxFilename"/>
 
     <TextView
         android:id="@+id/celltx_TxDate"
-        android:layout_width="91dp"
+        android:layout_width="wrap_content"
         android:layout_height="17dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
         android:text="celltx_TxDate"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSortCode" />
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSeqNo"/>
 
     <TextView
         android:id="@+id/celltx_TxType"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
         android:text="celltx_TxType"
         app:layout_constraintStart_toEndOf="@+id/celltx_TxDate"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSortCode" />
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxSeqNo"/>
+
+    <TextView
+        android:id="@+id/celltx_BankAccount"
+        android:layout_width="141dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_weight="1"
+        android:text="celltx_BankAccount"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDate"/>
 
     <TextView
         android:id="@+id/celltx_TxDescription"
-        android:layout_width="187dp"
-        android:layout_height="21dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="209dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
         android:text="celltx_TxDescription"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDate" />
+        app:layout_constraintTop_toBottomOf="@+id/celltx_BankAccount"/>
 
     <TextView
         android:id="@+id/celltx_TxAmount"
-        android:layout_width="100dp"
+        android:layout_width="82dp"
         android:layout_height="20dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
         android:layout_weight="1"
         android:text="celltx_TxAmount"
+        android:textAlignment="textEnd"
         app:layout_constraintEnd_toStartOf="@+id/celltx_TxBalance"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/celltx_BankAccount" />
 
     <TextView
         android:id="@+id/celltx_TxBalance"
-        android:layout_width="103dp"
+        android:layout_width="69dp"
         android:layout_height="19dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="0dp"
         android:layout_weight="1"
         android:text="celltx_TxBalance"
+        android:textAlignment="textEnd"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxAmount"/>
 
 </android.support.constraint.ConstraintLayout>

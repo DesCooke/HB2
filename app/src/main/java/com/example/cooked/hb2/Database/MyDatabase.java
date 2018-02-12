@@ -99,9 +99,9 @@ public class MyDatabase extends SQLiteOpenHelper
         tableTransaction.addTransaction(rt);
     }
 
-    public ArrayList<RecordTransaction> getTransactionList()
+    public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
-        return tableTransaction.getTransactionList();
+        return tableTransaction.getTransactionList(sortCode, accountNum);
     }
 
     public ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode, String lAccountNumber)
@@ -109,6 +109,11 @@ public class MyDatabase extends SQLiteOpenHelper
         return tableTransaction.getTxDateRange(lFrom, lTo, lSortCode, lAccountNumber);
     }
 
+    public void updateFilenameLineNo(RecordTransaction dbRec, RecordTransaction fileRec)
+    {
+        tableTransaction.updateFilenameLineNo(dbRec, fileRec);
+        
+    }
 
     //endregion
  }
