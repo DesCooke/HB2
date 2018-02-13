@@ -61,12 +61,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        context = this;
+        if (!MyPermission.checkIfAlreadyHavePermission(this))
+            MyPermission.requestForSpecificPermission(this);
         try
         {
-            context = this;
-            if (!MyPermission.checkIfAlreadyHavePermission(this))
-                MyPermission.requestForSpecificPermission(this);
-
             //MyLog.RemoveLog();
             MyLog.SetContext(this);
             MyLog.WriteLogMessage("Starting");

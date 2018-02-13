@@ -9,28 +9,37 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.CategoryUI.SubCategoryItem;
 import com.example.cooked.hb2.CategoryUI.CategoryItem;
+import com.example.cooked.hb2.Database.RecordCategory;
+import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
 
 
-/**
- * Created by Gourav on 08-03-2016.
- */
 public class CategoryListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private ArrayList<CategoryItem> deptList;
+    private ArrayList<RecordCategory> categoryList;
 
-    public CategoryListAdapter(Context context, ArrayList<CategoryItem> deptList) {
+    public CategoryListAdapter(Context context, ArrayList<RecordCategory> lcategoryList) {
         this.context = context;
-        this.deptList = deptList;
+        this.categoryList = lcategoryList;
     }
 
     @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        ArrayList<SubCategoryItem> productList = deptList.get(groupPosition).getProductList();
-        return productList.get(childPosition);
+    public Object getChild(int groupPosition, int childPosition)
+    {
+        try
+        {
+            //ArrayList<SubCategoryItem> productList = deptList.get(groupPosition).getProductList();
+            //return productList.get(childPosition);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in CategoryListAdapter::getChild", e.getMessage());
+        }
+        return(null);
     }
 
     @Override
@@ -42,57 +51,106 @@ public class CategoryListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                              View view, ViewGroup parent) {
 
-        SubCategoryItem detailInfo = (SubCategoryItem) getChild(groupPosition, childPosition);
-        if (view == null) {
-            LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = infalInflater.inflate(R.layout.subcategory_item, null);
+        try
+        {
+            /*
+            SubCategoryItem detailInfo = (SubCategoryItem) getChild(groupPosition, childPosition);
+            if (view == null)
+            {
+                LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = infalInflater.inflate(R.layout.subcategory_item, null);
+            }
+    
+            TextView sequence = (TextView) view.findViewById(R.id.sequence);
+            sequence.setText(detailInfo.getSequence().trim() + ". ");
+            TextView childItem = (TextView) view.findViewById(R.id.childItem);
+            childItem.setText(detailInfo.getName().trim());
+    
+            return view;
+            */
         }
-
-        TextView sequence = (TextView) view.findViewById(R.id.sequence);
-        sequence.setText(detailInfo.getSequence().trim() + ". ");
-        TextView childItem = (TextView) view.findViewById(R.id.childItem);
-        childItem.setText(detailInfo.getName().trim());
-
-        return view;
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in CategoryListAdapter::getChildView", e.getMessage());
+        }
+        return(view);
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
 
-        ArrayList<SubCategoryItem> productList = deptList.get(groupPosition).getProductList();
-        return productList.size();
-
+        try
+        {
+            //ArrayList<SubCategoryItem> productList = deptList.get(groupPosition).getProductList();
+            //return productList.size();
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in CategoryListAdapter::getChildrenCount", e.getMessage());
+        }
+        return(0);
     }
 
     @Override
-    public Object getGroup(int groupPosition) {
-        return deptList.get(groupPosition);
+    public Object getGroup(int groupPosition)
+    {
+        try
+        {
+            return categoryList.get(groupPosition);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in CategoryListAdapter::getGroup", e.getMessage());
+        }
+        return(null);
     }
 
     @Override
-    public int getGroupCount() {
-        return deptList.size();
+    public int getGroupCount()
+    {
+        try
+        {
+            return categoryList.size();
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in CategoryListAdapter::getGroupCount", e.getMessage());
+        }
+        return(0);
     }
 
     @Override
-    public long getGroupId(int groupPosition) {
+    public long getGroupId(int groupPosition)
+    {
         return groupPosition;
     }
 
     @Override
     public View getGroupView(int groupPosition, boolean isLastChild, View view,
                              ViewGroup parent) {
+        try
+        {
+            MyLog.WriteLogMessage("Starting getGroupView");
 
-        CategoryItem headerInfo = (CategoryItem) getGroup(groupPosition);
-        if (view == null) {
-            LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inf.inflate(R.layout.category_item, null);
+            RecordCategory category = (RecordCategory) getGroup(groupPosition);
+            if (view == null)
+            {
+                LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inf.inflate(R.layout.category_item, null);
+            }
+    
+            TextView heading = (TextView) view.findViewById(R.id.heading);
+            heading.setText(Integer.toString(category.CategoryId) + ":" + category.CategoryName);
+    
+            MyLog.WriteLogMessage("End getGroupView");
+    
+            return view;
         }
-
-        TextView heading = (TextView) view.findViewById(R.id.heading);
-        heading.setText(headerInfo.getName().trim());
-
-        return view;
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in CategoryListAdapter::getGroupView", e.getMessage());
+        }
+        return(null);
     }
 
     @Override

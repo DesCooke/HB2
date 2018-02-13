@@ -25,6 +25,7 @@ public class RecordTransaction
     public Float TxAmount;
     public Float TxBalance;
     public Status TxStatus;
+    public Integer CategoryId;
 
     public RecordTransaction
             (
@@ -38,7 +39,8 @@ public class RecordTransaction
                      String pTxAccountNumber,
                      String pTxDescription,
                      Float pTxAmount,
-                     Float pTxBalance
+                     Float pTxBalance,
+                     Integer pCategoryId
             )
     {
         TxSeqNo = pTxSeqNo;
@@ -53,6 +55,7 @@ public class RecordTransaction
         TxAmount = pTxAmount;
         TxBalance = pTxBalance;
         TxStatus = Status.NEW;
+        CategoryId = pCategoryId;
     }
     public RecordTransaction()
     {

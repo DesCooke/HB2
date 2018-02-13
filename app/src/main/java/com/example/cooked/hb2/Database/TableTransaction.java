@@ -53,7 +53,8 @@ class TableTransaction extends TableBase
                     "   TxAccountNumber TEXT, " +
                     "   TxDescription TEXT, " +
                     "   TxAmount REAL, " +
-                    "   TxBalance REAL " +
+                    "   TxBalance REAL, " +
+                    "   CategoryId INTEGER " +
                     ") ";
     
             db.execSQL(lSql);
@@ -169,7 +170,8 @@ class TableTransaction extends TableBase
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
                             "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
-                            "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance"},
+                            "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
+                            "CategoryId"},
                     "TxSortCode=? AND TxAccountNumber=?",
                     new String[]{sortCode, accountNum}, null, null, "TxDate desc, TxLineNo", null);
             cnt = cursor.getCount();
@@ -194,7 +196,8 @@ class TableTransaction extends TableBase
                                 cursor.getString(7),
                                 cursor.getString(8),
                                 Float.parseFloat(cursor.getString(9)),
-                                Float.parseFloat(cursor.getString(10))
+                                Float.parseFloat(cursor.getString(10)),
+                                Integer.parseInt(cursor.getString(11))
                             )
                     );
                     cnt++;
@@ -219,7 +222,8 @@ class TableTransaction extends TableBase
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
                             "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
-                            "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance"},
+                            "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
+                            "CategoryId"},
                     "TxDate>=? AND TxDate<=? AND TxSortCode=? AND TxAccountNumber=?",
                     new String[]{Long.toString(lFrom.getTime()), Long.toString(lTo.getTime()),
                     lSortCode, lAccountNumber},
@@ -246,7 +250,8 @@ class TableTransaction extends TableBase
                                                     cursor.getString(7),
                                                     cursor.getString(8),
                                                     Float.parseFloat(cursor.getString(9)),
-                                                    Float.parseFloat(cursor.getString(10))
+                                                    Float.parseFloat(cursor.getString(10)),
+                                                    Integer.parseInt(cursor.getString(11))
                                             )
                             );
                     cnt++;
@@ -263,6 +268,11 @@ class TableTransaction extends TableBase
 
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
+        if(oldVersion==1 && newVersion==2)
+        {
+            MyLog.WriteLogMessage("Altering tblTransaction - adding column CategoryId");
+            db.execSQL("ALTER TABLE tblTransaction ADD COLUMN CategoryId INTEGER DEFAULT 0");
+        }
     }
 
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)

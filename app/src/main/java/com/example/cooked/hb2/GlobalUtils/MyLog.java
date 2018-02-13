@@ -3,6 +3,7 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 import java.io.BufferedWriter;
@@ -11,6 +12,7 @@ import java.io.FileWriter;
 import java.text.DateFormat;
 import java.util.Date;
 
+import static com.example.cooked.hb2.MainActivity.context;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
@@ -21,9 +23,11 @@ public class MyLog
 {
     private static Resources res;
     private static Boolean firstTime=TRUE;
+    private static Context mycontext;
     
     public static void SetContext(Context context)
     {
+        mycontext = context;
         res = context.getResources();
     }
 

@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
@@ -21,11 +22,12 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static MyDatabase myDB;
     
     private TableTransaction tableTransaction;
+    private TableCategory tableCategory;
     
     public static MyDatabase MyDB()
     {
@@ -43,6 +45,7 @@ public class MyDatabase extends SQLiteOpenHelper
         try
         {
             tableTransaction = new TableTransaction(this);
+            tableCategory = new TableCategory(this);
         }
         catch(Exception e)
         {
@@ -57,6 +60,7 @@ public class MyDatabase extends SQLiteOpenHelper
         try
         {
             tableTransaction.onCreate(db);
+            tableCategory.onCreate(db);
         }
         catch(Exception e)
         {
@@ -70,7 +74,11 @@ public class MyDatabase extends SQLiteOpenHelper
     {
         try
         {
+            MyLog.WriteLogMessage("Upgrading database from " + Integer.toString(oldVersion) + " to " +
+            Integer.toString(newVersion));
+
             tableTransaction.onUpgrade(db, oldVersion, newVersion);
+            tableCategory.onUpgrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -85,6 +93,7 @@ public class MyDatabase extends SQLiteOpenHelper
         try
         {
             tableTransaction.onDowngrade(db, oldVersion, newVersion);
+            tableCategory.onDowngrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -114,7 +123,15 @@ public class MyDatabase extends SQLiteOpenHelper
         tableTransaction.updateFilenameLineNo(dbRec, fileRec);
         
     }
+    //endregion
+    
+    //region Category functions
+    public void addCategory(RecordCategory rc) { tableCategory.addCategory(rc);}
 
+    public ArrayList<RecordCategory> getCategoryList()
+    {
+        return tableCategory.getCategoryList();
+    }
     //endregion
  }
 
