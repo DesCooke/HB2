@@ -9,8 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 
 import com.example.cooked.hb2.CategoryUI.CategoryAdapter;
+import com.example.cooked.hb2.CategoryUI.CategoryItem;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
@@ -68,6 +70,20 @@ public class activityCategory extends AppCompatActivity{
         mCategoryList.setLayoutManager(mLayoutManagerCurrent);
         mCategoryAdapter = new CategoryAdapter(mDataset);
         mCategoryList.setAdapter(mCategoryAdapter);
+        
+        mCategoryAdapter.setOnItemClickListener(new CategoryAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordCategory obj)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityCategoryItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("CATEGORYID", obj.CategoryId);
+                intent.putExtra("CATEGORYNAME", obj.CategoryName);
+                startActivity(intent);
+            }
+        });
+        
     }
 
     @Override

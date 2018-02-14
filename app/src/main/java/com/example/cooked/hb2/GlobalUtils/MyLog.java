@@ -22,7 +22,6 @@ import static java.lang.Boolean.TRUE;
 public class MyLog
 {
     private static Resources res;
-    private static Boolean firstTime=TRUE;
     private static Context mycontext;
     
     public static void SetContext(Context context)
@@ -52,9 +51,7 @@ public class MyLog
 
             String timeStamp=DateFormat.getDateTimeInstance().format(new Date());
 
-            FileWriter fw = new FileWriter(file, !firstTime);
-            
-            firstTime=FALSE;
+            FileWriter fw = new FileWriter(file, /*append*/ TRUE);
             
             BufferedWriter bw=new BufferedWriter(fw);
             bw.write(timeStamp + ":" + argString + "\n");

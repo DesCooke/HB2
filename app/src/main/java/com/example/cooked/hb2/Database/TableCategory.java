@@ -103,6 +103,51 @@ public class TableCategory extends TableBase
         }
     }
     
+    public void updateCategory(RecordCategory rc)
+    {
+        try
+        {
+            MyLog.WriteLogMessage("Updating category." +
+              "CategoryId: " + rc.CategoryId.toString() + ", " +
+                    "CategoryNamee: " + rc.CategoryName);
+
+            String lSql =
+                    "UPDATE tblCategory " +
+                    "  SET CategoryName = '" + rc.CategoryName + "' " +
+                    "WHERE CategoryId = " + rc.CategoryId.toString();
+
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            db.execSQL(lSql);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in TableCategory::updateCategory", e.getMessage());
+        }
+    }
+    
+    public void deleteCategory(RecordCategory rc)
+    {
+        try
+        {
+            MyLog.WriteLogMessage("Deleting category." +
+              "CategoryId: " + rc.CategoryId.toString() + ", " +
+                    "CategoryNamee: " + rc.CategoryName);
+
+            String lSql =
+                    "DELETE FROM tblCategory " +
+                    "WHERE CategoryId = " + rc.CategoryId.toString();
+
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            db.execSQL(lSql);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in TableCategory::deleteCategory", e.getMessage());
+        }
+    }
+
     public ArrayList<RecordCategory> getCategoryList()
     {
         int cnt;

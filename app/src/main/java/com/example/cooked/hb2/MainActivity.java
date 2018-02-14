@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     private TransactionAdapter mTransactionAdapterGeneral;
     private TransactionAdapter mTransactionAdapterLongTerm;
     private TransactionAdapter mTransactionAdapterFamily;
+    private Toolbar toolbar;
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -66,17 +67,38 @@ public class MainActivity extends AppCompatActivity
             MyPermission.requestForSpecificPermission(this);
         try
         {
-            //MyLog.RemoveLog();
             MyLog.SetContext(this);
             MyLog.WriteLogMessage("Starting");
 
-            SQLiteDatabase db = MyDatabase.MyDB().getWritableDatabase();
-            
-            setContentView(R.layout.activity_main);
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+            if(MyDownloads.MyDL().CollectFiles()==FALSE)
+                return;
+
+            setupActivity();
     
+            setupTabs();
+
+            setupFAB();
+
+            setupNavigationSideBar();
+
+            setupRecyclerViews();
             
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in MainActivity::onCreate", e.getMessage());
+        }
+    }
+    
+    private void setupActivity()
+    {
+        setContentView(R.layout.activity_main);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+    
+    private void setupTabs()
+    {
         TabHost host = (TabHost)findViewById(R.id.mainTabHost);
         host.setup();
 
@@ -109,17 +131,18 @@ public class MainActivity extends AppCompatActivity
         spec.setContent(R.id.tab5);
         spec.setIndicator("Family");
         host.addTab(spec);
-
-final TabWidget tw = (TabWidget)host.findViewById(android.R.id.tabs);
-    for (int i = 0; i < tw.getChildCount(); ++i)
-    {
-        final View tabView = tw.getChildTabViewAt(i);
-        final TextView tv = (TextView)tabView.findViewById(android.R.id.title);
-        tv.setTextSize(8);
+        
+        final TabWidget tw = (TabWidget)host.findViewById(android.R.id.tabs);
+        for (int i = 0; i < tw.getChildCount(); ++i)
+        {
+            final View tabView = tw.getChildTabViewAt(i);
+            final TextView tv = (TextView)tabView.findViewById(android.R.id.title);
+            tv.setTextSize(8);
+        }
     }
-            if(MyDownloads.MyDL().CollectFiles()==FALSE)
-                return;
-            
+    
+    private void setupFAB()
+    {
             FloatingActionButton fab = findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener()
             {
@@ -131,6 +154,30 @@ final TabWidget tw = (TabWidget)host.findViewById(android.R.id.tabs);
                 }
             });
     
+    }
+    
+    @Override
+    public void onBackPressed()
+    {
+        try
+        {
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START))
+            {
+                drawer.closeDrawer(GravityCompat.START);
+            } else
+            {
+                super.onBackPressed();
+            }
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in MainActivity::onBackPressed", e.getMessage());
+        }
+    }
+    
+    private void setupNavigationSideBar()
+    {
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -141,6 +188,48 @@ final TabWidget tw = (TabWidget)host.findViewById(android.R.id.tabs);
             navigationView.setItemIconTintList(null);
             navigationView.setNavigationItemSelectedListener(this);
 
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        try
+        {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.main, menu);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in MainActivity::onCreateOptionsMenu", e.getMessage());
+        }
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        try
+        {
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
+    
+            //noinspection SimplifiableIfStatement
+            if (id == R.id.action_settings)
+            {
+                return true;
+            }
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in MainActivity::onOptionsItemSelected", e.getMessage());
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
+    private void setupRecyclerViews()
+    {
             mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840");
             mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830");
             mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503");
@@ -183,69 +272,6 @@ final TabWidget tw = (TabWidget)host.findViewById(android.R.id.tabs);
 
             mTransactionAdapterFamily = new TransactionAdapter(mDatasetFamily);
             mTransactionListFamily.setAdapter(mTransactionAdapterFamily);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in MainActivity::onCreate", e.getMessage());
-        }
-    }
-    
-    @Override
-    public void onBackPressed()
-    {
-        try
-        {
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            if (drawer.isDrawerOpen(GravityCompat.START))
-            {
-                drawer.closeDrawer(GravityCompat.START);
-            } else
-            {
-                super.onBackPressed();
-            }
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in MainActivity::onBackPressed", e.getMessage());
-        }
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        try
-        {
-            // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.main, menu);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in MainActivity::onCreateOptionsMenu", e.getMessage());
-        }
-        return true;
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        try
-        {
-            // Handle action bar item clicks here. The action bar will
-            // automatically handle clicks on the Home/Up button, so long
-            // as you specify a parent activity in AndroidManifest.xml.
-            int id = item.getItemId();
-    
-            //noinspection SimplifiableIfStatement
-            if (id == R.id.action_settings)
-            {
-                return true;
-            }
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in MainActivity::onOptionsItemSelected", e.getMessage());
-        }
-        return super.onOptionsItemSelected(item);
     }
     
     @SuppressWarnings("StatementWithEmptyBody")

@@ -23,12 +23,12 @@ public class MyDatabase extends SQLiteOpenHelper
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
     private static final int DATABASE_VERSION = 2;
-
     private static MyDatabase myDB;
-    
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
+    //endregion
     
+    //region statics
     public static MyDatabase MyDB()
     {
         if(myDB==null)
@@ -127,6 +127,10 @@ public class MyDatabase extends SQLiteOpenHelper
     
     //region Category functions
     public void addCategory(RecordCategory rc) { tableCategory.addCategory(rc);}
+
+    public void updateCategory(RecordCategory rc) { tableCategory.updateCategory(rc);}
+
+    public void deleteCategory(RecordCategory rc) { tableCategory.deleteCategory(rc);}
 
     public ArrayList<RecordCategory> getCategoryList()
     {
