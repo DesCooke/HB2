@@ -22,10 +22,11 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
+    private TableSubCategory tableSubCategory;
     //endregion
     
     //region statics
@@ -61,6 +62,7 @@ public class MyDatabase extends SQLiteOpenHelper
         {
             tableTransaction.onCreate(db);
             tableCategory.onCreate(db);
+            tableSubCategory.onCreate(db);
         }
         catch(Exception e)
         {
@@ -79,6 +81,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
             tableTransaction.onUpgrade(db, oldVersion, newVersion);
             tableCategory.onUpgrade(db, oldVersion, newVersion);
+            tableSubCategory.onUpgrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -94,6 +97,7 @@ public class MyDatabase extends SQLiteOpenHelper
         {
             tableTransaction.onDowngrade(db, oldVersion, newVersion);
             tableCategory.onDowngrade(db, oldVersion, newVersion);
+            tableSubCategory.onDowngrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -135,6 +139,20 @@ public class MyDatabase extends SQLiteOpenHelper
     public ArrayList<RecordCategory> getCategoryList()
     {
         return tableCategory.getCategoryList();
+    }
+    //endregion
+    
+    
+//region SubCategory functions
+    public void addSubCategory(RecordSubCategory rc) { tableSubCategory.addSubCategory(rc);}
+
+    public void updateSubCategory(RecordSubCategory rc) { tableSubCategory.updateSubCategory(rc);}
+
+    public void deleteSubCategory(RecordSubCategory rc) { tableSubCategory.deleteSubCategory(rc);}
+
+    public ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId)
+    {
+        return tableSubCategory.getSubCategoryList(pCategoryId);
     }
     //endregion
  }
