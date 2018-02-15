@@ -36,78 +36,85 @@ import java.util.ArrayList;
 import static java.lang.Boolean.FALSE;
 
 public class MainActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener
-{
+        implements NavigationView.OnNavigationItemSelectedListener {
     public static Context context;
 
     private RecyclerView mTransactionListCurrent;
     private RecyclerView mTransactionListGeneral;
     private RecyclerView mTransactionListLongTerm;
     private RecyclerView mTransactionListFamily;
+    private RecyclerView mTransactionListCash;
     private ArrayList<RecordTransaction> mDatasetCurrent;
     private ArrayList<RecordTransaction> mDatasetGeneral;
     private ArrayList<RecordTransaction> mDatasetLongTerm;
     private ArrayList<RecordTransaction> mDatasetFamily;
+    private ArrayList<RecordTransaction> mDatasetCash;
     private RecyclerView.LayoutManager mLayoutManagerCurrent;
     private RecyclerView.LayoutManager mLayoutManagerGeneral;
     private RecyclerView.LayoutManager mLayoutManagerLongTerm;
     private RecyclerView.LayoutManager mLayoutManagerFamily;
+    private RecyclerView.LayoutManager mLayoutManagerCash;
     private TransactionAdapter mTransactionAdapterCurrent;
     private TransactionAdapter mTransactionAdapterGeneral;
     private TransactionAdapter mTransactionAdapterLongTerm;
     private TransactionAdapter mTransactionAdapterFamily;
+    private TransactionAdapter mTransactionAdapterCash;
     private Toolbar toolbar;
+    private FloatingActionButton fab;
 
-    private void setupStatics(Context lcontext)
-    {
+    private void setupStatics(Context lcontext) {
         context = lcontext;
         MyResources.setContext(context);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setupStatics(this);
 
         if (!MyPermission.checkIfAlreadyHavePermission(this))
             MyPermission.requestForSpecificPermission(this);
-        try
-        {
+        try {
             MyLog.WriteLogMessage("Starting");
 
-            if(MyDownloads.MyDL().CollectFiles()==FALSE)
+            if (MyDownloads.MyDL().CollectFiles() == FALSE)
                 return;
 
             setupActivity();
-    
-            setupTabs();
 
-            setupFAB();
+            setupTabs();
 
             setupNavigationSideBar();
 
             setupRecyclerViews();
-            
-        }
-        catch(Exception e)
-        {
+
+        } catch (Exception e) {
             ErrorDialog.Show("Error in MainActivity::onCreate", e.getMessage());
         }
     }
-    
-    private void setupActivity()
-    {
+
+    private void setupActivity() {
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+        fab.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(MainActivity.this, activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "ADD");
+                startActivity(intent);
+            }
+        });
     }
-    
-    private void setupTabs()
-    {
-        TabHost host = (TabHost)findViewById(R.id.mainTabHost);
+
+    private void setupTabs() {
+        TabHost host = (TabHost) findViewById(R.id.mainTabHost);
         host.setup();
 
         //Tab 1
@@ -127,7 +134,7 @@ public class MainActivity extends AppCompatActivity
         spec.setContent(R.id.tab3);
         spec.setIndicator("General");
         host.addTab(spec);
-        
+
         //Tab 4
         spec = host.newTabSpec("Long Term");
         spec.setContent(R.id.tab4);
@@ -139,184 +146,169 @@ public class MainActivity extends AppCompatActivity
         spec.setContent(R.id.tab5);
         spec.setIndicator("Family");
         host.addTab(spec);
-        
-        final TabWidget tw = (TabWidget)host.findViewById(android.R.id.tabs);
-        for (int i = 0; i < tw.getChildCount(); ++i)
-        {
+
+        //Tab 6
+        spec = host.newTabSpec("Cash");
+        spec.setContent(R.id.tab6);
+        spec.setIndicator("Cash");
+        host.addTab(spec);
+
+        final TabWidget tw = (TabWidget) host.findViewById(android.R.id.tabs);
+        for (int i = 0; i < tw.getChildCount(); ++i) {
             final View tabView = tw.getChildTabViewAt(i);
-            final TextView tv = (TextView)tabView.findViewById(android.R.id.title);
+            final TextView tv = (TextView) tabView.findViewById(android.R.id.title);
             tv.setTextSize(8);
         }
-    }
-    
-    private void setupFAB()
-    {
-            FloatingActionButton fab = findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
+
+        host.setOnTabChangedListener(new TabHost.OnTabChangeListener(){
+            @Override
+            public void onTabChanged(String tabId) {
+                if(tabId.compareTo("Cash")==0)
                 {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                    fab.setVisibility(View.VISIBLE);
                 }
-            });
-    
+                else
+                {
+                    fab.setVisibility(View.GONE);
+                }
+            }});
     }
-    
+
     @Override
-    public void onBackPressed()
-    {
-        try
-        {
+    public void onBackPressed() {
+        try {
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            if (drawer.isDrawerOpen(GravityCompat.START))
-            {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
-            } else
-            {
+            } else {
                 super.onBackPressed();
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             ErrorDialog.Show("Error in MainActivity::onBackPressed", e.getMessage());
         }
     }
-    
-    private void setupNavigationSideBar()
-    {
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+
+    private void setupNavigationSideBar() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.addDrawerListener(toggle);
-            toggle.syncState();
-    
-            NavigationView navigationView = findViewById(R.id.nav_view);
-            navigationView.setItemIconTintList(null);
-            navigationView.setNavigationItemSelectedListener(this);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
+        navigationView.setNavigationItemSelectedListener(this);
 
     }
-    
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        try
-        {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        try {
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.main, menu);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             ErrorDialog.Show("Error in MainActivity::onCreateOptionsMenu", e.getMessage());
         }
         return true;
     }
-    
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        try
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        try {
             // Handle action bar item clicks here. The action bar will
             // automatically handle clicks on the Home/Up button, so long
             // as you specify a parent activity in AndroidManifest.xml.
             int id = item.getItemId();
-    
+
             //noinspection SimplifiableIfStatement
-            if (id == R.id.action_settings)
-            {
+            if (id == R.id.action_settings) {
                 return true;
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             ErrorDialog.Show("Error in MainActivity::onOptionsItemSelected", e.getMessage());
         }
         return super.onOptionsItemSelected(item);
     }
-    
-    private void setupRecyclerViews()
-    {
-            mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840");
-            mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830");
-            mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503");
-            mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361");
 
-            mTransactionListCurrent = (RecyclerView) findViewById(R.id.transactionListCurrent);
-            mTransactionListGeneral = (RecyclerView) findViewById(R.id.transactionListGeneral);
-            mTransactionListLongTerm = (RecyclerView) findViewById(R.id.transactionListLongTerm);
-            mTransactionListFamily = (RecyclerView) findViewById(R.id.transactionListFamily);
+    private void setupRecyclerViews() {
+        mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840");
+        mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830");
+        mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503");
+        mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361");
+        mDatasetCash = MyDatabase.MyDB().getTransactionList("cash", "cash");
 
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
-            mTransactionListCurrent.setHasFixedSize(true);
-            mTransactionListGeneral.setHasFixedSize(true);
-            mTransactionListLongTerm.setHasFixedSize(true);
-            mTransactionListFamily.setHasFixedSize(true);
+        mTransactionListCurrent = (RecyclerView) findViewById(R.id.transactionListCurrent);
+        mTransactionListGeneral = (RecyclerView) findViewById(R.id.transactionListGeneral);
+        mTransactionListLongTerm = (RecyclerView) findViewById(R.id.transactionListLongTerm);
+        mTransactionListFamily = (RecyclerView) findViewById(R.id.transactionListFamily);
+        mTransactionListCash = (RecyclerView) findViewById(R.id.transactionListCash);
 
-            // use a linear layout manager
-            mLayoutManagerCurrent = new LinearLayoutManager(this);
-            mTransactionListCurrent.setLayoutManager(mLayoutManagerCurrent);
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mTransactionListCurrent.setHasFixedSize(true);
+        mTransactionListGeneral.setHasFixedSize(true);
+        mTransactionListLongTerm.setHasFixedSize(true);
+        mTransactionListFamily.setHasFixedSize(true);
+        mTransactionListCash.setHasFixedSize(true);
 
-            mLayoutManagerGeneral = new LinearLayoutManager(this);
-            mTransactionListGeneral.setLayoutManager(mLayoutManagerGeneral);
+        // use a linear layout manager
+        mLayoutManagerCurrent = new LinearLayoutManager(this);
+        mTransactionListCurrent.setLayoutManager(mLayoutManagerCurrent);
 
-            mLayoutManagerLongTerm = new LinearLayoutManager(this);
-            mTransactionListLongTerm.setLayoutManager(mLayoutManagerLongTerm);
+        mLayoutManagerGeneral = new LinearLayoutManager(this);
+        mTransactionListGeneral.setLayoutManager(mLayoutManagerGeneral);
 
-            mLayoutManagerFamily = new LinearLayoutManager(this);
-            mTransactionListFamily.setLayoutManager(mLayoutManagerFamily);
+        mLayoutManagerLongTerm = new LinearLayoutManager(this);
+        mTransactionListLongTerm.setLayoutManager(mLayoutManagerLongTerm);
 
-            // specify an adapter (see also next example)
-            mTransactionAdapterCurrent = new TransactionAdapter(mDatasetCurrent);
-            mTransactionListCurrent.setAdapter(mTransactionAdapterCurrent);
+        mLayoutManagerFamily = new LinearLayoutManager(this);
+        mTransactionListFamily.setLayoutManager(mLayoutManagerFamily);
 
-            mTransactionAdapterGeneral = new TransactionAdapter(mDatasetGeneral);
-            mTransactionListGeneral.setAdapter(mTransactionAdapterGeneral);
+        mLayoutManagerCash = new LinearLayoutManager(this);
+        mTransactionListCash.setLayoutManager(mLayoutManagerCash);
 
-            mTransactionAdapterLongTerm = new TransactionAdapter(mDatasetLongTerm);
-            mTransactionListLongTerm.setAdapter(mTransactionAdapterLongTerm);
+        // specify an adapter (see also next example)
+        mTransactionAdapterCurrent = new TransactionAdapter(mDatasetCurrent);
+        mTransactionListCurrent.setAdapter(mTransactionAdapterCurrent);
 
-            mTransactionAdapterFamily = new TransactionAdapter(mDatasetFamily);
-            mTransactionListFamily.setAdapter(mTransactionAdapterFamily);
+        mTransactionAdapterGeneral = new TransactionAdapter(mDatasetGeneral);
+        mTransactionListGeneral.setAdapter(mTransactionAdapterGeneral);
+
+        mTransactionAdapterLongTerm = new TransactionAdapter(mDatasetLongTerm);
+        mTransactionListLongTerm.setAdapter(mTransactionAdapterLongTerm);
+
+        mTransactionAdapterFamily = new TransactionAdapter(mDatasetFamily);
+        mTransactionListFamily.setAdapter(mTransactionAdapterFamily);
+
+        mTransactionAdapterCash = new TransactionAdapter(mDatasetCash);
+        mTransactionListCash.setAdapter(mTransactionAdapterCash);
     }
-    
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item)
-    {
-        try
-        {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        try {
             // Handle navigation view item clicks here.
             int id = item.getItemId();
-    
-            if (id == R.id.nav_category)
-            {
+
+            if (id == R.id.nav_category) {
                 Intent intent = new Intent(this, activityCategory.class);
                 startActivity(intent);
-            } else if (id == R.id.nav_gallery)
-            {
-        
-            } else if (id == R.id.nav_slideshow)
-            {
-        
-            } else if (id == R.id.nav_manage)
-            {
-        
-            } else if (id == R.id.nav_share)
-            {
-        
-            } else if (id == R.id.nav_send)
-            {
-        
+            } else if (id == R.id.nav_gallery) {
+
+            } else if (id == R.id.nav_slideshow) {
+
+            } else if (id == R.id.nav_manage) {
+
+            } else if (id == R.id.nav_share) {
+
+            } else if (id == R.id.nav_send) {
+
             }
-    
+
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             ErrorDialog.Show("Error in MainActivity::onNavigationItemSelected", e.getMessage());
         }
         return true;

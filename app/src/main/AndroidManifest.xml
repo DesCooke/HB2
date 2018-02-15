@@ -38,6 +38,10 @@
             android:name=".activitySubCategoryItem"
             android:label="@string/title_activity_subcategory_item"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activityTransactionItem"
+            android:label="@string/title_activity_transaction_item"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

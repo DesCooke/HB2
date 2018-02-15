@@ -103,6 +103,20 @@
                             tools:layout_editor_absoluteY="8dp"/>
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:id="@+id/tab6"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/transactionListCash"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            tools:layout_editor_absoluteX="8dp"
+                            tools:layout_editor_absoluteY="8dp"/>
+
+                    </LinearLayout>
                 </FrameLayout>
             </LinearLayout>
         </TabHost>
