@@ -7,4 +7,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_category">activityCategory</string>
     <string name="title_activity_category_item">activity_category_item</string>
+    <string name="title_activity_subcategory">activitySubCategory</string>
+    <string name="title_activity_subcategory_item">activity_subcategory_item</string>
 </resources>

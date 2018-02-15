@@ -28,6 +28,7 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyDownloads;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyPermission;
+import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.TransactionUI.TransactionAdapter;
 
 import java.util.ArrayList;
@@ -57,17 +58,24 @@ public class MainActivity extends AppCompatActivity
     private TransactionAdapter mTransactionAdapterFamily;
     private Toolbar toolbar;
 
+    private void setupStatics(Context lcontext)
+    {
+        context = lcontext;
+        MyResources.setContext(context);
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        context = this;
+
+        setupStatics(this);
+
         if (!MyPermission.checkIfAlreadyHavePermission(this))
             MyPermission.requestForSpecificPermission(this);
         try
         {
-            MyLog.SetContext(this);
             MyLog.WriteLogMessage("Starting");
 
             if(MyDownloads.MyDL().CollectFiles()==FALSE)

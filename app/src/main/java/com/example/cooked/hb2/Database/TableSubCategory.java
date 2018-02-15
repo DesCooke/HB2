@@ -44,7 +44,7 @@ public class TableSubCategory extends TableBase
                 "CREATE TABLE tblSubCategory " +
                     " (" +
                     "   SubCategoryId INTEGER PRIMARY KEY, " +
-                    "   CategoryId INTEGER PRIMARY KEY, " +
+                    "   CategoryId INTEGER, " +
                     "   SubCategoryName TEXT " +
                     ") ";
     
@@ -66,7 +66,7 @@ public class TableSubCategory extends TableBase
             if (cursor != null) {
                 cursor.moveToFirst();
                 lString = cursor.getString(0);
-                if (!lString.isEmpty())
+                if (lString != null)
                     return (Integer.parseInt(cursor.getString(0)) + 1);
             }
         }
@@ -173,6 +173,8 @@ public class TableSubCategory extends TableBase
                 cursor.moveToFirst();
                 do
                 {
+                    if(cursor.getCount()==0)
+                        break;
                     list.add
                             (
                                     new RecordSubCategory
@@ -198,7 +200,7 @@ public class TableSubCategory extends TableBase
 
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        if(oldVersion==2 && newVersion==3)
+        if(oldVersion==4 && newVersion==5)
         {
             MyLog.WriteLogMessage("Creating table tblSubCategory");
 

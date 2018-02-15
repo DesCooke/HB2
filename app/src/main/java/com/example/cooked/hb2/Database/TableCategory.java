@@ -65,7 +65,7 @@ public class TableCategory extends TableBase
             if (cursor != null) {
                 cursor.moveToFirst();
                 lString = cursor.getString(0);
-                if (!lString.isEmpty())
+                if (lString!=null)
                     return (Integer.parseInt(cursor.getString(0)) + 1);
             }
         }

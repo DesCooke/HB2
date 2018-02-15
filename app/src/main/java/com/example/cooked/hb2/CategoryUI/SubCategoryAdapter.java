@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordCategory;
+import com.example.cooked.hb2.Database.RecordSubCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.activityCategory;
@@ -17,32 +18,25 @@ import com.example.cooked.hb2.activityCategoryItem;
 
 import java.util.ArrayList;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder>
+public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.ViewHolder>
 {
-    private ArrayList<RecordCategory> mDataset;
+    private ArrayList<RecordSubCategory> mDataset;
     private OnItemClickListener mOnItemClickListener;
-    private OnItemClickListener mOnShowClickListener;
 
     public interface OnItemClickListener
     {
-        void onItemClick(View view, RecordCategory obj);
+        void onItemClick(View view, RecordSubCategory obj);
     }
-    
+
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener)
     {
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public void setOnShowClickListener(final OnItemClickListener mItemClickListener)
-    {
-        this.mOnShowClickListener = mItemClickListener;
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView mCategoryName;
+        public TextView mSubCategoryName;
         public ImageButton btnEdit;
-        public ImageButton btnShow;
 
         public ViewHolder(View v)
         {
@@ -50,10 +44,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
             try
             {
-                mCategoryName = (TextView) v.findViewById(R.id.cellcat_CategoryName);
-            
+                mSubCategoryName = (TextView) v.findViewById(R.id.cellcat_SubCategoryName);
+
                 btnEdit = (ImageButton) v.findViewById(R.id.btnEdit);
-                btnShow = (ImageButton) v.findViewById(R.id.btnShowSubCategory);
 
             }
             catch(Exception e)
@@ -63,27 +56,27 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         }
     }
 
-    public CategoryAdapter(ArrayList<RecordCategory> lDataset)
+    public SubCategoryAdapter(ArrayList<RecordSubCategory> lDataset)
     {
         mDataset = lDataset;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public CategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+    public SubCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType)
     {
         try
         {
             // create a new view
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_category, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_subcategory, parent, false);
             // set the view's size, margins, paddings and layout parameters
             ViewHolder vh = new ViewHolder(v);
             return vh;
         }
         catch(Exception e)
         {
-            ErrorDialog.Show("Error in CategoryAdapter.ViewHolder::onCreateViewHolder", e.getMessage());
+            ErrorDialog.Show("Error in SubCategoryAdapter.ViewHolder::onCreateViewHolder", e.getMessage());
         }
         return(null);
     }
@@ -92,14 +85,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        final RecordCategory rec;
+        final RecordSubCategory rec;
 
         try
         {
 
             rec = mDataset.get(position);
-    
-            holder.mCategoryName.setText(rec.CategoryName);
+
+            holder.mSubCategoryName.setText(rec.SubCategoryName);
             holder.btnEdit.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -111,23 +104,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                     }
                 }
             });
-            holder.btnShow.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    if (mOnShowClickListener != null)
-                    {
-                        mOnShowClickListener.onItemClick(view, rec);
-                    }
-                }
-            });
 
-            
         }
         catch (Exception e)
         {
-            ErrorDialog.Show("Error in CategoryAdapter.onBindViewHolder", e.getMessage());
+            ErrorDialog.Show("Error in SubCategoryAdapter.onBindViewHolder", e.getMessage());
         }
     }
 
@@ -141,7 +122,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         }
         catch (Exception e)
         {
-            ErrorDialog.Show("Error in CategoryAdapter.getItemCount", e.getMessage());
+            ErrorDialog.Show("Error in SubCategoryAdapter.getItemCount", e.getMessage());
         }
         return(0);
     }

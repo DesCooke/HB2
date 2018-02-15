@@ -1,9 +1,7 @@
 package com.example.cooked.hb2.GlobalUtils;
 
-import android.content.Context;
 import android.content.res.Resources;
 
-import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 import java.io.BufferedWriter;
@@ -12,8 +10,6 @@ import java.io.FileWriter;
 import java.text.DateFormat;
 import java.util.Date;
 
-import static com.example.cooked.hb2.MainActivity.context;
-import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 //
@@ -21,22 +17,13 @@ import static java.lang.Boolean.TRUE;
 //
 public class MyLog
 {
-    private static Resources res;
-    private static Context mycontext;
-    
-    public static void SetContext(Context context)
-    {
-        mycontext = context;
-        res = context.getResources();
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void WriteLogMessage(String argString)
     {
         try
         {
-            String homeDirectory=res.getString(R.string.home_directory);
-            String logfilename=res.getString(R.string.log_filename);
+            String homeDirectory=MyResources.R().getString(R.string.home_directory);
+            String logfilename=MyResources.R().getString(R.string.log_filename);
 
             // create a File object from it
             File file=new File(homeDirectory + '/' + logfilename);
@@ -60,7 +47,7 @@ public class MyLog
         }
         catch(Exception e)
         {
-            ErrorDialog.Show("Error in MyLog::WriteLogMessage", e.getMessage());
+            String myerror = e.getMessage();
         }
     }
 }

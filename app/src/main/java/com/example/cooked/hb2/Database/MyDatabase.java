@@ -22,7 +22,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -47,6 +47,7 @@ public class MyDatabase extends SQLiteOpenHelper
         {
             tableTransaction = new TableTransaction(this);
             tableCategory = new TableCategory(this);
+            tableSubCategory = new TableSubCategory(this);
         }
         catch(Exception e)
         {
@@ -134,7 +135,21 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public void updateCategory(RecordCategory rc) { tableCategory.updateCategory(rc);}
 
-    public void deleteCategory(RecordCategory rc) { tableCategory.deleteCategory(rc);}
+    public void deleteCategory(RecordCategory rc)
+    {
+        try {
+            ArrayList<RecordSubCategory> rscList;
+            rscList = getSubCategoryList(rc.CategoryId);
+            for (int i = 0; i < rscList.size(); i++) {
+                tableSubCategory.deleteSubCategory(rscList.get(i));
+            }
+            tableCategory.deleteCategory(rc);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.deleteCategory", e.getMessage());
+        }
+    }
 
     public ArrayList<RecordCategory> getCategoryList()
     {
