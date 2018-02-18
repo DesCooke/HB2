@@ -26,6 +26,7 @@ public class RecordTransaction
     public Float TxBalance;
     public Status TxStatus;
     public Integer CategoryId;
+    public String SubCategoryName;
 
     public RecordTransaction
             (
@@ -56,6 +57,7 @@ public class RecordTransaction
         TxBalance = pTxBalance;
         TxStatus = Status.NEW;
         CategoryId = pCategoryId;
+        SubCategoryName = "";
     }
     public RecordTransaction()
     {

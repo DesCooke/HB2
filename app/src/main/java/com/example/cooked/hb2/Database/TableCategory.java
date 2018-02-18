@@ -60,13 +60,18 @@ public class TableCategory extends TableBase
         try {
             String lString;
             SQLiteDatabase db = helper.getReadableDatabase();
-            Cursor cursor = db.query("tblCategory", new String[]{"MAX(CategoryId)"},
-                    null, null, null, null, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
-                lString = cursor.getString(0);
-                if (lString!=null)
-                    return (Integer.parseInt(cursor.getString(0)) + 1);
+            try {
+                Cursor cursor = db.query("tblCategory", new String[]{"MAX(CategoryId)"},
+                        null, null, null, null, null);
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    lString = cursor.getString(0);
+                    if (lString != null)
+                        return (Integer.parseInt(cursor.getString(0)) + 1);
+                }
+            }finally
+            {
+                db.close();
             }
         }
         catch(Exception e)
@@ -96,6 +101,7 @@ public class TableCategory extends TableBase
             SQLiteDatabase db = helper.getWritableDatabase();
 
             db.execSQL(lSql);
+            db.close();
         }
         catch(Exception e)
         {
@@ -119,6 +125,7 @@ public class TableCategory extends TableBase
             SQLiteDatabase db = helper.getWritableDatabase();
 
             db.execSQL(lSql);
+            db.close();
         }
         catch(Exception e)
         {
@@ -141,6 +148,7 @@ public class TableCategory extends TableBase
             SQLiteDatabase db = helper.getWritableDatabase();
 
             db.execSQL(lSql);
+            db.close();
         }
         catch(Exception e)
         {
@@ -155,32 +163,36 @@ public class TableCategory extends TableBase
         try
         {
             SQLiteDatabase db = helper.getReadableDatabase();
-            Cursor cursor = db.query
-                (false,
-                    "tblCategory",
-                    new String[]{"CategoryId", "CategoryName"},
-                    null,
-                    null,
-                    null,
-                    null, "CategoryName", null, null);
-            cnt = cursor.getCount();
-            list = new ArrayList<RecordCategory>();
-            cnt = 0;
-            if (cursor != null)
+            try {
+                Cursor cursor = db.query
+                        (false,
+                                "tblCategory",
+                                new String[]{"CategoryId", "CategoryName"},
+                                null,
+                                null,
+                                null,
+                                null, "CategoryName", null, null);
+                cnt = cursor.getCount();
+                list = new ArrayList<RecordCategory>();
+                cnt = 0;
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    do {
+                        list.add
+                                (
+                                        new RecordCategory
+                                                (
+                                                        Integer.parseInt(cursor.getString(0)),
+                                                        cursor.getString(1)
+                                                )
+                                );
+                        cnt++;
+                    } while (cursor.moveToNext());
+                }
+            }
+            finally
             {
-                cursor.moveToFirst();
-                do
-                {
-                    list.add
-                            (
-                                    new RecordCategory
-                                            (
-                                                    Integer.parseInt(cursor.getString(0)),
-                                                    cursor.getString(1)
-                                            )
-                            );
-                    cnt++;
-                } while (cursor.moveToNext());
+                db.close();
             }
         }
         catch (Exception e)

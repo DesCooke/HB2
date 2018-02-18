@@ -1,5 +1,6 @@
 package com.example.cooked.hb2.TransactionUI;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,17 @@ import java.util.ArrayList;
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder>
 {
     private ArrayList<RecordTransaction> mDataset;
+    private OnItemClickListener mOnItemClickListener;
+
+    public interface OnItemClickListener
+    {
+        void onItemClick(View view, RecordTransaction obj);
+    }
+
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener)
+    {
+        this.mOnItemClickListener = mItemClickListener;
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -32,6 +44,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         public TextView mTxDescription;
         public TextView mTxAmount;
         public TextView mTxBalance;
+        public TextView mSubCategoryName;
+        public ConstraintLayout mFull;
 
         public ViewHolder(View v)
         {
@@ -47,6 +61,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             mTxDescription = (TextView) v.findViewById(R.id.celltx_TxDescription);
             mTxAmount = (TextView) v.findViewById(R.id.celltx_TxAmount);
             mTxBalance = (TextView) v.findViewById(R.id.celltx_TxBalance);
+            mSubCategoryName = (TextView) v.findViewById(R.id.celltx_SubCategoryName);
+            mFull = (ConstraintLayout) v.findViewById(R.id.celltx_full);
         }
     }
 
@@ -72,9 +88,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {
-        RecordTransaction rec;
+        final RecordTransaction rec;
 
-        rec = mDataset.get(position);
+         rec = mDataset.get(position);
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
@@ -89,6 +105,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.mTxType.setText(rec.TxType);
             holder.mBankAccount.setText(rec.TxSortCode + " " + rec.TxAccountNumber);
             holder.mTxDescription.setText(rec.TxDescription);
+            holder.mSubCategoryName.setText(rec.SubCategoryName);
             if(rec.TxAmount < 0.00)
             {
                 holder.mTxAmount.setText("-£" + String.format("%.2f", rec.TxAmount*-1));
@@ -105,6 +122,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             {
                 holder.mTxBalance.setText("£" + String.format("%.2f", rec.TxBalance));
             }
+            holder.mFull.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    if (mOnItemClickListener != null)
+                    {
+                        mOnItemClickListener.onItemClick(view, rec);
+                    }
+                }
+            });
+
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in NounAdapter.onBindViewHolder", e.getMessage());

@@ -61,13 +61,19 @@ public class TableSubCategory extends TableBase
         try {
             String lString;
             SQLiteDatabase db = helper.getReadableDatabase();
-            Cursor cursor = db.query("tblSubCategory", new String[]{"MAX(SubCategoryId)"},
-                    null, null, null, null, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
-                lString = cursor.getString(0);
-                if (lString != null)
-                    return (Integer.parseInt(cursor.getString(0)) + 1);
+            try {
+                Cursor cursor = db.query("tblSubCategory", new String[]{"MAX(SubCategoryId)"},
+                        null, null, null, null, null);
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    lString = cursor.getString(0);
+                    if (lString != null)
+                        return (Integer.parseInt(cursor.getString(0)) + 1);
+                }
+            }
+            finally
+            {
+                db.close();
             }
         }
         catch(Exception e)
@@ -98,6 +104,7 @@ public class TableSubCategory extends TableBase
             SQLiteDatabase db = helper.getWritableDatabase();
 
             db.execSQL(lSql);
+            db.close();
         }
         catch(Exception e)
         {
@@ -121,6 +128,7 @@ public class TableSubCategory extends TableBase
             SQLiteDatabase db = helper.getWritableDatabase();
 
             db.execSQL(lSql);
+            db.close();
         }
         catch(Exception e)
         {
@@ -143,6 +151,7 @@ public class TableSubCategory extends TableBase
             SQLiteDatabase db = helper.getWritableDatabase();
 
             db.execSQL(lSql);
+            db.close();
         }
         catch(Exception e)
         {
@@ -157,36 +166,49 @@ public class TableSubCategory extends TableBase
         try
         {
             SQLiteDatabase db = helper.getReadableDatabase();
-            Cursor cursor = db.query
-                (false,
-                    "tblSubCategory",
-                    new String[]{"SubCategoryId", "CategoryId", "SubCategoryName"},
-                    "CategoryId=?",
-                   new String[]{pCategoryId.toString()},
-                    null,
-                    null, "SubCategoryName", null, null);
-            cnt = cursor.getCount();
-            list = new ArrayList<RecordSubCategory>();
-            cnt = 0;
-            if (cursor != null)
-            {
-                cursor.moveToFirst();
-                do
-                {
-                    if(cursor.getCount()==0)
-                        break;
-                    list.add
-                            (
-                                    new RecordSubCategory
-                                            (
-                                                    Integer.parseInt(cursor.getString(1)),
-                                                    Integer.parseInt(cursor.getString(0)),
-                                                    cursor.getString(2)
-                                            )
-                            );
-                    cnt++;
-                } while (cursor.moveToNext());
+            try {
+                Cursor cursor;
+                String l_SQL;
+                if (pCategoryId != 0) {
+                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName " +
+                            "FROM tblSubCategory a, tblCategory b " +
+                            "WHERE a.CategoryId = " + pCategoryId.toString() + " " +
+                            "AND a.CategoryId = b.CategoryId " +
+                            "ORDER BY b.CategoryName, a.SubCategoryName ";
+                } else {
+                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, a.SubCategoryName, b.CategoryName " +
+                            "FROM tblSubCategory a, tblCategory b " +
+                            "WHERE a.CategoryId = b.CategoryId " +
+                            "ORDER BY b.CategoryName, a.SubCategoryName ";
+                }
+                cursor = db.rawQuery(l_SQL, null);
+                cnt = cursor.getCount();
+                list = new ArrayList<RecordSubCategory>();
+                cnt = 0;
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    do {
+                        if (cursor.getCount() == 0)
+                            break;
+                        list.add
+                                (
+                                        new RecordSubCategory
+                                                (
+                                                        Integer.parseInt(cursor.getString(1)),
+                                                        cursor.getString(3),
+                                                        Integer.parseInt(cursor.getString(0)),
+                                                        cursor.getString(2)
+                                                )
+                                );
+                        cnt++;
+                    } while (cursor.moveToNext());
+                }
             }
+            finally
+            {
+                db.close();
+            }
+
         }
         catch (Exception e)
         {
@@ -196,7 +218,54 @@ public class TableSubCategory extends TableBase
         return list;
     }
 
-    
+    public RecordSubCategory getSubCategory(Integer pSubCategoryId)
+    {
+        int cnt;
+        try
+        {
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor;
+                String l_SQL;
+                l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName " +
+                        "FROM tblSubCategory a, tblCategory b " +
+                        "WHERE a.SubCategoryId = " + pSubCategoryId.toString() + " " +
+                        "AND a.CategoryId = b.CategoryId " +
+                        "ORDER BY b.CategoryName, a.SubCategoryName ";
+                cursor = db.rawQuery(l_SQL, null);
+                cnt = cursor.getCount();
+                cnt = 0;
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    do {
+                        if (cursor.getCount() == 0)
+                            break;
+                        return
+                                (
+                                        new RecordSubCategory
+                                                (
+                                                        Integer.parseInt(cursor.getString(1)),
+                                                        cursor.getString(3),
+                                                        Integer.parseInt(cursor.getString(0)),
+                                                        cursor.getString(2)
+                                                )
+                                );
+                    } while (cursor.moveToNext());
+                }
+            }
+            finally
+            {
+                db.close();
+            }
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TableSubCategory.getSubCategoryList", e.getMessage());
+        }
+        return(null);
+    }
+
 
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {

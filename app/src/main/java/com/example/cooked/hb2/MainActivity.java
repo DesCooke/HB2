@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyApiSpecific;
 import com.example.cooked.hb2.GlobalUtils.MyDownloads;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyPermission;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity
     private void setupStatics(Context lcontext) {
         context = lcontext;
         MyResources.setContext(context);
+        MyApiSpecific.setContext(context);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -235,7 +237,7 @@ public class MainActivity extends AppCompatActivity
         mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830");
         mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503");
         mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361");
-        mDatasetCash = MyDatabase.MyDB().getTransactionList("cash", "cash");
+        mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash");
 
         mTransactionListCurrent = (RecyclerView) findViewById(R.id.transactionListCurrent);
         mTransactionListGeneral = (RecyclerView) findViewById(R.id.transactionListGeneral);
@@ -282,6 +284,19 @@ public class MainActivity extends AppCompatActivity
 
         mTransactionAdapterCash = new TransactionAdapter(mDatasetCash);
         mTransactionListCash.setAdapter(mTransactionAdapterCash);
+        mTransactionAdapterCash.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -313,4 +328,13 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
+
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+
+        setupRecyclerViews();
+    }
+
 }

@@ -112,10 +112,28 @@ public class MyDatabase extends SQLiteOpenHelper
     {
         tableTransaction.addTransaction(rt);
     }
+    public void deleteTransaction(RecordTransaction rt)
+    {
+        tableTransaction.deleteTransaction(rt);
+    }
+
+    public void updateTransaction(RecordTransaction rt)
+    {
+        tableTransaction.updateTransaction(rt);
+    }
 
     public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
-        return tableTransaction.getTransactionList(sortCode, accountNum);
+        ArrayList<RecordTransaction> rta = tableTransaction.getTransactionList(sortCode, accountNum);
+        if(rta!=null)
+        {
+            for(int i=0;i<rta.size();i++) {
+                RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
+                if (sc != null)
+                    rta.get(i).SubCategoryName = sc.SubCategoryName;
+            }
+        }
+        return(rta);
     }
 
     public ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode, String lAccountNumber)
@@ -127,6 +145,23 @@ public class MyDatabase extends SQLiteOpenHelper
     {
         tableTransaction.updateFilenameLineNo(dbRec, fileRec);
         
+    }
+
+    public int getNextTxLineNo(Date pDate)
+    {
+        return(tableTransaction.getNextTxLineNo(pDate));
+    }
+
+    public RecordTransaction getSingleTransaction(Integer pTxSeqNo)
+    {
+        RecordTransaction rt =tableTransaction.getSingleTransaction(pTxSeqNo);
+        if(rt!=null)
+        {
+           RecordSubCategory sc = tableSubCategory.getSubCategory(rt.CategoryId);
+           if(sc!=null)
+               rt.SubCategoryName = sc.SubCategoryName;
+        }
+        return(rt);
     }
     //endregion
     
@@ -169,6 +204,12 @@ public class MyDatabase extends SQLiteOpenHelper
     {
         return tableSubCategory.getSubCategoryList(pCategoryId);
     }
+
+    public RecordSubCategory getSubCategory(Integer pSubCategoryId)
+    {
+        return tableSubCategory.getSubCategory(pSubCategoryId);
+    }
+
     //endregion
  }
 
