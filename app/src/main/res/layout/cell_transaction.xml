@@ -102,8 +102,8 @@
 
     <TextView
         android:id="@+id/celltx_TxDescription"
-        android:layout_width="209dp"
-        android:layout_height="22dp"
+        android:layout_width="157dp"
+        android:layout_height="23dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
@@ -113,24 +113,26 @@
 
     <TextView
         android:id="@+id/celltx_TxAmount"
-        android:layout_width="82dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="125dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
         android:layout_weight="1"
         android:text="celltx_TxAmount"
         android:textAlignment="textEnd"
-        app:layout_constraintEnd_toStartOf="@+id/celltx_TxBalance"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_SubCategoryName" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDescription" />
 
     <TextView
         android:id="@+id/celltx_TxBalance"
-        android:layout_width="69dp"
+        android:layout_width="129dp"
         android:layout_height="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
         android:layout_weight="1"
         android:text="celltx_TxBalance"
         android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_SubCategoryName" />
+        app:layout_constraintStart_toEndOf="@+id/celltx_TxAmount"
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDescription" />
 
 </android.support.constraint.ConstraintLayout>

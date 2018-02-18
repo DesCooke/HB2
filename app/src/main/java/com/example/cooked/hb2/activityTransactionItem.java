@@ -89,7 +89,7 @@ public class activityTransactionItem extends AppCompatActivity
                 edtCategory.setText(originalRecord.SubCategoryName);
 
                 btnDelete.setVisibility(View.VISIBLE);
-                if(originalRecord.TxSortCode.compareTo("Cash")!=0)
+/*                if(originalRecord.TxSortCode.compareTo("Cash")!=0)
                 {
                     edtTxDate.setFocusable(FALSE);
                     edtTxDate.setEnabled(FALSE);
@@ -99,7 +99,7 @@ public class activityTransactionItem extends AppCompatActivity
                     edtTxAmount.setEnabled(FALSE);
                     btnDelete.setVisibility(GONE);
                 }
-            }
+  */          }
 
 
             btnOk.setOnClickListener(new View.OnClickListener()
