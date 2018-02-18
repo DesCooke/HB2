@@ -27,6 +27,8 @@ import java.util.Date;
 import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 public class activityTransactionItem extends AppCompatActivity
 {
@@ -87,7 +89,18 @@ public class activityTransactionItem extends AppCompatActivity
                 edtCategory.setText(originalRecord.SubCategoryName);
 
                 btnDelete.setVisibility(View.VISIBLE);
+                if(originalRecord.TxSortCode.compareTo("Cash")!=0)
+                {
+                    edtTxDate.setFocusable(FALSE);
+                    edtTxDate.setEnabled(FALSE);
+                    edtTxDescription.setFocusable(FALSE);
+                    edtTxDescription.setEnabled(FALSE);
+                    edtTxAmount.setFocusable(FALSE);
+                    edtTxAmount.setEnabled(FALSE);
+                    btnDelete.setVisibility(GONE);
+                }
             }
+
 
             btnOk.setOnClickListener(new View.OnClickListener()
             {

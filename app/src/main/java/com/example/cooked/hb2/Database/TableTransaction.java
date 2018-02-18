@@ -10,6 +10,9 @@ import com.example.cooked.hb2.GlobalUtils.MyLog;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 class TableTransaction extends TableBase
 {
     private SQLiteOpenHelper helper;
@@ -122,6 +125,40 @@ class TableTransaction extends TableBase
         return(-1);
     }
 
+    public boolean txExists(RecordTransaction rt)
+    {
+        try {
+            String lString;
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                String l_SQL = "SELECT TxSeqNo FROM tblTransaction " +
+                        "WHERE TxDate = " + Long.toString(rt.TxDate.getTime()) + " " +
+                        "AND TxType = '" + rt.TxType + "' " +
+                        "AND TxDescription = '" + rt.TxDescription + "' " +
+                        "AND TxAmount = " + Float.toString(rt.TxAmount) + " ";
+                Cursor cursor = db.rawQuery(l_SQL, null);
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    if(cursor.getCount()>0) {
+                        lString = cursor.getString(0);
+                        if (lString != null)
+                            return (TRUE);
+                    }
+                }
+            }
+            finally
+            {
+                db.close();
+            }
+
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("Error in TableTransaction::getNextTxLineNo", e.getMessage());
+        }
+        return(FALSE);
+    }
+
     public void addTransaction(RecordTransaction rt)
     {
         try
@@ -176,7 +213,6 @@ class TableTransaction extends TableBase
             {
                 MyLog.WriteLogMessage("Updating transaction." +
                         "TxDate: " + rt.TxDate.toString() + ", " +
-                        "TxDate: " + rt.TxDate.toString() + ", " +
                         "TxType: " + rt.TxType + ", " +
                         "TxSortCode: " + rt.TxSortCode + ", " +
                         "TxAccountNumber: " + rt.TxAccountNumber + ", " +
@@ -196,6 +232,33 @@ class TableTransaction extends TableBase
 
                 db.execSQL(lSql);
                 db.close();
+            }
+            else
+            {
+                MyLog.WriteLogMessage("Updating transaction." +
+                        "CategoryId: " + Integer.toString(rt.CategoryId)
+                );
+
+                String lSql =
+                        "UPDATE tblTransaction " +
+                                "SET CategoryId = " + Integer.toString(rt.CategoryId) + " " +
+                                "WHERE TxSeqNo = " + Integer.toString(rt.TxSeqNo);
+
+                SQLiteDatabase db = helper.getWritableDatabase();
+
+                db.execSQL(lSql);
+                db.close();
+
+                if(rt.SubCategoryName.compareTo("Cash Transfer")==0)
+                {
+                    rt.TxSortCode = "Cash";
+                    rt.TxAccountNumber = "Cash";
+                    rt.TxAmount = rt.TxAmount * -1;
+                    if(txExists(rt)==FALSE) {
+                        rt.TxLineNo = getNextTxLineNo(rt.TxDate);
+                        addTransaction(rt);
+                    }
+                }
             }
         }
         catch(Exception e)

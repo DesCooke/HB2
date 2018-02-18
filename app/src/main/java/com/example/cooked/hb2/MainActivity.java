@@ -272,15 +272,59 @@ public class MainActivity extends AppCompatActivity
         // specify an adapter (see also next example)
         mTransactionAdapterCurrent = new TransactionAdapter(mDatasetCurrent);
         mTransactionListCurrent.setAdapter(mTransactionAdapterCurrent);
+        mTransactionAdapterCurrent.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
 
         mTransactionAdapterGeneral = new TransactionAdapter(mDatasetGeneral);
         mTransactionListGeneral.setAdapter(mTransactionAdapterGeneral);
+        mTransactionAdapterGeneral.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
 
         mTransactionAdapterLongTerm = new TransactionAdapter(mDatasetLongTerm);
         mTransactionListLongTerm.setAdapter(mTransactionAdapterLongTerm);
+        mTransactionAdapterLongTerm.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
 
         mTransactionAdapterFamily = new TransactionAdapter(mDatasetFamily);
         mTransactionListFamily.setAdapter(mTransactionAdapterFamily);
+        mTransactionAdapterFamily.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
 
         mTransactionAdapterCash = new TransactionAdapter(mDatasetCash);
         mTransactionListCash.setAdapter(mTransactionAdapterCash);
