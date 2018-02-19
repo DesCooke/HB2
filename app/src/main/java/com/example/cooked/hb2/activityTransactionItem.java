@@ -114,6 +114,7 @@ public class activityTransactionItem extends AppCompatActivity
                         originalRecord.TxDescription = edtTxDescription.getText().toString();
                         originalRecord.TxAmount = Float.parseFloat(edtTxAmount.getText().toString());
                         originalRecord.CategoryId = MySubCategoryId.Value;
+                        originalRecord.SubCategoryName = edtCategory.getText().toString();
                         if (actionType.compareTo("ADD") == 0)
                         {
                             originalRecord.TxType = "Cash";
