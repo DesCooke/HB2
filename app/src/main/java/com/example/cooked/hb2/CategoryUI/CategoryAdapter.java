@@ -1,19 +1,15 @@
 package com.example.cooked.hb2.CategoryUI;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
-import com.example.cooked.hb2.activityCategory;
-import com.example.cooked.hb2.activityCategoryItem;
 
 import java.util.ArrayList;
 
@@ -38,22 +34,22 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         this.mOnShowClickListener = mItemClickListener;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    static class ViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView mCategoryName;
-        public ImageButton btnEdit;
-        public ImageButton btnShow;
+        TextView mCategoryName;
+        ImageButton btnEdit;
+        ImageButton btnShow;
 
-        public ViewHolder(View v)
+        ViewHolder(View v)
         {
             super(v);
 
             try
             {
-                mCategoryName = (TextView) v.findViewById(R.id.cellcat_CategoryName);
+                mCategoryName = v.findViewById(R.id.cellcat_CategoryName);
             
-                btnEdit = (ImageButton) v.findViewById(R.id.btnEdit);
-                btnShow = (ImageButton) v.findViewById(R.id.btnShowSubCategory);
+                btnEdit = v.findViewById(R.id.btnEdit);
+                btnShow = v.findViewById(R.id.btnShowSubCategory);
 
             }
             catch(Exception e)
@@ -77,9 +73,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         {
             // create a new view
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_category, parent, false);
-            // set the view's size, margins, paddings and layout parameters
-            ViewHolder vh = new ViewHolder(v);
-            return vh;
+            // set the view's size, margins, padding and layout parameters
+            return new ViewHolder(v);
         }
         catch(Exception e)
         {

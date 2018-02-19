@@ -44,7 +44,8 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblTxDate" />
+        app:layout_constraintTop_toBottomOf="@+id/lblTxDate"
+        tools:ignore="LabelFor"/>
 
     <TextView
         android:id="@+id/lblDescription"
@@ -68,7 +69,8 @@
         android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/lblDescription"
+        tools:ignore="LabelFor"/>
 
     <TextView
         android:id="@+id/lblTxDate4"
@@ -94,7 +96,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblTxDate4" />
+        app:layout_constraintTop_toBottomOf="@+id/lblTxDate4"
+        tools:ignore="LabelFor"/>
 
     <TextView
         android:id="@+id/lblAmount"
@@ -118,7 +121,8 @@
         android:text="0.00"
         android:textAlignment="textEnd"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblAmount" />
+        app:layout_constraintTop_toBottomOf="@+id/lblAmount"
+        tools:ignore="LabelFor"/>
 
     <Button
         android:id="@+id/btnOk"

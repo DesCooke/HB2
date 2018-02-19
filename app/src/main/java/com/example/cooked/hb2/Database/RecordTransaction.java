@@ -8,9 +8,7 @@ import static java.lang.Boolean.TRUE;
 public class RecordTransaction
 {
     public enum Status {
-        NEW,
-        CHANGED,
-        DELETED
+        NEW
     }
 
     public Integer TxSeqNo;   // Unique number given when inserted into the table - primary key
@@ -28,7 +26,7 @@ public class RecordTransaction
     public Integer CategoryId;
     public String SubCategoryName;
 
-    public RecordTransaction
+    RecordTransaction
             (
                      int pTxSeqNo,
                      Date pTxAdded,
@@ -61,7 +59,20 @@ public class RecordTransaction
     }
     public RecordTransaction()
     {
+        TxSeqNo = 0;
+        TxAdded = new Date();
+        TxFilename = "";
+        TxLineNo = 0;
+        TxDate = new Date();
+        TxType = "";
+        TxSortCode = "";
+        TxAccountNumber = "";
+        TxDescription = "";
+        TxAmount = 0.00f;
+        TxBalance = 0.00f;
         TxStatus = Status.NEW;
+        CategoryId = 0;
+        SubCategoryName = "";
     }
     public boolean Equals(RecordTransaction recTwo)
     {

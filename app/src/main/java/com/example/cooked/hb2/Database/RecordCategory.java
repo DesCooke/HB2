@@ -5,7 +5,7 @@ public class RecordCategory
     public Integer CategoryId;
     public String CategoryName;
 
-    public RecordCategory
+    RecordCategory
             (
                      Integer pCategoryId,
                      String pCategoryName

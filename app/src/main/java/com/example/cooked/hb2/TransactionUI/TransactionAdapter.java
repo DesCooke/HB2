@@ -1,5 +1,6 @@
 package com.example.cooked.hb2.TransactionUI;
 
+import android.annotation.SuppressLint;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -85,6 +86,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint({"DefaultLocale", "SetTextI18n"})
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position)
     {

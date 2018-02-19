@@ -7,7 +7,7 @@ public class RecordSubCategory
     public Integer SubCategoryId;
     public String SubCategoryName;
 
-    public RecordSubCategory
+    RecordSubCategory
             (
                      Integer pCategoryId,
                      String pCategoryName,

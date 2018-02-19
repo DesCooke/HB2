@@ -10,4 +10,6 @@
     <string name="title_activity_subcategory">activitySubCategory</string>
     <string name="title_activity_subcategory_item">activity_subcategory_item</string>
     <string name="title_activity_transaction_item">activity_transaction_item</string>
+    <string name="android_studio">Android Studio</string>
+    <string name="android_studio_android_com">android.studio@android.com</string>
 </resources>

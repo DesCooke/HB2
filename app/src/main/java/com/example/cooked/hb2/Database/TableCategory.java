@@ -8,213 +8,138 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 
 import java.util.ArrayList;
-import java.util.Date;
 
-public class TableCategory extends TableBase
+class TableCategory extends TableBase
 {
-    private SQLiteOpenHelper helper;
-
+    
     TableCategory(SQLiteOpenHelper argHelper)
     {
-        helper = argHelper;
+        super(argHelper);
     }
     
     private void dropTableIfExists(SQLiteDatabase db)
     {
-        try
-        {
-            String lSql =
-                "DROP TABLE IF EXISTS tblCategory";
-    
-            db.execSQL(lSql);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in TableCategory::dropTableIfExists", e.getMessage());
-        }
+        String lSql = "DROP TABLE IF EXISTS tblCategory";
+        executeSQL(lSql, "TableCategory::dropTableIfExists", db);
     }
- 
+    
     void onCreate(SQLiteDatabase db)
     {
-        try
-        {
-            dropTableIfExists(db);
-    
-            String lSql =
-                "CREATE TABLE tblCategory " +
-                    " (" +
-                    "   CategoryId INTEGER PRIMARY KEY, " +
-                    "   CategoryName TEXT " +
-                    ") ";
-    
-            db.execSQL(lSql);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in TableCategory::onCreate", e.getMessage());
-        }
-    }
-
-    public int getNextCategoryId()
-    {
-        try {
-            String lString;
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try {
-                Cursor cursor = db.query("tblCategory", new String[]{"MAX(CategoryId)"},
-                        null, null, null, null, null);
-                if (cursor != null) {
-                    cursor.moveToFirst();
-                    lString = cursor.getString(0);
-                    if (lString != null)
-                        return (Integer.parseInt(cursor.getString(0)) + 1);
-                }
-            }finally
-            {
-                db.close();
-            }
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in TableCategory::getNextCategoryId", e.getMessage());
-        }
-        return(1);
-    }
-
-    public void addCategory(RecordCategory rc)
-    {
-        try
-        {
-            rc.CategoryId = getNextCategoryId();
-
-            MyLog.WriteLogMessage("Adding category." +
-              "CategoryId: " + rc.CategoryId.toString() + ", " +
-                    "CategoryNamee: " + rc.CategoryName);
-
-            String lSql =
-                    "INSERT INTO tblCategory " +
-                    "(CategoryId, CategoryName) " +
-                    "VALUES ("+
-                    Integer.toString(rc.CategoryId) + "," +
-                    "'" + rc.CategoryName + "') ";
-
-            SQLiteDatabase db = helper.getWritableDatabase();
-
-            db.execSQL(lSql);
-            db.close();
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in TableCategory::addCategory", e.getMessage());
-        }
+        dropTableIfExists(db);
+        
+        String lSql =
+            "CREATE TABLE tblCategory " +
+                " (" +
+                "   CategoryId INTEGER PRIMARY KEY, " +
+                "   CategoryName TEXT " +
+                ") ";
+        
+        executeSQL(lSql, "TableCategory::onCreate", db);
     }
     
-    public void updateCategory(RecordCategory rc)
+    private int getNextCategoryId()
     {
-        try
-        {
-            MyLog.WriteLogMessage("Updating category." +
-              "CategoryId: " + rc.CategoryId.toString() + ", " +
-                    "CategoryNamee: " + rc.CategoryName);
-
-            String lSql =
-                    "UPDATE tblCategory " +
-                    "  SET CategoryName = '" + rc.CategoryName + "' " +
-                    "WHERE CategoryId = " + rc.CategoryId.toString();
-
-            SQLiteDatabase db = helper.getWritableDatabase();
-
-            db.execSQL(lSql);
-            db.close();
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in TableCategory::updateCategory", e.getMessage());
-        }
+        String lSql = "SELECT MAX(CategoryId) FROM tblCategory ";
+        
+        return (getMaxPlus1(lSql, "TableCategory::getNextCategoryId"));
     }
     
-    public void deleteCategory(RecordCategory rc)
+    void addCategory(RecordCategory rc)
     {
-        try
-        {
-            MyLog.WriteLogMessage("Deleting category." +
-              "CategoryId: " + rc.CategoryId.toString() + ", " +
-                    "CategoryNamee: " + rc.CategoryName);
-
-            String lSql =
-                    "DELETE FROM tblCategory " +
-                    "WHERE CategoryId = " + rc.CategoryId.toString();
-
-            SQLiteDatabase db = helper.getWritableDatabase();
-
-            db.execSQL(lSql);
-            db.close();
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in TableCategory::deleteCategory", e.getMessage());
-        }
+        rc.CategoryId = getNextCategoryId();
+        
+        String lSql =
+            "INSERT INTO tblCategory " +
+                "(CategoryId, CategoryName) " +
+                "VALUES (" +
+                Integer.toString(rc.CategoryId) + "," +
+                "'" + rc.CategoryName + "') ";
+        
+        executeSQL(lSql, "TableCategory::addCategory", null);
     }
-
-    public ArrayList<RecordCategory> getCategoryList()
+    
+    void updateCategory(RecordCategory rc)
     {
-        int cnt;
+        String lSql =
+            "UPDATE tblCategory " +
+                "  SET CategoryName = '" + rc.CategoryName + "' " +
+                "WHERE CategoryId = " + rc.CategoryId.toString();
+        
+        executeSQL(lSql, "TableCategory::updateCategory", null);
+    }
+    
+    void deleteCategory(RecordCategory rc)
+    {
+        String lSql =
+            "DELETE FROM tblCategory " +
+                "WHERE CategoryId = " + rc.CategoryId.toString();
+        
+        executeSQL(lSql, "TableCategory::deleteCategory", null);
+    }
+    
+    ArrayList<RecordCategory> getCategoryList()
+    {
         ArrayList<RecordCategory> list;
         try
         {
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try {
-                Cursor cursor = db.query
-                        (false,
-                                "tblCategory",
-                                new String[]{"CategoryId", "CategoryName"},
-                                null,
-                                null,
-                                null,
-                                null, "CategoryName", null, null);
-                cnt = cursor.getCount();
-                list = new ArrayList<RecordCategory>();
-                cnt = 0;
-                if (cursor != null) {
-                    cursor.moveToFirst();
-                    do {
-                        list.add
-                                (
-                                        new RecordCategory
-                                                (
-                                                        Integer.parseInt(cursor.getString(0)),
-                                                        cursor.getString(1)
-                                                )
-                                );
-                        cnt++;
-                    } while (cursor.moveToNext());
-                }
-            }
-            finally
+            try (SQLiteDatabase db = helper.getReadableDatabase())
             {
-                db.close();
+                try
+                {
+                    String lString =
+                        "SELECT CategoryId, CategoryName " +
+                            "FROM tblCategory " +
+                            "ORDER BY CategoryName";
+                    Cursor cursor = db.rawQuery(lString, null);
+                    list = new ArrayList<>();
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                list.add
+                                    (
+                                        new RecordCategory
+                                            (
+                                                Integer.parseInt(cursor.getString(0)),
+                                                cursor.getString(1)
+                                            )
+                                    );
+                            } while (cursor.moveToNext());
+                        }
+                        finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                }
+                finally
+                {
+                    db.close();
+                }
             }
         }
         catch (Exception e)
         {
-            list = new ArrayList<RecordCategory>();
+            list = new ArrayList<>();
             ErrorDialog.Show("Error in TableCategory.getCategoryList", e.getMessage());
         }
         return list;
     }
-
     
-
+    
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        if(oldVersion==1 && newVersion==2)
+        if (oldVersion == 1 && newVersion == 2)
         {
             MyLog.WriteLogMessage("Creating table tblCategory");
-
+            
             onCreate(db);
         }
     }
-
+    
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
     }

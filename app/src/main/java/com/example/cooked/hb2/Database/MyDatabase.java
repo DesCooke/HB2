@@ -204,12 +204,7 @@ public class MyDatabase extends SQLiteOpenHelper
     {
         return tableSubCategory.getSubCategoryList(pCategoryId);
     }
-
-    public RecordSubCategory getSubCategory(Integer pSubCategoryId)
-    {
-        return tableSubCategory.getSubCategory(pSubCategoryId);
-    }
-
+    
     //endregion
  }
 
