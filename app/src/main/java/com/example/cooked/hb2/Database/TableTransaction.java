@@ -44,7 +44,10 @@ class TableTransaction extends TableBase
                 "   TxDescription TEXT, " +
                 "   TxAmount REAL, " +
                 "   TxBalance REAL, " +
-                "   CategoryId INTEGER " +
+                "   CategoryId INTEGER, " +
+                "   Comments TEXT, " +
+                "   BudgetYear INTEGER, " +
+                "   BudgetMonth INTEGER " +
                 ") ";
         
         executeSQL(lSql, "TableTransaction::onCreate", db);
@@ -83,7 +86,8 @@ class TableTransaction extends TableBase
         String lSql =
             "INSERT INTO tblTransaction " +
                 "(TxSeqNo, TxAdded, TxFilename, TxLineNo, TxDate, TxType, TxSortCode, " +
-                "TxAccountNumber, TxDescription, TxAmount, TxBalance, CategoryId) " +
+                "TxAccountNumber, TxDescription, TxAmount, TxBalance, CategoryId, " +
+                "Comments, BudgetYear, BudgetMonth) " +
                 "VALUES (" +
                 Integer.toString(rt.TxSeqNo) + "," +
                 Long.toString(rt.TxAdded.getTime()) + "," +
@@ -96,7 +100,11 @@ class TableTransaction extends TableBase
                 "'" + rt.TxDescription + "'," +
                 rt.TxAmount.toString() + ", " +
                 rt.TxBalance.toString() + ", " +
-                Integer.toString(rt.CategoryId) + ") ";
+                Integer.toString(rt.CategoryId) + ", " +
+                "'" + rt.Comments + "', " +
+                Integer.toString(rt.BudgetYear) + ", " +
+                Integer.toString(rt.BudgetMonth) + " " +
+        ") ";
         
         executeSQL(lSql, "TableTransaction::addTransaction", null);
     }
@@ -110,7 +118,10 @@ class TableTransaction extends TableBase
                     "SET TxDate = " + Long.toString(rt.TxDate.getTime()) + ", " +
                     "TxDescription = '" + rt.TxDescription + "'," +
                     "TxAmount = " + rt.TxAmount.toString() + ", " +
-                    "CategoryId = " + Integer.toString(rt.CategoryId) + " " +
+                    "CategoryId = " + Integer.toString(rt.CategoryId) + ", " +
+                    "Comments = '" + rt.Comments + "'," +
+                    "BudgetYear = " + Integer.toString(rt.BudgetYear) + ", " +
+                    "BudgetMonth = " + Integer.toString(rt.BudgetMonth) + " " +
                     "WHERE TxSeqNo = " + Integer.toString(rt.TxSeqNo);
             
             executeSQL(lSql, "TableTransaction::updateTransaction", null);
@@ -119,7 +130,10 @@ class TableTransaction extends TableBase
         {
             String lSql =
                 "UPDATE tblTransaction " +
-                    "SET CategoryId = " + Integer.toString(rt.CategoryId) + " " +
+                    "SET CategoryId = " + Integer.toString(rt.CategoryId) + ", " +
+                    "Comments = '" + rt.Comments + "'," +
+                    "BudgetYear = " + Integer.toString(rt.BudgetYear) + ", " +
+                    "BudgetMonth = " + Integer.toString(rt.BudgetMonth) + " " +
                     "WHERE TxSeqNo = " + Integer.toString(rt.TxSeqNo);
             
             executeSQL(lSql, "TableTransaction::updateTransaction", null);
@@ -178,7 +192,7 @@ class TableTransaction extends TableBase
                 Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
                         "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
                         "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId"},
+                        "CategoryId","Comments", "BudgetYear", "BudgetMonth"},
                     "TxSortCode=? AND TxAccountNumber=?",
                     new String[]{sortCode, accountNum}, null, null, "TxDate desc, TxLineNo", null);
                 list = new ArrayList<RecordTransaction>();
@@ -206,7 +220,10 @@ class TableTransaction extends TableBase
                                             cursor.getString(8),
                                             Float.parseFloat(cursor.getString(9)),
                                             Float.parseFloat(cursor.getString(10)),
-                                            Integer.parseInt(cursor.getString(11))
+                                            Integer.parseInt(cursor.getString(11)),
+                                            cursor.getString(12),
+                                            Integer.parseInt(cursor.getString(13)),
+                                            Integer.parseInt(cursor.getString(14))
                                         );
                                 list.add(lrec);
                                 cnt++;
@@ -255,7 +272,7 @@ class TableTransaction extends TableBase
                 Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
                         "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
                         "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId"},
+                        "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
                     "TxDate>=? AND TxDate<=? AND TxSortCode=? AND TxAccountNumber=?",
                     new String[]{Long.toString(lFrom.getTime()), Long.toString(lTo.getTime()),
                         lSortCode, lAccountNumber},
@@ -286,7 +303,10 @@ class TableTransaction extends TableBase
                                                 cursor.getString(8),
                                                 Float.parseFloat(cursor.getString(9)),
                                                 Float.parseFloat(cursor.getString(10)),
-                                                Integer.parseInt(cursor.getString(11))
+                                                Integer.parseInt(cursor.getString(11)),
+                                                cursor.getString(12),
+                                                Integer.parseInt(cursor.getString(13)),
+                                                Integer.parseInt(cursor.getString(14))
                                             )
                                     );
                                 cnt++;
@@ -323,7 +343,7 @@ class TableTransaction extends TableBase
                 Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
                         "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
                         "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId"},
+                        "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
                     "TxSeqNo=?",
                     new String[]{Integer.toString(pTxSeqNo)},
                     null, null, null, null);
@@ -348,7 +368,10 @@ class TableTransaction extends TableBase
                                         cursor.getString(8),
                                         Float.parseFloat(cursor.getString(9)),
                                         Float.parseFloat(cursor.getString(10)),
-                                        Integer.parseInt(cursor.getString(11))
+                                        Integer.parseInt(cursor.getString(11)),
+                                        cursor.getString(12),
+                                        Integer.parseInt(cursor.getString(13)),
+                                        Integer.parseInt(cursor.getString(14))
                                     )
                             );
                         }
@@ -378,6 +401,13 @@ class TableTransaction extends TableBase
         {
             MyLog.WriteLogMessage("Altering tblTransaction - adding column CategoryId");
             db.execSQL("ALTER TABLE tblTransaction ADD COLUMN CategoryId INTEGER DEFAULT 0");
+        }
+        if (oldVersion == 5 && newVersion == 6)
+        {
+            MyLog.WriteLogMessage("Altering tblTransaction - adding columns Comments, BudgetYear, BudgetMonth");
+            db.execSQL("ALTER TABLE tblTransaction ADD COLUMN Comments TEXT DEFAULT ''");
+            db.execSQL("ALTER TABLE tblTransaction ADD COLUMN BudgetYear INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE tblTransaction ADD COLUMN BudgetMonth INTEGER DEFAULT 0");
         }
     }
     

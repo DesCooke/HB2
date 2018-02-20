@@ -37,6 +37,9 @@ public class activityTransactionItem extends AppCompatActivity
     public EditText edtTxDescription;
     public EditText edtTxAmount;
     public TextView edtCategory;
+    public TextView edtComments;
+    public TextView edtBudgetYear;
+    public TextView edtBudgetMonth;
     public MyInt MySubCategoryId;
     public Button btnOk;
     public Button btnDelete;
@@ -59,6 +62,9 @@ public class activityTransactionItem extends AppCompatActivity
             edtTxDescription = (EditText) findViewById(R.id.edtDescription);
             edtTxAmount = (EditText) findViewById(R.id.edtTxAmount);
             edtCategory = (TextView) findViewById(R.id.edtCategory);
+            edtComments = (TextView) findViewById(R.id.edtComments);
+            edtBudgetYear = (TextView) findViewById(R.id.edtBudgetYear);
+            edtBudgetMonth = (TextView) findViewById(R.id.edtBudgetMonth);
             btnOk = (Button) findViewById(R.id.btnOk);
             btnDelete = (Button) findViewById(R.id.btnDelete);
 
@@ -87,6 +93,14 @@ public class activityTransactionItem extends AppCompatActivity
                 edtTxAmount.setText(Float.toString(originalRecord.TxAmount));
                 MySubCategoryId.Value = originalRecord.CategoryId;
                 edtCategory.setText(originalRecord.SubCategoryName);
+                edtComments.setText(originalRecord.Comments);
+                if(originalRecord.BudgetYear==0)
+                    originalRecord.BudgetYear = dateUtils().CurrentBudgetYear();
+                if(originalRecord.BudgetMonth==0)
+                    originalRecord.BudgetMonth = dateUtils().CurrentBudgetMonth();
+                
+                edtBudgetYear.setText(Integer.toString(originalRecord.BudgetYear));
+                edtBudgetMonth.setText(Integer.toString(originalRecord.BudgetMonth));
 
                 btnDelete.setVisibility(View.VISIBLE);
 /*                if(originalRecord.TxSortCode.compareTo("Cash")!=0)
@@ -115,6 +129,9 @@ public class activityTransactionItem extends AppCompatActivity
                         originalRecord.TxAmount = Float.parseFloat(edtTxAmount.getText().toString());
                         originalRecord.CategoryId = MySubCategoryId.Value;
                         originalRecord.SubCategoryName = edtCategory.getText().toString();
+                        originalRecord.Comments = edtComments.getText().toString();
+                        originalRecord.BudgetYear = Integer.parseInt(edtBudgetYear.getText().toString());
+                        originalRecord.BudgetMonth = Integer.parseInt(edtBudgetMonth.getText().toString());
                         if (actionType.compareTo("ADD") == 0)
                         {
                             originalRecord.TxType = "Cash";
@@ -205,6 +222,11 @@ public class activityTransactionItem extends AppCompatActivity
         edtTxDescription.setText("");
         edtTxAmount.setText("0.00");
         edtCategory.setText("");
+        edtComments.setText("");
+        Integer lMonth = dateUtils().CurrentBudgetMonth();
+        Integer lYear = dateUtils().CurrentBudgetYear();
+        edtBudgetYear.setText(lYear.toString());
+        edtCategory.setText(lMonth.toString());
     }
 
     public void pickDateTime(View view)

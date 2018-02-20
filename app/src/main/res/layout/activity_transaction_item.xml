@@ -83,6 +83,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtTxAmount" />
 
+    <TextView
+        android:id="@+id/lblComments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Comments"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtCategory"/>
+
     <EditText
         android:id="@+id/edtCategory"
         android:layout_width="368dp"
@@ -91,12 +102,25 @@
         android:layout_marginStart="8dp"
         android:editable="false"
         android:onClick="pickCategory"
-        android:text="edtDate"
+        android:text="edtCategory"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblTxDate4"
+        tools:ignore="LabelFor"/>
+
+    <EditText
+        android:id="@+id/edtComments"
+        android:layout_width="368dp"
+        android:layout_height="57dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="edtComments"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblComments"
         tools:ignore="LabelFor"/>
 
     <TextView
@@ -109,6 +133,17 @@
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtDescription" />
+
+    <TextView
+        android:id="@+id/lblBudget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Budget"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtDescription"/>
 
     <EditText
         android:id="@+id/edtTxAmount"
@@ -124,6 +159,34 @@
         app:layout_constraintTop_toBottomOf="@+id/lblAmount"
         tools:ignore="LabelFor"/>
 
+    <EditText
+        android:id="@+id/edtBudgetYear"
+        android:layout_width="53dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:onClick="selectAll"
+        android:text="2018"
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblAmount"
+        tools:ignore="LabelFor"/>
+
+    <EditText
+        android:id="@+id/edtBudgetMonth"
+        android:layout_width="43dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:onClick="selectAll"
+        android:text="02"
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toStartOf="@+id/edtBudgetYear"
+        app:layout_constraintTop_toBottomOf="@+id/lblAmount"
+        tools:ignore="LabelFor"/>
+
     <Button
         android:id="@+id/btnOk"
         android:layout_width="wrap_content"
@@ -132,7 +195,7 @@
         android:layout_marginTop="8dp"
         android:text="Ok"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtCategory" />
+        app:layout_constraintTop_toBottomOf="@+id/edtComments"/>
 
     <Button
         android:id="@+id/btnDelete"
@@ -142,6 +205,6 @@
         android:layout_marginTop="8dp"
         android:text="Delete"
         app:layout_constraintEnd_toStartOf="@+id/btnOk"
-        app:layout_constraintTop_toBottomOf="@+id/edtCategory" />
+        app:layout_constraintTop_toBottomOf="@+id/edtComments"/>
 
 </android.support.constraint.ConstraintLayout>

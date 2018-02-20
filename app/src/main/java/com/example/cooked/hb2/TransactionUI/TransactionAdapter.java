@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
+
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder>
 {
@@ -46,6 +49,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         public TextView mTxAmount;
         public TextView mTxBalance;
         public TextView mSubCategoryName;
+        public TextView mComments;
+        public TextView mBudget;
         public ConstraintLayout mFull;
 
         public ViewHolder(View v)
@@ -63,6 +68,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             mTxAmount = (TextView) v.findViewById(R.id.celltx_TxAmount);
             mTxBalance = (TextView) v.findViewById(R.id.celltx_TxBalance);
             mSubCategoryName = (TextView) v.findViewById(R.id.celltx_SubCategoryName);
+            mComments = (TextView) v.findViewById(R.id.celltx_Comments);
+            mBudget = (TextView) v.findViewById(R.id.celltx_Budget);
             mFull = (ConstraintLayout) v.findViewById(R.id.celltx_full);
         }
     }
@@ -108,6 +115,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.mBankAccount.setText(rec.TxSortCode + " " + rec.TxAccountNumber);
             holder.mTxDescription.setText(rec.TxDescription);
             holder.mSubCategoryName.setText(rec.SubCategoryName);
+            holder.mComments.setText(rec.Comments);
+            holder.mBudget.setText(dateUtils().BudgetAsString(rec.BudgetYear, rec.BudgetMonth));
             if(rec.TxAmount < 0.00)
             {
                 holder.mTxAmount.setText("-£" + String.format("%.2f", rec.TxAmount*-1));
@@ -138,7 +147,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         }
         catch (Exception e) {
-            ErrorDialog.Show("Error in NounAdapter.onBindViewHolder", e.getMessage());
+            ErrorDialog.Show("Error in TransactionAdapter.onBindViewHolder", e.getMessage());
         }
     }
 

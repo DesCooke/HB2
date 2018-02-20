@@ -58,6 +58,41 @@ public class DateUtils
         }
     }
 
+    public String MonthAsText(Integer pBudgetMonth)
+    {
+        if(pBudgetMonth==1)
+            return("Jan");
+        if(pBudgetMonth==2)
+            return("Feb");
+        if(pBudgetMonth==3)
+            return("Mar");
+        if(pBudgetMonth==4)
+            return("Apr");
+        if(pBudgetMonth==5)
+            return("May");
+        if(pBudgetMonth==6)
+            return("Jun");
+        if(pBudgetMonth==7)
+            return("Jul");
+        if(pBudgetMonth==8)
+            return("Aug");
+        if(pBudgetMonth==9)
+            return("Sep");
+        if(pBudgetMonth==10)
+            return("Oct");
+        if(pBudgetMonth==11)
+            return("Nov");
+        if(pBudgetMonth==12)
+            return("Dec");
+        return("???");
+    }
+    public String BudgetAsString(Integer pBudgetYear, Integer pBudgetMonth)
+    {
+        if(pBudgetYear==0 || pBudgetMonth==0)
+            return("Budget Not Assigned");
+        return(MonthAsText(pBudgetMonth) + " " + pBudgetYear.toString());
+    }
+    
     //
     // DateToInt
     //   Description: accepts a Date and returns the milliseconds part
@@ -145,6 +180,58 @@ public class DateUtils
             ErrorDialog.Show("AddDays", e.getMessage());
             return (false);
         }
+    }
+
+    public Integer CurrentBudgetYear()
+    {
+        try
+        {
+            Calendar calendar = Calendar.getInstance();
+            int lYear=calendar.get(Calendar.YEAR);
+            int lMonth=calendar.get(Calendar.MONTH);
+            int lDay=calendar.get(Calendar.DAY_OF_MONTH);
+            if(lDay<26)
+            {
+                lMonth--;
+                if(lMonth<0)
+                {
+                    lMonth=11;
+                    lYear--;
+                }
+            }
+            return(lYear);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("CurrentBudgetYear", e.getMessage());
+        }
+        return (0);
+    }
+
+    public Integer CurrentBudgetMonth()
+    {
+        try
+        {
+            Calendar calendar = Calendar.getInstance();
+            int lYear=calendar.get(Calendar.YEAR);
+            int lMonth=calendar.get(Calendar.MONTH);
+            int lDay=calendar.get(Calendar.DAY_OF_MONTH);
+            if(lDay<26)
+            {
+                lMonth--;
+                if(lMonth<0)
+                {
+                    lMonth=11;
+                    lYear--;
+                }
+            }
+            return(lMonth+1);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("CurrentBudgetMonth", e.getMessage());
+        }
+        return (0);
     }
 
     //

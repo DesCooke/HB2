@@ -25,6 +25,9 @@ public class RecordTransaction
     public Status TxStatus;
     public Integer CategoryId;
     public String SubCategoryName;
+    public String Comments;
+    public Integer BudgetYear;
+    public Integer BudgetMonth;
 
     RecordTransaction
             (
@@ -39,7 +42,10 @@ public class RecordTransaction
                      String pTxDescription,
                      Float pTxAmount,
                      Float pTxBalance,
-                     Integer pCategoryId
+                     Integer pCategoryId,
+                     String pComments,
+                     Integer pBudgetYear,
+                     Integer pBudgetMonth
             )
     {
         TxSeqNo = pTxSeqNo;
@@ -56,6 +62,9 @@ public class RecordTransaction
         TxStatus = Status.NEW;
         CategoryId = pCategoryId;
         SubCategoryName = "";
+        Comments = pComments;
+        BudgetYear = pBudgetYear;
+        BudgetMonth = pBudgetMonth;
     }
     public RecordTransaction()
     {
@@ -73,6 +82,9 @@ public class RecordTransaction
         TxStatus = Status.NEW;
         CategoryId = 0;
         SubCategoryName = "";
+        Comments = "";
+        BudgetYear = 0;
+        BudgetMonth = 0;
     }
     public boolean Equals(RecordTransaction recTwo)
     {
