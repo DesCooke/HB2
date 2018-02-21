@@ -234,6 +234,61 @@ public class DateUtils
         return (0);
     }
 
+    public Integer GetBudgetYear(Date pDate)
+    {
+        try
+        {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(pDate);
+            int lYear=calendar.get(Calendar.YEAR);
+            int lMonth=calendar.get(Calendar.MONTH);
+            int lDay=calendar.get(Calendar.DAY_OF_MONTH);
+            if(lDay<26)
+            {
+                lMonth--;
+                if(lMonth<0)
+                {
+                    lMonth=11;
+                    lYear--;
+                }
+            }
+            return(lYear);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("CurrentBudgetYear", e.getMessage());
+        }
+        return (0);
+    }
+
+    public Integer GetBudgetMonth(Date pDate)
+    {
+        try
+        {
+            
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(pDate);
+            int lYear=calendar.get(Calendar.YEAR);
+            int lMonth=calendar.get(Calendar.MONTH);
+            int lDay=calendar.get(Calendar.DAY_OF_MONTH);
+            if(lDay<26)
+            {
+                lMonth--;
+                if(lMonth<0)
+                {
+                    lMonth=11;
+                    lYear--;
+                }
+            }
+            return(lMonth+1);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("CurrentBudgetMonth", e.getMessage());
+        }
+        return (0);
+    }
+
     //
     // StrToDate
     //   Description: accepts string and sets retDate to the date equivalent

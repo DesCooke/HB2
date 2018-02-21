@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
@@ -93,6 +94,9 @@ public class MyDownloads
                 
                 DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                 rt.TxDate = df.parse(row[0]);
+
+                rt.BudgetYear = dateUtils().GetBudgetYear(rt.TxDate);
+                rt.BudgetMonth = dateUtils().GetBudgetMonth(rt.TxDate);
 
                 rt.TxType = row[1];
                 rt.TxSortCode = row[2].substring(1);

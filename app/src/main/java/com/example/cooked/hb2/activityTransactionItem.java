@@ -6,6 +6,8 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,7 +58,7 @@ public class activityTransactionItem extends AppCompatActivity
             setContentView(R.layout.activity_transaction_item);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
-
+    
             MySubCategoryId = new MyInt();
             edtTxDate = (TextView) findViewById(R.id.edtTxDate);
             edtTxDescription = (EditText) findViewById(R.id.edtDescription);
@@ -67,11 +69,11 @@ public class activityTransactionItem extends AppCompatActivity
             edtBudgetMonth = (TextView) findViewById(R.id.edtBudgetMonth);
             btnOk = (Button) findViewById(R.id.btnOk);
             btnDelete = (Button) findViewById(R.id.btnDelete);
-
-            cp=new CategoryPicker(this);
+    
+            cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
-            cp.edtSubCategoryName= edtCategory;
-
+            cp.edtSubCategoryName = edtCategory;
+    
             setTitle("<Unknown>");
             actionType = getIntent().getStringExtra("ACTIONTYPE");
             if (actionType.compareTo("ADD") == 0)
@@ -94,14 +96,14 @@ public class activityTransactionItem extends AppCompatActivity
                 MySubCategoryId.Value = originalRecord.CategoryId;
                 edtCategory.setText(originalRecord.SubCategoryName);
                 edtComments.setText(originalRecord.Comments);
-                if(originalRecord.BudgetYear==0)
+                if (originalRecord.BudgetYear == 0)
                     originalRecord.BudgetYear = dateUtils().CurrentBudgetYear();
-                if(originalRecord.BudgetMonth==0)
+                if (originalRecord.BudgetMonth == 0)
                     originalRecord.BudgetMonth = dateUtils().CurrentBudgetMonth();
-                
+    
                 edtBudgetYear.setText(Integer.toString(originalRecord.BudgetYear));
                 edtBudgetMonth.setText(Integer.toString(originalRecord.BudgetMonth));
-
+    
                 btnDelete.setVisibility(View.VISIBLE);
 /*                if(originalRecord.TxSortCode.compareTo("Cash")!=0)
                 {
@@ -113,9 +115,40 @@ public class activityTransactionItem extends AppCompatActivity
                     edtTxAmount.setEnabled(FALSE);
                     btnDelete.setVisibility(GONE);
                 }
-  */          }
-
-
+  */
+            }
+    
+    
+            edtTxDate.addTextChangedListener(new TextWatcher()
+            {
+                @Override
+                public void afterTextChanged(Editable s)
+                {
+                }
+        
+                @Override
+                public void beforeTextChanged(CharSequence s, int start,
+                                              int count, int after)
+                {
+                }
+        
+                @Override
+                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count)
+                {
+                    if (s.length() != 0)
+                    {
+                        dateUtils().StrToDate(edtTxDate.getText().toString(), originalRecord.TxDate);
+                        
+                        originalRecord.BudgetYear = dateUtils().GetBudgetYear(originalRecord.TxDate);
+                        originalRecord.BudgetMonth = dateUtils().GetBudgetMonth(originalRecord.TxDate);
+    
+                        edtBudgetYear.setText(Integer.toString(originalRecord.BudgetYear));
+                        edtBudgetMonth.setText(Integer.toString(originalRecord.BudgetMonth));
+                    }
+                }
+            });
+        
             btnOk.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v)
