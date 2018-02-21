@@ -36,6 +36,9 @@ class TablePlanned extends TableBase
                 "   PlannedId INTEGER PRIMARY KEY, " +
                 "   PlannedType INTEGER, " +
                 "   PlannedName TEXT, " +
+                "   SubCategoryId INTEGER, " +
+                "   SortCode TEXT, " +
+                "   AccountNo TEXT, " +
                 "   PlannedDate INTEGER, " +
                 "   PlannedMonth INTEGER, " +
                 "   PlannedDay INTEGER, " +
@@ -50,7 +53,7 @@ class TablePlanned extends TableBase
                 "   EndDate INTEGER, " +
                 "   MatchingTxType TEXT, " +
                 "   MatchingTxDescription TEXT, " +
-                "   MatchingTxAmount TEXT" +
+                "   MatchingTxAmount FLOAT " +
                 ") ";
         
         executeSQL(lSql, "TablePlanned::onCreate", db);
@@ -69,13 +72,16 @@ class TablePlanned extends TableBase
         
         String lSql =
             "INSERT INTO tblPlanned " +
-                "(PlannedId, PlannedType, PlannedName, PlannedDate, PlannedMonth, PlannedDay, Monday, " +
+                "(PlannedId, PlannedType, PlannedName, SubCategoryId, SortCode, AccountNo, PlannedDate, PlannedMonth, PlannedDay, Monday, " +
                 "Tuesday, Wednesday, Thursday, Friday, Saturday, " +
                 "Sunday, StartDate, EndDate, MatchingTxType, MatchingTxDescription, MatchingTxAmount) " +
                 "VALUES (" +
                 Integer.toString(rp.mPlannedId) + "," +
                 Integer.toString(rp.mPlannedType.ordinal()) + "," +
                 "'" + rp.mPlannedName + "'," +
+                Integer.toString(rp.mSubCategoryId) + "," +
+                    "'" + rp.mSortCode + "'," +
+                    "'" + rp.mAccountNo + "'," +
                 Long.toString(rp.mPlannedDate.getTime()) + "," +
                 Integer.toString(rp.mPlannedMonth) + "," +
                 Integer.toString(rp.mPlannedDay) + "," +
@@ -90,99 +96,66 @@ class TablePlanned extends TableBase
                 Long.toString(rp.mEndDate.getTime()) + "," +
                 "'" + rp.mMatchingTxType + "'," +
                 "'" + rp.mMatchingTxDescription + "'," +
-                "'" + rp.mMatchingTxAmount + "' " +
+                Float.toString(rp.mMatchingTxAmount) + " " +
         ") ";
         
         executeSQL(lSql, "TablePlanned::addPlanned", null);
     }
     
-    public void updateTransaction(RecordTransaction rt)
-    {
-        if (rt.TxSortCode.compareTo("Cash") == 0)
-        {
-            String lSql =
+    public void updatePlanned(RecordPlanned rp) {
+        String lSql =
                 "UPDATE tblTransaction " +
-                    "SET TxDate = " + Long.toString(rt.TxDate.getTime()) + ", " +
-                    "TxDescription = '" + rt.TxDescription + "'," +
-                    "TxAmount = " + rt.TxAmount.toString() + ", " +
-                    "CategoryId = " + Integer.toString(rt.CategoryId) + ", " +
-                    "Comments = '" + rt.Comments + "'," +
-                    "BudgetYear = " + Integer.toString(rt.BudgetYear) + ", " +
-                    "BudgetMonth = " + Integer.toString(rt.BudgetMonth) + " " +
-                    "WHERE TxSeqNo = " + Integer.toString(rt.TxSeqNo);
-            
-            executeSQL(lSql, "TableTransaction::updateTransaction", null);
-            
-        } else
-        {
-            String lSql =
-                "UPDATE tblTransaction " +
-                    "SET CategoryId = " + Integer.toString(rt.CategoryId) + ", " +
-                    "Comments = '" + rt.Comments + "'," +
-                    "BudgetYear = " + Integer.toString(rt.BudgetYear) + ", " +
-                    "BudgetMonth = " + Integer.toString(rt.BudgetMonth) + " " +
-                    "WHERE TxSeqNo = " + Integer.toString(rt.TxSeqNo);
-            
-            executeSQL(lSql, "TableTransaction::updateTransaction", null);
-            
-            MyLog.WriteLogMessage("Amending transaction, SubCategoryName is ("+rt.SubCategoryName+")");
-            
-            if (rt.SubCategoryName.compareTo("Cash Transfer") == 0)
-            {
-                MyLog.WriteLogMessage("It is a Cash Transfer - so do we need to create a record in Cash Account?");
-                rt.TxSortCode = "Cash";
-                rt.TxAccountNumber = "Cash";
-                rt.TxAmount = rt.TxAmount * -1;
-                if (txExists(rt) == FALSE)
-                {
-                    MyLog.WriteLogMessage("--yes");
-                    rt.TxLineNo = getNextTxLineNo(rt.TxDate);
-                    addTransaction(rt);
-                }
-                else
-                {
-                    MyLog.WriteLogMessage("--no");
-                }
-            }
-        }
+                        " SET PlannedType = " + Integer.toString(rp.mPlannedType.ordinal()) + "," +
+                        " PlannedName = '" + rp.mPlannedName + "'," +
+                        " SubCategoryId = " + Integer.toString(rp.mSubCategoryId) + "," +
+                        " SortCode = '" + rp.mSortCode + "'," +
+                        " AccountNo = '" + rp.mAccountNo + "'," +
+                        " PlannedDate = " + Long.toString(rp.mPlannedDate.getTime()) + "," +
+                        " PlannedMonth = " + Integer.toString(rp.mPlannedMonth) + "," +
+                        " PlannedDay = " + Integer.toString(rp.mPlannedDay) + "," +
+                        " Monday = " + Integer.toString(rp.mMonday ? 1 : 0) + "," +
+                        " Tuesday = " + Integer.toString(rp.mTuesday ? 1 : 0) + "," +
+                        " Wednesday = " + Integer.toString(rp.mWednesday ? 1 : 0) + "," +
+                        " Thursday = " + Integer.toString(rp.mThursday ? 1 : 0) + "," +
+                        " Friday = " + Integer.toString(rp.mFriday ? 1 : 0) + "," +
+                        " Saturday = " + Integer.toString(rp.mSaturday ? 1 : 0) + "," +
+                        " Sunday = " + Integer.toString(rp.mSunday ? 1 : 0) + "," +
+                        " StartDate = " + Long.toString(rp.mStartDate.getTime()) + "," +
+                        " EndDate = " + Long.toString(rp.mEndDate.getTime()) + "," +
+                        " MatchingTxType = '" + rp.mMatchingTxType + "'," +
+                        " MatchingTxDescription = '" + rp.mMatchingTxDescription + "'," +
+                        " MatchingTxAmount = " + Float.toString(rp.mMatchingTxAmount) + " " +
+                        "WHERE TxSeqNo = " + Integer.toString(rp.mPlannedId);
+
+        executeSQL(lSql, "TablePlanned::updatePlanned", null);
     }
     
-    public void updateFilenameLineNo(RecordTransaction dbRec, RecordTransaction fileRec)
+    public void deletePlanned(RecordPlanned rec)
     {
         String lSql =
-            "UPDATE tblTransaction " +
-                " SET TxFilename = '" + fileRec.TxFilename + "', " +
-                " TxLineNo = " + fileRec.TxLineNo + " " +
-                "WHERE TxSeqNo = " + dbRec.TxSeqNo.toString();
+            "DELETE FROM tblPlanned " +
+                "WHERE PlannedId = " + rec.mPlannedId.toString();
         
-        executeSQL(lSql, "TableTransaction::updateFilenameLineNo", null);
+        executeSQL(lSql, "TablePlanned::deletePlanned", null);
     }
     
-    public void deleteTransaction(RecordTransaction rec)
-    {
-        String lSql =
-            "DELETE FROM tblTransaction " +
-                "WHERE TxSeqNo = " + rec.TxSeqNo.toString();
-        
-        executeSQL(lSql, "TableTransaction::deleteTransaction", null);
-    }
-    
-    public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
+    public ArrayList<RecordPlanned> getPlannedList(String sortCode, String accountNum)
     {
         int cnt;
-        ArrayList<RecordTransaction> list;
+        ArrayList<RecordPlanned> list;
         try
         {
             SQLiteDatabase db = helper.getReadableDatabase();
             try
             {
-                Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
-                        "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
-                        "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId","Comments", "BudgetYear", "BudgetMonth"},
-                    "TxSortCode=? AND TxAccountNumber=?",
-                    new String[]{sortCode, accountNum}, null, null, "TxDate desc, TxLineNo", null);
-                list = new ArrayList<RecordTransaction>();
+                Cursor cursor = db.query("tblPlanned", new String[]{"PlannedId", "PlannedType",
+                        "PlannedName", "SubCategoryId", "SortCode", "AccountNo", "PlannedDate",
+                        "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
+                        "Wednesday","Thursday", "Friday", "Saturday", "Sunday", "StartDate",
+                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount"},
+                    "SortCode=? AND AccountNo=?",
+                    new String[]{sortCode, accountNum}, null, null, null, null);
+                list = new ArrayList<RecordPlanned>();
                 cnt = 0;
                 if (cursor != null)
                 {
@@ -193,7 +166,7 @@ class TablePlanned extends TableBase
                             cursor.moveToFirst();
                             do
                             {
-                                RecordTransaction lrec =
+                                RecordPlanned lrec =
                                     new RecordTransaction
                                         (
                                             Integer.parseInt(cursor.getString(0)),

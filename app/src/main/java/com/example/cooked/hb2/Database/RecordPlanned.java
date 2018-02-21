@@ -15,6 +15,9 @@ public class RecordPlanned
     public Integer mPlannedId;
     public PlannedType mPlannedType;
     public String mPlannedName;
+    public Integer mSubCategoryId;
+    public String mSortCode;
+    public String mAccountNo;
     
     public Date mPlannedDate;
     public Integer mPlannedMonth;
@@ -32,7 +35,7 @@ public class RecordPlanned
     
     public String mMatchingTxType;
     public String mMatchingTxDescription;
-    public String mMatchingTxAmount;
+    public Float mMatchingTxAmount;
     
 
     RecordPlanned
@@ -40,6 +43,9 @@ public class RecordPlanned
             Integer pPlannedId,
             PlannedType pPlannedType,
             String pPlannedName,
+            Integer pSubCategoryId,
+            String pSortCode,
+            String pAccountNo,
     
             Date pPlannedDate,
             Integer pPlannedMonth,
@@ -57,12 +63,15 @@ public class RecordPlanned
     
             String pMatchingTxType,
             String pMatchingTxDescription,
-            String pMatchingTxAmount
+            Float pMatchingTxAmount
         )
     {
             mPlannedId = pPlannedId;
             mPlannedType = pPlannedType;
             mPlannedName = pPlannedName;
+            mSubCategoryId = pSubCategoryId;
+            mSortCode = pSortCode;
+            mAccountNo = pAccountNo;
     
             mPlannedDate = pPlannedDate;
             mPlannedMonth = pPlannedMonth;
@@ -88,6 +97,9 @@ public class RecordPlanned
         mPlannedId = 0;
         mPlannedType = PlannedType.OneOff;
         mPlannedName = "";
+        mSubCategoryId = 0;
+        mSortCode = "";
+        mAccountNo = "";
     
         mPlannedDate = new Date();
         mPlannedMonth = 0;
@@ -105,7 +117,7 @@ public class RecordPlanned
     
         mMatchingTxType = "";
         mMatchingTxDescription = "";
-        mMatchingTxAmount = "";
+        mMatchingTxAmount = 0.0f;
     }
     
 }
