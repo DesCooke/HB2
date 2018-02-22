@@ -4,16 +4,15 @@ import java.util.Date;
 
 public class RecordPlanned
 {
-    public enum PlannedType {
-        OneOff,
-        Annual,
-        Monthly,
-        Weekly,
-        Daily
-    }
-
+    public static String[] mPlannedTypes = {"Oneoff", "Yearly", "Monthly", "Weekly", "Daily"};
+    public static int mPTOneOff = 0;
+    public static int mPTYearly = 1;
+    public static int mPTMonthly = 2;
+    public static int mPTWeekly = 3;
+    public static int mPTDaily = 4;
+    
     public Integer mPlannedId;
-    public PlannedType mPlannedType;
+    public Integer mPlannedType;
     public String mPlannedName;
     public Integer mSubCategoryId;
     public String mSortCode;
@@ -41,7 +40,7 @@ public class RecordPlanned
     RecordPlanned
         (
             Integer pPlannedId,
-            PlannedType pPlannedType,
+            Integer pPlannedType,
             String pPlannedName,
             Integer pSubCategoryId,
             String pSortCode,
@@ -95,7 +94,7 @@ public class RecordPlanned
     public RecordPlanned()
     {
         mPlannedId = 0;
-        mPlannedType = PlannedType.OneOff;
+        mPlannedType = 0; // oneoff
         mPlannedName = "";
         mSubCategoryId = 0;
         mSortCode = "";

@@ -31,7 +31,7 @@ class TablePlanned extends TableBase
         dropTableIfExists(db);
         
         String lSql =
-            "CREATE TABLE tblTransaction " +
+            "CREATE TABLE tblPlanned " +
                 " (" +
                 "   PlannedId INTEGER PRIMARY KEY, " +
                 "   PlannedType INTEGER, " +
@@ -77,7 +77,7 @@ class TablePlanned extends TableBase
                 "Sunday, StartDate, EndDate, MatchingTxType, MatchingTxDescription, MatchingTxAmount) " +
                 "VALUES (" +
                 Integer.toString(rp.mPlannedId) + "," +
-                Integer.toString(rp.mPlannedType.ordinal()) + "," +
+                Integer.toString(rp.mPlannedType) + "," +
                 "'" + rp.mPlannedName + "'," +
                 Integer.toString(rp.mSubCategoryId) + "," +
                     "'" + rp.mSortCode + "'," +
@@ -105,7 +105,7 @@ class TablePlanned extends TableBase
     public void updatePlanned(RecordPlanned rp) {
         String lSql =
                 "UPDATE tblTransaction " +
-                        " SET PlannedType = " + Integer.toString(rp.mPlannedType.ordinal()) + "," +
+                        " SET PlannedType = " + Integer.toString(rp.mPlannedType) + "," +
                         " PlannedName = '" + rp.mPlannedName + "'," +
                         " SubCategoryId = " + Integer.toString(rp.mSubCategoryId) + "," +
                         " SortCode = '" + rp.mSortCode + "'," +
@@ -125,7 +125,7 @@ class TablePlanned extends TableBase
                         " MatchingTxType = '" + rp.mMatchingTxType + "'," +
                         " MatchingTxDescription = '" + rp.mMatchingTxDescription + "'," +
                         " MatchingTxAmount = " + Float.toString(rp.mMatchingTxAmount) + " " +
-                        "WHERE TxSeqNo = " + Integer.toString(rp.mPlannedId);
+                        "WHERE PlannedId = " + Integer.toString(rp.mPlannedId);
 
         executeSQL(lSql, "TablePlanned::updatePlanned", null);
     }
@@ -167,23 +167,29 @@ class TablePlanned extends TableBase
                             do
                             {
                                 RecordPlanned lrec =
-                                    new RecordTransaction
+                                    new RecordPlanned
                                         (
                                             Integer.parseInt(cursor.getString(0)),
-                                            new Date(Long.parseLong(cursor.getString(1))),
+                                            Integer.parseInt(cursor.getString(1)),
                                             cursor.getString(2),
                                             Integer.parseInt(cursor.getString(3)),
-                                            new Date(Long.parseLong(cursor.getString(4))),
+                                            cursor.getString(4),
                                             cursor.getString(5),
-                                            cursor.getString(6),
-                                            cursor.getString(7),
-                                            cursor.getString(8),
-                                            Float.parseFloat(cursor.getString(9)),
-                                            Float.parseFloat(cursor.getString(10)),
-                                            Integer.parseInt(cursor.getString(11)),
-                                            cursor.getString(12),
-                                            Integer.parseInt(cursor.getString(13)),
-                                            Integer.parseInt(cursor.getString(14))
+                                            new Date(Long.parseLong(cursor.getString(6))),
+                                            Integer.parseInt(cursor.getString(7)),
+                                            Integer.parseInt(cursor.getString(8)),
+                                            Integer.parseInt(cursor.getString(9))==1?TRUE:FALSE,
+                                            Integer.parseInt(cursor.getString(10))==1?TRUE:FALSE,
+                                            Integer.parseInt(cursor.getString(11))==1?TRUE:FALSE,
+                                            Integer.parseInt(cursor.getString(12))==1?TRUE:FALSE,
+                                            Integer.parseInt(cursor.getString(13))==1?TRUE:FALSE,
+                                            Integer.parseInt(cursor.getString(14))==1?TRUE:FALSE,
+                                            Integer.parseInt(cursor.getString(15))==1?TRUE:FALSE,
+                                            new Date(Long.parseLong(cursor.getString(16))),
+                                            new Date(Long.parseLong(cursor.getString(17))),
+                                            cursor.getString(18),
+                                            cursor.getString(19),
+                                            Float.parseFloat(cursor.getString(20))
                                         );
                                 list.add(lrec);
                                 cnt++;
@@ -204,40 +210,27 @@ class TablePlanned extends TableBase
         }
         catch (Exception e)
         {
-            list = new ArrayList<RecordTransaction>();
-            ErrorDialog.Show("Error in TableTransaction.getTransactionList", e.getMessage());
-        }
-        if (sortCode.compareTo("Cash") == 0)
-        {
-            Float lBal = new Float(0.00);
-            for (int i = list.size() - 1; i >= 0; i--)
-            {
-                lBal = lBal + list.get(i).TxAmount;
-                list.get(i).TxBalance = lBal;
-            }
+            list = new ArrayList<RecordPlanned>();
+            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
         }
         return list;
     }
     
-    public ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode,
-                                                       String lAccountNumber)
+    public RecordPlanned getSinglePlanned(Integer pPlannedId)
     {
         int cnt;
-        ArrayList<RecordTransaction> list;
         try
         {
             SQLiteDatabase db = helper.getReadableDatabase();
             try
             {
-                Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
-                        "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
-                        "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
-                    "TxDate>=? AND TxDate<=? AND TxSortCode=? AND TxAccountNumber=?",
-                    new String[]{Long.toString(lFrom.getTime()), Long.toString(lTo.getTime()),
-                        lSortCode, lAccountNumber},
-                    null, null, "TxDate, TxLineNo", null);
-                list = new ArrayList<RecordTransaction>();
+                Cursor cursor = db.query("tblPlanned", new String[]{"PlannedId", "PlannedType",
+                        "PlannedName", "SubCategoryId", "SortCode", "AccountNo", "PlannedDate",
+                        "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
+                        "Wednesday","Thursday", "Friday", "Saturday", "Sunday", "StartDate",
+                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount"},
+                    "PlannedId=?",
+                    new String[]{pPlannedId.toString()}, null, null, null, null);
                 cnt = 0;
                 if (cursor != null)
                 {
@@ -246,94 +239,33 @@ class TablePlanned extends TableBase
                         if (cursor.getCount() > 0)
                         {
                             cursor.moveToFirst();
-                            do
-                            {
-                                list.add
-                                    (
-                                        new RecordTransaction
-                                            (
-                                                Integer.parseInt(cursor.getString(0)),
-                                                new Date(Long.parseLong(cursor.getString(1))),
-                                                cursor.getString(2),
-                                                Integer.parseInt(cursor.getString(3)),
-                                                new Date(Long.parseLong(cursor.getString(4))),
-                                                cursor.getString(5),
-                                                cursor.getString(6),
-                                                cursor.getString(7),
-                                                cursor.getString(8),
-                                                Float.parseFloat(cursor.getString(9)),
-                                                Float.parseFloat(cursor.getString(10)),
-                                                Integer.parseInt(cursor.getString(11)),
-                                                cursor.getString(12),
-                                                Integer.parseInt(cursor.getString(13)),
-                                                Integer.parseInt(cursor.getString(14))
-                                            )
-                                    );
-                                cnt++;
-                            } while (cursor.moveToNext());
-                        }
-                    }
-                    finally
-                    {
-                        cursor.close();
-                    }
-                }
-            }
-            finally
-            {
-                db.close();
-            }
-            
-        }
-        catch (Exception e)
-        {
-            list = new ArrayList<RecordTransaction>();
-            ErrorDialog.Show("Error in TableTransaction.getTransactionList", e.getMessage());
-        }
-        return list;
-    }
-    
-    public RecordTransaction getSingleTransaction(Integer pTxSeqNo)
-    {
-        try
-        {
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try
-            {
-                Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
-                        "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
-                        "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
-                    "TxSeqNo=?",
-                    new String[]{Integer.toString(pTxSeqNo)},
-                    null, null, null, null);
-                if (cursor != null)
-                {
-                    try
-                    {
-                        if (cursor.getCount() > 0)
-                        {
-                            cursor.moveToFirst();
-                            return (
-                                new RecordTransaction
+
+                            RecordPlanned lrec =
+                                new RecordPlanned
                                     (
                                         Integer.parseInt(cursor.getString(0)),
-                                        new Date(Long.parseLong(cursor.getString(1))),
+                                        Integer.parseInt(cursor.getString(1)),
                                         cursor.getString(2),
                                         Integer.parseInt(cursor.getString(3)),
-                                        new Date(Long.parseLong(cursor.getString(4))),
+                                        cursor.getString(4),
                                         cursor.getString(5),
-                                        cursor.getString(6),
-                                        cursor.getString(7),
-                                        cursor.getString(8),
-                                        Float.parseFloat(cursor.getString(9)),
-                                        Float.parseFloat(cursor.getString(10)),
-                                        Integer.parseInt(cursor.getString(11)),
-                                        cursor.getString(12),
-                                        Integer.parseInt(cursor.getString(13)),
-                                        Integer.parseInt(cursor.getString(14))
-                                    )
-                            );
+                                        new Date(Long.parseLong(cursor.getString(6))),
+                                        Integer.parseInt(cursor.getString(7)),
+                                        Integer.parseInt(cursor.getString(8)),
+                                        Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
+                                        new Date(Long.parseLong(cursor.getString(16))),
+                                        new Date(Long.parseLong(cursor.getString(17))),
+                                        cursor.getString(18),
+                                        cursor.getString(19),
+                                        Float.parseFloat(cursor.getString(20))
+                                    );
+                            return(lrec);
                         }
                     }
                     finally
@@ -350,24 +282,17 @@ class TablePlanned extends TableBase
         }
         catch (Exception e)
         {
-            ErrorDialog.Show("Error in TableTransaction.getTransactionList", e.getMessage());
+            ErrorDialog.Show("Error in TablePlanned.getSinglePlanned", e.getMessage());
         }
-        return (null);
+        return (new RecordPlanned());
     }
     
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        if (oldVersion == 1 && newVersion == 2)
+        if (oldVersion == 7 && newVersion == 8)
         {
-            MyLog.WriteLogMessage("Altering tblTransaction - adding column CategoryId");
-            db.execSQL("ALTER TABLE tblTransaction ADD COLUMN CategoryId INTEGER DEFAULT 0");
-        }
-        if (oldVersion == 5 && newVersion == 6)
-        {
-            MyLog.WriteLogMessage("Altering tblTransaction - adding columns Comments, BudgetYear, BudgetMonth");
-            db.execSQL("ALTER TABLE tblTransaction ADD COLUMN Comments TEXT DEFAULT ''");
-            db.execSQL("ALTER TABLE tblTransaction ADD COLUMN BudgetYear INTEGER DEFAULT 0");
-            db.execSQL("ALTER TABLE tblTransaction ADD COLUMN BudgetMonth INTEGER DEFAULT 0");
+            MyLog.WriteLogMessage("Creating tblPlanned");
+            onCreate(db);
         }
     }
     

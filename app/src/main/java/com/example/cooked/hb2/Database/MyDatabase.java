@@ -22,11 +22,12 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
     private TableSubCategory tableSubCategory;
+    private TablePlanned tablePlanned;
     //endregion
     
     //region statics
@@ -48,6 +49,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableTransaction = new TableTransaction(this);
             tableCategory = new TableCategory(this);
             tableSubCategory = new TableSubCategory(this);
+            tablePlanned = new TablePlanned(this);
         }
         catch(Exception e)
         {
@@ -64,6 +66,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableTransaction.onCreate(db);
             tableCategory.onCreate(db);
             tableSubCategory.onCreate(db);
+            tablePlanned.onCreate(db);
         }
         catch(Exception e)
         {
@@ -83,6 +86,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableTransaction.onUpgrade(db, oldVersion, newVersion);
             tableCategory.onUpgrade(db, oldVersion, newVersion);
             tableSubCategory.onUpgrade(db, oldVersion, newVersion);
+            tablePlanned.onUpgrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -99,6 +103,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableTransaction.onDowngrade(db, oldVersion, newVersion);
             tableCategory.onDowngrade(db, oldVersion, newVersion);
             tableSubCategory.onDowngrade(db, oldVersion, newVersion);
+            tablePlanned.onDowngrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -206,6 +211,35 @@ public class MyDatabase extends SQLiteOpenHelper
     }
     
     //endregion
+    
+    //region Planned Functions
+    public void addPlanned(RecordPlanned rp)
+    {
+        tablePlanned.addPlanned(rp);
+    }
+    public void deletePlanned(RecordPlanned rp)
+    {
+        tablePlanned.deletePlanned(rp);
+    }
+
+    public void updatePlanned(RecordPlanned rp)
+    {
+        tablePlanned.updatePlanned(rp);
+    }
+
+    public ArrayList<RecordPlanned> getPlannedList(String sortCode, String accountNum)
+    {
+        ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedList(sortCode, accountNum);
+        return(rpa);
+    }
+
+    public RecordPlanned getSinglePlanned(Integer pPlannedId)
+    {
+        RecordPlanned rp =tablePlanned.getSinglePlanned(pPlannedId);
+        return(rp);
+    }
+    //endregion
+    
  }
 
  
