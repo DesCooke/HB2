@@ -7,8 +7,8 @@
 
     <RadioGroup
         android:id="@+id/rgPlannedType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="163dp"
+        android:layout_height="292dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
@@ -20,35 +20,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Oneoff"/>
+            android:text="Oneoff"
+            android:textSize="24sp" />
 
         <RadioButton
             android:id="@+id/radYearly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Yearly"/>
+            android:text="Yearly"
+            android:textSize="24sp" />
 
         <RadioButton
             android:id="@+id/radMonthly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Monthly"/>
+            android:text="Monthly"
+            android:textSize="24sp" />
 
         <RadioButton
             android:id="@+id/radWeekly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Weekly"/>
+            android:text="Weekly"
+            android:textSize="24sp" />
 
         <RadioButton
             android:id="@+id/radDaily"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Daily"/>
+            android:text="Daily"
+            android:textSize="24sp" />
 
     </RadioGroup>
 

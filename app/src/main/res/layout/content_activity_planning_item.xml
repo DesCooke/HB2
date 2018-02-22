@@ -16,20 +16,20 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Planned Type"
-        android:textSize="10sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/edtPlannedType"
-        android:layout_width="107dp"
-        android:layout_height="13dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:onClick="pickPlannedType"
         android:text="Planned Type"
-        android:textSize="10sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/lblPlannedType"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
