@@ -5,48 +5,35 @@
                                              android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <RadioGroup
-        android:id="@+id/rgPlannedType"
-        android:layout_width="163dp"
-        android:layout_height="292dp"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/edtDay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <RadioButton
-            android:id="@+id/radOneOff"
+        <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Oneoff"
-            android:textSize="24sp" />
+            android:hint="Day"/>
+    </android.support.design.widget.TextInputLayout>
 
-        <RadioButton
-            android:id="@+id/radYearly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Yearly"
-            android:textSize="24sp" />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/edtMonth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtDay">
 
-        <RadioButton
-            android:id="@+id/radMonthly"
+        <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Monthly"
-            android:textSize="24sp" />
-
-        <RadioButton
-            android:id="@+id/radWeekly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Weekly"
-            android:textSize="24sp" />
-    </RadioGroup>
+            android:hint="Month"/>
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/btnOk"
@@ -56,6 +43,6 @@
         android:layout_marginTop="8dp"
         android:text="Ok"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rgPlannedType"/>
+        app:layout_constraintTop_toBottomOf="@+id/edtMonth"/>
 
 </android.support.constraint.ConstraintLayout>

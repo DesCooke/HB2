@@ -62,7 +62,6 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
             RadioButton radYearly =findViewById(R.id.radYearly);
             RadioButton radMonthly =findViewById(R.id.radMonthly);
             RadioButton radWeekly =findViewById(R.id.radWeekly);
-            RadioButton radDaily =findViewById(R.id.radDaily);
             mPlannedType.Value = RecordPlanned.mPTOneOff;
             if(radYearly.isChecked())
               mPlannedType.Value = RecordPlanned.mPTYearly;
@@ -70,8 +69,6 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
               mPlannedType.Value = RecordPlanned.mPTMonthly;
             if(radWeekly.isChecked())
               mPlannedType.Value = RecordPlanned.mPTWeekly;
-            if(radDaily.isChecked())
-              mPlannedType.Value = RecordPlanned.mPTDaily;
             edtPlannedType.setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
             
             dismiss();

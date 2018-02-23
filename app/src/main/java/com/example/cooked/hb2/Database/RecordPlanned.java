@@ -4,12 +4,11 @@ import java.util.Date;
 
 public class RecordPlanned
 {
-    public static String[] mPlannedTypes = {"Oneoff", "Yearly", "Monthly", "Weekly", "Daily"};
+    public static String[] mPlannedTypes = {"Oneoff", "Yearly", "Monthly", "Weekly"};
     public static int mPTOneOff = 0;
     public static int mPTYearly = 1;
     public static int mPTMonthly = 2;
     public static int mPTWeekly = 3;
-    public static int mPTDaily = 4;
     
     public Integer mPlannedId;
     public Integer mPlannedType;

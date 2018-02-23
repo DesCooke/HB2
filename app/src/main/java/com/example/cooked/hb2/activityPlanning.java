@@ -28,6 +28,7 @@ public class activityPlanning extends AppCompatActivity
             public void onClick(View view)
             {
                 Intent intent = new Intent(getApplicationContext(), activityPlanningItem.class);
+                intent.putExtra("ACTIONTYPE", "ADD");
                 startActivity(intent);
             }
         });
