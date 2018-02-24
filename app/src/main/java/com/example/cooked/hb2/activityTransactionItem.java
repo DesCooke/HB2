@@ -1,5 +1,6 @@
 package com.example.cooked.hb2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -45,6 +46,7 @@ public class activityTransactionItem extends AppCompatActivity
     public MyInt MySubCategoryId;
     public Button btnOk;
     public Button btnDelete;
+    public Button btnCreatePlanned;
     public CategoryPicker cp;
     public Integer txSeqNo;
     public RecordTransaction originalRecord;
@@ -69,7 +71,8 @@ public class activityTransactionItem extends AppCompatActivity
             edtBudgetMonth = (TextView) findViewById(R.id.edtBudgetMonth);
             btnOk = (Button) findViewById(R.id.btnOk);
             btnDelete = (Button) findViewById(R.id.btnDelete);
-    
+            btnCreatePlanned = (Button) findViewById(R.id.btnCreatePlanned);
+
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
             cp.edtSubCategoryName = edtCategory;
@@ -81,6 +84,7 @@ public class activityTransactionItem extends AppCompatActivity
                 originalRecord = new RecordTransaction();
                 setTitle("Add a new Cash Transaction");
                 btnDelete.setVisibility(GONE);
+                btnCreatePlanned.setVisibility(GONE);
                 setDefaults();
             }
             if (actionType.compareTo("EDIT") == 0)
@@ -105,6 +109,7 @@ public class activityTransactionItem extends AppCompatActivity
                 edtBudgetMonth.setText(Integer.toString(originalRecord.BudgetMonth));
     
                 btnDelete.setVisibility(View.VISIBLE);
+                btnCreatePlanned.setVisibility(View.VISIBLE);
 /*                if(originalRecord.TxSortCode.compareTo("Cash")!=0)
                 {
                     edtTxDate.setFocusable(FALSE);
@@ -138,7 +143,7 @@ public class activityTransactionItem extends AppCompatActivity
                 {
                     if (s.length() != 0)
                     {
-                        dateUtils().StrToDate(edtTxDate.getText().toString(), originalRecord.TxDate);
+                        originalRecord.TxDate = dateUtils().StrToDate(edtTxDate.getText().toString());
                         
                         originalRecord.BudgetYear = dateUtils().GetBudgetYear(originalRecord.TxDate);
                         originalRecord.BudgetMonth = dateUtils().GetBudgetMonth(originalRecord.TxDate);
@@ -157,7 +162,7 @@ public class activityTransactionItem extends AppCompatActivity
                     {
                         RecordTransaction rt;
                         originalRecord.TxDate = new Date();
-                        dateUtils().StrToDate(edtTxDate.getText().toString(), originalRecord.TxDate);
+                        originalRecord.TxDate = dateUtils().StrToDate(edtTxDate.getText().toString());
                         originalRecord.TxDescription = edtTxDescription.getText().toString();
                         originalRecord.TxAmount = Float.parseFloat(edtTxAmount.getText().toString());
                         originalRecord.CategoryId = MySubCategoryId.Value;
@@ -203,6 +208,20 @@ public class activityTransactionItem extends AppCompatActivity
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
                     }
                     finish();
+                }
+            });
+            btnCreatePlanned.setOnClickListener(new View.OnClickListener()
+            {
+                public void onClick(View v)
+                {
+                    try
+                    {
+                        createPlanned(v);
+                    }
+                    catch(Exception e)
+                    {
+                        ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
+                    }
                 }
             });
 /*
@@ -268,11 +287,25 @@ public class activityTransactionItem extends AppCompatActivity
         {
             DialogDatePicker ddp=new DialogDatePicker(this);
             ddp.txtStartDate=(TextView) findViewById(R.id.edtTxDate);
-            Date date=new Date();
-            if(!dateUtils().StrToDate(ddp.txtStartDate.getText().toString(), date))
-                return;
+            Date date=dateUtils().StrToDate(ddp.txtStartDate.getText().toString() );
             ddp.setInitialDate(date);
             ddp.show();
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("pickDateTime", e.getMessage());
+        }
+    }
+
+    public void createPlanned(View view)
+    {
+        try
+        {
+            int lPlannedId = MyDB().createPlanned(originalRecord.TxSeqNo);
+            Intent intent = new Intent(getApplicationContext(), activityPlanningItem.class);
+            intent.putExtra("ACTIONTYPE", "EDIT");
+            intent.putExtra("PlannedId", lPlannedId);
+            startActivity(intent);
         }
         catch(Exception e)
         {

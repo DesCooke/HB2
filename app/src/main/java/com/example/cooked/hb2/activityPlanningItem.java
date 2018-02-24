@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
+import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
 import com.example.cooked.hb2.GlobalUtils.DialogDayPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogMonthDayPicker;
@@ -29,6 +30,7 @@ import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 public class activityPlanningItem extends AppCompatActivity
 {
@@ -44,6 +46,7 @@ public class activityPlanningItem extends AppCompatActivity
     public TextInputLayout edtMatchDescription;
     public TextInputLayout edtMatchAmount;
     public Button btnOk;
+    public Button btnDelete;
     public MyInt MySubCategoryId;
     public MyInt MyDay;
     public MyInt MyMonth;
@@ -99,7 +102,9 @@ public class activityPlanningItem extends AppCompatActivity
         edtMatchDescription = findViewById(R.id.edtMatchDescription);
         edtMatchAmount = findViewById(R.id.edtMatchAmount);
         btnOk = findViewById(R.id.btnOk);
-        
+        btnDelete = findViewById(R.id.btnDelete);
+
+
         cp = new CategoryPicker(this);
         cp.MySubCategoryId = MySubCategoryId;
         cp.edtSubCategoryName = edtSubCategoryName;
@@ -145,8 +150,59 @@ public class activityPlanningItem extends AppCompatActivity
                 return;
             edtStartDate.setText(myString.Value);
             edtEndDate.setText("31 Dec 2099");
+            btnDelete.setVisibility(View.GONE);
         }
-        
+        if (mActionType.compareTo("EDIT") == 0)
+        {
+            setTitle("Modify a planned item");
+            Integer lPlannedId=getIntent().getIntExtra("PlannedId", 0);
+            if(lPlannedId==0)
+            {
+                edtPlanned.setText("<pick>");
+                edtSubCategoryName.setText("<pick>");
+                edtPlannedType.setText("<pick>");
+
+                MyString myString=new MyString();
+                if(!dateUtils().DateToStr(new Date(), myString))
+                    return;
+                edtStartDate.setText(myString.Value);
+                edtEndDate.setText("31 Dec 2099");
+            }
+            else
+            {
+                mRecordPlanned = MyDB().getSinglePlanned(lPlannedId);
+                edtPlannedType.setText(RecordPlanned.mPlannedTypes[mRecordPlanned.mPlannedType]);
+                edtPlannedName.getEditText().setText(mRecordPlanned.mPlannedName);
+                edtSubCategoryName.setText(mRecordPlanned.mSubCategoryName);
+
+                if(mRecordPlanned.mSortCode.compareTo("Cash")==0)
+                    radCashAccount.setChecked(TRUE);
+                else
+                    radCurrentAccount.setChecked(TRUE);
+
+                edtPlanned.setText(mRecordPlanned.mPlanned);
+
+                MyString lString = new MyString();
+
+                DateUtils.dateUtils().DateTo_ddmmyyyy(mRecordPlanned.mStartDate, lString);
+                edtStartDate.setText(lString.Value);
+
+                DateUtils.dateUtils().DateTo_ddmmyyyy(mRecordPlanned.mEndDate, lString);
+                edtEndDate.setText(lString.Value);
+
+                edtMatchType.getEditText().setText(mRecordPlanned.mMatchingTxType);
+                edtMatchDescription.getEditText().setText(mRecordPlanned.mMatchingTxDescription);
+                if(mRecordPlanned.mMatchingTxAmount < 0.00)
+                {
+                    edtMatchAmount.getEditText().setText("-" + String.format("%.2f", mRecordPlanned.mMatchingTxAmount*-1));
+                }
+                else
+                {
+                    edtMatchAmount.getEditText().setText(String.format("%.2f", mRecordPlanned.mMatchingTxAmount));
+                }
+            }
+        }
+
     }
 
     public void pickCashAccount(View view)
@@ -158,9 +214,7 @@ public class activityPlanningItem extends AppCompatActivity
     {
         try
         {
-            Date date=new Date();
-            if(!dateUtils().StrToDate(ddpStart.txtStartDate.getText().toString(), date))
-                return;
+            Date date=dateUtils().StrToDate(ddpStart.txtStartDate.getText().toString());
             ddpStart.setInitialDate(date);
             ddpStart.show();
         }
@@ -174,103 +228,119 @@ public class activityPlanningItem extends AppCompatActivity
     {
         try
         {
+            mRecordPlanned.mPlannedType = mPlannedType.Value;
+            mRecordPlanned.mPlannedName = edtPlannedName.getEditText().getText().toString();
+            mRecordPlanned.mSubCategoryId = MySubCategoryId.Value;
+            if (radCashAccount.isChecked())
+            {
+                mRecordPlanned.mSortCode = "Cash";
+                mRecordPlanned.mAccountNo = "Cash";
+            } else
+            {
+                mRecordPlanned.mSortCode = "11-03-95";
+                mRecordPlanned.mAccountNo = "00038840";
+            }
+
+            if (mPlannedType.Value == RecordPlanned.mPTOneOff)
+            {
+                mRecordPlanned.mPlannedDate = dateUtils().StrToDate(edtPlanned.getText().toString());
+
+                mRecordPlanned.mPlannedMonth = 0;
+                mRecordPlanned.mPlannedDay = 0;
+                mRecordPlanned.mMonday = FALSE;
+                mRecordPlanned.mTuesday = FALSE;
+                mRecordPlanned.mWednesday = FALSE;
+                mRecordPlanned.mThursday = FALSE;
+                mRecordPlanned.mFriday = FALSE;
+                mRecordPlanned.mSaturday = FALSE;
+                mRecordPlanned.mSunday = FALSE;
+            }
+
+            if (mPlannedType.Value == RecordPlanned.mPTYearly)
+            {
+                mRecordPlanned.mPlannedMonth = MyMonth.Value;
+                mRecordPlanned.mPlannedDay = MyDay.Value;
+
+                mRecordPlanned.mPlannedDate = new Date();
+                mRecordPlanned.mMonday = FALSE;
+                mRecordPlanned.mTuesday = FALSE;
+                mRecordPlanned.mWednesday = FALSE;
+                mRecordPlanned.mThursday = FALSE;
+                mRecordPlanned.mFriday = FALSE;
+                mRecordPlanned.mSaturday = FALSE;
+                mRecordPlanned.mSunday = FALSE;
+            }
+
+            if (mPlannedType.Value == RecordPlanned.mPTMonthly)
+            {
+                mRecordPlanned.mPlannedDay = MyDay.Value;
+
+                mRecordPlanned.mPlannedMonth = 0;
+                mRecordPlanned.mPlannedDate = new Date();
+                mRecordPlanned.mMonday = FALSE;
+                mRecordPlanned.mTuesday = FALSE;
+                mRecordPlanned.mWednesday = FALSE;
+                mRecordPlanned.mThursday = FALSE;
+                mRecordPlanned.mFriday = FALSE;
+                mRecordPlanned.mSaturday = FALSE;
+                mRecordPlanned.mSunday = FALSE;
+            }
+
+            if (mPlannedType.Value == RecordPlanned.mPTWeekly)
+            {
+                mRecordPlanned.mMonday = MyMonday.Value;
+                mRecordPlanned.mTuesday = MyTuesday.Value;
+                mRecordPlanned.mWednesday = MyWednesday.Value;
+                mRecordPlanned.mThursday = MyThursday.Value;
+                mRecordPlanned.mFriday = MyFriday.Value;
+                mRecordPlanned.mSaturday = MySaturday.Value;
+                mRecordPlanned.mSunday = MySunday.Value;
+
+                mRecordPlanned.mPlannedDay = 0;
+                mRecordPlanned.mPlannedMonth = 0;
+                mRecordPlanned.mPlannedDate = new Date();
+            }
+
+
+            mRecordPlanned.mStartDate = dateUtils().StrToDate(edtStartDate.getText().toString());
+
+            mRecordPlanned.mEndDate = dateUtils().StrToDate(edtEndDate.getText().toString());
+
+            mRecordPlanned.mMatchingTxType = edtMatchType.getEditText().getText().toString();
+            mRecordPlanned.mMatchingTxDescription = edtMatchDescription.getEditText().getText().toString();
+            mRecordPlanned.mMatchingTxAmount = 0.00f;
+            if(edtMatchAmount.getEditText().getText().length() > 0)
+                mRecordPlanned.mMatchingTxAmount = Float.valueOf(edtMatchAmount.getEditText().getText().toString());
+
+
             if (mActionType.compareTo("ADD") == 0)
             {
                 mRecordPlanned.mPlannedId = 0;
-                mRecordPlanned.mPlannedType = mPlannedType.Value;
-                mRecordPlanned.mPlannedName = edtPlannedName.getEditText().getText().toString();
-                mRecordPlanned.mSubCategoryId = MySubCategoryId.Value;
-                if (radCashAccount.isChecked())
-                {
-                    mRecordPlanned.mSortCode = "Cash";
-                    mRecordPlanned.mAccountNo = "Cash";
-                } else
-                {
-                    mRecordPlanned.mSortCode = "11-03-95";
-                    mRecordPlanned.mAccountNo = "00038840";
-                }
-    
-                if (mPlannedType.Value == RecordPlanned.mPTOneOff)
-                {
-                    mRecordPlanned.mPlannedDate = new Date();
-                    dateUtils().StrToDate(edtPlanned.getText().toString(), mRecordPlanned.mPlannedDate);
-                    
-                    mRecordPlanned.mPlannedMonth = 0;
-                    mRecordPlanned.mPlannedDay = 0;
-                    mRecordPlanned.mMonday = FALSE;
-                    mRecordPlanned.mTuesday = FALSE;
-                    mRecordPlanned.mWednesday = FALSE;
-                    mRecordPlanned.mThursday = FALSE;
-                    mRecordPlanned.mFriday = FALSE;
-                    mRecordPlanned.mSaturday = FALSE;
-                    mRecordPlanned.mSunday = FALSE;
-                }
-    
-                if (mPlannedType.Value == RecordPlanned.mPTYearly)
-                {
-                    mRecordPlanned.mPlannedMonth = MyMonth.Value;
-                    mRecordPlanned.mPlannedDay = MyDay.Value;
-
-                    mRecordPlanned.mPlannedDate = new Date();
-                    mRecordPlanned.mMonday = FALSE;
-                    mRecordPlanned.mTuesday = FALSE;
-                    mRecordPlanned.mWednesday = FALSE;
-                    mRecordPlanned.mThursday = FALSE;
-                    mRecordPlanned.mFriday = FALSE;
-                    mRecordPlanned.mSaturday = FALSE;
-                    mRecordPlanned.mSunday = FALSE;
-                }
-    
-                if (mPlannedType.Value == RecordPlanned.mPTMonthly)
-                {
-                    mRecordPlanned.mPlannedDay = MyDay.Value;
-
-                    mRecordPlanned.mPlannedMonth = 0;
-                    mRecordPlanned.mPlannedDate = new Date();
-                    mRecordPlanned.mMonday = FALSE;
-                    mRecordPlanned.mTuesday = FALSE;
-                    mRecordPlanned.mWednesday = FALSE;
-                    mRecordPlanned.mThursday = FALSE;
-                    mRecordPlanned.mFriday = FALSE;
-                    mRecordPlanned.mSaturday = FALSE;
-                    mRecordPlanned.mSunday = FALSE;
-                }
-    
-                if (mPlannedType.Value == RecordPlanned.mPTWeekly)
-                {
-                    mRecordPlanned.mMonday = MyMonday.Value;
-                    mRecordPlanned.mTuesday = MyTuesday.Value;
-                    mRecordPlanned.mWednesday = MyWednesday.Value;
-                    mRecordPlanned.mThursday = MyThursday.Value;
-                    mRecordPlanned.mFriday = MyFriday.Value;
-                    mRecordPlanned.mSaturday = MySaturday.Value;
-                    mRecordPlanned.mSunday = MySunday.Value;
-
-                    mRecordPlanned.mPlannedDay = 0;
-                    mRecordPlanned.mPlannedMonth = 0;
-                    mRecordPlanned.mPlannedDate = new Date();
-                }
-    
-    
-                mRecordPlanned.mStartDate = new Date();
-                dateUtils().StrToDate(edtStartDate.getText().toString(), mRecordPlanned.mStartDate);
-
-                mRecordPlanned.mEndDate = new Date();
-                dateUtils().StrToDate(edtEndDate.getText().toString(), mRecordPlanned.mEndDate);
-    
-                mRecordPlanned.mMatchingTxType = edtMatchType.getEditText().getText().toString();
-                mRecordPlanned.mMatchingTxDescription = edtMatchDescription.getEditText().getText().toString();
-                mRecordPlanned.mMatchingTxAmount = 0.00f;
-                if(edtMatchAmount.getEditText().getText().length() > 0)
-                    mRecordPlanned.mMatchingTxAmount = Float.valueOf(edtMatchAmount.getEditText().getText().toString());
-    
                 MyDB().addPlanned(mRecordPlanned);
-                finish();
             }
+
+            if (mActionType.compareTo("EDIT") == 0)
+            {
+                MyDB().updatePlanned(mRecordPlanned);
+            }
+            finish();
         }
         catch(Exception e)
         {
             ErrorDialog.Show("saveItem", e.getMessage());
+        }
+    }
+
+    public void deleteItem(View view)
+    {
+        try
+        {
+            MyDB().deletePlanned(mRecordPlanned);
+            finish();
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("deleteItem", e.getMessage());
         }
     }
 

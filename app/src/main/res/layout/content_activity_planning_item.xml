@@ -73,24 +73,24 @@
         android:id="@+id/lblEndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="End"
+        android:text=", End"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/edtEndDate"
-        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName"/>
+        app:layout_constraintStart_toEndOf="@+id/edtStartDate"
+        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName" />
 
     <TextView
         android:id="@+id/edtEndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:onClick="pickEndDateTime"
         android:text="End Date"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName"/>
+        app:layout_constraintStart_toEndOf="@+id/lblEndDate"
+        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName" />
 
     <TextView
         android:id="@+id/edtStartDate"
@@ -117,27 +117,27 @@
 
     <TextView
         android:id="@+id/edtPlannedType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="29dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:onClick="pickPlannedType"
         android:text="**Planned Type**"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/lblPlannedType"
-        app:layout_constraintTop_toBottomOf="@+id/edtStartDate"/>
+        app:layout_constraintTop_toBottomOf="@+id/edtStartDate" />
 
     <TextView
         android:id="@+id/edtSubCategoryName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="285dp"
+        android:layout_height="26dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:onClick="pickCategory"
         android:text="**Category**"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/lblSubCategoryName"
-        app:layout_constraintTop_toBottomOf="@+id/radCashAccount"/>
+        app:layout_constraintTop_toBottomOf="@+id/radCashAccount" />
 
     <RadioButton
         android:id="@+id/radCurrentAccount"
@@ -216,5 +216,16 @@
         android:text="Ok"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="deleteItem"
+        android:text="Delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnOk" />
 
 </android.support.constraint.ConstraintLayout>

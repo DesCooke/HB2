@@ -294,18 +294,17 @@ public class DateUtils
     //   Description: accepts string and sets retDate to the date equivalent
     //   Returns: true(worked)/false(failed)
     //
-    public boolean StrToDate(String string, Date date)
+    public Date StrToDate(String string)
     {
         try
         {
-            DateFormat df=getDateInstance();
-            date.setTime(df.parse(string).getTime());
-            return (true);
+            SimpleDateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy");
+            return(dateFormat.parse(string));
         }
         catch(ParseException e)
         {
             ErrorDialog.Show("StrToDate", e.getMessage());
-            return (false);
+            return (new Date());
         }
     }
 
@@ -485,6 +484,33 @@ public class DateUtils
         }
     }
 
+
+    public boolean DateTo_ddd_ddmmyyyy(Date date, MyString retString)
+    {
+        try
+        {
+            retString.Value = android.text.format.DateFormat.format("EEE, dd/MM/yyyy", date).toString();
+            return(true);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("DateTo_ddd_ddmmyyyy", e.getMessage());
+            return (false);
+        }
+    }
+    public boolean DateTo_ddmmyyyy(Date date, MyString retString)
+    {
+        try
+        {
+            retString.Value = android.text.format.DateFormat.format("dd/MM/yyyy", date).toString();
+            return(true);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("DateTo_ddmmyyyy", e.getMessage());
+            return (false);
+        }
+    }
 
     //
     // DateToStr

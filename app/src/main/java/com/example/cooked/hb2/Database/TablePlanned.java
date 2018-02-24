@@ -104,7 +104,7 @@ class TablePlanned extends TableBase
     
     public void updatePlanned(RecordPlanned rp) {
         String lSql =
-                "UPDATE tblTransaction " +
+                "UPDATE tblPlanned " +
                         " SET PlannedType = " + Integer.toString(rp.mPlannedType) + "," +
                         " PlannedName = '" + rp.mPlannedName + "'," +
                         " SubCategoryId = " + Integer.toString(rp.mSubCategoryId) + "," +
@@ -139,7 +139,7 @@ class TablePlanned extends TableBase
         executeSQL(lSql, "TablePlanned::deletePlanned", null);
     }
     
-    public ArrayList<RecordPlanned> getPlannedList(String sortCode, String accountNum)
+    public ArrayList<RecordPlanned> getPlannedList()
     {
         int cnt;
         ArrayList<RecordPlanned> list;
@@ -153,8 +153,8 @@ class TablePlanned extends TableBase
                         "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
                         "Wednesday","Thursday", "Friday", "Saturday", "Sunday", "StartDate",
                         "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount"},
-                    "SortCode=? AND AccountNo=?",
-                    new String[]{sortCode, accountNum}, null, null, null, null);
+                    null,
+                    null, null, null, "PlannedName", null);
                 list = new ArrayList<RecordPlanned>();
                 cnt = 0;
                 if (cursor != null)

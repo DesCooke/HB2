@@ -4,13 +4,17 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 
 // derived from SQLiteOpenHelper because it give lots of features like - upgrade/downgrade
 // automatically handles the creation and recreation of the database
@@ -222,20 +226,77 @@ public class MyDatabase extends SQLiteOpenHelper
         tablePlanned.deletePlanned(rp);
     }
 
+    public int createPlanned(int pTxSeqNo)
+    {
+        RecordTransaction rt = tableTransaction.getSingleTransaction(pTxSeqNo);
+        if(rt!=null)
+        {
+            RecordPlanned rp = new RecordPlanned();
+            rp.mPlannedId = 0;
+            rp.mPlannedType = RecordPlanned.mPTMonthly;
+            rp.mPlannedName = rt.TxDescription;
+            rp.mSubCategoryId = rt.CategoryId;
+            rp.mSortCode = rt.TxSortCode;
+            rp.mAccountNo = rt.TxAccountNumber;
+
+            rp.mPlannedDate = rt.TxDate;
+            rp.mPlannedMonth = 0;
+            Calendar c = Calendar.getInstance();
+            c.setTime(rt.TxDate);
+            rp.mPlannedDay = c.get(Calendar.DAY_OF_MONTH);
+            rp.mMonday = false;
+            rp.mTuesday = false;
+            rp.mWednesday = false;
+            rp.mThursday = false;
+            rp.mFriday = false;
+            rp.mSaturday = false;
+            rp.mSunday = false;
+
+            rp.mStartDate = rt.TxDate;
+            rp.mEndDate = dateUtils().StrToDate("31/12/2099");
+
+            rp.mMatchingTxType = rt.TxType;
+            rp.mMatchingTxDescription = rt.TxDescription;
+            rp.mMatchingTxAmount = rt.TxAmount;
+
+            rp.mPlanned = "";
+            rp.mSubCategoryName = rt.SubCategoryName;
+
+            tablePlanned.addPlanned(rp);
+
+            return(rp.mPlannedId);
+
+        }
+        return(0);
+    }
+
     public void updatePlanned(RecordPlanned rp)
     {
         tablePlanned.updatePlanned(rp);
     }
 
-    public ArrayList<RecordPlanned> getPlannedList(String sortCode, String accountNum)
+    public ArrayList<RecordPlanned> getPlannedList()
     {
-        ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedList(sortCode, accountNum);
+        ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedList();
+        if(rpa!=null)
+        {
+            for(int i=0;i<rpa.size();i++) {
+                RecordSubCategory sc = tableSubCategory.getSubCategory(rpa.get(i).mSubCategoryId);
+                if (sc != null)
+                    rpa.get(i).mSubCategoryName = sc.SubCategoryName;
+            }
+        }
         return(rpa);
     }
 
     public RecordPlanned getSinglePlanned(Integer pPlannedId)
     {
         RecordPlanned rp =tablePlanned.getSinglePlanned(pPlannedId);
+        if(rp!=null) {
+            RecordSubCategory sc = tableSubCategory.getSubCategory(rp.mSubCategoryId);
+            if (sc != null)
+                rp.mSubCategoryName = sc.SubCategoryName;
+        }
         return(rp);
     }
     //endregion

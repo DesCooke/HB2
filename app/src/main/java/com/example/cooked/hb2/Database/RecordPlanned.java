@@ -1,5 +1,8 @@
 package com.example.cooked.hb2.Database;
 
+import com.example.cooked.hb2.GlobalUtils.DateUtils;
+import com.example.cooked.hb2.GlobalUtils.MyString;
+
 import java.util.Date;
 
 public class RecordPlanned
@@ -34,6 +37,9 @@ public class RecordPlanned
     public String mMatchingTxType;
     public String mMatchingTxDescription;
     public Float mMatchingTxAmount;
+
+    public String mPlanned;
+    public String mSubCategoryName;
     
 
     RecordPlanned
@@ -62,32 +68,68 @@ public class RecordPlanned
             String pMatchingTxType,
             String pMatchingTxDescription,
             Float pMatchingTxAmount
-        )
-    {
-            mPlannedId = pPlannedId;
-            mPlannedType = pPlannedType;
-            mPlannedName = pPlannedName;
-            mSubCategoryId = pSubCategoryId;
-            mSortCode = pSortCode;
-            mAccountNo = pAccountNo;
-    
-            mPlannedDate = pPlannedDate;
-            mPlannedMonth = pPlannedMonth;
-            mPlannedDay = pPlannedDay;
-            mMonday = pMonday;
-            mTuesday = pTuesday;
-            mWednesday = pWednesday;
-            mThursday = pThursday;
-            mFriday = pFriday;
-            mSaturday = pSaturday;
-            mSunday = pSunday;
-    
-            mStartDate = pStartDate;
-            mEndDate = pEndDate;
-    
-            mMatchingTxType = pMatchingTxType;
-            mMatchingTxDescription = pMatchingTxDescription;
-            mMatchingTxAmount = pMatchingTxAmount;
+        ) {
+        mPlannedId = pPlannedId;
+        mPlannedType = pPlannedType;
+        mPlannedName = pPlannedName;
+        mSubCategoryId = pSubCategoryId;
+        mSortCode = pSortCode;
+        mAccountNo = pAccountNo;
+
+        mPlannedDate = pPlannedDate;
+        mPlannedMonth = pPlannedMonth;
+        mPlannedDay = pPlannedDay;
+        mMonday = pMonday;
+        mTuesday = pTuesday;
+        mWednesday = pWednesday;
+        mThursday = pThursday;
+        mFriday = pFriday;
+        mSaturday = pSaturday;
+        mSunday = pSunday;
+
+        mStartDate = pStartDate;
+        mEndDate = pEndDate;
+
+        mMatchingTxType = pMatchingTxType;
+        mMatchingTxDescription = pMatchingTxDescription;
+        mMatchingTxAmount = pMatchingTxAmount;
+
+        mPlanned = "";
+        if (mPlannedType == RecordPlanned.mPTOneOff) {
+            MyString ms=new MyString();
+            if(DateUtils.dateUtils().DateTo_ddd_ddmmyyyy(mPlannedDate, ms) != false)
+              mPlanned = ms.Value;
+        }
+
+        if (mPlannedType == RecordPlanned.mPTYearly) {
+            mPlanned = "Day: " + mPlannedDay.toString() + ", Month " + mPlannedMonth.toString();
+        }
+
+        if (mPlannedType == RecordPlanned.mPTMonthly) {
+            mPlanned = "Day: " + mPlannedDay.toString();
+        }
+
+        if (mPlannedType == RecordPlanned.mPTWeekly) {
+            String lString="";
+            if(mMonday)
+                lString = lString + "Mon,";
+            if(mTuesday)
+                lString = lString + "Tue,";
+            if(mWednesday)
+                lString = lString + "Wed,";
+            if(mThursday)
+                lString = lString + "Thu,";
+            if(mFriday)
+                lString = lString + "Fri,";
+            if(mSaturday)
+                lString = lString + "Sat,";
+            if(mSunday)
+                lString = lString + "Sun,";
+
+            mPlanned = lString;
+        }
+        mSubCategoryName = "";
+
     }
     
     public RecordPlanned()
@@ -116,6 +158,9 @@ public class RecordPlanned
         mMatchingTxType = "";
         mMatchingTxDescription = "";
         mMatchingTxAmount = 0.0f;
+
+        mPlanned = "";
+        mSubCategoryName = "";
     }
     
 }
