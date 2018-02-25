@@ -40,6 +40,8 @@ public class RecordPlanned
 
     public String mPlanned;
     public String mSubCategoryName;
+
+    public Date mNextDueDate;
     
 
     RecordPlanned
@@ -68,6 +70,7 @@ public class RecordPlanned
             String pMatchingTxType,
             String pMatchingTxDescription,
             Float pMatchingTxAmount
+
         ) {
         mPlannedId = pPlannedId;
         mPlannedType = pPlannedType;
@@ -129,6 +132,7 @@ public class RecordPlanned
             mPlanned = lString;
         }
         mSubCategoryName = "";
+        mNextDueDate = null;
 
     }
     
@@ -161,6 +165,7 @@ public class RecordPlanned
 
         mPlanned = "";
         mSubCategoryName = "";
+        mNextDueDate = null;
     }
     
 }

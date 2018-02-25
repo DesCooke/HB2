@@ -182,6 +182,41 @@ public class DateUtils
         }
     }
 
+    public Date BudgetStart(int pMonth, int pYear)
+    {
+        try
+        {
+            String lString = "26/" + pMonth + "/" + pYear;
+            return(StrToDate(lString));
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("CurrentBudgetYear", e.getMessage());
+        }
+        return (new Date());
+    }
+
+    public Date BudgetEnd(int pMonth, int pYear)
+    {
+        try
+        {
+            int lMonth=pMonth;
+            int lYear=pYear;
+            lMonth++;
+            if(lMonth>12)
+            {
+                lMonth=1;
+                lYear++;
+            }
+            String lString = "25/" + lMonth + "/" + lYear;
+            return(StrToDate(lString));
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("CurrentBudgetYear", e.getMessage());
+        }
+        return (new Date());
+    }
     public Integer CurrentBudgetYear()
     {
         try
@@ -375,6 +410,21 @@ public class DateUtils
         }
     }
 
+    public boolean GetDayOfWeek(Date date, MyString myString)
+    {
+        try
+        {
+            String lString=new SimpleDateFormat("EEE", Locale.ENGLISH).format(date);
+            myString.Value=lString;
+            return (true);
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("GetYear", e.getMessage());
+            return (false);
+        }
+    }
+
     public boolean GetDiff(Date date1, Date date2, MyDateDiff myDateDiff)
     {
         try
@@ -473,9 +523,7 @@ public class DateUtils
             if(getDateFromDatePicker(datePicker, date) == false)
                 return (false);
 
-            DateFormat df=getDateInstance();
-            retString.Value=df.format(date);
-            return (true);
+            return(DateTo_ddmmyyyy(date, retString));
         }
         catch(Exception e)
         {

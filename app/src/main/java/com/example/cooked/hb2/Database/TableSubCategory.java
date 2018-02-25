@@ -202,7 +202,16 @@ public class TableSubCategory extends TableBase
         {
             ErrorDialog.Show("Error in TableSubCategory.getSubCategoryList", e.getMessage());
         }
-        return (null);
+        return
+                (
+                        new RecordSubCategory
+                                (
+                                        0,
+                                        "Unknown Category",
+                                        pSubCategoryId,
+                                        "Unknown SubCategory"
+                                )
+                );
     }
     
     

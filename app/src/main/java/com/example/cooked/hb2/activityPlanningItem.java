@@ -105,6 +105,9 @@ public class activityPlanningItem extends AppCompatActivity
         btnDelete = findViewById(R.id.btnDelete);
 
 
+
+
+
         cp = new CategoryPicker(this);
         cp.MySubCategoryId = MySubCategoryId;
         cp.edtSubCategoryName = edtSubCategoryName;
@@ -171,6 +174,9 @@ public class activityPlanningItem extends AppCompatActivity
             else
             {
                 mRecordPlanned = MyDB().getSinglePlanned(lPlannedId);
+                mPlannedType.Value = mRecordPlanned.mPlannedType;
+                MyDay.Value = mRecordPlanned.mPlannedDay;
+                MySubCategoryId.Value = mRecordPlanned.mSubCategoryId;
                 edtPlannedType.setText(RecordPlanned.mPlannedTypes[mRecordPlanned.mPlannedType]);
                 edtPlannedName.getEditText().setText(mRecordPlanned.mPlannedName);
                 edtSubCategoryName.setText(mRecordPlanned.mSubCategoryName);
@@ -200,6 +206,18 @@ public class activityPlanningItem extends AppCompatActivity
                 {
                     edtMatchAmount.getEditText().setText(String.format("%.2f", mRecordPlanned.mMatchingTxAmount));
                 }
+
+
+                MyMonday.Value = mRecordPlanned.mMonday;
+                MyTuesday.Value = mRecordPlanned.mTuesday;
+                MyWednesday.Value = mRecordPlanned.mWednesday;
+                MyThursday.Value = mRecordPlanned.mThursday;
+                MyFriday.Value = mRecordPlanned.mFriday;
+                MySaturday.Value = mRecordPlanned.mSaturday;
+                MySunday.Value = mRecordPlanned.mSunday;
+
+                MyDay.Value = mRecordPlanned.mPlannedDay;
+                MyMonth.Value = mRecordPlanned.mPlannedMonth;
             }
         }
 
@@ -408,6 +426,7 @@ public class activityPlanningItem extends AppCompatActivity
     
     public void pickPlannedType(View view)
     {
+        edtPlanned.setText("<pick>");
         DialogPlannedTypePicker ppp = new DialogPlannedTypePicker(this);
         ppp.edtPlannedType = edtPlannedType;
         ppp.mPlannedType = mPlannedType;

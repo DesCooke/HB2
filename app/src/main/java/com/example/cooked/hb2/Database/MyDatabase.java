@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.myDateUtils;
 
 // derived from SQLiteOpenHelper because it give lots of features like - upgrade/downgrade
 // automatically handles the creation and recreation of the database
@@ -134,6 +135,27 @@ public class MyDatabase extends SQLiteOpenHelper
     public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
         ArrayList<RecordTransaction> rta = tableTransaction.getTransactionList(sortCode, accountNum);
+
+        if(sortCode.compareTo("11-03-95")==0)
+        {
+            int lBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+            int lBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+            ArrayList<RecordTransaction> rba = tablePlanned.getOutstandingList(sortCode, accountNum, lBudgetMonth, lBudgetYear);
+            if(rba!=null)
+            {
+                Float lBal=0.00f;
+                if(rta.size()>0) {
+                    lBal = rta.get(0).TxBalance;
+                }
+                for (int i = 0; i < rba.size(); i++) {
+                    lBal = lBal + rba.get(i).TxAmount;
+                    rba.get(i).TxBalance = lBal;
+                    rta.add(0, rba.get(i));
+                }
+
+            }
+        }
+
         if(rta!=null)
         {
             for(int i=0;i<rta.size();i++) {
@@ -209,6 +231,10 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public void deleteSubCategory(RecordSubCategory rc) { tableSubCategory.deleteSubCategory(rc);}
 
+    public RecordSubCategory getSubCategory(Integer pSubCategoryId)
+    {
+        return(tableSubCategory.getSubCategory(pSubCategoryId));
+    }
     public ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId)
     {
         return tableSubCategory.getSubCategoryList(pCategoryId);
