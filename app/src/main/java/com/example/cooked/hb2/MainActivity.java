@@ -17,10 +17,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.cooked.hb2.Budget.BudgetAdapter;
+import com.example.cooked.hb2.Budget.RecordBudgetGroup;
+import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordButton;
 import com.example.cooked.hb2.Database.RecordTransaction;
@@ -46,7 +51,9 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mTransactionListLongTerm;
     private RecyclerView mTransactionListFamily;
     private RecyclerView mTransactionListCash;
+    private ExpandableListView budgetListView;
 
+    private ArrayList<RecordBudgetGroup> mDatasetBudget;
     private ArrayList<RecordButton> mDatasetButton;
     private ArrayList<RecordTransaction> mDatasetCurrent;
     private ArrayList<RecordTransaction> mDatasetGeneral;
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView.LayoutManager mLayoutManagerFamily;
     private RecyclerView.LayoutManager mLayoutManagerCash;
     
+    private BudgetAdapter budgetAdapter;
     private ImageAdapter mTransactionAdapterButton;
     private TransactionAdapter mTransactionAdapterCurrent;
     private TransactionAdapter mTransactionAdapterGeneral;
@@ -93,6 +101,8 @@ public class MainActivity extends AppCompatActivity
 
             setupActivity();
 
+            setupBudget();
+            
             setupTabs();
 
             setupNavigationSideBar();
@@ -104,6 +114,85 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void setupBudget()
+    {
+        try
+        {
+            mDatasetBudget = MyDatabase.MyDB().getBudget(1,2018);
+    
+            //get reference of the ExpandableListView
+            budgetListView = (ExpandableListView) findViewById(R.id.budgetList);
+    
+            // create the adapter by passing your ArrayList data
+            budgetAdapter = new BudgetAdapter(MainActivity.this, mDatasetBudget);
+    
+            if (budgetAdapter == null)
+            {
+                ErrorDialog.Show("budgetAdapter is null", "budgetAdapter is null");
+            }
+    
+            if (budgetListView == null)
+            {
+                ErrorDialog.Show("budgetListView is null", "budgetListView is null");
+            }
+    
+            // attach the adapter to the expandable list view
+            budgetListView.setAdapter(budgetAdapter);
+    
+            //expand all the Groups
+            collapseAll();
+    
+            // setOnChildClickListener listener for child row click
+            budgetListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
+            {
+                @Override
+                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id)
+                {
+                    //get the group header
+                    RecordBudgetGroup budgetGroupInfo = mDatasetBudget.get(groupPosition);
+                    //get the child info
+                    RecordBudgetItem budgetItemInfo = budgetGroupInfo.budgetItems.get(childPosition);
+                    //display it or do something with it
+                    Toast.makeText(getBaseContext(), " Clicked on :: " + budgetGroupInfo.budgetGroupName
+                        + "/" + budgetItemInfo.budgetItemName, Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            });
+            // setOnGroupClickListener listener for group heading click
+            budgetListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener()
+            {
+                @Override
+                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id)
+                {
+                    //get the group header
+                    RecordBudgetGroup budgetGroupInfo = mDatasetBudget.get(groupPosition);
+                    //display it or do something with it
+                    Toast.makeText(getBaseContext(), " Header is :: " + budgetGroupInfo.budgetGroupName,
+                        Toast.LENGTH_LONG).show();
+            
+                    return false;
+                }
+            });
+        } catch (Exception e) {
+            ErrorDialog.Show("Error in MainActivity::setupBudget", e.getMessage());
+        }
+    }
+    
+//method to expand all groups
+    private void expandAll() {
+        int count = budgetAdapter.getGroupCount();
+        for (int i = 0; i < count; i++){
+            budgetListView.expandGroup(i);
+        }
+    }
+
+    //method to collapse all groups
+    private void collapseAll() {
+        int count = budgetAdapter.getGroupCount();
+        for (int i = 0; i < count; i++){
+            budgetListView.collapseGroup(i);
+        }
+    }
     private void setupActivity() {
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
@@ -139,6 +228,11 @@ public class MainActivity extends AppCompatActivity
         spec = host.newTabSpec("Cash");
         spec.setContent(R.id.tabCashAccount);
         spec.setIndicator("Cash");
+        host.addTab(spec);
+
+        spec = host.newTabSpec("Budget");
+        spec.setContent(R.id.tabBudget);
+        spec.setIndicator("Budget");
         host.addTab(spec);
 
         spec = host.newTabSpec("General");
@@ -232,10 +326,10 @@ public class MainActivity extends AppCompatActivity
         lList.add(new RecordButton(0, R.drawable.button, "Dashboard"));
         lList.add(new RecordButton(1, R.drawable.button, "Current Account"));
         lList.add(new RecordButton(2, R.drawable.button, "Cash Account"));
-        //lList.add(new RecordButton(3, R.drawable.button, "Budget"));
-        lList.add(new RecordButton(3, R.drawable.button, "General Savings"));
-        lList.add(new RecordButton(4, R.drawable.button, "Long Term Savings"));
-        lList.add(new RecordButton(5, R.drawable.button, "Family Savings"));
+        lList.add(new RecordButton(3, R.drawable.button, "Budget"));
+        lList.add(new RecordButton(4, R.drawable.button, "General Savings"));
+        lList.add(new RecordButton(5, R.drawable.button, "Long Term Savings"));
+        lList.add(new RecordButton(6, R.drawable.button, "Family Savings"));
         lList.get(0).selected = true;
         return(lList);
     }

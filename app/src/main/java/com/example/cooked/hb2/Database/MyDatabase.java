@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.cooked.hb2.Budget.RecordBudgetGroup;
+import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
@@ -325,7 +327,42 @@ public class MyDatabase extends SQLiteOpenHelper
         }
         return(rp);
     }
+    
+    public ArrayList<RecordBudgetGroup> getBudget(Integer pMonth, Integer pYear)
+    {
+        ArrayList<RecordBudgetGroup> lList = new ArrayList<>();
+        
+        RecordBudgetGroup rbg;
+        rbg = new RecordBudgetGroup();
+        rbg.budgetGroupName = "MONTHLY EXPENSES";
+        rbg.divider = true;
+        lList.add(rbg);
+
+
+        ArrayList<RecordCategory> cl = tableCategory.getCategoryList();
+        for(int i=0;i<cl.size();i++)
+        {
+            rbg = new RecordBudgetGroup();
+            rbg.budgetGroupName = cl.get(i).CategoryName;
+            rbg.CategoryId = cl.get(i).CategoryId;
+            rbg.RecCount = 0;
+            lList.add(rbg);
+    
+            ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
+            RecordBudgetItem rbi;
+            for (int j = 0; j < scl.size(); j++)
+            {
+                rbi = new RecordBudgetItem();
+                rbi.budgetItemName = scl.get(j).SubCategoryName;
+                rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                rbi.RecCount = 0;
+                rbg.budgetItems.add(rbi);
+            }
+        }
+        return(lList);
+    }
     //endregion
+  
     
  }
 

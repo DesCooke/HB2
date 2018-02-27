@@ -9,179 +9,236 @@
     tools:context="com.example.cooked.hb2.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <LinearLayout
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        android:layout_marginBottom="8dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/buttonList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/buttonList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    </android.support.v7.widget.RecyclerView>
 
-        <TabHost
-            android:id="@+id/mainTabHost"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <TabHost
+        android:id="@+id/mainTabHost"
+        android:layout_width="368dp"
+        android:layout_height="455dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonList">
 
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TabWidget
+                android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:scrollbars="horizontal"
+                android:visibility="gone"/>
 
-                <TabWidget
-                    android:id="@android:id/tabs"
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <LinearLayout
+                    android:id="@+id/tabDasboard"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="horizontal"
-                    android:visibility="gone"/>
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:text="Dashboard">
 
-                <FrameLayout
-                    android:id="@android:id/tabcontent"
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="Dashboard"
+                        android:textSize="18sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabCurrentAccount"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:text="Current Account">
 
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="Current Account"
+                        android:textSize="18sp"/>
 
-                    <LinearLayout
-                        android:id="@+id/tabDasboard"
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/transactionListCurrent"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:text="Dashboard">
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp"/>
+                </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/textView3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Dashboard"
-                            android:textSize="18sp"/>
-                    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/tabCashAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/tabCurrentAccount"
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="Cash Account"
+                        android:textSize="18sp"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/transactionListCash"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:text="Current Account">
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabBudget"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="Budget"
+                        android:textSize="18sp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/imgLeft"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:srcCompat="@android:drawable/ic_media_rew"/>
 
                         <TextView
-                            android:id="@+id/textView2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Current Account"
-                            android:textSize="18sp"/>
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/transactionListCurrent"
-                            android:layout_width="match_parent"
+                            android:id="@+id/txtBudgetTitle"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            tools:layout_editor_absoluteX="8dp"
-                            tools:layout_editor_absoluteY="8dp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/tabCashAccount"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/textView7"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_weight="5"
                             android:gravity="center_vertical|center_horizontal"
-                            android:text="Cash Account"
+                            android:text="Feb / 2018"
                             android:textSize="18sp"/>
 
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/transactionListCash"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            tools:layout_editor_absoluteX="8dp"
-                            tools:layout_editor_absoluteY="8dp"/>
+                        <ImageButton
+                            android:id="@+id/imgRight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:srcCompat="@android:drawable/ic_media_ff"/>
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/tabGeneralSavings"
+                    <ExpandableListView
+                        android:id="@+id/budgetList"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:childDivider="#00f2ff"
+                        android:divider="#0084ff"
+                        android:dividerHeight="2dp"
+                        android:groupIndicator="@null"
+                        android:listSelector="#ffa200"
+                        />
 
-                        <TextView
-                            android:id="@+id/textView4"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="General Savings"
-                            android:textSize="18sp"/>
 
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/transactionListGeneral"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            tools:layout_editor_absoluteX="8dp"
-                            tools:layout_editor_absoluteY="8dp"/>
-                    </LinearLayout>
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/tabLongTermSavings"
+                <LinearLayout
+                    android:id="@+id/tabGeneralSavings"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="General Savings"
+                        android:textSize="18sp"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/transactionListGeneral"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp"/>
+                </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/textView5"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Long Term Savings"
-                            android:textSize="18sp"/>
+                <LinearLayout
+                    android:id="@+id/tabLongTermSavings"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/transactionListLongTerm"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            tools:layout_editor_absoluteX="8dp"
-                            tools:layout_editor_absoluteY="8dp"/>
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="Long Term Savings"
+                        android:textSize="18sp"/>
 
-                    <LinearLayout
-                        android:id="@+id/tabFamilySavings"
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/transactionListLongTerm"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp"/>
+                </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/textView6"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Family Savings"
-                            android:textSize="18sp"/>
+                <LinearLayout
+                    android:id="@+id/tabFamilySavings"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/transactionListFamily"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            tools:layout_editor_absoluteX="8dp"
-                            tools:layout_editor_absoluteY="8dp"/>
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="Family Savings"
+                        android:textSize="18sp"/>
 
-                </FrameLayout>
-            </LinearLayout>
-        </TabHost>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/transactionListFamily"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="8dp"/>
+                </LinearLayout>
 
-    </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
 
 </android.support.constraint.ConstraintLayout>
