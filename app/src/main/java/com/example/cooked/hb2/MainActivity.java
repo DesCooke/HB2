@@ -2,11 +2,9 @@ package com.example.cooked.hb2;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,12 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordButton;
@@ -131,48 +126,35 @@ public class MainActivity extends AppCompatActivity
         TabHost host = (TabHost) findViewById(R.id.mainTabHost);
         host.setup();
 
-        //Tab 1
         TabHost.TabSpec spec = host.newTabSpec("Dashboard");
-        spec.setContent(R.id.tab1);
+        spec.setContent(R.id.tabDasboard);
         spec.setIndicator("Dashboard");
         host.addTab(spec);
 
-        //Tab 2
         spec = host.newTabSpec("Current");
-        spec.setContent(R.id.tab2);
+        spec.setContent(R.id.tabCurrentAccount);
         spec.setIndicator("Current");
         host.addTab(spec);
 
-        //Tab 3
-        spec = host.newTabSpec("General");
-        spec.setContent(R.id.tab3);
-        spec.setIndicator("General");
-        host.addTab(spec);
-
-        //Tab 4
-        spec = host.newTabSpec("Long Term");
-        spec.setContent(R.id.tab4);
-        spec.setIndicator("Long Term");
-        host.addTab(spec);
-
-        //Tab 5
-        spec = host.newTabSpec("Family");
-        spec.setContent(R.id.tab5);
-        spec.setIndicator("Family");
-        host.addTab(spec);
-
-        //Tab 6
         spec = host.newTabSpec("Cash");
-        spec.setContent(R.id.tab6);
+        spec.setContent(R.id.tabCashAccount);
         spec.setIndicator("Cash");
         host.addTab(spec);
 
-        final TabWidget tw = (TabWidget) host.findViewById(android.R.id.tabs);
-        for (int i = 0; i < tw.getChildCount(); ++i) {
-            final View tabView = tw.getChildTabViewAt(i);
-            final TextView tv = (TextView) tabView.findViewById(android.R.id.title);
-            tv.setTextSize(8);
-        }
+        spec = host.newTabSpec("General");
+        spec.setContent(R.id.tabGeneralSavings);
+        spec.setIndicator("General");
+        host.addTab(spec);
+
+        spec = host.newTabSpec("Long Term");
+        spec.setContent(R.id.tabLongTermSavings);
+        spec.setIndicator("Long Term");
+        host.addTab(spec);
+
+        spec = host.newTabSpec("Family");
+        spec.setContent(R.id.tabFamilySavings);
+        spec.setIndicator("Family");
+        host.addTab(spec);
 
         host.setOnTabChangedListener(new TabHost.OnTabChangeListener(){
             @Override
@@ -247,12 +229,14 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<RecordButton>getButtonList()
     {
         ArrayList<RecordButton>lList = new ArrayList<>();
-        lList.add(new RecordButton(0, R.drawable.side_nav_bar, "Summary"));
-        lList.add(new RecordButton(1, R.drawable.side_nav_bar, "Current"));
-        lList.add(new RecordButton(2, R.drawable.side_nav_bar, "General"));
-        lList.add(new RecordButton(3, R.drawable.side_nav_bar, "Longterm"));
-        lList.add(new RecordButton(4, R.drawable.side_nav_bar, "Family"));
-        lList.add(new RecordButton(5, R.drawable.side_nav_bar, "Cash"));
+        lList.add(new RecordButton(0, R.drawable.button, "Dashboard"));
+        lList.add(new RecordButton(1, R.drawable.button, "Current Account"));
+        lList.add(new RecordButton(2, R.drawable.button, "Cash Account"));
+        //lList.add(new RecordButton(3, R.drawable.button, "Budget"));
+        lList.add(new RecordButton(3, R.drawable.button, "General Savings"));
+        lList.add(new RecordButton(4, R.drawable.button, "Long Term Savings"));
+        lList.add(new RecordButton(5, R.drawable.button, "Family Savings"));
+        lList.get(0).selected = true;
         return(lList);
     }
     private void setupRecyclerViews() {
@@ -279,7 +263,7 @@ public class MainActivity extends AppCompatActivity
         mTransactionListFamily.setHasFixedSize(true);
         mTransactionListCash.setHasFixedSize(true);
 
-        mLayoutManagerButton = new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false);
+        mLayoutManagerButton = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
         mTransactionListButton.setLayoutManager(mLayoutManagerButton);
 
         // use a linear layout manager
@@ -308,6 +292,11 @@ public class MainActivity extends AppCompatActivity
             {
                 TabHost host = (TabHost) findViewById(R.id.mainTabHost);
                 host.setCurrentTab(obj.buttonId);
+                for(int i=0;i<mDatasetButton.size();i++)
+                    mDatasetButton.get(i).selected = false;
+                obj.selected = true;
+                mTransactionAdapterButton.notifyDataSetChanged();
+                
             }
         });
 

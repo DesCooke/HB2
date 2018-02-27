@@ -25,7 +25,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/buttonList"
             android:layout_width="match_parent"
-            android:layout_height="100dp"/>
+            android:layout_height="wrap_content"/>
 
         <TabHost
             android:id="@+id/mainTabHost"
@@ -49,21 +49,37 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+
                     <LinearLayout
-                        android:id="@+id/tab1"
+                        android:id="@+id/tabDasboard"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:text="Dashboard">
 
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Dashboard"
+                            android:textSize="18sp"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/tab2"
+                        android:id="@+id/tabCurrentAccount"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:text="Current Account">
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Current Account"
+                            android:textSize="18sp"/>
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/transactionListCurrent"
@@ -74,10 +90,41 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/tab3"
+                        android:id="@+id/tabCashAccount"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView7"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Cash Account"
+                            android:textSize="18sp"/>
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/transactionListCash"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            tools:layout_editor_absoluteX="8dp"
+                            tools:layout_editor_absoluteY="8dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/tabGeneralSavings"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="General Savings"
+                            android:textSize="18sp"/>
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/transactionListGeneral"
@@ -88,10 +135,18 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/tab4"
+                        android:id="@+id/tabLongTermSavings"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Long Term Savings"
+                            android:textSize="18sp"/>
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/transactionListLongTerm"
@@ -102,10 +157,18 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/tab5"
+                        android:id="@+id/tabFamilySavings"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Family Savings"
+                            android:textSize="18sp"/>
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/transactionListFamily"
@@ -115,20 +178,6 @@
                             tools:layout_editor_absoluteY="8dp"/>
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/tab6"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/transactionListCash"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            tools:layout_editor_absoluteX="8dp"
-                            tools:layout_editor_absoluteY="8dp"/>
-
-                    </LinearLayout>
                 </FrameLayout>
             </LinearLayout>
         </TabHost>

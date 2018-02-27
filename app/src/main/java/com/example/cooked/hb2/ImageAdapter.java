@@ -1,6 +1,7 @@
 package com.example.cooked.hb2;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -40,14 +41,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
         // each data item is just a string in this case
-        public ImageButton mImageButton;
+        //public ImageButton mImageButton;
         public TextView mTextView;
         
         public ViewHolder(View v)
         {
             super(v);
             
-            mImageButton = v.findViewById(R.id.imageButton);
+            //mImageButton = v.findViewById(R.id.imageButton);
             mTextView = v.findViewById(R.id.buttonText);
         }
     }
@@ -83,8 +84,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
         // - replace the contents of the view with that element
         try
         {
-            holder.mImageButton.setImageResource(rec.button);
-            holder.mImageButton.setOnClickListener(new View.OnClickListener()
+            //holder.mImageButton.setImageResource(rec.button);
+            holder.mTextView.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View view)
@@ -96,6 +97,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
                 }
             });
             holder.mTextView.setText(rec.buttonText);
+            if(rec.selected)
+            {
+                holder.mTextView.setTextColor(Color.MAGENTA);
+            }
+            else
+            {
+                holder.mTextView.setTextColor(Color.WHITE);
+            }
+            
         }
         catch (Exception e)
         {

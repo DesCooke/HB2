@@ -12,6 +12,7 @@ public class RecordButton
     public int buttonId;
     public int button;
     public String buttonText;
+    public boolean selected;
 
     public RecordButton
             (
@@ -23,6 +24,7 @@ public class RecordButton
         buttonId = pButtonId;
         button = pButton;
         buttonText = pButtonText;
+        selected = false;
     }
 
     public RecordButton()
@@ -30,5 +32,6 @@ public class RecordButton
         buttonId = 0;
         button = 0;
         buttonText = "";
+        selected = false;
     }
 }
