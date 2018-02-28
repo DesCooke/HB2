@@ -69,6 +69,11 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
             //      sequence.setText(detailInfo.getSequence().trim() + ". ");
             TextView childItem = (TextView) view.findViewById(R.id.childItem);
             childItem.setText(detailInfo.budgetItemName.trim());
+            TextView budget_summary = view.findViewById(R.id.budget_summary);
+
+            String lText = String.format("£%.2f / £%.2f / £%.2f",detailInfo.total, detailInfo.spent,
+                    detailInfo.outstanding);
+            budget_summary.setText(lText);
     
             return view;
         }

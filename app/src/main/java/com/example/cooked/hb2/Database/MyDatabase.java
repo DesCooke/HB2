@@ -333,32 +333,220 @@ public class MyDatabase extends SQLiteOpenHelper
         ArrayList<RecordBudgetGroup> lList = new ArrayList<>();
         
         RecordBudgetGroup rbg;
+
         rbg = new RecordBudgetGroup();
         rbg.budgetGroupName = "MONTHLY EXPENSES";
         rbg.divider = true;
         lList.add(rbg);
 
+        ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
+        ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
 
         ArrayList<RecordCategory> cl = tableCategory.getCategoryList();
+
+
+        for(int i=0;i<cl.size();i++)
+        {
+
+            rbg = new RecordBudgetGroup();
+            rbg.budgetGroupName = cl.get(i).CategoryName;
+            rbg.CategoryId = cl.get(i).CategoryId;
+            rbg.RecCount = 0;
+
+            ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
+            RecordBudgetItem rbi;
+            RecordBudget rb2;
+            for (int j = 0; j < scl.size(); j++)
+            {
+                rb2=null;
+                for (int k=0;k<rb.size();k++)
+                {
+                    if(rb.get(k).SubCategoryId == scl.get(j).SubCategoryId &&
+                            rb.get(k).MonthlyBudget &&
+                            rb.get(k).Amount<0.00f) {
+                        rb2 = rb.get(k);
+                        break;
+                    }
+                }
+                if(rb2!=null) {
+                    rbi = new RecordBudgetItem();
+
+                    for(int l=0;l<rbspent.size();l++)
+                    {
+                        if(rbspent.get(l).SubCategoryId==rb2.SubCategoryId)
+                        {
+                            rbi.spent = rbspent.get(l).Amount;
+                            break;
+                        }
+                    }
+
+                    rbi.budgetItemName = scl.get(j).SubCategoryName;
+                    rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                    rbi.total = rb2.Amount;
+                    rbi.RecCount = 0;
+                    rbg.budgetItems.add(rbi);
+                }
+            }
+            if(rbg.budgetItems.size()>0)
+                lList.add(rbg);
+        }
+
+
+        rbg = new RecordBudgetGroup();
+        rbg.budgetGroupName = "MONTHLY INCOME";
+        rbg.divider = true;
+        lList.add(rbg);
+
         for(int i=0;i<cl.size();i++)
         {
             rbg = new RecordBudgetGroup();
             rbg.budgetGroupName = cl.get(i).CategoryName;
             rbg.CategoryId = cl.get(i).CategoryId;
             rbg.RecCount = 0;
-            lList.add(rbg);
-    
+
             ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
             RecordBudgetItem rbi;
+            RecordBudget rb2;
             for (int j = 0; j < scl.size(); j++)
             {
-                rbi = new RecordBudgetItem();
-                rbi.budgetItemName = scl.get(j).SubCategoryName;
-                rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                rbi.RecCount = 0;
-                rbg.budgetItems.add(rbi);
+                rb2=null;
+                for (int k=0;k<rb.size();k++)
+                {
+                    if(rb.get(k).SubCategoryId == scl.get(j).SubCategoryId &&
+                            rb.get(k).MonthlyBudget &&
+                            rb.get(k).Amount>0.00f) {
+                        rb2 = rb.get(k);
+                        break;
+                    }
+                }
+                if(rb2!=null) {
+                    rbi = new RecordBudgetItem();
+
+                    for(int l=0;l<rbspent.size();l++)
+                    {
+                        if(rbspent.get(l).SubCategoryId==rb2.SubCategoryId)
+                        {
+                            rbi.spent = rbspent.get(l).Amount;
+                            break;
+                        }
+                    }
+
+                    rbi.budgetItemName = scl.get(j).SubCategoryName;
+                    rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                    rbi.total = rb2.Amount;
+                    rbi.outstanding = rbi.total - rbi.spent;
+                    rbi.RecCount = 0;
+                    rbg.budgetItems.add(rbi);
+                }
             }
+            if(rbg.budgetItems.size()>0)
+                lList.add(rbg);
         }
+
+
+        rbg = new RecordBudgetGroup();
+        rbg.budgetGroupName = "EXTRA EXPENSES";
+        rbg.divider = true;
+        lList.add(rbg);
+
+        for(int i=0;i<cl.size();i++)
+        {
+
+            rbg = new RecordBudgetGroup();
+            rbg.budgetGroupName = cl.get(i).CategoryName;
+            rbg.CategoryId = cl.get(i).CategoryId;
+            rbg.RecCount = 0;
+
+            ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
+            RecordBudgetItem rbi;
+            RecordBudget rb2;
+            for (int j = 0; j < scl.size(); j++)
+            {
+                rb2=null;
+                for (int k=0;k<rb.size();k++)
+                {
+                    if(rb.get(k).SubCategoryId == scl.get(j).SubCategoryId &&
+                            rb.get(k).MonthlyBudget==false &&
+                            rb.get(k).Amount<0.00f) {
+                        rb2 = rb.get(k);
+                        break;
+                    }
+                }
+                if(rb2!=null) {
+                    rbi = new RecordBudgetItem();
+
+                    for(int l=0;l<rbspent.size();l++)
+                    {
+                        if(rbspent.get(l).SubCategoryId==rb2.SubCategoryId)
+                        {
+                            rbi.spent = rbspent.get(l).Amount;
+                            break;
+                        }
+                    }
+
+                    rbi.budgetItemName = scl.get(j).SubCategoryName;
+                    rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                    rbi.total = rb2.Amount;
+                    rbi.RecCount = 0;
+                    rbg.budgetItems.add(rbi);
+                }
+            }
+            if(rbg.budgetItems.size()>0)
+                lList.add(rbg);
+        }
+
+
+        rbg = new RecordBudgetGroup();
+        rbg.budgetGroupName = "EXTRA INCOME";
+        rbg.divider = true;
+        lList.add(rbg);
+
+        for(int i=0;i<cl.size();i++)
+        {
+            rbg = new RecordBudgetGroup();
+            rbg.budgetGroupName = cl.get(i).CategoryName;
+            rbg.CategoryId = cl.get(i).CategoryId;
+            rbg.RecCount = 0;
+
+            ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
+            RecordBudgetItem rbi;
+            RecordBudget rb2;
+            for (int j = 0; j < scl.size(); j++)
+            {
+                rb2=null;
+                for (int k=0;k<rb.size();k++)
+                {
+                    if(rb.get(k).SubCategoryId == scl.get(j).SubCategoryId &&
+                            rb.get(k).MonthlyBudget==false &&
+                            rb.get(k).Amount>0.00f) {
+                        rb2 = rb.get(k);
+                        break;
+                    }
+                }
+                if(rb2!=null) {
+                    rbi = new RecordBudgetItem();
+
+                    for(int l=0;l<rbspent.size();l++)
+                    {
+                        if(rbspent.get(l).SubCategoryId==rb2.SubCategoryId)
+                        {
+                            rbi.spent = rbspent.get(l).Amount;
+                            break;
+                        }
+                    }
+
+                    rbi.budgetItemName = scl.get(j).SubCategoryName;
+                    rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                    rbi.total = rb2.Amount;
+                    rbi.outstanding = rbi.total - rbi.spent;
+                    rbi.RecCount = 0;
+                    rbg.budgetItems.add(rbi);
+                }
+            }
+            if(rbg.budgetItems.size()>0)
+                lList.add(rbg);
+        }
+
         return(lList);
     }
     //endregion

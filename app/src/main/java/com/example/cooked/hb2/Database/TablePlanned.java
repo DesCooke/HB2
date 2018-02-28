@@ -263,7 +263,12 @@ class TablePlanned extends TableBase
                                 RecordBudget lrec =
                                         new RecordBudget(
                                                 Integer.parseInt(cursor.getString(0)),
-                                                Float.parseFloat(cursor.getString(1))
+                                                0,
+                                                Float.parseFloat(cursor.getString(1)),
+                                                "",
+                                                "",
+                                                false,
+                                                null
                                         );
                                 budgetSpent.add(lrec);
                                 cnt++;
@@ -369,6 +374,64 @@ class TablePlanned extends TableBase
         return list;
     }
 
+    public ArrayList<RecordBudget> getBudgetSpent(int pMonth, int pYear)
+    {
+        ArrayList<RecordBudget> budgetSpent = new ArrayList<RecordBudget>();
+        try
+        {
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try
+            {
+                String l_SQL = "SELECT CategoryId, SUM(TxAmount) FROM tblTransaction " +
+                        "WHERE BudgetYear = " + pYear + " AND BudgetMonth = " +
+                        pMonth + " GROUP BY CategoryId ";
+
+                Cursor cursor = db.rawQuery(l_SQL, null);
+
+                if (cursor != null)
+                {
+                    try
+                    {
+                        if (cursor.getCount() > 0)
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                RecordBudget lrec =
+                                        new RecordBudget(
+                                                Integer.parseInt(cursor.getString(0)),
+                                                0,
+                                                Float.parseFloat(cursor.getString(1)),
+                                                "",
+                                                "",
+                                                false,
+                                                null
+                                        );
+                                budgetSpent.add(lrec);
+                            } while (cursor.moveToNext());
+                        }
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+            finally
+            {
+                db.close();
+            }
+
+            return(budgetSpent);
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TablePlanned.getBudgetSpent", e.getMessage());
+        }
+        return (null);
+    }
+
     public Boolean isDue(RecordPlanned prp, Date pDate)
     {
         if(prp.mPlannedType==mPTOneOff)
@@ -459,8 +522,23 @@ class TablePlanned extends TableBase
                             lFound = true;
                         }
                     }
-                    if (!lFound)
-                        budgetFull.add(new RecordBudget(rp.mSubCategoryId, lAmount, rp.mNextDueDate));
+                    if (!lFound) {
+                        Boolean lMonthlyBudget=false;
+                        if(rp.mPlannedType==RecordPlanned.mPTMonthly ||
+                                rp.mPlannedType==RecordPlanned.mPTWeekly)
+                        {
+                            lMonthlyBudget=true;
+                        }
+                        budgetFull.add(
+                                new RecordBudget(
+                                        rp.mSubCategoryId,
+                                        0,
+                                        rp.mMatchingTxAmount,
+                                        rp.mSubCategoryName,
+                                        "",
+                                        lMonthlyBudget,
+                                        rp.mNextDueDate));
+                    }
                 }
             }
         }
