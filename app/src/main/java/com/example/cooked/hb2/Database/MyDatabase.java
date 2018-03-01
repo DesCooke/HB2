@@ -393,12 +393,12 @@ public class MyDatabase extends SQLiteOpenHelper
                 RecordBudget rb2;
                 for (int j = 0; j < scl.size(); j++)
                 {
+                    // ignore if not for the selected category type
                     if (scl.get(j).SubCategoryType.intValue() != pCategoryType.intValue())
                         continue;
     
-                /*
-                Is there a planned transaction for this sub category?
-                 */
+                    
+                    //Is there a planned transaction for this sub category?
                     rb2 = null;
                     for (int k = 0; k < rb.size(); k++)
                     {
@@ -410,9 +410,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     }
                     if (rb2 != null)
                     {
-                    /*
-                    Yes there is - have we spent anything of it?
-                     */
+                        // Yes there is - have we spent anything of it?
                         rbi = new RecordBudgetItem();
                 
                         for (int l = 0; l < rbspent.size(); l++)

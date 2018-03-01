@@ -40,6 +40,7 @@ import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.TransactionUI.TransactionAdapter;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static java.lang.Boolean.FALSE;
 
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     private ImageButton imgLeft;
     private ImageButton imgRight;
     private TextView txtBudgetTitle;
+    private TextView txtSubTitle;
     
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
@@ -156,7 +158,20 @@ public class MainActivity extends AppCompatActivity
             txtBudgetTitle.setText(lTitle);
             
             mDatasetBudget = MyDatabase.MyDB().getBudget(mCurrentBudgetMonth,mCurrentBudgetYear);
-    
+
+            Float lTotal=0.00f;
+            Float lSpent=0.00f;
+            Float lOutstanding=0.00f;
+            for(int i=0;i<mDatasetBudget.size();i++)
+            {
+                lTotal += mDatasetBudget.get(i).total;
+                lSpent += mDatasetBudget.get(i).spent;
+                lOutstanding += mDatasetBudget.get(i).outstanding;
+            }
+            String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f",lTotal, lSpent,
+                    lOutstanding);
+            txtSubTitle.setText(lText);
+
             //get reference of the ExpandableListView
             budgetListView = (ExpandableListView) findViewById(R.id.budgetList);
     
@@ -236,6 +251,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         
         txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
+        txtSubTitle = findViewById(R.id.txtSubTitle);
         
         imgLeft = findViewById(R.id.imgLeft);
         imgLeft.setOnClickListener(new View.OnClickListener()
