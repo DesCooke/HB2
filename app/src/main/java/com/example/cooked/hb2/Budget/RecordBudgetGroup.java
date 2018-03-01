@@ -13,6 +13,9 @@ public class RecordBudgetGroup
     public boolean divider;
     public Integer CategoryId;
     public Integer RecCount;
+    public Float total;
+    public Float spent;
+    public Float outstanding;
 
     public RecordBudgetGroup()
     {
@@ -21,5 +24,8 @@ public class RecordBudgetGroup
         divider=false;
         CategoryId = 0;
         RecCount = 0;
+        total=0.00f;
+        spent = 0.00f;
+        outstanding = 0.00f;
     }
 }

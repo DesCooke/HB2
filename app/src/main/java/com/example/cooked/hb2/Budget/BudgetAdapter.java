@@ -148,13 +148,29 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
     
             LinearLayout cellbudgetgroup = view.findViewById(R.id.cellbudgetgroup);
             ImageView image = view.findViewById(R.id.indicator);
-            
+            TextView budget_summary = view.findViewById(R.id.budget_summary);
+
+            String lText = String.format("£%.2f / £%.2f / £%.2f",headerInfo.total, headerInfo.spent,
+                    headerInfo.outstanding);
+            budget_summary.setText(lText);
+
             TextView heading = (TextView) view.findViewById(R.id.heading);
             heading.setText(headerInfo.budgetGroupName.trim());
-            if (headerInfo.divider)
+            if (headerInfo.budgetGroupName.compareTo("MONTHLY EXPENSES")==0 ||
+                    headerInfo.budgetGroupName.compareTo("MONTHLY INCOME")==0 ||
+                    headerInfo.budgetGroupName.compareTo("EXTRA EXPENSES")==0 ||
+                    headerInfo.budgetGroupName.compareTo("EXTRA INCOME")==0
+                    )
             {
-                //cellbudgetgroup.setBackgroundColor(Color.GREEN);
-                //heading.setTextColor(Color.WHITE);
+                cellbudgetgroup.setBackgroundColor(context.getResources().getColor(R.color.budgetHeader));
+                heading.setTextColor(Color.WHITE);
+                budget_summary.setTextColor(Color.WHITE);
+            }
+            else
+            {
+                cellbudgetgroup.setBackgroundColor(context.getResources().getColor(R.color.budgetSubHeader));
+                heading.setTextColor(Color.BLACK);
+                budget_summary.setTextColor(Color.BLACK);
             }
     if (image != null)
     {

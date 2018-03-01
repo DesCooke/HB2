@@ -29,7 +29,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -333,11 +333,12 @@ public class MyDatabase extends SQLiteOpenHelper
         ArrayList<RecordBudgetGroup> lList = new ArrayList<>();
         
         RecordBudgetGroup rbg;
+        RecordBudgetGroup mrbg;
 
-        rbg = new RecordBudgetGroup();
-        rbg.budgetGroupName = "MONTHLY EXPENSES";
-        rbg.divider = true;
-        lList.add(rbg);
+        mrbg = new RecordBudgetGroup();
+        mrbg.budgetGroupName = "MONTHLY EXPENSES";
+        mrbg.divider = true;
+        lList.add(mrbg);
 
         ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
         ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
@@ -358,33 +359,54 @@ public class MyDatabase extends SQLiteOpenHelper
             RecordBudget rb2;
             for (int j = 0; j < scl.size(); j++)
             {
-                rb2=null;
-                for (int k=0;k<rb.size();k++)
-                {
-                    if(rb.get(k).SubCategoryId == scl.get(j).SubCategoryId &&
-                            rb.get(k).MonthlyBudget &&
-                            rb.get(k).Amount<0.00f) {
-                        rb2 = rb.get(k);
-                        break;
-                    }
-                }
-                if(rb2!=null) {
-                    rbi = new RecordBudgetItem();
-
-                    for(int l=0;l<rbspent.size();l++)
-                    {
-                        if(rbspent.get(l).SubCategoryId==rb2.SubCategoryId)
-                        {
-                            rbi.spent = rbspent.get(l).Amount;
+                if(scl.get(j).SubCategoryType==RecordSubCategory.mSCTMonthlyExpense) {
+                    rb2 = null;
+                    for (int k = 0; k < rb.size(); k++) {
+                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId) {
+                            rb2 = rb.get(k);
                             break;
                         }
                     }
+                    if (rb2 != null) {
+                        rbi = new RecordBudgetItem();
 
-                    rbi.budgetItemName = scl.get(j).SubCategoryName;
-                    rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                    rbi.total = rb2.Amount;
-                    rbi.RecCount = 0;
-                    rbg.budgetItems.add(rbi);
+                        for (int l = 0; l < rbspent.size(); l++) {
+                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId) {
+                                rbi.spent = rbspent.get(l).Amount;
+                                rbg.spent += rbi.spent;
+                                mrbg.spent += rbi.spent;
+                                break;
+                            }
+                        }
+
+                        rbi.budgetItemName = scl.get(j).SubCategoryName;
+                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                        rbi.total = rb2.Amount;
+                        rbg.total += rbi.total;
+                        mrbg.total += rbi.total;
+                        rbi.RecCount = 0;
+                        rbg.budgetItems.add(rbi);
+                    } else {
+                        for (int l = 0; l < rbspent.size(); l++) {
+                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId) {
+                                rb2 = rbspent.get(l);
+                                break;
+                            }
+                        }
+                        if (rb2 != null) {
+
+                            rbi = new RecordBudgetItem();
+
+                            rbi.budgetItemName = scl.get(j).SubCategoryName;
+                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                            rbi.total = 0.00f;
+                            rbi.outstanding = rbi.total - rb2.Amount;
+                            rbg.outstanding += rbi.outstanding;
+                            mrbg.outstanding += rbi.outstanding;
+                            rbi.RecCount = 0;
+                            rbg.budgetItems.add(rbi);
+                        }
+                    }
                 }
             }
             if(rbg.budgetItems.size()>0)
@@ -392,10 +414,10 @@ public class MyDatabase extends SQLiteOpenHelper
         }
 
 
-        rbg = new RecordBudgetGroup();
-        rbg.budgetGroupName = "MONTHLY INCOME";
-        rbg.divider = true;
-        lList.add(rbg);
+        mrbg = new RecordBudgetGroup();
+        mrbg.budgetGroupName = "MONTHLY INCOME";
+        mrbg.divider = true;
+        lList.add(mrbg);
 
         for(int i=0;i<cl.size();i++)
         {
@@ -409,34 +431,57 @@ public class MyDatabase extends SQLiteOpenHelper
             RecordBudget rb2;
             for (int j = 0; j < scl.size(); j++)
             {
-                rb2=null;
-                for (int k=0;k<rb.size();k++)
-                {
-                    if(rb.get(k).SubCategoryId == scl.get(j).SubCategoryId &&
-                            rb.get(k).MonthlyBudget &&
-                            rb.get(k).Amount>0.00f) {
-                        rb2 = rb.get(k);
-                        break;
-                    }
-                }
-                if(rb2!=null) {
-                    rbi = new RecordBudgetItem();
-
-                    for(int l=0;l<rbspent.size();l++)
-                    {
-                        if(rbspent.get(l).SubCategoryId==rb2.SubCategoryId)
-                        {
-                            rbi.spent = rbspent.get(l).Amount;
+                if(scl.get(j).SubCategoryType==RecordSubCategory.mSCTMonthlyIncome) {
+                    rb2 = null;
+                    for (int k = 0; k < rb.size(); k++) {
+                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId) {
+                            rb2 = rb.get(k);
                             break;
                         }
                     }
+                    if (rb2 != null) {
+                        rbi = new RecordBudgetItem();
 
-                    rbi.budgetItemName = scl.get(j).SubCategoryName;
-                    rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                    rbi.total = rb2.Amount;
-                    rbi.outstanding = rbi.total - rbi.spent;
-                    rbi.RecCount = 0;
-                    rbg.budgetItems.add(rbi);
+                        for (int l = 0; l < rbspent.size(); l++) {
+                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId) {
+                                rbi.spent = rbspent.get(l).Amount;
+                                rbg.spent += rbi.spent;
+                                mrbg.spent += rbi.spent;
+                                break;
+                            }
+                        }
+
+                        rbi.budgetItemName = scl.get(j).SubCategoryName;
+                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                        rbi.total = rb2.Amount;
+                        rbg.total += rbi.total;
+                        mrbg.total += rbi.total;
+                        rbi.outstanding = rbi.total - rbi.spent;
+                        rbg.outstanding += rbi.outstanding;
+                        mrbg.outstanding += rbi.outstanding;
+                        rbi.RecCount = 0;
+                        rbg.budgetItems.add(rbi);
+                    } else {
+                        for (int l = 0; l < rbspent.size(); l++) {
+                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId) {
+                                rb2 = rbspent.get(l);
+                                break;
+                            }
+                        }
+                        if (rb2 != null) {
+
+                            rbi = new RecordBudgetItem();
+
+                            rbi.budgetItemName = scl.get(j).SubCategoryName;
+                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                            rbi.total = 0.00f;
+                            rbi.outstanding = rbi.total - rb2.Amount;
+                            rbg.outstanding += rbi.outstanding;
+                            mrbg.outstanding += rbi.outstanding;
+                            rbi.RecCount = 0;
+                            rbg.budgetItems.add(rbi);
+                        }
+                    }
                 }
             }
             if(rbg.budgetItems.size()>0)
@@ -444,10 +489,10 @@ public class MyDatabase extends SQLiteOpenHelper
         }
 
 
-        rbg = new RecordBudgetGroup();
-        rbg.budgetGroupName = "EXTRA EXPENSES";
-        rbg.divider = true;
-        lList.add(rbg);
+        mrbg = new RecordBudgetGroup();
+        mrbg.budgetGroupName = "EXTRA EXPENSES";
+        mrbg.divider = true;
+        lList.add(mrbg);
 
         for(int i=0;i<cl.size();i++)
         {
@@ -462,33 +507,55 @@ public class MyDatabase extends SQLiteOpenHelper
             RecordBudget rb2;
             for (int j = 0; j < scl.size(); j++)
             {
-                rb2=null;
-                for (int k=0;k<rb.size();k++)
-                {
-                    if(rb.get(k).SubCategoryId == scl.get(j).SubCategoryId &&
-                            rb.get(k).MonthlyBudget==false &&
-                            rb.get(k).Amount<0.00f) {
-                        rb2 = rb.get(k);
-                        break;
-                    }
-                }
-                if(rb2!=null) {
-                    rbi = new RecordBudgetItem();
+                if(scl.get(j).SubCategoryType==RecordSubCategory.mSCTExtraExpense) {
 
-                    for(int l=0;l<rbspent.size();l++)
-                    {
-                        if(rbspent.get(l).SubCategoryId==rb2.SubCategoryId)
-                        {
-                            rbi.spent = rbspent.get(l).Amount;
+                    rb2 = null;
+                    for (int k = 0; k < rb.size(); k++) {
+                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId) {
+                            rb2 = rb.get(k);
                             break;
                         }
                     }
+                    if (rb2 != null) {
+                        rbi = new RecordBudgetItem();
 
-                    rbi.budgetItemName = scl.get(j).SubCategoryName;
-                    rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                    rbi.total = rb2.Amount;
-                    rbi.RecCount = 0;
-                    rbg.budgetItems.add(rbi);
+                        for (int l = 0; l < rbspent.size(); l++) {
+                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId) {
+                                rbi.spent = rbspent.get(l).Amount;
+                                rbg.spent += rbi.spent;
+                                mrbg.spent += rbi.spent;
+                                break;
+                            }
+                        }
+
+                        rbi.budgetItemName = scl.get(j).SubCategoryName;
+                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                        rbi.total = rb2.Amount;
+                        rbg.total += rbi.total;
+                        mrbg.total += rbi.total;
+                        rbi.RecCount = 0;
+                        rbg.budgetItems.add(rbi);
+                    } else {
+                        for (int l = 0; l < rbspent.size(); l++) {
+                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId) {
+                                rb2 = rbspent.get(l);
+                                break;
+                            }
+                        }
+                        if (rb2 != null) {
+
+                            rbi = new RecordBudgetItem();
+
+                            rbi.budgetItemName = scl.get(j).SubCategoryName;
+                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                            rbi.total = 0.00f;
+                            rbi.outstanding = rbi.total - rb2.Amount;
+                            rbg.outstanding += rbi.outstanding;
+                            mrbg.outstanding += rbi.outstanding;
+                            rbi.RecCount = 0;
+                            rbg.budgetItems.add(rbi);
+                        }
+                    }
                 }
             }
             if(rbg.budgetItems.size()>0)
@@ -496,10 +563,10 @@ public class MyDatabase extends SQLiteOpenHelper
         }
 
 
-        rbg = new RecordBudgetGroup();
-        rbg.budgetGroupName = "EXTRA INCOME";
-        rbg.divider = true;
-        lList.add(rbg);
+        mrbg = new RecordBudgetGroup();
+        mrbg.budgetGroupName = "EXTRA INCOME";
+        mrbg.divider = true;
+        lList.add(mrbg);
 
         for(int i=0;i<cl.size();i++)
         {
@@ -513,34 +580,57 @@ public class MyDatabase extends SQLiteOpenHelper
             RecordBudget rb2;
             for (int j = 0; j < scl.size(); j++)
             {
-                rb2=null;
-                for (int k=0;k<rb.size();k++)
-                {
-                    if(rb.get(k).SubCategoryId == scl.get(j).SubCategoryId &&
-                            rb.get(k).MonthlyBudget==false &&
-                            rb.get(k).Amount>0.00f) {
-                        rb2 = rb.get(k);
-                        break;
-                    }
-                }
-                if(rb2!=null) {
-                    rbi = new RecordBudgetItem();
-
-                    for(int l=0;l<rbspent.size();l++)
-                    {
-                        if(rbspent.get(l).SubCategoryId==rb2.SubCategoryId)
-                        {
-                            rbi.spent = rbspent.get(l).Amount;
+                if(scl.get(j).SubCategoryType==RecordSubCategory.mSCTExtraIncome) {
+                    rb2 = null;
+                    for (int k = 0; k < rb.size(); k++) {
+                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId) {
+                            rb2 = rb.get(k);
                             break;
                         }
                     }
+                    if (rb2 != null) {
+                        rbi = new RecordBudgetItem();
 
-                    rbi.budgetItemName = scl.get(j).SubCategoryName;
-                    rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                    rbi.total = rb2.Amount;
-                    rbi.outstanding = rbi.total - rbi.spent;
-                    rbi.RecCount = 0;
-                    rbg.budgetItems.add(rbi);
+                        for (int l = 0; l < rbspent.size(); l++) {
+                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId) {
+                                rbi.spent = rbspent.get(l).Amount;
+                                rbg.spent += rbi.spent;
+                                mrbg.spent += rbi.spent;
+                                break;
+                            }
+                        }
+
+                        rbi.budgetItemName = scl.get(j).SubCategoryName;
+                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                        rbi.total = rb2.Amount;
+                        rbg.total += rbi.total;
+                        mrbg.total += rbi.total;
+                        rbi.outstanding = rbi.total - rbi.spent;
+                        rbg.outstanding += rbi.outstanding;
+                        mrbg.outstanding += rbi.outstanding;
+                        rbi.RecCount = 0;
+                        rbg.budgetItems.add(rbi);
+                    } else {
+                        for (int l = 0; l < rbspent.size(); l++) {
+                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId) {
+                                rb2 = rbspent.get(l);
+                                break;
+                            }
+                        }
+                        if (rb2 != null) {
+
+                            rbi = new RecordBudgetItem();
+
+                            rbi.budgetItemName = scl.get(j).SubCategoryName;
+                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                            rbi.total = 0.00f;
+                            rbi.outstanding = rbi.total - rb2.Amount;
+                            rbg.outstanding+= rbi.outstanding;
+                            mrbg.outstanding+= rbi.outstanding;
+                            rbi.RecCount = 0;
+                            rbg.budgetItems.add(rbi);
+                        }
+                    }
                 }
             }
             if(rbg.budgetItems.size()>0)
