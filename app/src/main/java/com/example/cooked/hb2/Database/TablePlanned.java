@@ -493,8 +493,8 @@ class TablePlanned extends TableBase
         {
             RecordPlanned rp = plannedList.get(i);
 
-            if(rp.mStartDate.getTime() < lBudgetEnd.getTime() &&
-                    rp.mEndDate.getTime() > lBudgetStart.getTime()) {
+            if(rp.mStartDate.getTime() <= lBudgetEnd.getTime() &&
+                    rp.mEndDate.getTime() >= lBudgetStart.getTime()) {
                 lCurrentDate = lBudgetStart;
                 Float lAmount = 0.00f;
                 Boolean lAtleastOne = false;
@@ -533,7 +533,7 @@ class TablePlanned extends TableBase
                                 new RecordBudget(
                                         rp.mSubCategoryId,
                                         0,
-                                        rp.mMatchingTxAmount,
+                                        lAmount,
                                         rp.mSubCategoryName,
                                         "",
                                         lMonthlyBudget,
