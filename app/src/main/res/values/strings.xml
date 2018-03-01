@@ -14,4 +14,8 @@
     <string name="android_studio_android_com">android.studio@android.com</string>
     <string name="title_activity_planning">activityPlanning</string>
     <string name="title_activity_planning_item">activityPlanningItem</string>
+    <string name="budget_header_monthly_expenses">MONTHLY EXPENSES</string>
+    <string name="budget_header_monthly_income">MONTHLY INCOME</string>
+    <string name="budget_header_extra_expenses">EXTRA EXPENSES</string>
+    <string name="budget_header_extra_income">EXTRA INCOME</string>
 </resources>

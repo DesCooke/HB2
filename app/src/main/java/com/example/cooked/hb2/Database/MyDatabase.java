@@ -17,7 +17,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
-import static com.example.cooked.hb2.GlobalUtils.DateUtils.myDateUtils;
 
 // derived from SQLiteOpenHelper because it give lots of features like - upgrade/downgrade
 // automatically handles the creation and recreation of the database
@@ -136,37 +135,48 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
-        ArrayList<RecordTransaction> rta = tableTransaction.getTransactionList(sortCode, accountNum);
-
-        if(sortCode.compareTo("11-03-95")==0)
+        try
         {
-            int lBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
-            int lBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
-            ArrayList<RecordTransaction> rba = tablePlanned.getOutstandingList(sortCode, accountNum, lBudgetMonth, lBudgetYear);
-            if(rba!=null)
+            ArrayList<RecordTransaction> rta = tableTransaction.getTransactionList(sortCode, accountNum);
+    
+            if (sortCode.compareTo("11-03-95") == 0)
             {
-                Float lBal=0.00f;
-                if(rta.size()>0) {
-                    lBal = rta.get(0).TxBalance;
+                int lBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+                int lBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+                ArrayList<RecordTransaction> rba = tablePlanned.getOutstandingList(sortCode, accountNum, lBudgetMonth, lBudgetYear);
+                if (rba != null)
+                {
+                    Float lBal = 0.00f;
+                    if (rta.size() > 0)
+                    {
+                        lBal = rta.get(0).TxBalance;
+                    }
+                    for (int i = 0; i < rba.size(); i++)
+                    {
+                        lBal = lBal + rba.get(i).TxAmount;
+                        rba.get(i).TxBalance = lBal;
+                        rta.add(0, rba.get(i));
+                    }
+            
                 }
-                for (int i = 0; i < rba.size(); i++) {
-                    lBal = lBal + rba.get(i).TxAmount;
-                    rba.get(i).TxBalance = lBal;
-                    rta.add(0, rba.get(i));
-                }
-
             }
+    
+            if (rta != null)
+            {
+                for (int i = 0; i < rta.size(); i++)
+                {
+                    RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
+                    if (sc != null)
+                        rta.get(i).SubCategoryName = sc.SubCategoryName;
+                }
+            }
+            return (rta);
         }
-
-        if(rta!=null)
+        catch (Exception e)
         {
-            for(int i=0;i<rta.size();i++) {
-                RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
-                if (sc != null)
-                    rta.get(i).SubCategoryName = sc.SubCategoryName;
-            }
+            ErrorDialog.Show("Error in MyDatabase.getTransactionList", e.getMessage());
         }
-        return(rta);
+        return(null);
     }
 
     public ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode, String lAccountNumber)
@@ -187,14 +197,22 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public RecordTransaction getSingleTransaction(Integer pTxSeqNo)
     {
-        RecordTransaction rt =tableTransaction.getSingleTransaction(pTxSeqNo);
-        if(rt!=null)
+        try
         {
-           RecordSubCategory sc = tableSubCategory.getSubCategory(rt.CategoryId);
-           if(sc!=null)
-               rt.SubCategoryName = sc.SubCategoryName;
+            RecordTransaction rt = tableTransaction.getSingleTransaction(pTxSeqNo);
+            if (rt != null)
+            {
+                RecordSubCategory sc = tableSubCategory.getSubCategory(rt.CategoryId);
+                if (sc != null)
+                    rt.SubCategoryName = sc.SubCategoryName;
+            }
+            return (rt);
         }
-        return(rt);
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getSingleTransaction", e.getMessage());
+        }
+        return(null);
     }
     //endregion
     
@@ -256,46 +274,55 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public int createPlanned(int pTxSeqNo)
     {
-        RecordTransaction rt = tableTransaction.getSingleTransaction(pTxSeqNo);
-        if(rt!=null)
+        try
         {
-            RecordPlanned rp = new RecordPlanned();
-            rp.mPlannedId = 0;
-            rp.mPlannedType = RecordPlanned.mPTMonthly;
-            rp.mPlannedName = rt.TxDescription;
-            rp.mSubCategoryId = rt.CategoryId;
-            rp.mSortCode = rt.TxSortCode;
-            rp.mAccountNo = rt.TxAccountNumber;
-
-            rp.mPlannedDate = rt.TxDate;
-            rp.mPlannedMonth = 0;
-            Calendar c = Calendar.getInstance();
-            c.setTime(rt.TxDate);
-            rp.mPlannedDay = c.get(Calendar.DAY_OF_MONTH);
-            rp.mMonday = false;
-            rp.mTuesday = false;
-            rp.mWednesday = false;
-            rp.mThursday = false;
-            rp.mFriday = false;
-            rp.mSaturday = false;
-            rp.mSunday = false;
-
-            rp.mStartDate = rt.TxDate;
-            rp.mEndDate = dateUtils().StrToDate("31/12/2099");
-
-            rp.mMatchingTxType = rt.TxType;
-            rp.mMatchingTxDescription = rt.TxDescription;
-            rp.mMatchingTxAmount = rt.TxAmount;
-
-            rp.mPlanned = "";
-            rp.mSubCategoryName = rt.SubCategoryName;
-
-            tablePlanned.addPlanned(rp);
-
-            return(rp.mPlannedId);
-
+            RecordTransaction rt = tableTransaction.getSingleTransaction(pTxSeqNo);
+            if (rt != null)
+            {
+                RecordPlanned rp = new RecordPlanned();
+                rp.mPlannedId = 0;
+                rp.mPlannedType = RecordPlanned.mPTMonthly;
+                rp.mPlannedName = rt.TxDescription;
+                rp.mSubCategoryId = rt.CategoryId;
+                rp.mSortCode = rt.TxSortCode;
+                rp.mAccountNo = rt.TxAccountNumber;
+        
+                rp.mPlannedDate = rt.TxDate;
+                rp.mPlannedMonth = 0;
+                Calendar c = Calendar.getInstance();
+                c.setTime(rt.TxDate);
+                rp.mPlannedDay = c.get(Calendar.DAY_OF_MONTH);
+                rp.mMonday = false;
+                rp.mTuesday = false;
+                rp.mWednesday = false;
+                rp.mThursday = false;
+                rp.mFriday = false;
+                rp.mSaturday = false;
+                rp.mSunday = false;
+        
+                rp.mStartDate = rt.TxDate;
+                rp.mEndDate = dateUtils().StrToDate(MainActivity.context.getString(R.string.end_of_time));
+        
+                rp.mMatchingTxType = rt.TxType;
+                rp.mMatchingTxDescription = rt.TxDescription;
+                rp.mMatchingTxAmount = rt.TxAmount;
+        
+                rp.mPlanned = "";
+                rp.mSubCategoryName = rt.SubCategoryName;
+        
+                tablePlanned.addPlanned(rp);
+        
+                return (rp.mPlannedId);
+        
+            }
         }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.createPlanned", e.getMessage());
+        }
+        
         return(0);
+        
     }
 
     public void updatePlanned(RecordPlanned rp)
@@ -305,339 +332,195 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public ArrayList<RecordPlanned> getPlannedList()
     {
-        ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedList();
-        if(rpa!=null)
+        try
         {
-            for(int i=0;i<rpa.size();i++) {
-                RecordSubCategory sc = tableSubCategory.getSubCategory(rpa.get(i).mSubCategoryId);
-                if (sc != null)
-                    rpa.get(i).mSubCategoryName = sc.SubCategoryName;
+            ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedList();
+            if (rpa != null)
+            {
+                for (int i = 0; i < rpa.size(); i++)
+                {
+                    RecordSubCategory sc = tableSubCategory.getSubCategory(rpa.get(i).mSubCategoryId);
+                    if (sc != null)
+                        rpa.get(i).mSubCategoryName = sc.SubCategoryName;
+                }
             }
+            return (rpa);
         }
-        return(rpa);
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getPlannedList", e.getMessage());
+        }
+        return(null);
     }
 
     public RecordPlanned getSinglePlanned(Integer pPlannedId)
     {
-        RecordPlanned rp =tablePlanned.getSinglePlanned(pPlannedId);
-        if(rp!=null) {
-            RecordSubCategory sc = tableSubCategory.getSubCategory(rp.mSubCategoryId);
-            if (sc != null)
-                rp.mSubCategoryName = sc.SubCategoryName;
+        try
+        {
+            RecordPlanned rp = tablePlanned.getSinglePlanned(pPlannedId);
+            if (rp != null)
+            {
+                RecordSubCategory sc = tableSubCategory.getSubCategory(rp.mSubCategoryId);
+                if (sc != null)
+                    rp.mSubCategoryName = sc.SubCategoryName;
+            }
+            return (rp);
         }
-        return(rp);
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getSinglePlanned", e.getMessage());
+        }
+        return(null);
     }
     
+    private void ProcessGroup(ArrayList<RecordCategory> cl, ArrayList<RecordBudget> rb,
+                              ArrayList<RecordBudget> rbspent, RecordBudgetGroup mainGroup,
+                              ArrayList<RecordBudgetGroup> lList, Integer pCategoryType)
+    {
+        try
+        {
+            RecordBudgetGroup rbg;
+    
+            for (int i = 0; i < cl.size(); i++)
+            {
+                rbg = new RecordBudgetGroup();
+                rbg.budgetGroupName = cl.get(i).CategoryName;
+                rbg.CategoryId = cl.get(i).CategoryId;
+                rbg.RecCount = 0;
+        
+                ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
+                RecordBudgetItem rbi;
+                RecordBudget rb2;
+                for (int j = 0; j < scl.size(); j++)
+                {
+                    if (scl.get(j).SubCategoryType.intValue() != pCategoryType.intValue())
+                        continue;
+    
+                /*
+                Is there a planned transaction for this sub category?
+                 */
+                    rb2 = null;
+                    for (int k = 0; k < rb.size(); k++)
+                    {
+                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId)
+                        {
+                            rb2 = rb.get(k);
+                            break;
+                        }
+                    }
+                    if (rb2 != null)
+                    {
+                    /*
+                    Yes there is - have we spent anything of it?
+                     */
+                        rbi = new RecordBudgetItem();
+                
+                        for (int l = 0; l < rbspent.size(); l++)
+                        {
+                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId)
+                            {
+                            /* yes - update spent totals */
+                                rbi.spent = rbspent.get(l).Amount;
+                                rbg.spent += rbi.spent;
+                                mainGroup.spent += rbi.spent;
+                                break;
+                            }
+                        }
+                
+                        rbi.budgetItemName = scl.get(j).SubCategoryName;
+                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                        rbi.total = rb2.Amount;
+                        rbg.total += rbi.total;
+                        mainGroup.total += rbi.total;
+                        rbi.RecCount = 0;
+                        rbg.budgetItems.add(rbi);
+                    } else
+                    {
+                    /*
+                    Nope - unplanned expense
+                     */
+                        for (int l = 0; l < rbspent.size(); l++)
+                        {
+                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId)
+                            {
+                                rb2 = rbspent.get(l);
+                                break;
+                            }
+                        }
+                        if (rb2 != null)
+                        {
+                    
+                            rbi = new RecordBudgetItem();
+                    
+                            rbi.budgetItemName = scl.get(j).SubCategoryName;
+                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                            rbi.total = 0.00f;
+                            rbi.spent = rb2.Amount;
+                            rbi.outstanding = rbi.total - rb2.Amount;
+                            rbg.spent += rb2.Amount;
+                            rbg.outstanding += rbi.outstanding;
+                            mainGroup.spent += rbi.spent;
+                            mainGroup.outstanding += rbi.outstanding;
+                            rbi.RecCount = 0;
+                            rbg.budgetItems.add(rbi);
+                        }
+                    }
+            
+                }
+                if (rbg.budgetItems.size() > 0)
+                    lList.add(rbg);
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.processGroup", e.getMessage());
+        }
+        
+    }
     public ArrayList<RecordBudgetGroup> getBudget(Integer pMonth, Integer pYear)
     {
-        ArrayList<RecordBudgetGroup> lList = new ArrayList<>();
+        try
+        {
+            ArrayList<RecordBudgetGroup> lList = new ArrayList<>();
+    
+            RecordBudgetGroup mrbg;
+    
+            ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
+            ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
+            ArrayList<RecordCategory> cl = tableCategory.getCategoryList();
+    
+            mrbg = new RecordBudgetGroup();
+            mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_monthly_expenses);
+            mrbg.divider = true;
+            lList.add(mrbg);
+            ProcessGroup(cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTMonthlyExpense);
+    
+            mrbg = new RecordBudgetGroup();
+            mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_monthly_income);
+            mrbg.divider = true;
+            lList.add(mrbg);
+            ProcessGroup(cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTMonthlyIncome);
+    
+            mrbg = new RecordBudgetGroup();
+            mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_extra_expenses);
+            mrbg.divider = true;
+            lList.add(mrbg);
+            ProcessGroup(cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTExtraExpense);
+    
+            mrbg = new RecordBudgetGroup();
+            mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_extra_income);
+            mrbg.divider = true;
+            lList.add(mrbg);
+            ProcessGroup(cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTExtraIncome);
+    
+            return (lList);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getbudget", e.getMessage());
+        }
         
-        RecordBudgetGroup rbg;
-        RecordBudgetGroup mrbg;
-
-        mrbg = new RecordBudgetGroup();
-        mrbg.budgetGroupName = "MONTHLY EXPENSES";
-        mrbg.divider = true;
-        lList.add(mrbg);
-
-        ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
-        ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
-
-        ArrayList<RecordCategory> cl = tableCategory.getCategoryList();
-
-
-        for(int i=0;i<cl.size();i++)
-        {
-
-            rbg = new RecordBudgetGroup();
-            rbg.budgetGroupName = cl.get(i).CategoryName;
-            rbg.CategoryId = cl.get(i).CategoryId;
-            rbg.RecCount = 0;
-
-            ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
-            RecordBudgetItem rbi;
-            RecordBudget rb2;
-            for (int j = 0; j < scl.size(); j++)
-            {
-                if(scl.get(j).SubCategoryType==RecordSubCategory.mSCTMonthlyExpense) {
-                    rb2 = null;
-                    for (int k = 0; k < rb.size(); k++) {
-                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId) {
-                            rb2 = rb.get(k);
-                            break;
-                        }
-                    }
-                    if (rb2 != null) {
-                        rbi = new RecordBudgetItem();
-
-                        for (int l = 0; l < rbspent.size(); l++) {
-                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId) {
-                                rbi.spent = rbspent.get(l).Amount;
-                                rbg.spent += rbi.spent;
-                                mrbg.spent += rbi.spent;
-                                break;
-                            }
-                        }
-
-                        rbi.budgetItemName = scl.get(j).SubCategoryName;
-                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                        rbi.total = rb2.Amount;
-                        rbg.total += rbi.total;
-                        mrbg.total += rbi.total;
-                        rbi.RecCount = 0;
-                        rbg.budgetItems.add(rbi);
-                    } else {
-                        for (int l = 0; l < rbspent.size(); l++) {
-                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId) {
-                                rb2 = rbspent.get(l);
-                                break;
-                            }
-                        }
-                        if (rb2 != null) {
-
-                            rbi = new RecordBudgetItem();
-
-                            rbi.budgetItemName = scl.get(j).SubCategoryName;
-                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                            rbi.total = 0.00f;
-                            rbi.outstanding = rbi.total - rb2.Amount;
-                            rbg.outstanding += rbi.outstanding;
-                            mrbg.outstanding += rbi.outstanding;
-                            rbi.RecCount = 0;
-                            rbg.budgetItems.add(rbi);
-                        }
-                    }
-                }
-            }
-            if(rbg.budgetItems.size()>0)
-                lList.add(rbg);
-        }
-
-
-        mrbg = new RecordBudgetGroup();
-        mrbg.budgetGroupName = "MONTHLY INCOME";
-        mrbg.divider = true;
-        lList.add(mrbg);
-
-        for(int i=0;i<cl.size();i++)
-        {
-            rbg = new RecordBudgetGroup();
-            rbg.budgetGroupName = cl.get(i).CategoryName;
-            rbg.CategoryId = cl.get(i).CategoryId;
-            rbg.RecCount = 0;
-
-            ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
-            RecordBudgetItem rbi;
-            RecordBudget rb2;
-            for (int j = 0; j < scl.size(); j++)
-            {
-                if(scl.get(j).SubCategoryType==RecordSubCategory.mSCTMonthlyIncome) {
-                    rb2 = null;
-                    for (int k = 0; k < rb.size(); k++) {
-                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId) {
-                            rb2 = rb.get(k);
-                            break;
-                        }
-                    }
-                    if (rb2 != null) {
-                        rbi = new RecordBudgetItem();
-
-                        for (int l = 0; l < rbspent.size(); l++) {
-                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId) {
-                                rbi.spent = rbspent.get(l).Amount;
-                                rbg.spent += rbi.spent;
-                                mrbg.spent += rbi.spent;
-                                break;
-                            }
-                        }
-
-                        rbi.budgetItemName = scl.get(j).SubCategoryName;
-                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                        rbi.total = rb2.Amount;
-                        rbg.total += rbi.total;
-                        mrbg.total += rbi.total;
-                        rbi.outstanding = rbi.total - rbi.spent;
-                        rbg.outstanding += rbi.outstanding;
-                        mrbg.outstanding += rbi.outstanding;
-                        rbi.RecCount = 0;
-                        rbg.budgetItems.add(rbi);
-                    } else {
-                        for (int l = 0; l < rbspent.size(); l++) {
-                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId) {
-                                rb2 = rbspent.get(l);
-                                break;
-                            }
-                        }
-                        if (rb2 != null) {
-
-                            rbi = new RecordBudgetItem();
-
-                            rbi.budgetItemName = scl.get(j).SubCategoryName;
-                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                            rbi.total = 0.00f;
-                            rbi.outstanding = rbi.total - rb2.Amount;
-                            rbg.outstanding += rbi.outstanding;
-                            mrbg.outstanding += rbi.outstanding;
-                            rbi.RecCount = 0;
-                            rbg.budgetItems.add(rbi);
-                        }
-                    }
-                }
-            }
-            if(rbg.budgetItems.size()>0)
-                lList.add(rbg);
-        }
-
-
-        mrbg = new RecordBudgetGroup();
-        mrbg.budgetGroupName = "EXTRA EXPENSES";
-        mrbg.divider = true;
-        lList.add(mrbg);
-
-        for(int i=0;i<cl.size();i++)
-        {
-
-            rbg = new RecordBudgetGroup();
-            rbg.budgetGroupName = cl.get(i).CategoryName;
-            rbg.CategoryId = cl.get(i).CategoryId;
-            rbg.RecCount = 0;
-
-            ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
-            RecordBudgetItem rbi;
-            RecordBudget rb2;
-            for (int j = 0; j < scl.size(); j++)
-            {
-                if(scl.get(j).SubCategoryType==RecordSubCategory.mSCTExtraExpense) {
-
-                    rb2 = null;
-                    for (int k = 0; k < rb.size(); k++) {
-                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId) {
-                            rb2 = rb.get(k);
-                            break;
-                        }
-                    }
-                    if (rb2 != null) {
-                        rbi = new RecordBudgetItem();
-
-                        for (int l = 0; l < rbspent.size(); l++) {
-                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId) {
-                                rbi.spent = rbspent.get(l).Amount;
-                                rbg.spent += rbi.spent;
-                                mrbg.spent += rbi.spent;
-                                break;
-                            }
-                        }
-
-                        rbi.budgetItemName = scl.get(j).SubCategoryName;
-                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                        rbi.total = rb2.Amount;
-                        rbg.total += rbi.total;
-                        mrbg.total += rbi.total;
-                        rbi.RecCount = 0;
-                        rbg.budgetItems.add(rbi);
-                    } else {
-                        for (int l = 0; l < rbspent.size(); l++) {
-                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId) {
-                                rb2 = rbspent.get(l);
-                                break;
-                            }
-                        }
-                        if (rb2 != null) {
-
-                            rbi = new RecordBudgetItem();
-
-                            rbi.budgetItemName = scl.get(j).SubCategoryName;
-                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                            rbi.total = 0.00f;
-                            rbi.outstanding = rbi.total - rb2.Amount;
-                            rbg.outstanding += rbi.outstanding;
-                            mrbg.outstanding += rbi.outstanding;
-                            rbi.RecCount = 0;
-                            rbg.budgetItems.add(rbi);
-                        }
-                    }
-                }
-            }
-            if(rbg.budgetItems.size()>0)
-                lList.add(rbg);
-        }
-
-
-        mrbg = new RecordBudgetGroup();
-        mrbg.budgetGroupName = "EXTRA INCOME";
-        mrbg.divider = true;
-        lList.add(mrbg);
-
-        for(int i=0;i<cl.size();i++)
-        {
-            rbg = new RecordBudgetGroup();
-            rbg.budgetGroupName = cl.get(i).CategoryName;
-            rbg.CategoryId = cl.get(i).CategoryId;
-            rbg.RecCount = 0;
-
-            ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
-            RecordBudgetItem rbi;
-            RecordBudget rb2;
-            for (int j = 0; j < scl.size(); j++)
-            {
-                if(scl.get(j).SubCategoryType==RecordSubCategory.mSCTExtraIncome) {
-                    rb2 = null;
-                    for (int k = 0; k < rb.size(); k++) {
-                        if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId) {
-                            rb2 = rb.get(k);
-                            break;
-                        }
-                    }
-                    if (rb2 != null) {
-                        rbi = new RecordBudgetItem();
-
-                        for (int l = 0; l < rbspent.size(); l++) {
-                            if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId) {
-                                rbi.spent = rbspent.get(l).Amount;
-                                rbg.spent += rbi.spent;
-                                mrbg.spent += rbi.spent;
-                                break;
-                            }
-                        }
-
-                        rbi.budgetItemName = scl.get(j).SubCategoryName;
-                        rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                        rbi.total = rb2.Amount;
-                        rbg.total += rbi.total;
-                        mrbg.total += rbi.total;
-                        rbi.outstanding = rbi.total - rbi.spent;
-                        rbg.outstanding += rbi.outstanding;
-                        mrbg.outstanding += rbi.outstanding;
-                        rbi.RecCount = 0;
-                        rbg.budgetItems.add(rbi);
-                    } else {
-                        for (int l = 0; l < rbspent.size(); l++) {
-                            if (rbspent.get(l).SubCategoryId == scl.get(j).SubCategoryId) {
-                                rb2 = rbspent.get(l);
-                                break;
-                            }
-                        }
-                        if (rb2 != null) {
-
-                            rbi = new RecordBudgetItem();
-
-                            rbi.budgetItemName = scl.get(j).SubCategoryName;
-                            rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                            rbi.total = 0.00f;
-                            rbi.outstanding = rbi.total - rb2.Amount;
-                            rbg.outstanding+= rbi.outstanding;
-                            mrbg.outstanding+= rbi.outstanding;
-                            rbi.RecCount = 0;
-                            rbg.budgetItems.add(rbi);
-                        }
-                    }
-                }
-            }
-            if(rbg.budgetItems.size()>0)
-                lList.add(rbg);
-        }
-
-        return(lList);
+        return(null);
     }
     //endregion
   

@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordButton;
 import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyApiSpecific;
 import com.example.cooked.hb2.GlobalUtils.MyDownloads;
@@ -77,7 +79,13 @@ public class MainActivity extends AppCompatActivity
     private TransactionAdapter mTransactionAdapterCash;
     private Toolbar toolbar;
     private FloatingActionButton fab;
-
+    private ImageButton imgLeft;
+    private ImageButton imgRight;
+    private TextView txtBudgetTitle;
+    
+    private Integer mCurrentBudgetYear;
+    private Integer mCurrentBudgetMonth;
+    
     private void setupStatics(Context lcontext) {
         context = lcontext;
         MyResources.setContext(context);
@@ -101,6 +109,9 @@ public class MainActivity extends AppCompatActivity
 
             setupActivity();
 
+            mCurrentBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+            mCurrentBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+            
             setupBudget();
             
             setupTabs();
@@ -114,11 +125,37 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void IncreaseBudgetPeriod(View view)
+    {
+        mCurrentBudgetMonth++;
+        if(mCurrentBudgetMonth>12)
+        {
+            mCurrentBudgetMonth=1;
+            mCurrentBudgetYear++;
+        }
+        setupBudget();
+    }
+    
+    private void DecreaseBudgetPeriod(View view)
+    {
+        mCurrentBudgetMonth--;
+        if(mCurrentBudgetMonth<1)
+        {
+            mCurrentBudgetMonth=12;
+            mCurrentBudgetYear--;
+        }
+        setupBudget();
+    }
+
     private void setupBudget()
     {
         try
         {
-            mDatasetBudget = MyDatabase.MyDB().getBudget(1,2018);
+            String lTitle = DateUtils.dateUtils().MonthAsText(mCurrentBudgetMonth) + " / " +
+                mCurrentBudgetYear.toString();
+            txtBudgetTitle.setText(lTitle);
+            
+            mDatasetBudget = MyDatabase.MyDB().getBudget(mCurrentBudgetMonth,mCurrentBudgetYear);
     
             //get reference of the ExpandableListView
             budgetListView = (ExpandableListView) findViewById(R.id.budgetList);
@@ -197,6 +234,29 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        
+        txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
+        
+        imgLeft = findViewById(R.id.imgLeft);
+        imgLeft.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                DecreaseBudgetPeriod(view);
+            }
+        });
+
+        imgRight = findViewById(R.id.imgRight);
+        imgRight.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                IncreaseBudgetPeriod(view);
+            }
+        });
+        
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener()

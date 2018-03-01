@@ -2,12 +2,11 @@ package com.example.cooked.hb2.Budget;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +15,7 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class BudgetAdapter extends BaseExpandableListAdapter {
@@ -60,18 +60,13 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
         {
             RecordBudgetItem detailInfo = (RecordBudgetItem) getChild(groupPosition, childPosition);
             if (view == null)
-            {
-                LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = infalInflater.inflate(R.layout.budgetitem, null);
-            }
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.budgetitem, parent, false);
 
-//        TextView sequence = (TextView) view.findViewById(R.id.sequence);
-            //      sequence.setText(detailInfo.getSequence().trim() + ". ");
-            TextView childItem = (TextView) view.findViewById(R.id.childItem);
+            TextView childItem = view.findViewById(R.id.childItem);
             childItem.setText(detailInfo.budgetItemName.trim());
             TextView budget_summary = view.findViewById(R.id.budget_summary);
 
-            String lText = String.format("£%.2f / £%.2f / £%.2f",detailInfo.total, detailInfo.spent,
+            String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f",detailInfo.total, detailInfo.spent,
                     detailInfo.outstanding);
             budget_summary.setText(lText);
     
@@ -141,54 +136,50 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
         {
             RecordBudgetGroup headerInfo = (RecordBudgetGroup) getGroup(groupPosition);
             if (view == null)
-            {
-                LayoutInflater inf = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inf.inflate(R.layout.budgetgroup, null);
-            }
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.budgetgroup, parent, false);
     
             LinearLayout cellbudgetgroup = view.findViewById(R.id.cellbudgetgroup);
             ImageView image = view.findViewById(R.id.indicator);
             TextView budget_summary = view.findViewById(R.id.budget_summary);
 
-            String lText = String.format("£%.2f / £%.2f / £%.2f",headerInfo.total, headerInfo.spent,
+            String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f",headerInfo.total, headerInfo.spent,
                     headerInfo.outstanding);
             budget_summary.setText(lText);
 
-            TextView heading = (TextView) view.findViewById(R.id.heading);
+            TextView heading = view.findViewById(R.id.heading);
             heading.setText(headerInfo.budgetGroupName.trim());
-            if (headerInfo.budgetGroupName.compareTo("MONTHLY EXPENSES")==0 ||
-                    headerInfo.budgetGroupName.compareTo("MONTHLY INCOME")==0 ||
-                    headerInfo.budgetGroupName.compareTo("EXTRA EXPENSES")==0 ||
-                    headerInfo.budgetGroupName.compareTo("EXTRA INCOME")==0
+            if (headerInfo.budgetGroupName.compareTo(context.getResources().getString(R.string.budget_header_monthly_expenses))==0 ||
+                    headerInfo.budgetGroupName.compareTo(context.getResources().getString(R.string.budget_header_monthly_income))==0 ||
+                    headerInfo.budgetGroupName.compareTo(context.getResources().getString(R.string.budget_header_extra_expenses))==0 ||
+                    headerInfo.budgetGroupName.compareTo(context.getResources().getString(R.string.budget_header_extra_income))==0
                     )
             {
-                cellbudgetgroup.setBackgroundColor(context.getResources().getColor(R.color.budgetHeader));
+                cellbudgetgroup.setBackgroundColor(ContextCompat.getColor(context, R.color.budgetHeader));
                 heading.setTextColor(Color.WHITE);
                 budget_summary.setTextColor(Color.WHITE);
             }
             else
             {
-                cellbudgetgroup.setBackgroundColor(context.getResources().getColor(R.color.budgetSubHeader));
+                cellbudgetgroup.setBackgroundColor(ContextCompat.getColor(context, R.color.budgetSubHeader));
                 heading.setTextColor(Color.BLACK);
                 budget_summary.setTextColor(Color.BLACK);
             }
     if (image != null)
     {
-        ImageView indicator = (ImageView) image;
         if (getChildrenCount(groupPosition) == 0)
         {
-            indicator.setVisibility(View.INVISIBLE);
+            image.setVisibility(View.INVISIBLE);
         }
         else
         {
-            indicator.setVisibility(View.VISIBLE);
+            image.setVisibility(View.VISIBLE);
             if(isLastChild)
             {
-                indicator.setImageResource(R.drawable.expanded);
+                image.setImageResource(R.drawable.expanded);
             }
             else
             {
-                indicator.setImageResource(R.drawable.collapsed);
+                image.setImageResource(R.drawable.collapsed);
             }
             
         }
