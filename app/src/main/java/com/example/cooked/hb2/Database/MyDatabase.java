@@ -133,7 +133,7 @@ public class MyDatabase extends SQLiteOpenHelper
         tableTransaction.updateTransaction(rt);
     }
 
-    public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
+    public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum, boolean showPlanned)
     {
         try
         {
@@ -141,23 +141,25 @@ public class MyDatabase extends SQLiteOpenHelper
     
             if (sortCode.compareTo("11-03-95") == 0)
             {
-                int lBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
-                int lBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
-                ArrayList<RecordTransaction> rba = tablePlanned.getOutstandingList(sortCode, accountNum, lBudgetMonth, lBudgetYear);
-                if (rba != null)
+                if(showPlanned)
                 {
-                    Float lBal = 0.00f;
-                    if (rta.size() > 0)
+                    int lBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+                    int lBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+                    ArrayList<RecordTransaction> rba = tablePlanned.getOutstandingList(sortCode, accountNum, lBudgetMonth, lBudgetYear);
+                    if (rba != null)
                     {
-                        lBal = rta.get(0).TxBalance;
+                        Float lBal = 0.00f;
+                        if (rta.size() > 0)
+                        {
+                            lBal = rta.get(0).TxBalance;
+                        }
+                        for (int i = 0; i < rba.size(); i++)
+                        {
+                            lBal = lBal + rba.get(i).TxAmount;
+                            rba.get(i).TxBalance = lBal;
+                            rta.add(0, rba.get(i));
+                        }
                     }
-                    for (int i = 0; i < rba.size(); i++)
-                    {
-                        lBal = lBal + rba.get(i).TxAmount;
-                        rba.get(i).TxBalance = lBal;
-                        rta.add(0, rba.get(i));
-                    }
-            
                 }
             }
     
@@ -412,6 +414,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     {
                         // Yes there is - have we spent anything of it?
                         rbi = new RecordBudgetItem();
+                        rbi.spent = 0.00f;
                 
                         for (int l = 0; l < rbspent.size(); l++)
                         {
@@ -428,8 +431,14 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.budgetItemName = scl.get(j).SubCategoryName;
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.total = rb2.Amount;
+                        rbi.outstanding = rbi.total - rbi.spent;
+                        
                         rbg.total += rbi.total;
+                        rbg.outstanding += rbi.outstanding;
+
                         mainGroup.total += rbi.total;
+                        mainGroup.outstanding += rbi.outstanding;
+
                         rbi.RecCount = 0;
                         rbg.budgetItems.add(rbi);
                     } else
@@ -452,13 +461,18 @@ public class MyDatabase extends SQLiteOpenHelper
                     
                             rbi.budgetItemName = scl.get(j).SubCategoryName;
                             rbi.SubCategoryId = scl.get(j).SubCategoryId;
-                            rbi.total = 0.00f;
+                            rbi.total = rb2.Amount;
                             rbi.spent = rb2.Amount;
                             rbi.outstanding = rbi.total - rb2.Amount;
-                            rbg.spent += rb2.Amount;
+                            
+                            rbg.total += rbi.total;
+                            rbg.spent += rbi.total;
                             rbg.outstanding += rbi.outstanding;
+                            
+                            mainGroup.total += rbi.total;
                             mainGroup.spent += rbi.spent;
                             mainGroup.outstanding += rbi.outstanding;
+                            
                             rbi.RecCount = 0;
                             rbg.budgetItems.add(rbi);
                         }

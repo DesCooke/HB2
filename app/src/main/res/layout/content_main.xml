@@ -67,6 +67,12 @@
                         android:gravity="center_vertical|center_horizontal"
                         android:text="Dashboard"
                         android:textSize="18sp" />
+
+                    <include
+                        layout="@layout/dashboard_budget_summary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -76,20 +82,11 @@
                     android:orientation="vertical"
                     android:text="Current Account">
 
-                    <TextView
-                        android:id="@+id/textView2"
+                    <include
+                        layout="@layout/content_tab_current"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="Current Account"
-                        android:textSize="18sp" />
+                        android:layout_height="match_parent" />
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/transactionListCurrent"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:layout_editor_absoluteX="8dp"
-                        tools:layout_editor_absoluteY="8dp" />
                 </LinearLayout>
 
                 <LinearLayout

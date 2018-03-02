@@ -3,6 +3,7 @@ package com.example.cooked.hb2;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
@@ -45,9 +47,17 @@ import java.util.Locale;
 import static java.lang.Boolean.FALSE;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+    implements NavigationView.OnNavigationItemSelectedListener
+{
     public static Context context;
-
+    
+    private final String KEY_RECYCLER_STATE_BUTTON = "recycler_state_button";
+    private final String KEY_RECYCLER_STATE_CURRENT = "recycler_state_current";
+    private final String KEY_RECYCLER_STATE_GENERAL = "recycler_state_general";
+    private final String KEY_RECYCLER_STATE_LONGTERM = "recycler_state_longterm";
+    private final String KEY_RECYCLER_STATE_FAMILY = "recycler_state_family";
+    private final String KEY_RECYCLER_STATE_CASH = "recycler_state_cash";
+    
     private RecyclerView mTransactionListButton;
     private RecyclerView mTransactionListCurrent;
     private RecyclerView mTransactionListGeneral;
@@ -55,7 +65,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mTransactionListFamily;
     private RecyclerView mTransactionListCash;
     private ExpandableListView budgetListView;
-
+    
     private ArrayList<RecordBudgetGroup> mDatasetBudget;
     private ArrayList<RecordButton> mDatasetButton;
     private ArrayList<RecordTransaction> mDatasetCurrent;
@@ -71,6 +81,13 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView.LayoutManager mLayoutManagerFamily;
     private RecyclerView.LayoutManager mLayoutManagerCash;
     
+    private Bundle mButtonViewState;
+    private Bundle mCurrentViewState;
+    private Bundle mGeneralViewState;
+    private Bundle mLongTermViewState;
+    private Bundle mFamilyViewState;
+    private Bundle mCashViewState;
+    
     private BudgetAdapter budgetAdapter;
     private ImageAdapter mTransactionAdapterButton;
     private TransactionAdapter mTransactionAdapterCurrent;
@@ -85,54 +102,69 @@ public class MainActivity extends AppCompatActivity
     private TextView txtBudgetTitle;
     private TextView txtSubTitle;
     
+    private Switch sw_show_planned;
+    
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
     
-    private void setupStatics(Context lcontext) {
+    private TextView lblMonthlyExpense;
+    private TextView lblMonthlyIncome;
+    private TextView lblMonthlyTotal;
+    private TextView lblExtraExpense;
+    private TextView lblExtraIncome;
+    private TextView lblExtraTotal;
+    private TextView lblBudgetTotal;
+    
+    private void setupStatics(Context lcontext)
+    {
         context = lcontext;
         MyResources.setContext(context);
         MyApiSpecific.setContext(context);
     }
-
+    
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-
+        
         setupStatics(this);
-
+        
         if (!MyPermission.checkIfAlreadyHavePermission(this))
             MyPermission.requestForSpecificPermission(this);
-        try {
+        try
+        {
             MyLog.WriteLogMessage("Starting");
-
+            
             if (MyDownloads.MyDL().CollectFiles() == FALSE)
                 return;
-
+            
             setupActivity();
-
+            
             mCurrentBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
             mCurrentBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
             
             setupBudget();
             
             setupTabs();
-
+            
             setupNavigationSideBar();
-
+            
             setupRecyclerViews();
             
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             ErrorDialog.Show("Error in MainActivity::onCreate", e.getMessage());
         }
     }
-
+    
     private void IncreaseBudgetPeriod(View view)
     {
         mCurrentBudgetMonth++;
-        if(mCurrentBudgetMonth>12)
+        if (mCurrentBudgetMonth > 12)
         {
-            mCurrentBudgetMonth=1;
+            mCurrentBudgetMonth = 1;
             mCurrentBudgetYear++;
         }
         setupBudget();
@@ -141,14 +173,14 @@ public class MainActivity extends AppCompatActivity
     private void DecreaseBudgetPeriod(View view)
     {
         mCurrentBudgetMonth--;
-        if(mCurrentBudgetMonth<1)
+        if (mCurrentBudgetMonth < 1)
         {
-            mCurrentBudgetMonth=12;
+            mCurrentBudgetMonth = 12;
             mCurrentBudgetYear--;
         }
         setupBudget();
     }
-
+    
     private void setupBudget()
     {
         try
@@ -157,43 +189,70 @@ public class MainActivity extends AppCompatActivity
                 mCurrentBudgetYear.toString();
             txtBudgetTitle.setText(lTitle);
             
-            mDatasetBudget = MyDatabase.MyDB().getBudget(mCurrentBudgetMonth,mCurrentBudgetYear);
-
-            Float lTotal=0.00f;
-            Float lSpent=0.00f;
-            Float lOutstanding=0.00f;
-            for(int i=0;i<mDatasetBudget.size();i++)
+            mDatasetBudget = MyDatabase.MyDB().getBudget(mCurrentBudgetMonth, mCurrentBudgetYear);
+            
+            Float lTotal = 0.00f;
+            Float lSpent = 0.00f;
+            Float lOutstanding = 0.00f;
+            
+            Float l_BCIncome = 0.00f;
+            Float l_BCExpense = 0.00f;
+            Float l_BCEIncome = 0.00f;
+            Float l_BCEExpense = 0.00f;
+            for (int i = 0; i < mDatasetBudget.size(); i++)
             {
-                lTotal += mDatasetBudget.get(i).total;
-                lSpent += mDatasetBudget.get(i).spent;
-                lOutstanding += mDatasetBudget.get(i).outstanding;
+                RecordBudgetGroup rbg = mDatasetBudget.get(i);
+                lTotal += rbg.total;
+                lSpent += rbg.spent;
+                lOutstanding += rbg.outstanding;
+                
+                if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_monthly_income)) == 0)
+                    l_BCIncome = rbg.total;
+                if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_monthly_expenses)) == 0)
+                    l_BCExpense = rbg.total * -1;
+                if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_extra_income)) == 0)
+                    l_BCEIncome = rbg.total;
+                if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_extra_expenses)) == 0)
+                    l_BCEExpense = rbg.total * -1;
+                
             }
-            String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f",lTotal, lSpent,
-                    lOutstanding);
+            String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f", lTotal, lSpent,
+                lOutstanding);
             txtSubTitle.setText(lText);
-
+            
+            lblMonthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCIncome));
+            lblMonthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCExpense));
+            lblMonthlyTotal.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCIncome-l_BCExpense));
+            
+            lblExtraIncome.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCEIncome));
+            lblExtraExpense.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCEExpense));
+            lblExtraTotal.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCEIncome - l_BCEExpense));
+            
+            lblBudgetTotal.setText(String.format(Locale.ENGLISH, "£%.2f",
+                (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense)));
+            
             //get reference of the ExpandableListView
             budgetListView = (ExpandableListView) findViewById(R.id.budgetList);
-    
+            
             // create the adapter by passing your ArrayList data
             budgetAdapter = new BudgetAdapter(MainActivity.this, mDatasetBudget);
-    
+            
             if (budgetAdapter == null)
             {
                 ErrorDialog.Show("budgetAdapter is null", "budgetAdapter is null");
             }
-    
+            
             if (budgetListView == null)
             {
                 ErrorDialog.Show("budgetListView is null", "budgetListView is null");
             }
-    
+            
             // attach the adapter to the expandable list view
             budgetListView.setAdapter(budgetAdapter);
-    
+            
             //expand all the Groups
             collapseAll();
-    
+            
             // setOnChildClickListener listener for child row click
             budgetListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
             {
@@ -221,31 +280,44 @@ public class MainActivity extends AppCompatActivity
                     //display it or do something with it
                     Toast.makeText(getBaseContext(), " Header is :: " + budgetGroupInfo.budgetGroupName,
                         Toast.LENGTH_LONG).show();
-            
+                    
                     return false;
                 }
             });
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             ErrorDialog.Show("Error in MainActivity::setupBudget", e.getMessage());
         }
     }
     
-//method to expand all groups
-    private void expandAll() {
+    //method to expand all groups
+    private void expandAll()
+    {
         int count = budgetAdapter.getGroupCount();
-        for (int i = 0; i < count; i++){
+        for (int i = 0; i < count; i++)
+        {
             budgetListView.expandGroup(i);
         }
     }
-
+    
     //method to collapse all groups
-    private void collapseAll() {
+    private void collapseAll()
+    {
         int count = budgetAdapter.getGroupCount();
-        for (int i = 0; i < count; i++){
+        for (int i = 0; i < count; i++)
+        {
             budgetListView.collapseGroup(i);
         }
     }
-    private void setupActivity() {
+    
+    private void ToggleShowPlanned(View view)
+    {
+        setupRecyclerViews();
+    }
+    
+    private void setupActivity()
+    {
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -262,7 +334,7 @@ public class MainActivity extends AppCompatActivity
                 DecreaseBudgetPeriod(view);
             }
         });
-
+        
         imgRight = findViewById(R.id.imgRight);
         imgRight.setOnClickListener(new View.OnClickListener()
         {
@@ -270,6 +342,24 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view)
             {
                 IncreaseBudgetPeriod(view);
+            }
+        });
+        
+        lblMonthlyExpense = findViewById(R.id.lblMonthlyExpense);
+        lblMonthlyIncome = findViewById(R.id.lblMonthlyIncome);
+        lblMonthlyTotal = findViewById(R.id.lblMonthlyTotal);
+        lblExtraExpense = findViewById(R.id.lblExtraExpense);
+        lblExtraIncome = findViewById(R.id.lblExtraIncome);
+        lblExtraTotal = findViewById(R.id.lblExtraTotal);
+        lblBudgetTotal = findViewById(R.id.lblBudgetTotal);
+        
+        sw_show_planned = findViewById(R.id.sw_show_planned);
+        sw_show_planned.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                ToggleShowPlanned(view);
             }
         });
         
@@ -286,119 +376,138 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-
-    private void setupTabs() {
+    
+    private void setupTabs()
+    {
         TabHost host = (TabHost) findViewById(R.id.mainTabHost);
         host.setup();
-
+        
         TabHost.TabSpec spec = host.newTabSpec("Dashboard");
         spec.setContent(R.id.tabDasboard);
         spec.setIndicator("Dashboard");
         host.addTab(spec);
-
+        
         spec = host.newTabSpec("Current");
         spec.setContent(R.id.tabCurrentAccount);
         spec.setIndicator("Current");
         host.addTab(spec);
-
+        
         spec = host.newTabSpec("Cash");
         spec.setContent(R.id.tabCashAccount);
         spec.setIndicator("Cash");
         host.addTab(spec);
-
+        
         spec = host.newTabSpec("Budget");
         spec.setContent(R.id.tabBudget);
         spec.setIndicator("Budget");
         host.addTab(spec);
-
+        
         spec = host.newTabSpec("General");
         spec.setContent(R.id.tabGeneralSavings);
         spec.setIndicator("General");
         host.addTab(spec);
-
+        
         spec = host.newTabSpec("Long Term");
         spec.setContent(R.id.tabLongTermSavings);
         spec.setIndicator("Long Term");
         host.addTab(spec);
-
+        
         spec = host.newTabSpec("Family");
         spec.setContent(R.id.tabFamilySavings);
         spec.setIndicator("Family");
         host.addTab(spec);
-
-        host.setOnTabChangedListener(new TabHost.OnTabChangeListener(){
+        
+        host.setOnTabChangedListener(new TabHost.OnTabChangeListener()
+        {
             @Override
-            public void onTabChanged(String tabId) {
-                if(tabId.compareTo("Cash")==0)
+            public void onTabChanged(String tabId)
+            {
+                if (tabId.compareTo("Cash") == 0)
                 {
                     fab.setVisibility(View.VISIBLE);
-                }
-                else
+                } else
                 {
                     fab.setVisibility(View.GONE);
                 }
-            }});
+            }
+        });
     }
-
+    
     @Override
-    public void onBackPressed() {
-        try {
+    public void onBackPressed()
+    {
+        try
+        {
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
+            if (drawer.isDrawerOpen(GravityCompat.START))
+            {
                 drawer.closeDrawer(GravityCompat.START);
-            } else {
+            } else
+            {
                 super.onBackPressed();
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             ErrorDialog.Show("Error in MainActivity::onBackPressed", e.getMessage());
         }
     }
-
-    private void setupNavigationSideBar() {
+    
+    private void setupNavigationSideBar()
+    {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
+        
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
-
+        
     }
-
+    
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        try {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        try
+        {
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.main, menu);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             ErrorDialog.Show("Error in MainActivity::onCreateOptionsMenu", e.getMessage());
         }
         return true;
     }
-
+    
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        try {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        try
+        {
             // Handle action bar item clicks here. The action bar will
             // automatically handle clicks on the Home/Up button, so long
             // as you specify a parent activity in AndroidManifest.xml.
             int id = item.getItemId();
-
+            
             //noinspection SimplifiableIfStatement
-            if (id == R.id.action_settings) {
+            if (id == R.id.action_settings)
+            {
                 return true;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             ErrorDialog.Show("Error in MainActivity::onOptionsItemSelected", e.getMessage());
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private ArrayList<RecordButton>getButtonList()
+    
+    private ArrayList<RecordButton> getButtonList()
     {
-        ArrayList<RecordButton>lList = new ArrayList<>();
+        ArrayList<RecordButton> lList = new ArrayList<>();
         lList.add(new RecordButton(0, R.drawable.button, "Dashboard"));
         lList.add(new RecordButton(1, R.drawable.button, "Current Account"));
         lList.add(new RecordButton(2, R.drawable.button, "Cash Account"));
@@ -407,23 +516,25 @@ public class MainActivity extends AppCompatActivity
         lList.add(new RecordButton(5, R.drawable.button, "Long Term Savings"));
         lList.add(new RecordButton(6, R.drawable.button, "Family Savings"));
         lList.get(0).selected = true;
-        return(lList);
+        return (lList);
     }
-    private void setupRecyclerViews() {
+    
+    private void setupRecyclerViews()
+    {
         mDatasetButton = getButtonList();
-        mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840");
-        mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830");
-        mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503");
-        mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361");
-        mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash");
-
+        mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", sw_show_planned.isChecked());
+        mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830", false);
+        mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503", false);
+        mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361", false);
+        mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash", false);
+        
         mTransactionListButton = (RecyclerView) findViewById(R.id.buttonList);
         mTransactionListCurrent = (RecyclerView) findViewById(R.id.transactionListCurrent);
         mTransactionListGeneral = (RecyclerView) findViewById(R.id.transactionListGeneral);
         mTransactionListLongTerm = (RecyclerView) findViewById(R.id.transactionListLongTerm);
         mTransactionListFamily = (RecyclerView) findViewById(R.id.transactionListFamily);
         mTransactionListCash = (RecyclerView) findViewById(R.id.transactionListCash);
-
+        
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mTransactionListButton.setHasFixedSize(true);
@@ -432,26 +543,26 @@ public class MainActivity extends AppCompatActivity
         mTransactionListLongTerm.setHasFixedSize(true);
         mTransactionListFamily.setHasFixedSize(true);
         mTransactionListCash.setHasFixedSize(true);
-
+        
         mLayoutManagerButton = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
         mTransactionListButton.setLayoutManager(mLayoutManagerButton);
-
+        
         // use a linear layout manager
         mLayoutManagerCurrent = new LinearLayoutManager(this);
         mTransactionListCurrent.setLayoutManager(mLayoutManagerCurrent);
-
+        
         mLayoutManagerGeneral = new LinearLayoutManager(this);
         mTransactionListGeneral.setLayoutManager(mLayoutManagerGeneral);
-
+        
         mLayoutManagerLongTerm = new LinearLayoutManager(this);
         mTransactionListLongTerm.setLayoutManager(mLayoutManagerLongTerm);
-
+        
         mLayoutManagerFamily = new LinearLayoutManager(this);
         mTransactionListFamily.setLayoutManager(mLayoutManagerFamily);
-
+        
         mLayoutManagerCash = new LinearLayoutManager(this);
         mTransactionListCash.setLayoutManager(mLayoutManagerCash);
-
+        
         mTransactionAdapterButton = new ImageAdapter(mDatasetButton);
         mTransactionListButton.setAdapter(mTransactionAdapterButton);
         
@@ -462,15 +573,15 @@ public class MainActivity extends AppCompatActivity
             {
                 TabHost host = (TabHost) findViewById(R.id.mainTabHost);
                 host.setCurrentTab(obj.buttonId);
-                for(int i=0;i<mDatasetButton.size();i++)
+                for (int i = 0; i < mDatasetButton.size(); i++)
                     mDatasetButton.get(i).selected = false;
                 obj.selected = true;
                 mTransactionAdapterButton.notifyDataSetChanged();
                 
             }
         });
-
-
+        
+        
         // specify an adapter (see also next example)
         mTransactionAdapterCurrent = new TransactionAdapter(mDatasetCurrent);
         mTransactionListCurrent.setAdapter(mTransactionAdapterCurrent);
@@ -485,7 +596,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
+        
         mTransactionAdapterGeneral = new TransactionAdapter(mDatasetGeneral);
         mTransactionListGeneral.setAdapter(mTransactionAdapterGeneral);
         mTransactionAdapterGeneral.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
@@ -499,7 +610,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
+        
         mTransactionAdapterLongTerm = new TransactionAdapter(mDatasetLongTerm);
         mTransactionListLongTerm.setAdapter(mTransactionAdapterLongTerm);
         mTransactionAdapterLongTerm.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
@@ -513,7 +624,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
+        
         mTransactionAdapterFamily = new TransactionAdapter(mDatasetFamily);
         mTransactionListFamily.setAdapter(mTransactionAdapterFamily);
         mTransactionAdapterFamily.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
@@ -527,7 +638,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
+        
         mTransactionAdapterCash = new TransactionAdapter(mDatasetCash);
         mTransactionListCash.setAdapter(mTransactionAdapterCash);
         mTransactionAdapterCash.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
@@ -541,47 +652,135 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
-
+        
+        
     }
-
+    
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        try {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item)
+    {
+        try
+        {
             // Handle navigation view item clicks here.
             int id = item.getItemId();
-
-            if (id == R.id.nav_category) {
+            
+            if (id == R.id.nav_category)
+            {
                 Intent intent = new Intent(this, activityCategory.class);
                 startActivity(intent);
-            } else if (id == R.id.nav_planning) {
+            } else if (id == R.id.nav_planning)
+            {
                 Intent intent = new Intent(this, activityPlanning.class);
                 startActivity(intent);
-            } else if (id == R.id.nav_slideshow) {
-
-            } else if (id == R.id.nav_manage) {
-
-            } else if (id == R.id.nav_share) {
-
-            } else if (id == R.id.nav_send) {
-
+            } else if (id == R.id.nav_slideshow)
+            {
+            
+            } else if (id == R.id.nav_manage)
+            {
+            
+            } else if (id == R.id.nav_share)
+            {
+            
+            } else if (id == R.id.nav_send)
+            {
+            
             }
-
+            
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             ErrorDialog.Show("Error in MainActivity::onNavigationItemSelected", e.getMessage());
         }
         return true;
     }
-
+    
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        
+        try
+        {
+            // save RecyclerView state
+            mButtonViewState = new Bundle();
+            mCurrentViewState = new Bundle();
+            mGeneralViewState = new Bundle();
+            mLongTermViewState = new Bundle();
+            mFamilyViewState = new Bundle();
+            mCashViewState = new Bundle();
+            
+            Parcelable listStateButton = mTransactionListButton.getLayoutManager().onSaveInstanceState();
+            mButtonViewState.putParcelable(KEY_RECYCLER_STATE_BUTTON, listStateButton);
+            
+            Parcelable listStateCurrent = mTransactionListCurrent.getLayoutManager().onSaveInstanceState();
+            mCurrentViewState.putParcelable(KEY_RECYCLER_STATE_CURRENT, listStateCurrent);
+            
+            Parcelable listStateGeneral = mTransactionListGeneral.getLayoutManager().onSaveInstanceState();
+            mGeneralViewState.putParcelable(KEY_RECYCLER_STATE_GENERAL, listStateGeneral);
+            
+            Parcelable listStateLongTerm = mTransactionListLongTerm.getLayoutManager().onSaveInstanceState();
+            mLongTermViewState.putParcelable(KEY_RECYCLER_STATE_LONGTERM, listStateLongTerm);
+            
+            Parcelable listStateFamily = mTransactionListFamily.getLayoutManager().onSaveInstanceState();
+            mFamilyViewState.putParcelable(KEY_RECYCLER_STATE_FAMILY, listStateFamily);
+            
+            Parcelable listStateCash = mTransactionListCash.getLayoutManager().onSaveInstanceState();
+            mCashViewState.putParcelable(KEY_RECYCLER_STATE_CASH, listStateCash);
+            
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MainActivity::onPause", e.getMessage());
+        }
+        
+    }
+    
     @Override
     public void onResume()
     {  // After a pause OR at startup
         super.onResume();
-
+        
         setupRecyclerViews();
+        
+        if (mButtonViewState != null)
+        {
+            Parcelable listStateButton = mButtonViewState.getParcelable(KEY_RECYCLER_STATE_BUTTON);
+            mTransactionListButton.getLayoutManager().onRestoreInstanceState(listStateButton);
+        }
+        
+        if (mCurrentViewState != null)
+        {
+            Parcelable listStateCurrent = mCurrentViewState.getParcelable(KEY_RECYCLER_STATE_CURRENT);
+            mTransactionListCurrent.getLayoutManager().onRestoreInstanceState(listStateCurrent);
+        }
+        
+        if (mGeneralViewState != null)
+        {
+            Parcelable listStateGeneral = mGeneralViewState.getParcelable(KEY_RECYCLER_STATE_GENERAL);
+            mTransactionListGeneral.getLayoutManager().onRestoreInstanceState(listStateGeneral);
+        }
+        
+        if (mLongTermViewState != null)
+        {
+            Parcelable listStateLongTerm = mLongTermViewState.getParcelable(KEY_RECYCLER_STATE_LONGTERM);
+            mTransactionListLongTerm.getLayoutManager().onRestoreInstanceState(listStateLongTerm);
+        }
+        
+        if (mFamilyViewState != null)
+        {
+            Parcelable listStateFamily = mFamilyViewState.getParcelable(KEY_RECYCLER_STATE_FAMILY);
+            mTransactionListFamily.getLayoutManager().onRestoreInstanceState(listStateFamily);
+        }
+        
+        if (mCashViewState != null)
+        {
+            Parcelable listStateCash = mCashViewState.getParcelable(KEY_RECYCLER_STATE_CASH);
+            mTransactionListCash.getLayoutManager().onRestoreInstanceState(listStateCash);
+        }
+        
     }
-
+    
 }
