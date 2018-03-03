@@ -152,7 +152,7 @@ public class activityPlanningItem extends AppCompatActivity
             if(!dateUtils().DateToStr(new Date(), myString))
                 return;
             edtStartDate.setText(myString.Value);
-            edtEndDate.setText("31 Dec 2099");
+            edtEndDate.setText("31/12/2099");
             btnDelete.setVisibility(View.GONE);
         }
         if (mActionType.compareTo("EDIT") == 0)
@@ -169,7 +169,7 @@ public class activityPlanningItem extends AppCompatActivity
                 if(!dateUtils().DateToStr(new Date(), myString))
                     return;
                 edtStartDate.setText(myString.Value);
-                edtEndDate.setText("31 Dec 2099");
+                edtEndDate.setText("31/12/2099");
             }
             else
             {

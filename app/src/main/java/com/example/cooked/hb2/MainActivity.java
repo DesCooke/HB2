@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity
     private TextView lblExtraIncome;
     private TextView lblExtraTotal;
     private TextView lblBudgetTotal;
+
+    public int mSelectedButton;
     
     private void setupStatics(Context lcontext)
     {
@@ -576,6 +578,7 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0; i < mDatasetButton.size(); i++)
                     mDatasetButton.get(i).selected = false;
                 obj.selected = true;
+
                 mTransactionAdapterButton.notifyDataSetChanged();
                 
             }
@@ -704,6 +707,11 @@ public class MainActivity extends AppCompatActivity
         
         try
         {
+            mSelectedButton = 0;
+            for (int i = 0; i < mDatasetButton.size(); i++)
+                if(mDatasetButton.get(i).selected)
+                    mSelectedButton = i;
+
             // save RecyclerView state
             mButtonViewState = new Bundle();
             mCurrentViewState = new Bundle();
@@ -742,7 +750,9 @@ public class MainActivity extends AppCompatActivity
     public void onResume()
     {  // After a pause OR at startup
         super.onResume();
-        
+
+        setupBudget();
+
         setupRecyclerViews();
         
         if (mButtonViewState != null)
@@ -780,7 +790,10 @@ public class MainActivity extends AppCompatActivity
             Parcelable listStateCash = mCashViewState.getParcelable(KEY_RECYCLER_STATE_CASH);
             mTransactionListCash.getLayoutManager().onRestoreInstanceState(listStateCash);
         }
-        
+        for (int i = 0; i < mDatasetButton.size(); i++)
+            mDatasetButton.get(i).selected = false;
+        mDatasetButton.get(mSelectedButton).selected = true;
+
     }
     
 }
