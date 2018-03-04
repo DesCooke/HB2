@@ -523,7 +523,7 @@ public class DateUtils
             if(getDateFromDatePicker(datePicker, date) == false)
                 return (false);
 
-            return(DateTo_ddmmyyyy(date, retString));
+            return(DateToStr(date, retString));
         }
         catch(Exception e)
         {
@@ -546,33 +546,12 @@ public class DateUtils
             return (false);
         }
     }
-    public boolean DateTo_ddmmyyyy(Date date, MyString retString)
+    public boolean DateToStr(Date date, MyString retString)
     {
         try
         {
             retString.Value = android.text.format.DateFormat.format("dd/MM/yyyy", date).toString();
             return(true);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("DateTo_ddmmyyyy", e.getMessage());
-            return (false);
-        }
-    }
-
-    //
-    // DateToStr
-    //   Description: accepts a Date and returns the string equivalent through
-    //                MyString
-    //   Returns: true(worked)/false(failed)
-    //
-    public boolean DateToStr(Date date, MyString retString)
-    {
-        try
-        {
-            DateFormat df=getDateInstance();
-            retString.Value=df.format(date);
-            return (true);
         }
         catch(Exception e)
         {

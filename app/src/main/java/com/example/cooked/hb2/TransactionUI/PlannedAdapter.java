@@ -115,10 +115,10 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
 
             MyString lMyString = new MyString();
 
-            DateUtils.dateUtils().DateTo_ddmmyyyy(rec.mStartDate, lMyString);
+            DateUtils.dateUtils().DateToStr(rec.mStartDate, lMyString);
             holder.mStartDate.setText("Start: " + lMyString.Value);
 
-            DateUtils.dateUtils().DateTo_ddmmyyyy(rec.mEndDate, lMyString);
+            DateUtils.dateUtils().DateToStr(rec.mEndDate, lMyString);
             holder.mEndDate.setText("End: " + lMyString.Value);
 
             holder.mMatchingType.setText("Matching Type: " + rec.mMatchingTxType);

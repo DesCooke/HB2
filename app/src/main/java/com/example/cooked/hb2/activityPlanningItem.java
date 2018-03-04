@@ -190,10 +190,10 @@ public class activityPlanningItem extends AppCompatActivity
 
                 MyString lString = new MyString();
 
-                DateUtils.dateUtils().DateTo_ddmmyyyy(mRecordPlanned.mStartDate, lString);
+                DateUtils.dateUtils().DateToStr(mRecordPlanned.mStartDate, lString);
                 edtStartDate.setText(lString.Value);
 
-                DateUtils.dateUtils().DateTo_ddmmyyyy(mRecordPlanned.mEndDate, lString);
+                DateUtils.dateUtils().DateToStr(mRecordPlanned.mEndDate, lString);
                 edtEndDate.setText(lString.Value);
 
                 edtMatchType.getEditText().setText(mRecordPlanned.mMatchingTxType);
