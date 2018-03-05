@@ -33,6 +33,7 @@ import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordButton;
 import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
+import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyApiSpecific;
 import com.example.cooked.hb2.GlobalUtils.MyDownloads;
@@ -266,8 +267,19 @@ public class MainActivity extends AppCompatActivity
                     //get the child info
                     RecordBudgetItem budgetItemInfo = budgetGroupInfo.budgetItems.get(childPosition);
                     //display it or do something with it
-                    Toast.makeText(getBaseContext(), " Clicked on :: " + budgetGroupInfo.budgetGroupName
-                        + "/" + budgetItemInfo.budgetItemName, Toast.LENGTH_LONG).show();
+                    DialogTransactionList dtl = new DialogTransactionList(MainActivity.this);
+                    try
+                    {
+                        dtl.budgetYear = mCurrentBudgetYear;
+                        dtl.budgetMonth = mCurrentBudgetMonth;
+                        dtl.subCategoryId = budgetItemInfo.SubCategoryId;
+                        dtl.GetTrans();
+                        dtl.show();
+                    }
+                    catch (Exception e)
+                    {
+                        ErrorDialog.Show("Error in MainActivity::onChildClick", e.getMessage());
+                    }
                     return false;
                 }
             });
@@ -280,9 +292,6 @@ public class MainActivity extends AppCompatActivity
                     //get the group header
                     RecordBudgetGroup budgetGroupInfo = mDatasetBudget.get(groupPosition);
                     //display it or do something with it
-                    Toast.makeText(getBaseContext(), " Header is :: " + budgetGroupInfo.budgetGroupName,
-                        Toast.LENGTH_LONG).show();
-                    
                     return false;
                 }
             });

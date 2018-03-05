@@ -258,7 +258,77 @@ class TableTransaction extends TableBase
         }
         return list;
     }
-    
+
+    public ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCategoryId)
+    {
+        int cnt;
+        ArrayList<RecordTransaction> list;
+        try
+        {
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try
+            {
+                Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
+                                "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
+                                "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
+                                "CategoryId","Comments", "BudgetYear", "BudgetMonth"},
+                        "BudgetYear=? AND BudgetMonth=? AND CategoryId=?",
+                        new String[]{pBudgetYear.toString(), pBudgetMonth.toString(), pSubCategoryId.toString()},
+                        null, null, "TxDate desc, TxLineNo", null);
+                list = new ArrayList<RecordTransaction>();
+                cnt = 0;
+                if (cursor != null)
+                {
+                    try
+                    {
+                        if (cursor.getCount() > 0)
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                RecordTransaction lrec =
+                                        new RecordTransaction
+                                                (
+                                                        Integer.parseInt(cursor.getString(0)),
+                                                        new Date(Long.parseLong(cursor.getString(1))),
+                                                        cursor.getString(2),
+                                                        Integer.parseInt(cursor.getString(3)),
+                                                        new Date(Long.parseLong(cursor.getString(4))),
+                                                        cursor.getString(5),
+                                                        cursor.getString(6),
+                                                        cursor.getString(7),
+                                                        cursor.getString(8),
+                                                        Float.parseFloat(cursor.getString(9)),
+                                                        Float.parseFloat(cursor.getString(10)),
+                                                        Integer.parseInt(cursor.getString(11)),
+                                                        cursor.getString(12),
+                                                        Integer.parseInt(cursor.getString(13)),
+                                                        Integer.parseInt(cursor.getString(14))
+                                                );
+                                list.add(lrec);
+                                cnt++;
+                            } while (cursor.moveToNext());
+                        }
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+            finally
+            {
+                db.close();
+            }
+
+        }
+        catch (Exception e)
+        {
+            list = new ArrayList<RecordTransaction>();
+            ErrorDialog.Show("Error in TableTransaction.getBudgetList", e.getMessage());
+        }
+        return list;
+    }
     public ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode,
                                                        String lAccountNumber)
     {

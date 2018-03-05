@@ -181,6 +181,30 @@ public class MyDatabase extends SQLiteOpenHelper
         return(null);
     }
 
+    public ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCatgegoryId)
+    {
+        try
+        {
+            ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pSubCatgegoryId);
+
+            if (rta != null)
+            {
+                for (int i = 0; i < rta.size(); i++)
+                {
+                    RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
+                    if (sc != null)
+                        rta.get(i).SubCategoryName = sc.SubCategoryName;
+                }
+            }
+            return (rta);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getBudgetTrans", e.getMessage());
+        }
+        return(null);
+    }
+
     public ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode, String lAccountNumber)
     {
         return tableTransaction.getTxDateRange(lFrom, lTo, lSortCode, lAccountNumber);

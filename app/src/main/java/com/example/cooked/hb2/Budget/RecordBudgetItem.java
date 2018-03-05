@@ -1,5 +1,7 @@
 package com.example.cooked.hb2.Budget;
 
+import java.util.ArrayList;
+
 public class RecordBudgetItem
 {
     public String budgetItemName;
@@ -8,7 +10,7 @@ public class RecordBudgetItem
     public Float total;
     public Float spent;
     public Float outstanding;
-    
+
     public RecordBudgetItem()
     {
         budgetItemName = "";

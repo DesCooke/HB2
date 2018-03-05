@@ -24,6 +24,7 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
     public TextView edtPlannedType;
     public MyInt mPlannedType;
 
+
     public DialogPlannedTypePicker(Activity a)
     {
         super(a);
