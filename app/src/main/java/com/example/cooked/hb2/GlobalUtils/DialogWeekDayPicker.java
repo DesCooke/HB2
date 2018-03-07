@@ -3,13 +3,13 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 
@@ -90,15 +90,16 @@ public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
                 lString = lString + "Sat,";
             if(mSunday.Value)
                 lString = lString + "Sun,";
-            
-            edtText.setText("Days: " + lString );
+
+            String lCaption= MainActivity.context.getString(R.string.DaysCaption);
+            String lText = String.format(lCaption, lString);
+            edtText.setText(lText);
             
             dismiss();
         }
         catch(Exception e)
         {
             ShowError("onClick", e.getMessage());
-            return;
         }
     }
 

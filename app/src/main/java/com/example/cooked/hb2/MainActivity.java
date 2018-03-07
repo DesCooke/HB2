@@ -22,9 +22,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TabHost;
-import android.widget.TabWidget;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cooked.hb2.Budget.BudgetAdapter;
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
@@ -35,7 +33,6 @@ import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
-import com.example.cooked.hb2.GlobalUtils.MyApiSpecific;
 import com.example.cooked.hb2.GlobalUtils.MyDownloads;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyPermission;
@@ -122,7 +119,6 @@ public class MainActivity extends AppCompatActivity
     {
         context = lcontext;
         MyResources.setContext(context);
-        MyApiSpecific.setContext(context);
     }
     
     @SuppressWarnings("StatementWithEmptyBody")
