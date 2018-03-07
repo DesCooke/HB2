@@ -71,7 +71,7 @@ public class MyDownloads
     {
         String inputFile;
         String archiveFile;
-        int l_LineNo=1;
+        int l_LineNo=0;
         try
         {
             MyLog.WriteLogMessage("Reading file " + downloadDirectory + "/" + filename);
@@ -85,12 +85,16 @@ public class MyDownloads
             while ((csvLine = reader.readLine()) != null)
             {
                 l_LineNo++;
+                if(l_LineNo==1)
+                {
+                    continue;
+                }
 
                 String[] row = csvLine.split(",");
                 
                 RecordTransaction rt = new RecordTransaction();
                 
-                DateFormat df = new SimpleDateFormat( "dd/MM/yyyy", Locale.UK);
+                DateFormat df = new SimpleDateFormat( "dd/MM/yyyy");
                 rt.TxDate = df.parse(row[0]);
 
                 rt.BudgetYear = dateUtils().GetBudgetYear(rt.TxDate);
