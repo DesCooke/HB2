@@ -9,6 +9,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 
@@ -53,15 +54,24 @@ public class DialogDayPicker extends Dialog implements View.OnClickListener
         try
         {
             TextInputLayout myDay = findViewById(R.id.edtDay);
-            edtText.setText("Day: " + myDay.getEditText().getText() );
-            mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
-            
+            if(myDay != null)
+            {
+                if (myDay.getEditText() != null)
+                {
+                    if (myDay.getEditText().getText() != null)
+                    {
+                        String lFormat = MainActivity.context.getString(R.string.DayCaption);
+                        String lText = String.format(lFormat, myDay.getEditText().getText());
+                        edtText.setText(lText);
+                        mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
+                    }
+                }
+            }
             dismiss();
         }
         catch(Exception e)
         {
             ShowError("onClick", e.getMessage());
-            return;
         }
     }
 

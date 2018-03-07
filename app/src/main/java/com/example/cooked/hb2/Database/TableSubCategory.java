@@ -9,7 +9,7 @@ import com.example.cooked.hb2.GlobalUtils.MyLog;
 
 import java.util.ArrayList;
 
-public class TableSubCategory extends TableBase {
+class TableSubCategory extends TableBase {
     TableSubCategory(SQLiteOpenHelper argHelper) {
         super(argHelper);
     }
@@ -34,13 +34,13 @@ public class TableSubCategory extends TableBase {
         executeSQL(lSql, "TableSubCategory::onCreate", db);
     }
 
-    public int getNextSubCategoryId() {
+    private int getNextSubCategoryId() {
         String lSql = "SELECT MAX(SubCategoryId) FROM tblSubCategory ";
 
         return (getMaxPlus1(lSql, "TableSubCategory::getNextSubCategoryId"));
     }
 
-    public void addSubCategory(RecordSubCategory rc) {
+    void addSubCategory(RecordSubCategory rc) {
         rc.SubCategoryId = getNextSubCategoryId();
 
         String lSql =
@@ -55,7 +55,7 @@ public class TableSubCategory extends TableBase {
         executeSQL(lSql, "TableSubCategory::addSubCategory", null);
     }
 
-    public void updateSubCategory(RecordSubCategory rc) {
+    void updateSubCategory(RecordSubCategory rc) {
         String lSql =
                 "UPDATE tblSubCategory " +
                         "  SET SubCategoryName = '" + rc.SubCategoryName + "', " +
@@ -65,7 +65,7 @@ public class TableSubCategory extends TableBase {
         executeSQL(lSql, "TableSubCategory::updateSubCategory", null);
     }
 
-    public void deleteSubCategory(RecordSubCategory rc) {
+    void deleteSubCategory(RecordSubCategory rc) {
         String lSql =
                 "DELETE FROM tblSubCategory " +
                         "WHERE SubCategoryId = " + rc.SubCategoryId.toString();
@@ -73,101 +73,103 @@ public class TableSubCategory extends TableBase {
         executeSQL(lSql, "TableSubCategory::deleteSubCategory", null);
     }
 
-    public ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId) {
-        int cnt;
+    ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId) {
         ArrayList<RecordSubCategory> list;
         try {
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
                 Cursor cursor;
                 String l_SQL;
-                if (pCategoryId != 0) {
+                if (pCategoryId != 0)
+                {
                     l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, a.SubCategoryType " +
-                            "FROM tblSubCategory a, tblCategory b " +
-                            "WHERE a.CategoryId = " + pCategoryId.toString() + " " +
-                            "AND a.CategoryId = b.CategoryId " +
-                            "ORDER BY b.CategoryName, a.SubCategoryName ";
-                } else {
+                        "FROM tblSubCategory a, tblCategory b " +
+                        "WHERE a.CategoryId = " + pCategoryId.toString() + " " +
+                        "AND a.CategoryId = b.CategoryId " +
+                        "ORDER BY b.CategoryName, a.SubCategoryName ";
+                } else
+                {
                     l_SQL = "SELECT a.SubCategoryId, a.CategoryId, a.SubCategoryName, b.CategoryName, a.SubCategoryType " +
-                            "FROM tblSubCategory a, tblCategory b " +
-                            "WHERE a.CategoryId = b.CategoryId " +
-                            "ORDER BY b.CategoryName, a.SubCategoryName ";
+                        "FROM tblSubCategory a, tblCategory b " +
+                        "WHERE a.CategoryId = b.CategoryId " +
+                        "ORDER BY b.CategoryName, a.SubCategoryName ";
                 }
                 cursor = db.rawQuery(l_SQL, null);
-                try {
-                    cnt = cursor.getCount();
-                    list = new ArrayList<RecordSubCategory>();
-                    cnt = 0;
-                    if (cursor != null) {
+                try
+                {
+                    list = new ArrayList<>();
+                    if (cursor != null)
+                    {
                         cursor.moveToFirst();
-                        do {
+                        do
+                        {
                             if (cursor.getCount() == 0)
                                 break;
                             list.add
-                                    (
-                                            new RecordSubCategory
-                                                    (
-                                                            Integer.parseInt(cursor.getString(1)),
-                                                            cursor.getString(3),
-                                                            Integer.parseInt(cursor.getString(0)),
-                                                            cursor.getString(2),
-                                                            Integer.parseInt(cursor.getString(4))
-                                                    )
-                                    );
-                            cnt++;
+                                (
+                                    new RecordSubCategory
+                                        (
+                                            Integer.parseInt(cursor.getString(1)),
+                                            cursor.getString(3),
+                                            Integer.parseInt(cursor.getString(0)),
+                                            cursor.getString(2),
+                                            Integer.parseInt(cursor.getString(4))
+                                        )
+                                );
                         } while (cursor.moveToNext());
                     }
-                } finally {
+                }
+                finally
+                {
+                    assert cursor != null;
                     cursor.close();
                 }
-            } finally {
-                db.close();
             }
 
         } catch (Exception e) {
-            list = new ArrayList<RecordSubCategory>();
+            list = new ArrayList<>();
             ErrorDialog.Show("Error in TableSubCategory.getSubCategoryList", e.getMessage());
         }
         return list;
     }
 
-    public RecordSubCategory getSubCategory(Integer pSubCategoryId) {
+    RecordSubCategory getSubCategory(Integer pSubCategoryId) {
         try {
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
                 Cursor cursor;
                 String l_SQL;
                 l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, a.SubCategoryType " +
-                        "FROM tblSubCategory a, tblCategory b " +
-                        "WHERE a.SubCategoryId = " + pSubCategoryId.toString() + " " +
-                        "AND a.CategoryId = b.CategoryId " +
-                        "ORDER BY b.CategoryName, a.SubCategoryName ";
+                    "FROM tblSubCategory a, tblCategory b " +
+                    "WHERE a.SubCategoryId = " + pSubCategoryId.toString() + " " +
+                    "AND a.CategoryId = b.CategoryId " +
+                    "ORDER BY b.CategoryName, a.SubCategoryName ";
                 cursor = db.rawQuery(l_SQL, null);
-                if (cursor != null) {
-                    try {
-
+                if (cursor != null)
+                {
+                    try
+                    {
                         cursor.moveToFirst();
-                        do {
-                            if (cursor.getCount() == 0)
-                                break;
+                        if (cursor.getCount() > 0)
+                        {
                             return
-                                    (
-                                            new RecordSubCategory
-                                                    (
-                                                            Integer.parseInt(cursor.getString(1)),
-                                                            cursor.getString(3),
-                                                            Integer.parseInt(cursor.getString(0)),
-                                                            cursor.getString(2),
-                                                            Integer.parseInt(cursor.getString(4))
-                                                    )
-                                    );
-                        } while (cursor.moveToNext());
-                    } finally {
+                                (
+                                    new RecordSubCategory
+                                        (
+                                            Integer.parseInt(cursor.getString(1)),
+                                            cursor.getString(3),
+                                            Integer.parseInt(cursor.getString(0)),
+                                            cursor.getString(2),
+                                            Integer.parseInt(cursor.getString(4))
+                                        )
+                                );
+                        }
+                    }
+                    finally
+                    {
                         cursor.close();
                     }
                 }
-            } finally {
-                db.close();
             }
 
         } catch (Exception e) {
@@ -199,8 +201,10 @@ public class TableSubCategory extends TableBase {
             db.execSQL("ALTER TABLE tblSubCategory ADD COLUMN SubCategoryType INTEGER DEFAULT 0");
         }
     }
-
-    void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    {
+        MyLog.WriteLogMessage("DB Version " + Integer.toString(db.getVersion()) + ". " +
+                "Downgrading from " + Integer.toString(oldVersion) +
+                " down to " + Integer.toString(newVersion) );
     }
-
 }

@@ -133,9 +133,8 @@ class TableBase
         try
         {
             MyLog.WriteLogMessage("recordExists: " + pLocation + ":" + pSql);
-
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try
+    
+            try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.rawQuery(pSql, null);
                 if (cursor != null)
@@ -151,10 +150,6 @@ class TableBase
                         cursor.close();
                     }
                 }
-            }
-            finally
-            {
-                db.close();
             }
             
         }

@@ -9,6 +9,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 
@@ -55,16 +56,23 @@ public class DialogMonthDayPicker extends Dialog implements View.OnClickListener
         {
             TextInputLayout myDay = findViewById(R.id.edtDay);
             TextInputLayout myMonth = findViewById(R.id.edtMonth);
-            edtText.setText("Day: " + myDay.getEditText().getText() + ", Month " + myMonth.getEditText().getText() );
-            mMonth.Value = Integer.valueOf(myMonth.getEditText().getText().toString());
-            mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
-            
+            if(myDay!=null && myDay.getEditText()!=null && myDay.getEditText().getText() != null)
+            {
+                if(myMonth!=null && myMonth.getEditText()!=null && myMonth.getEditText().getText() != null)
+                {
+                    String lCaption = MainActivity.context.getString(R.string.DayAndMonth);
+                    String lText = String.format(lCaption, myDay.getEditText().getText(),
+                        myMonth.getEditText().getText());
+                    edtText.setText(lText);
+                    mMonth.Value = Integer.valueOf(myMonth.getEditText().getText().toString());
+                    mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
+                }
+            }
             dismiss();
         }
         catch(Exception e)
         {
             ShowError("onClick", e.getMessage());
-            return;
         }
     }
 

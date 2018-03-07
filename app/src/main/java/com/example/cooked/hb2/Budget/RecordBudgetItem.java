@@ -1,7 +1,5 @@
 package com.example.cooked.hb2.Budget;
 
-import java.util.ArrayList;
-
 public class RecordBudgetItem
 {
     public String budgetItemName;

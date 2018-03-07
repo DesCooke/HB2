@@ -2,38 +2,25 @@ package com.example.cooked.hb2.GlobalUtils;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.TextView;
 
-import com.example.cooked.hb2.CategoryUI.CategoryAdapter;
 import com.example.cooked.hb2.CategoryUI.CategoryPickerAdapter;
-import com.example.cooked.hb2.CategoryUI.SubCategoryAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.Database.RecordSubCategory;
+import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
-import com.example.cooked.hb2.activityCategoryItem;
-import com.example.cooked.hb2.activitySubCategory;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 
 public class CategoryPicker extends Dialog implements View.OnClickListener
 {
     public ArrayList<RecordSubCategory> mDataset;
-    public RecyclerView mCategoryList;
-    public RecyclerView.LayoutManager mLayoutManagerCurrent;
-    public CategoryPickerAdapter mCategoryPickerAdapter;
-    public Activity _activity;
     public MyInt MySubCategoryId;
     public TextView edtSubCategoryName;
 
@@ -69,11 +56,11 @@ public class CategoryPicker extends Dialog implements View.OnClickListener
     private void CreateRecyclerView()
     {
         mDataset = MyDatabase.MyDB().getSubCategoryList(0);
-        mCategoryList = (RecyclerView) findViewById(R.id.categoryList);
+        RecyclerView mCategoryList = findViewById(R.id.categoryList);
         mCategoryList.setHasFixedSize(true);
-        mLayoutManagerCurrent = new LinearLayoutManager(_activity);
+        RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(MainActivity.context);
         mCategoryList.setLayoutManager(mLayoutManagerCurrent);
-        mCategoryPickerAdapter = new CategoryPickerAdapter(mDataset);
+        CategoryPickerAdapter mCategoryPickerAdapter = new CategoryPickerAdapter(mDataset);
         mCategoryList.setAdapter(mCategoryPickerAdapter);
 
         mCategoryPickerAdapter.setOnItemClickListener(new CategoryPickerAdapter.OnItemClickListener()
@@ -91,26 +78,7 @@ public class CategoryPicker extends Dialog implements View.OnClickListener
     @Override
     public void onClick(View v)
     {
-        try
-        {
-            switch(v.getId())
-            {
-                case R.id.btnOk:
-                    MyString ms=new MyString();
-//                    if(dateUtils.DatePickerToStr(datePicker, ms) == false)
-  //                      return;
-    //                txtStartDate.setText(ms.Value);
-                    break;
-                default:
-                    break;
-            }
-            dismiss();
-        }
-        catch(Exception e)
-        {
-            ShowError("onClick", e.getMessage());
-            return;
-        }
+        dismiss();
     }
 
 }

@@ -139,9 +139,12 @@ class TableCategory extends TableBase
             onCreate(db);
         }
     }
-    
+
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
+        MyLog.WriteLogMessage("DB Version " + Integer.toString(db.getVersion()) + ". " +
+                "Downgrading from " + Integer.toString(oldVersion) +
+                " down to " + Integer.toString(newVersion) );
     }
     
 }

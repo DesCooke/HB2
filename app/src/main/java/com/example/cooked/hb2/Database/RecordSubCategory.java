@@ -2,7 +2,6 @@ package com.example.cooked.hb2.Database;
 
 public class RecordSubCategory
 {
-    public static String[] mSubCategoryTypes = {"MonthlyExpense", "MonthlyIncome", "ExtraExpense", "ExtraIncome"};
     public static int mSCTMonthlyExpense = 0;
     public static int mSCTMonthlyIncome = 1;
     public static int mSCTExtraExpense = 2;

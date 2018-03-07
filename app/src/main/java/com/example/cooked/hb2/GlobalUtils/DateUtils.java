@@ -1,26 +1,16 @@
 package com.example.cooked.hb2.GlobalUtils;
 
+import android.annotation.SuppressLint;
 import android.widget.DatePicker;
-import android.widget.TimePicker;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.example.cooked.hb2.GlobalUtils.MyApiSpecific.myApiSpecific;
-import static java.text.DateFormat.getDateInstance;
-
-//
-// All functions return true/false
-//
 public class DateUtils
 {
-    public static long unknownDate=2051222400000L;
-    public static long secondsInADay=86400;
-    public static long milliSecondsInADay=86400 * 1000;
-    public static DateUtils myDateUtils=null;
+    private static DateUtils myDateUtils=null;
 
     public static DateUtils dateUtils()
     {
@@ -37,7 +27,7 @@ public class DateUtils
     //                and passes back through retDate
     //   Returns: true(worked)/false(failed)
     //
-    public boolean getDateFromDatePicker(DatePicker datePicker, Date retDate)
+    private boolean getDateFromDatePicker(DatePicker datePicker, Date retDate)
     {
         try
         {
@@ -94,72 +84,12 @@ public class DateUtils
     }
     
     //
-    // DateToInt
-    //   Description: accepts a Date and returns the milliseconds part
-    //   Returns: true(worked)/false(failed)
-    //
-    public boolean DateToInt(Date date, MyLong retLong)
-    {
-        try
-        {
-            retLong.Value=date.getTime();
-            return (true);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("DateToInt", e.getMessage());
-            return (false);
-        }
-    }
-
-    //
-    // IntToDate
-    //   Description: accepts an integer and returns the date equivalent
-    //   Returns: true(worked)/false(failed)
-    //
-    public boolean IntToDate(long date, Date retDate)
-    {
-        try
-        {
-            retDate.setTime(date);
-            return (true);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("IntToDate", e.getMessage());
-            return (false);
-        }
-    }
-
-    //
-    // IsUnknown
-    //   Description: accepts date - if this is equal to the rogue value 'unknown'
-    //                then the retBoolean is returned true, else false
-    //   Returns: true(worked)/false(failed)
-    //
-    public boolean IsUnknown(Date argDate, MyBoolean retBoolean)
-    {
-        try
-        {
-            retBoolean.Value=false;
-            if(argDate.getTime() == unknownDate)
-                retBoolean.Value=true;
-            return (true);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("IsUnknown", e.getMessage());
-            return (false);
-        }
-    }
-
-    //
     // AddDays
     //   Description: accepts date - if this is equal to the rogue value 'unknown'
     //                then the retBoolean is returned true, else false
     //   Returns: true(worked)/false(failed)
     //
-    public boolean AddDays(Date date, int days, Date retDate)
+    public void AddDays(Date date, int days, Date retDate)
     {
         try
         {
@@ -172,13 +102,11 @@ public class DateUtils
             calendar.add(Calendar.DATE, days);
 
             retDate.setTime(calendar.getTimeInMillis());
-
-            return (true);
+    
         }
         catch(Exception e)
         {
             ErrorDialog.Show("AddDays", e.getMessage());
-            return (false);
         }
     }
 
@@ -230,7 +158,6 @@ public class DateUtils
                 lMonth--;
                 if(lMonth<0)
                 {
-                    lMonth=11;
                     lYear--;
                 }
             }
@@ -248,7 +175,6 @@ public class DateUtils
         try
         {
             Calendar calendar = Calendar.getInstance();
-            int lYear=calendar.get(Calendar.YEAR);
             int lMonth=calendar.get(Calendar.MONTH);
             int lDay=calendar.get(Calendar.DAY_OF_MONTH);
             if(lDay<26)
@@ -257,7 +183,6 @@ public class DateUtils
                 if(lMonth<0)
                 {
                     lMonth=11;
-                    lYear--;
                 }
             }
             return(lMonth+1);
@@ -283,7 +208,6 @@ public class DateUtils
                 lMonth--;
                 if(lMonth<0)
                 {
-                    lMonth=11;
                     lYear--;
                 }
             }
@@ -303,7 +227,6 @@ public class DateUtils
             
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(pDate);
-            int lYear=calendar.get(Calendar.YEAR);
             int lMonth=calendar.get(Calendar.MONTH);
             int lDay=calendar.get(Calendar.DAY_OF_MONTH);
             if(lDay<26)
@@ -312,7 +235,6 @@ public class DateUtils
                 if(lMonth<0)
                 {
                     lMonth=11;
-                    lYear--;
                 }
             }
             return(lMonth+1);
@@ -333,7 +255,7 @@ public class DateUtils
     {
         try
         {
-            SimpleDateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy");
             return(dateFormat.parse(string));
         }
         catch(ParseException e)
@@ -342,170 +264,45 @@ public class DateUtils
             return (new Date());
         }
     }
-
-    public boolean GetToday(Date retDate)
-    {
-        try
-        {
-            Calendar calendar=Calendar.getInstance();
-            calendar.setTime(new Date());
-            calendar.set(Calendar.MILLISECOND, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.HOUR, 0);
-
-            retDate.setTime(calendar.getTimeInMillis());
-
-            return (true);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("GetToday", e.getMessage());
-            return (false);
-        }
-    }
-
-    public boolean GetYear(Date date, MyInt myInt)
-    {
-        try
-        {
-            String lString=new SimpleDateFormat("yyyy", Locale.ENGLISH).format(date);
-            myInt.Value=Integer.parseInt(lString);
-            return (true);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("GetYear", e.getMessage());
-            return (false);
-        }
-    }
-
-    public boolean GetMonth(Date date, MyInt myInt)
+    
+    public void GetMonth(Date date, MyInt myInt)
     {
         try
         {
             String lString=new SimpleDateFormat("MM", Locale.ENGLISH).format(date);
             myInt.Value=Integer.parseInt(lString);
-            return (true);
         }
         catch(Exception e)
         {
-            ErrorDialog.Show("GetYear", e.getMessage());
-            return (false);
+            ErrorDialog.Show("GetMonth", e.getMessage());
         }
     }
 
-    public boolean GetDay(Date date, MyInt myInt)
+    public void GetDay(Date date, MyInt myInt)
     {
         try
         {
             String lString=new SimpleDateFormat("dd", Locale.ENGLISH).format(date);
             myInt.Value=Integer.parseInt(lString);
-            return (true);
         }
         catch(Exception e)
         {
-            ErrorDialog.Show("GetYear", e.getMessage());
-            return (false);
+            ErrorDialog.Show("GetDay", e.getMessage());
         }
     }
 
-    public boolean GetDayOfWeek(Date date, MyString myString)
+    public void GetDayOfWeek(Date date, MyString myString)
     {
         try
         {
-            String lString=new SimpleDateFormat("EEE", Locale.ENGLISH).format(date);
-            myString.Value=lString;
-            return (true);
+            myString.Value= new SimpleDateFormat("EEE", Locale.ENGLISH).format(date);
         }
         catch(Exception e)
         {
-            ErrorDialog.Show("GetYear", e.getMessage());
-            return (false);
+            ErrorDialog.Show("GetDayOfWeek", e.getMessage());
         }
     }
-
-    public boolean GetDiff(Date date1, Date date2, MyDateDiff myDateDiff)
-    {
-        try
-        {
-            Date ldate1=new Date();
-            Date ldate2=new Date();
-            MyInt lyear1=new MyInt();
-            MyInt lyear2=new MyInt();
-            MyInt lmonth1=new MyInt();
-            MyInt lmonth2=new MyInt();
-            MyInt lday1=new MyInt();
-            MyInt lday2=new MyInt();
-
-            // Ensure date1 is always the earlier date, date2 is always the later date
-            // remove time element
-            if(date1.getTime() < date2.getTime())
-            {
-                ldate1.setTime(date1.getTime());
-                ldate2.setTime(date2.getTime());
-            } else
-            {
-                ldate1.setTime(date2.getTime());
-                ldate2.setTime(date1.getTime());
-            }
-
-            if(GetYear(ldate1, lyear1) == false)
-                return (false);
-            if(GetYear(ldate2, lyear2) == false)
-                return (false);
-            if(GetMonth(ldate1, lmonth1) == false)
-                return (false);
-            if(GetMonth(ldate2, lmonth2) == false)
-                return (false);
-            if(GetDay(ldate1, lday1) == false)
-                return (false);
-            if(GetDay(ldate2, lday2) == false)
-                return (false);
-
-            //myMessages().LogMessage("GetDiff Starts");
-            //myMessages().LogMessage("date 1 " + lyear1.Value + ", " + lmonth1.Value + ", " + lday1.Value);
-            //myMessages().LogMessage("date 2 " + lyear2.Value + ", " + lmonth2.Value + ", " + lday2.Value);
-
-            myDateDiff.year=lyear2.Value - lyear1.Value;
-            myDateDiff.month=lmonth2.Value - lmonth1.Value;
-            myDateDiff.day=lday2.Value - lday1.Value;
-
-            if(myDateDiff.day < 0)
-            {
-                Calendar c=Calendar.getInstance();
-                c.set(lyear1.Value, lmonth1.Value - 1, 1);
-                int lDaysInMonth=c.getActualMaximum(Calendar.DAY_OF_MONTH);
-                //myMessages().LogMessage("days in earlier month " + lyear1.Value + "/" + lmonth1.Value + " = " + lDaysInMonth);
-
-                int lDaysStartOfNextMonth=lday2.Value;
-                //myMessages().LogMessage("Days in next month " + lDaysStartOfNextMonth);
-
-                int lDaysEndOfThisMonth=lDaysInMonth - lday1.Value;
-                //myMessages().LogMessage("Days to end of this month " + lDaysEndOfThisMonth);
-
-                myDateDiff.day=lDaysStartOfNextMonth + lDaysEndOfThisMonth;
-                //myMessages().LogMessage("final number of days " + myDateDiff.day);
-
-                myDateDiff.month--;
-            }
-
-            if(myDateDiff.month < 0)
-            {
-                myDateDiff.month=12 + myDateDiff.month;
-                myDateDiff.year--;
-            }
-            //myMessages().LogMessage("Diff " + myDateDiff.year + ", " + myDateDiff.month + ", " + myDateDiff.day);
-            //myMessages().LogMessage("GetDiff Ends");
-
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("GetDiff", e.getMessage());
-        }
-        return (true);
-    }
-
+    
     //
     // DatePickerToStr
     //   Description: accepts a DatePicker and extracts the date element
@@ -513,17 +310,15 @@ public class DateUtils
     //                date format through a MyString object
     //   Returns: true(worked)/false(failed)
     //
-    public boolean DatePickerToStr(DatePicker datePicker, MyString retString)
+    boolean DatePickerToStr(DatePicker datePicker, MyString retString)
     {
         try
         {
-            retString.Value="";
-
-            Date date=new Date();
-            if(getDateFromDatePicker(datePicker, date) == false)
-                return (false);
-
-            return(DateToStr(date, retString));
+            retString.Value = "";
+    
+            Date date = new Date();
+            return getDateFromDatePicker(datePicker, date) && (DateToStr(date, retString));
+    
         }
         catch(Exception e)
         {
@@ -559,55 +354,5 @@ public class DateUtils
             return (false);
         }
     }
-
-    //
-    // FormatTime
-    //   Description: ensures correct formatting of a time string - 04:09 etc
-    //   Returns: String - no need for error checking and it can be static
-    //
-    public static String FormatTime(int hour, int minute)
-    {
-        String timeString="";
-
-        if(hour < 10)
-            timeString=timeString + "0";
-
-        timeString=timeString + hour + ":";
-
-        if(minute < 10)
-            timeString=timeString + "0";
-
-        timeString=timeString + minute;
-
-        return (timeString);
-    }
-
-    //
-    // DateToStr
-    //   Description: accepts a Date and returns the string equivalent through
-    //                MyString
-    //   Returns: true(worked)/false(failed)
-    //
-    public boolean TimePickerToStr(TimePicker timePicker, MyString retString)
-    {
-        try
-        {
-            String timeString;
-            int hour;
-            int minute;
-
-            hour=myApiSpecific().GetHour(timePicker);
-            minute=myApiSpecific().GetMinute(timePicker);
-
-            timeString=DateUtils.FormatTime(hour, minute);
-            retString.Value=timeString;
-            return (true);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("TimePickerToStr", e.getMessage());
-            return (false);
-        }
-    }
-
+    
 }

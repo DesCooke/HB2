@@ -113,25 +113,49 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rec.TxDate));
             holder.mTxType.setText(rec.TxType);
             holder.mBankAccount.setText(rec.TxSortCode + " " + rec.TxAccountNumber);
-            holder.mTxDescription.setText(rec.TxDescription);
-            holder.mSubCategoryName.setText(rec.SubCategoryName);
-            holder.mComments.setText(rec.Comments);
+            if(rec.TxDescription.length() > 0)
+            {
+                holder.mTxDescription.setVisibility(View.VISIBLE);
+                holder.mTxDescription.setText("Description: " + rec.TxDescription);
+            }
+            else
+            {
+                holder.mTxDescription.setVisibility(View.GONE);
+            }
+            holder.mSubCategoryName.setText("Category: " + rec.SubCategoryName);
+
+            if(rec.Comments.length() > 0)
+            {
+                holder.mComments.setVisibility(View.VISIBLE);
+                holder.mComments.setText("Comments: " + rec.Comments);
+            }
+            else
+            {
+                holder.mComments.setVisibility(View.GONE);
+            }
             holder.mBudget.setText(dateUtils().BudgetAsString(rec.BudgetYear, rec.BudgetMonth));
             if(rec.TxAmount < 0.00)
             {
-                holder.mTxAmount.setText("-£" + String.format("%.2f", rec.TxAmount*-1));
+                holder.mTxAmount.setText("Amount -£" + String.format("%.2f", rec.TxAmount*-1));
             }
             else
             {
-                holder.mTxAmount.setText("£" + String.format("%.2f", rec.TxAmount));
+                holder.mTxAmount.setText("Amount £" + String.format("%.2f", rec.TxAmount));
             }
-            if(rec.TxBalance < 0.00)
+            if(rec.HideBalance.booleanValue()==true)
             {
-                holder.mTxBalance.setText("-£" + String.format("%.2f", rec.TxBalance*-1));
+                holder.mTxBalance.setVisibility(View.INVISIBLE);
             }
             else
             {
-                holder.mTxBalance.setText("£" + String.format("%.2f", rec.TxBalance));
+                holder.mTxBalance.setVisibility(View.VISIBLE);
+                if (rec.TxBalance < 0.00)
+                {
+                    holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1));
+                } else
+                {
+                    holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance));
+                }
             }
             holder.mFull.setOnClickListener(new View.OnClickListener()
             {

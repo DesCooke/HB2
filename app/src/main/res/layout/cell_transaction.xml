@@ -81,12 +81,10 @@
         android:id="@+id/celltx_Budget"
         android:layout_width="115dp"
         android:layout_height="19dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="8dp"
         android:layout_weight="1"
         android:text="celltx_Budget"
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/celltx_TxType"
         app:layout_constraintTop_toBottomOf="@+id/celltx_TxSeqNo"/>
 
     <TextView

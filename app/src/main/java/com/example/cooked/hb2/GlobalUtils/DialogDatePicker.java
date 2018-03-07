@@ -44,8 +44,8 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setContentView(R.layout.dialog_date_picker);
 
-            Button ok=(Button) findViewById(R.id.btnOk);
-            datePicker=(DatePicker) findViewById(R.id.datePicker);
+            Button ok= findViewById(R.id.btnOk);
+            datePicker= findViewById(R.id.datePicker);
 
             ok.setOnClickListener(this);
             dateUtils=new DateUtils();
@@ -77,7 +77,7 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
             {
                 case R.id.btnOk:
                     MyString ms=new MyString();
-                    if(dateUtils.DatePickerToStr(datePicker, ms) == false)
+                    if(!dateUtils.DatePickerToStr(datePicker, ms))
                         return;
                     txtStartDate.setText(ms.Value);
                     break;
@@ -89,7 +89,6 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
         catch(Exception e)
         {
             ShowError("onClick", e.getMessage());
-            return;
         }
     }
 

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 
 class TableTransaction extends TableBase
 {
@@ -53,14 +52,14 @@ class TableTransaction extends TableBase
         executeSQL(lSql, "TableTransaction::onCreate", db);
     }
     
-    public int getNextTxSeqNo()
+    private int getNextTxSeqNo()
     {
         String lSql = "SELECT MAX(TxSeqNo) FROM tblTransaction ";
         
         return (getMaxPlus1(lSql, "TableTransaction::getNextTxSeqNo"));
     }
     
-    public int getNextTxLineNo(Date pDate)
+    int getNextTxLineNo(Date pDate)
     {
         String lSql = "SELECT MIN(TxLineNo) FROM tblTransaction " +
             "WHERE TxDate = " + Long.toString(pDate.getTime()) + " " +
@@ -69,7 +68,7 @@ class TableTransaction extends TableBase
         return (getMinMinus1(lSql, "TableTransaction::getNextTxLineNo"));
     }
     
-    public boolean txExists(RecordTransaction rt)
+    private boolean txExists(RecordTransaction rt)
     {
         String lSql = "SELECT TxSeqNo FROM tblTransaction " +
             "WHERE TxDate = " + Long.toString(rt.TxDate.getTime()) + " " +
@@ -79,7 +78,7 @@ class TableTransaction extends TableBase
         return (recordExists(lSql, "TableTransaction::getNextTxLineNo"));
     }
     
-    public void addTransaction(RecordTransaction rt)
+    void addTransaction(RecordTransaction rt)
     {
         rt.TxSeqNo = getNextTxSeqNo();
         
@@ -109,7 +108,7 @@ class TableTransaction extends TableBase
         executeSQL(lSql, "TableTransaction::addTransaction", null);
     }
     
-    public void updateTransaction(RecordTransaction rt)
+    void updateTransaction(RecordTransaction rt)
     {
         if (rt.TxSortCode.compareTo("Cash") == 0)
         {
@@ -160,7 +159,7 @@ class TableTransaction extends TableBase
         }
     }
     
-    public void updateFilenameLineNo(RecordTransaction dbRec, RecordTransaction fileRec)
+    void updateFilenameLineNo(RecordTransaction dbRec, RecordTransaction fileRec)
     {
         String lSql =
             "UPDATE tblTransaction " +
@@ -171,7 +170,7 @@ class TableTransaction extends TableBase
         executeSQL(lSql, "TableTransaction::updateFilenameLineNo", null);
     }
     
-    public void deleteTransaction(RecordTransaction rec)
+    void deleteTransaction(RecordTransaction rec)
     {
         String lSql =
             "DELETE FROM tblTransaction " +
@@ -180,23 +179,20 @@ class TableTransaction extends TableBase
         executeSQL(lSql, "TableTransaction::deleteTransaction", null);
     }
     
-    public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
+    ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
-        int cnt;
         ArrayList<RecordTransaction> list;
         try
         {
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try
+            try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
                         "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
                         "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId","Comments", "BudgetYear", "BudgetMonth"},
+                        "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
                     "TxSortCode=? AND TxAccountNumber=?",
                     new String[]{sortCode, accountNum}, null, null, "TxDate desc, TxLineNo", null);
-                list = new ArrayList<RecordTransaction>();
-                cnt = 0;
+                list = new ArrayList<>();
                 if (cursor != null)
                 {
                     try
@@ -223,10 +219,10 @@ class TableTransaction extends TableBase
                                             Integer.parseInt(cursor.getString(11)),
                                             cursor.getString(12),
                                             Integer.parseInt(cursor.getString(13)),
-                                            Integer.parseInt(cursor.getString(14))
+                                            Integer.parseInt(cursor.getString(14)),
+                                            false
                                         );
                                 list.add(lrec);
-                                cnt++;
                             } while (cursor.moveToNext());
                         }
                     }
@@ -236,20 +232,16 @@ class TableTransaction extends TableBase
                     }
                 }
             }
-            finally
-            {
-                db.close();
-            }
             
         }
         catch (Exception e)
         {
-            list = new ArrayList<RecordTransaction>();
+            list = new ArrayList<>();
             ErrorDialog.Show("Error in TableTransaction.getTransactionList", e.getMessage());
         }
         if (sortCode.compareTo("Cash") == 0)
         {
-            Float lBal = new Float(0.00);
+            Float lBal = 0.00f;
             for (int i = list.size() - 1; i >= 0; i--)
             {
                 lBal = lBal + list.get(i).TxAmount;
@@ -259,24 +251,21 @@ class TableTransaction extends TableBase
         return list;
     }
 
-    public ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCategoryId)
+    ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCategoryId)
     {
-        int cnt;
         ArrayList<RecordTransaction> list;
         try
         {
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try
+            try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
-                                "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
-                                "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                                "CategoryId","Comments", "BudgetYear", "BudgetMonth"},
-                        "BudgetYear=? AND BudgetMonth=? AND CategoryId=?",
-                        new String[]{pBudgetYear.toString(), pBudgetMonth.toString(), pSubCategoryId.toString()},
-                        null, null, "TxDate desc, TxLineNo", null);
-                list = new ArrayList<RecordTransaction>();
-                cnt = 0;
+                        "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
+                        "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
+                        "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
+                    "BudgetYear=? AND BudgetMonth=? AND CategoryId=?",
+                    new String[]{pBudgetYear.toString(), pBudgetMonth.toString(), pSubCategoryId.toString()},
+                    null, null, "TxDate desc, TxLineNo", null);
+                list = new ArrayList<>();
                 if (cursor != null)
                 {
                     try
@@ -287,26 +276,26 @@ class TableTransaction extends TableBase
                             do
                             {
                                 RecordTransaction lrec =
-                                        new RecordTransaction
-                                                (
-                                                        Integer.parseInt(cursor.getString(0)),
-                                                        new Date(Long.parseLong(cursor.getString(1))),
-                                                        cursor.getString(2),
-                                                        Integer.parseInt(cursor.getString(3)),
-                                                        new Date(Long.parseLong(cursor.getString(4))),
-                                                        cursor.getString(5),
-                                                        cursor.getString(6),
-                                                        cursor.getString(7),
-                                                        cursor.getString(8),
-                                                        Float.parseFloat(cursor.getString(9)),
-                                                        Float.parseFloat(cursor.getString(10)),
-                                                        Integer.parseInt(cursor.getString(11)),
-                                                        cursor.getString(12),
-                                                        Integer.parseInt(cursor.getString(13)),
-                                                        Integer.parseInt(cursor.getString(14))
-                                                );
+                                    new RecordTransaction
+                                        (
+                                            Integer.parseInt(cursor.getString(0)),
+                                            new Date(Long.parseLong(cursor.getString(1))),
+                                            cursor.getString(2),
+                                            Integer.parseInt(cursor.getString(3)),
+                                            new Date(Long.parseLong(cursor.getString(4))),
+                                            cursor.getString(5),
+                                            cursor.getString(6),
+                                            cursor.getString(7),
+                                            cursor.getString(8),
+                                            Float.parseFloat(cursor.getString(9)),
+                                            Float.parseFloat(cursor.getString(10)),
+                                            Integer.parseInt(cursor.getString(11)),
+                                            cursor.getString(12),
+                                            Integer.parseInt(cursor.getString(13)),
+                                            Integer.parseInt(cursor.getString(14)),
+                                            true
+                                        );
                                 list.add(lrec);
-                                cnt++;
                             } while (cursor.moveToNext());
                         }
                     }
@@ -316,28 +305,22 @@ class TableTransaction extends TableBase
                     }
                 }
             }
-            finally
-            {
-                db.close();
-            }
 
         }
         catch (Exception e)
         {
-            list = new ArrayList<RecordTransaction>();
+            list = new ArrayList<>();
             ErrorDialog.Show("Error in TableTransaction.getBudgetList", e.getMessage());
         }
         return list;
     }
-    public ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode,
-                                                       String lAccountNumber)
+    ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode,
+                                                String lAccountNumber)
     {
-        int cnt;
         ArrayList<RecordTransaction> list;
         try
         {
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try
+            try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
                         "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
@@ -347,8 +330,7 @@ class TableTransaction extends TableBase
                     new String[]{Long.toString(lFrom.getTime()), Long.toString(lTo.getTime()),
                         lSortCode, lAccountNumber},
                     null, null, "TxDate, TxLineNo", null);
-                list = new ArrayList<RecordTransaction>();
-                cnt = 0;
+                list = new ArrayList<>();
                 if (cursor != null)
                 {
                     try
@@ -376,10 +358,10 @@ class TableTransaction extends TableBase
                                                 Integer.parseInt(cursor.getString(11)),
                                                 cursor.getString(12),
                                                 Integer.parseInt(cursor.getString(13)),
-                                                Integer.parseInt(cursor.getString(14))
+                                                Integer.parseInt(cursor.getString(14)),
+                                                false
                                             )
                                     );
-                                cnt++;
                             } while (cursor.moveToNext());
                         }
                     }
@@ -389,26 +371,21 @@ class TableTransaction extends TableBase
                     }
                 }
             }
-            finally
-            {
-                db.close();
-            }
             
         }
         catch (Exception e)
         {
-            list = new ArrayList<RecordTransaction>();
+            list = new ArrayList<>();
             ErrorDialog.Show("Error in TableTransaction.getTransactionList", e.getMessage());
         }
         return list;
     }
     
-    public RecordTransaction getSingleTransaction(Integer pTxSeqNo)
+    RecordTransaction getSingleTransaction(Integer pTxSeqNo)
     {
         try
         {
-            SQLiteDatabase db = helper.getReadableDatabase();
-            try
+            try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
                         "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
@@ -441,7 +418,8 @@ class TableTransaction extends TableBase
                                         Integer.parseInt(cursor.getString(11)),
                                         cursor.getString(12),
                                         Integer.parseInt(cursor.getString(13)),
-                                        Integer.parseInt(cursor.getString(14))
+                                        Integer.parseInt(cursor.getString(14)),
+                                        false
                                     )
                             );
                         }
@@ -451,10 +429,6 @@ class TableTransaction extends TableBase
                         cursor.close();
                     }
                 }
-            }
-            finally
-            {
-                db.close();
             }
             
         }
@@ -483,5 +457,8 @@ class TableTransaction extends TableBase
     
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
+        MyLog.WriteLogMessage("DB Version " + Integer.toString(db.getVersion()) + ". " +
+                "Downgrading from " + Integer.toString(oldVersion) +
+                " down to " + Integer.toString(newVersion) );
     }
 }

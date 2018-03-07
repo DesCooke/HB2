@@ -28,6 +28,7 @@ public class RecordTransaction
     public String Comments;
     public Integer BudgetYear;
     public Integer BudgetMonth;
+    public Boolean HideBalance;
 
     RecordTransaction
             (
@@ -45,7 +46,8 @@ public class RecordTransaction
                      Integer pCategoryId,
                      String pComments,
                      Integer pBudgetYear,
-                     Integer pBudgetMonth
+                     Integer pBudgetMonth,
+                     Boolean pHideBalance
             )
     {
         TxSeqNo = pTxSeqNo;
@@ -65,6 +67,7 @@ public class RecordTransaction
         Comments = pComments;
         BudgetYear = pBudgetYear;
         BudgetMonth = pBudgetMonth;
+        HideBalance = pHideBalance;
     }
     public RecordTransaction()
     {
@@ -85,6 +88,7 @@ public class RecordTransaction
         Comments = "";
         BudgetYear = 0;
         BudgetMonth = 0;
+        HideBalance = false;
     }
     public boolean Equals(RecordTransaction recTwo)
     {

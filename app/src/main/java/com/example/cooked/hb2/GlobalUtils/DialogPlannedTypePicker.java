@@ -3,21 +3,14 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.R;
-
-import java.util.Calendar;
-import java.util.Date;
-
 
 public class DialogPlannedTypePicker extends Dialog implements View.OnClickListener
 {
@@ -77,7 +70,6 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
         catch(Exception e)
         {
             ShowError("onClick", e.getMessage());
-            return;
         }
     }
 

@@ -41,7 +41,7 @@ public class RecordPlanned
     public String mPlanned;
     public String mSubCategoryName;
 
-    public Date mNextDueDate;
+    Date mNextDueDate;
     
 
     RecordPlanned
@@ -100,7 +100,7 @@ public class RecordPlanned
         mPlanned = "";
         if (mPlannedType == RecordPlanned.mPTOneOff) {
             MyString ms=new MyString();
-            if(DateUtils.dateUtils().DateTo_ddd_ddmmyyyy(mPlannedDate, ms) != false)
+            if(DateUtils.dateUtils().DateTo_ddd_ddmmyyyy(mPlannedDate, ms))
               mPlanned = ms.Value;
         }
 
