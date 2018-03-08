@@ -1,7 +1,7 @@
 package com.example.cooked.hb2.GlobalUtils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Environment;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordTransaction;
@@ -11,13 +11,13 @@ import com.example.cooked.hb2.R;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,12 +28,12 @@ import static java.lang.Boolean.TRUE;
 
 public class MyDownloads
 {
+    @SuppressLint("StaticFieldLeak")
     private static MyDownloads myDL;
     private String downloadDirectory;
     private String txArchiveDirectory;
-    private Context _context;
     private Pattern pattern;
-    private ArrayList<String> mylist = new ArrayList<String>();
+    private ArrayList<String> mylist = new ArrayList<>();
     public static MyDownloads MyDL()
     {
         if(myDL==null)
@@ -43,7 +43,6 @@ public class MyDownloads
     
     private MyDownloads(Context context)
     {
-        _context = context;
         try
         {
             downloadDirectory = context.getResources().getString(R.string.download_directory);
@@ -53,7 +52,7 @@ public class MyDownloads
                 f.mkdir();
             String expression = "\\d{8}_\\d{8}_\\d{4}.csv";
             pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-            mylist = new ArrayList<String>();
+            mylist = new ArrayList<>();
         }
         catch(Exception e)
         {
@@ -62,17 +61,17 @@ public class MyDownloads
         
     }
     
-    public boolean isBankFile(String filename)
+    private boolean isBankFile(String filename)
     {
         Matcher matcher = pattern.matcher(filename);
         return matcher.matches();
     }
 
-    public Boolean loadFile(String filename)
+    private Boolean loadFile(String filename)
     {
         String inputFile;
         String archiveFile;
-        int l_LineNo=1;
+        int l_LineNo=0;
         try
         {
             MyLog.WriteLogMessage("Reading file " + downloadDirectory + "/" + filename);
@@ -83,16 +82,19 @@ public class MyDownloads
             List resultList = new ArrayList();
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             String csvLine;
-            csvLine = reader.readLine();
             while ((csvLine = reader.readLine()) != null)
             {
                 l_LineNo++;
+                if(l_LineNo==1)
+                {
+                    continue;
+                }
 
                 String[] row = csvLine.split(",");
                 
                 RecordTransaction rt = new RecordTransaction();
                 
-                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                DateFormat df = new SimpleDateFormat( "dd/MM/yyyy");
                 rt.TxDate = df.parse(row[0]);
 
                 rt.BudgetYear = dateUtils().GetBudgetYear(rt.TxDate);

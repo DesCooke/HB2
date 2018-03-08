@@ -19,5 +19,6 @@
     <string name="budget_header_extra_expenses">EXTRA EXPENSES</string>
     <string name="budget_header_extra_income">EXTRA INCOME</string>
     <string name="DayCaption">Day: %s</string>
+    <string name="DaysCaption">Days: %s</string>
     <string name="DayAndMonth">Day: %s, Month: %s</string>
 </resources>
