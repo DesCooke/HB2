@@ -9,15 +9,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordPlanned;
-import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
-
-import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 
 public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHolder>
 {
@@ -37,36 +34,36 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    static class ViewHolder extends RecyclerView.ViewHolder
     {
         // each data item is just a string in this case
-        public TextView mPlannedType;
-        public TextView mPlannedName;
-        public TextView mSubcategoryName;
-        public TextView mBankAccount;
-        public TextView mPlanned;
-        public TextView mStartDate;
-        public TextView mEndDate;
-        public TextView mMatchingType;
-        public TextView mMatchingDescription;
-        public TextView mMatchingAmount;
-        public ConstraintLayout mFull;
+        TextView mPlannedType;
+        TextView mPlannedName;
+        TextView mSubcategoryName;
+        TextView mBankAccount;
+        TextView mPlanned;
+        TextView mStartDate;
+        TextView mEndDate;
+        TextView mMatchingType;
+        TextView mMatchingDescription;
+        TextView mMatchingAmount;
+        ConstraintLayout mFull;
 
-        public ViewHolder(View v)
+        ViewHolder(View v)
         {
             super(v);
 
-            mPlannedType = (TextView) v.findViewById(R.id.cell_PlannedType);
-            mPlannedName = (TextView) v.findViewById(R.id.cell_PlannedName);
-            mSubcategoryName = (TextView) v.findViewById(R.id.cell_SubcategoryName);
-            mBankAccount = (TextView) v.findViewById(R.id.cell_BankAccount);
-            mPlanned = (TextView) v.findViewById(R.id.cell_Planned);
-            mStartDate = (TextView) v.findViewById(R.id.cell_StartDate);
-            mEndDate = (TextView) v.findViewById(R.id.cell_EndDate);
-            mMatchingType = (TextView) v.findViewById(R.id.cell_MatchingType);
-            mMatchingDescription = (TextView) v.findViewById(R.id.cell_MatchingDescription);
-            mMatchingAmount = (TextView) v.findViewById(R.id.cell_MatchingAmount);
-            mFull = (ConstraintLayout) v.findViewById(R.id.cell_full);
+            mPlannedType = v.findViewById(R.id.cell_PlannedType);
+            mPlannedName = v.findViewById(R.id.cell_PlannedName);
+            mSubcategoryName = v.findViewById(R.id.cell_SubcategoryName);
+            mBankAccount = v.findViewById(R.id.cell_BankAccount);
+            mPlanned = v.findViewById(R.id.cell_Planned);
+            mStartDate = v.findViewById(R.id.cell_StartDate);
+            mEndDate = v.findViewById(R.id.cell_EndDate);
+            mMatchingType = v.findViewById(R.id.cell_MatchingType);
+            mMatchingDescription = v.findViewById(R.id.cell_MatchingDescription);
+            mMatchingAmount = v.findViewById(R.id.cell_MatchingAmount);
+            mFull = v.findViewById(R.id.cell_full);
         }
     }
 
@@ -84,8 +81,7 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_planned, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)

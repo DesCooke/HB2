@@ -1,7 +1,5 @@
 package com.example.cooked.hb2.GlobalUtils;
 
-import android.content.res.Resources;
-
 import com.example.cooked.hb2.R;
 
 import java.io.BufferedWriter;
@@ -12,9 +10,6 @@ import java.util.Date;
 
 import static java.lang.Boolean.TRUE;
 
-//
-// Simple class containing File Utility functions
-//
 public class MyLog
 {
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -22,8 +17,11 @@ public class MyLog
     {
         try
         {
-            String homeDirectory=MyResources.R().getString(R.string.home_directory);
-            String logfilename=MyResources.R().getString(R.string.log_filename);
+            if(MyResources.R()==null)
+              return;
+
+            String homeDirectory = MyResources.R().getString(R.string.home_directory);
+            String logfilename = MyResources.R().getString(R.string.log_filename);
 
             // create a File object from it
             File file=new File(homeDirectory + '/' + logfilename);
@@ -47,7 +45,7 @@ public class MyLog
         }
         catch(Exception e)
         {
-            String myerror = e.getMessage();
+            //
         }
     }
 }

@@ -1,18 +1,14 @@
 package com.example.cooked.hb2;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
-import com.example.cooked.hb2.GlobalUtils.MyLog;
 
 import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
@@ -30,7 +26,7 @@ public class activityCategoryItem extends AppCompatActivity
         try
         {
             setContentView(R.layout.activity_category_item);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
     
             edtCategoryName = findViewById(R.id.edtCategoryName);

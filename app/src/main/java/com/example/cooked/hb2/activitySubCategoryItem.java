@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.RadioButton;
 
 import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.Database.RecordSubCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 
@@ -23,11 +22,7 @@ public class activitySubCategoryItem extends AppCompatActivity
     public Integer subCategoryId;
     public String categoryName;
     public TextInputLayout edtSubCategoryName;
-    public RadioButton radMonthly;
-    public RadioButton radExra;
-    public RadioButton radIncome;
-    public RadioButton radExpense;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -35,7 +30,7 @@ public class activitySubCategoryItem extends AppCompatActivity
         try
         {
             setContentView(R.layout.activity_subcategory_item);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
             edtSubCategoryName = findViewById(R.id.edtSubCategoryName);
@@ -180,7 +175,7 @@ public class activitySubCategoryItem extends AppCompatActivity
         }
         catch(Exception e)
         {
-            ErrorDialog.Show("Error in activitSubyCategoryItem::onCreate", e.getMessage());
+            ErrorDialog.Show("Error in activitSubCategoryItem::onCreate", e.getMessage());
         }
     }
 

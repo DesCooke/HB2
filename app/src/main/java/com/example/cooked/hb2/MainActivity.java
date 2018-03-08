@@ -1,5 +1,6 @@
 package com.example.cooked.hb2;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import static java.lang.Boolean.FALSE;
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener
 {
+    @SuppressLint("StaticFieldLeak")
     public static Context context;
     
     private final String KEY_RECYCLER_STATE_BUTTON = "recycler_state_button";
@@ -66,18 +68,6 @@ public class MainActivity extends AppCompatActivity
     
     private ArrayList<RecordBudgetGroup> mDatasetBudget;
     private ArrayList<RecordButton> mDatasetButton;
-    private ArrayList<RecordTransaction> mDatasetCurrent;
-    private ArrayList<RecordTransaction> mDatasetGeneral;
-    private ArrayList<RecordTransaction> mDatasetLongTerm;
-    private ArrayList<RecordTransaction> mDatasetFamily;
-    private ArrayList<RecordTransaction> mDatasetCash;
-    
-    private RecyclerView.LayoutManager mLayoutManagerButton;
-    private RecyclerView.LayoutManager mLayoutManagerCurrent;
-    private RecyclerView.LayoutManager mLayoutManagerGeneral;
-    private RecyclerView.LayoutManager mLayoutManagerLongTerm;
-    private RecyclerView.LayoutManager mLayoutManagerFamily;
-    private RecyclerView.LayoutManager mLayoutManagerCash;
     
     private Bundle mButtonViewState;
     private Bundle mCurrentViewState;
@@ -88,15 +78,8 @@ public class MainActivity extends AppCompatActivity
     
     private BudgetAdapter budgetAdapter;
     private ImageAdapter mTransactionAdapterButton;
-    private TransactionAdapter mTransactionAdapterCurrent;
-    private TransactionAdapter mTransactionAdapterGeneral;
-    private TransactionAdapter mTransactionAdapterLongTerm;
-    private TransactionAdapter mTransactionAdapterFamily;
-    private TransactionAdapter mTransactionAdapterCash;
     private Toolbar toolbar;
     private FloatingActionButton fab;
-    private ImageButton imgLeft;
-    private ImageButton imgRight;
     private TextView txtBudgetTitle;
     private TextView txtSubTitle;
     
@@ -231,7 +214,7 @@ public class MainActivity extends AppCompatActivity
                 (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense)));
             
             //get reference of the ExpandableListView
-            budgetListView = (ExpandableListView) findViewById(R.id.budgetList);
+            budgetListView = findViewById(R.id.budgetList);
             
             // create the adapter by passing your ArrayList data
             budgetAdapter = new BudgetAdapter(MainActivity.this, mDatasetBudget);
@@ -331,8 +314,8 @@ public class MainActivity extends AppCompatActivity
         
         txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
         txtSubTitle = findViewById(R.id.txtSubTitle);
-        
-        imgLeft = findViewById(R.id.imgLeft);
+    
+        ImageButton imgLeft = findViewById(R.id.imgLeft);
         imgLeft.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -341,8 +324,8 @@ public class MainActivity extends AppCompatActivity
                 DecreaseBudgetPeriod(view);
             }
         });
-        
-        imgRight = findViewById(R.id.imgRight);
+    
+        ImageButton imgRight = findViewById(R.id.imgRight);
         imgRight.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -370,7 +353,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener()
         {
@@ -386,7 +369,7 @@ public class MainActivity extends AppCompatActivity
     
     private void setupTabs()
     {
-        TabHost host = (TabHost) findViewById(R.id.mainTabHost);
+        TabHost host = findViewById(R.id.mainTabHost);
         host.setup();
         
         TabHost.TabSpec spec = host.newTabSpec("Dashboard");
@@ -529,18 +512,18 @@ public class MainActivity extends AppCompatActivity
     private void setupRecyclerViews()
     {
         mDatasetButton = getButtonList();
-        mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", sw_show_planned.isChecked());
-        mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830", false);
-        mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503", false);
-        mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361", false);
-        mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash", false);
+        ArrayList<RecordTransaction> mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", sw_show_planned.isChecked());
+        ArrayList<RecordTransaction> mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830", false);
+        ArrayList<RecordTransaction> mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503", false);
+        ArrayList<RecordTransaction> mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361", false);
+        ArrayList<RecordTransaction> mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash", false);
         
-        mTransactionListButton = (RecyclerView) findViewById(R.id.buttonList);
-        mTransactionListCurrent = (RecyclerView) findViewById(R.id.transactionListCurrent);
-        mTransactionListGeneral = (RecyclerView) findViewById(R.id.transactionListGeneral);
-        mTransactionListLongTerm = (RecyclerView) findViewById(R.id.transactionListLongTerm);
-        mTransactionListFamily = (RecyclerView) findViewById(R.id.transactionListFamily);
-        mTransactionListCash = (RecyclerView) findViewById(R.id.transactionListCash);
+        mTransactionListButton = findViewById(R.id.buttonList);
+        mTransactionListCurrent =  findViewById(R.id.transactionListCurrent);
+        mTransactionListGeneral = findViewById(R.id.transactionListGeneral);
+        mTransactionListLongTerm =  findViewById(R.id.transactionListLongTerm);
+        mTransactionListFamily = findViewById(R.id.transactionListFamily);
+        mTransactionListCash = findViewById(R.id.transactionListCash);
         
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -550,24 +533,24 @@ public class MainActivity extends AppCompatActivity
         mTransactionListLongTerm.setHasFixedSize(true);
         mTransactionListFamily.setHasFixedSize(true);
         mTransactionListCash.setHasFixedSize(true);
-        
-        mLayoutManagerButton = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
+    
+        RecyclerView.LayoutManager mLayoutManagerButton = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
         mTransactionListButton.setLayoutManager(mLayoutManagerButton);
         
         // use a linear layout manager
-        mLayoutManagerCurrent = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
         mTransactionListCurrent.setLayoutManager(mLayoutManagerCurrent);
-        
-        mLayoutManagerGeneral = new LinearLayoutManager(this);
+    
+        RecyclerView.LayoutManager mLayoutManagerGeneral = new LinearLayoutManager(this);
         mTransactionListGeneral.setLayoutManager(mLayoutManagerGeneral);
-        
-        mLayoutManagerLongTerm = new LinearLayoutManager(this);
+    
+        RecyclerView.LayoutManager mLayoutManagerLongTerm = new LinearLayoutManager(this);
         mTransactionListLongTerm.setLayoutManager(mLayoutManagerLongTerm);
-        
-        mLayoutManagerFamily = new LinearLayoutManager(this);
+    
+        RecyclerView.LayoutManager mLayoutManagerFamily = new LinearLayoutManager(this);
         mTransactionListFamily.setLayoutManager(mLayoutManagerFamily);
-        
-        mLayoutManagerCash = new LinearLayoutManager(this);
+    
+        RecyclerView.LayoutManager mLayoutManagerCash = new LinearLayoutManager(this);
         mTransactionListCash.setLayoutManager(mLayoutManagerCash);
         
         mTransactionAdapterButton = new ImageAdapter(mDatasetButton);
@@ -578,7 +561,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(View view, RecordButton obj)
             {
-                TabHost host = (TabHost) findViewById(R.id.mainTabHost);
+                TabHost host = findViewById(R.id.mainTabHost);
                 host.setCurrentTab(obj.buttonId);
                 for (int i = 0; i < mDatasetButton.size(); i++)
                     mDatasetButton.get(i).selected = false;
@@ -591,7 +574,7 @@ public class MainActivity extends AppCompatActivity
         
         
         // specify an adapter (see also next example)
-        mTransactionAdapterCurrent = new TransactionAdapter(mDatasetCurrent);
+        TransactionAdapter mTransactionAdapterCurrent = new TransactionAdapter(mDatasetCurrent);
         mTransactionListCurrent.setAdapter(mTransactionAdapterCurrent);
         mTransactionAdapterCurrent.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
         {
@@ -604,8 +587,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        
-        mTransactionAdapterGeneral = new TransactionAdapter(mDatasetGeneral);
+    
+        TransactionAdapter mTransactionAdapterGeneral = new TransactionAdapter(mDatasetGeneral);
         mTransactionListGeneral.setAdapter(mTransactionAdapterGeneral);
         mTransactionAdapterGeneral.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
         {
@@ -618,8 +601,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        
-        mTransactionAdapterLongTerm = new TransactionAdapter(mDatasetLongTerm);
+    
+        TransactionAdapter mTransactionAdapterLongTerm = new TransactionAdapter(mDatasetLongTerm);
         mTransactionListLongTerm.setAdapter(mTransactionAdapterLongTerm);
         mTransactionAdapterLongTerm.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
         {
@@ -632,8 +615,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        
-        mTransactionAdapterFamily = new TransactionAdapter(mDatasetFamily);
+    
+        TransactionAdapter mTransactionAdapterFamily = new TransactionAdapter(mDatasetFamily);
         mTransactionListFamily.setAdapter(mTransactionAdapterFamily);
         mTransactionAdapterFamily.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
         {
@@ -646,8 +629,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        
-        mTransactionAdapterCash = new TransactionAdapter(mDatasetCash);
+    
+        TransactionAdapter mTransactionAdapterCash = new TransactionAdapter(mDatasetCash);
         mTransactionListCash.setAdapter(mTransactionAdapterCash);
         mTransactionAdapterCash.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
         {

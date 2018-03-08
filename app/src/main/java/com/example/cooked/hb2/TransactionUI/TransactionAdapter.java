@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordTransaction;
-import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
 
@@ -35,42 +34,42 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    static class ViewHolder extends RecyclerView.ViewHolder
     {
         // each data item is just a string in this case
-        public TextView mTxSeqNo;
-        public TextView mTxAdded;
-        public TextView mTxFilename;
-        public TextView mTxLineNo;
-        public TextView mTxDate;
-        public TextView mTxType;
-        public TextView mBankAccount;
-        public TextView mTxDescription;
-        public TextView mTxAmount;
-        public TextView mTxBalance;
-        public TextView mSubCategoryName;
-        public TextView mComments;
-        public TextView mBudget;
-        public ConstraintLayout mFull;
+        TextView mTxSeqNo;
+        TextView mTxAdded;
+        TextView mTxFilename;
+        TextView mTxLineNo;
+        TextView mTxDate;
+        TextView mTxType;
+        TextView mBankAccount;
+        TextView mTxDescription;
+        TextView mTxAmount;
+        TextView mTxBalance;
+        TextView mSubCategoryName;
+        TextView mComments;
+        TextView mBudget;
+        ConstraintLayout mFull;
 
-        public ViewHolder(View v)
+        ViewHolder(View v)
         {
             super(v);
 
-            mTxSeqNo = (TextView) v.findViewById(R.id.celltx_TxSeqNo);
-            mTxAdded = (TextView) v.findViewById(R.id.celltx_TxAdded);
-            mTxFilename = (TextView) v.findViewById(R.id.celltx_TxFilename);
-            mTxLineNo = (TextView) v.findViewById(R.id.celltx_TxLineNo);
-            mTxDate = (TextView) v.findViewById(R.id.celltx_TxDate);
-            mTxType = (TextView) v.findViewById(R.id.celltx_TxType);
-            mBankAccount = (TextView) v.findViewById(R.id.celltx_BankAccount);
-            mTxDescription = (TextView) v.findViewById(R.id.celltx_TxDescription);
-            mTxAmount = (TextView) v.findViewById(R.id.celltx_TxAmount);
-            mTxBalance = (TextView) v.findViewById(R.id.celltx_TxBalance);
-            mSubCategoryName = (TextView) v.findViewById(R.id.celltx_SubCategoryName);
-            mComments = (TextView) v.findViewById(R.id.celltx_Comments);
-            mBudget = (TextView) v.findViewById(R.id.celltx_Budget);
-            mFull = (ConstraintLayout) v.findViewById(R.id.celltx_full);
+            mTxSeqNo =  v.findViewById(R.id.celltx_TxSeqNo);
+            mTxAdded =  v.findViewById(R.id.celltx_TxAdded);
+            mTxFilename = v.findViewById(R.id.celltx_TxFilename);
+            mTxLineNo = v.findViewById(R.id.celltx_TxLineNo);
+            mTxDate = v.findViewById(R.id.celltx_TxDate);
+            mTxType = v.findViewById(R.id.celltx_TxType);
+            mBankAccount = v.findViewById(R.id.celltx_BankAccount);
+            mTxDescription = v.findViewById(R.id.celltx_TxDescription);
+            mTxAmount = v.findViewById(R.id.celltx_TxAmount);
+            mTxBalance = v.findViewById(R.id.celltx_TxBalance);
+            mSubCategoryName = v.findViewById(R.id.celltx_SubCategoryName);
+            mComments = v.findViewById(R.id.celltx_Comments);
+            mBudget = v.findViewById(R.id.celltx_Budget);
+            mFull = v.findViewById(R.id.celltx_full);
         }
     }
 
@@ -88,8 +87,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_transaction, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -142,7 +140,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             {
                 holder.mTxAmount.setText("Amount £" + String.format("%.2f", rec.TxAmount));
             }
-            if(rec.HideBalance.booleanValue()==true)
+            if(rec.HideBalance)
             {
                 holder.mTxBalance.setVisibility(View.INVISIBLE);
             }

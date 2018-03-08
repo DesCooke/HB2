@@ -16,8 +16,6 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 
 import java.util.ArrayList;
 
-import static android.view.View.GONE;
-
 public class activitySubCategory extends AppCompatActivity{
 
     public String categoryName;
@@ -33,7 +31,7 @@ public class activitySubCategory extends AppCompatActivity{
         try
         {
             setContentView(R.layout.activity_subcategory_list);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
             categoryId = getIntent().getIntExtra("CATEGORYID", 0);
@@ -41,7 +39,7 @@ public class activitySubCategory extends AppCompatActivity{
 
             setTitle("Sub Categories for " + categoryName);
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            FloatingActionButton fab =  findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -68,7 +66,7 @@ public class activitySubCategory extends AppCompatActivity{
     private void CreateRecyclerView()
     {
         mDataset = MyDatabase.MyDB().getSubCategoryList(categoryId);
-        mSubCategoryList = (RecyclerView) findViewById(R.id.subcategoryList);
+        mSubCategoryList = findViewById(R.id.subcategoryList);
         mSubCategoryList.setHasFixedSize(true);
         mLayoutManagerCurrent = new LinearLayoutManager(this);
         mSubCategoryList.setLayoutManager(mLayoutManagerCurrent);

@@ -1,15 +1,28 @@
 <component name="ProjectDictionaryState">
   <dictionary name="cooked">
     <words>
+      <w>activit</w>
       <w>atleast</w>
+      <w>brec</w>
+      <w>categoryid</w>
+      <w>categoryname</w>
       <w>catgegory</w>
       <w>cellbudgetgroup</w>
+      <w>ddayp</w>
       <w>ddmmyyyy</w>
+      <w>dmdp</w>
+      <w>dwdayp</w>
+      <w>filerec</w>
       <w>getbudget</w>
+      <w>lcontext</w>
+      <w>longterm</w>
       <w>lrec</w>
       <w>mrbg</w>
       <w>oneoff</w>
+      <w>paddings</w>
       <w>rbspent</w>
+      <w>subcategoryid</w>
+      <w>subcategoryname</w>
     </words>
   </dictionary>
 </component>

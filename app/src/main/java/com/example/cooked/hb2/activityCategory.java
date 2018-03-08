@@ -29,12 +29,12 @@ public class activityCategory extends AppCompatActivity{
         try
         {
             setContentView(R.layout.activity_category_list);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
     
             setTitle("Categories");
     
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            FloatingActionButton fab = findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -59,7 +59,7 @@ public class activityCategory extends AppCompatActivity{
     private void CreateRecyclerView()
     {
         mDataset = MyDatabase.MyDB().getCategoryList();
-        mCategoryList = (RecyclerView) findViewById(R.id.categoryList);
+        mCategoryList = findViewById(R.id.categoryList);
         mCategoryList.setHasFixedSize(true);
         mLayoutManagerCurrent = new LinearLayoutManager(this);
         mCategoryList.setLayoutManager(mLayoutManagerCurrent);

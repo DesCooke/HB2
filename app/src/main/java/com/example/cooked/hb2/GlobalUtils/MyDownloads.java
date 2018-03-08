@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,7 +78,7 @@ public class MyDownloads
             inputFile = downloadDirectory + "/" + filename;
             archiveFile = txArchiveDirectory + "/" + filename;
             
-            List resultList = new ArrayList();
+            List<RecordTransaction> resultList = new ArrayList<>();
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             String csvLine;
             while ((csvLine = reader.readLine()) != null)
@@ -94,7 +93,7 @@ public class MyDownloads
                 
                 RecordTransaction rt = new RecordTransaction();
                 
-                DateFormat df = new SimpleDateFormat( "dd/MM/yyyy");
+                @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat( "dd/MM/yyyy");
                 rt.TxDate = df.parse(row[0]);
 
                 rt.BudgetYear = dateUtils().GetBudgetYear(rt.TxDate);
@@ -117,34 +116,33 @@ public class MyDownloads
                 rt.TxLineNo = l_LineNo;
                 rt.TxSeqNo = 0;
                 rt.TxStatus = RecordTransaction.Status.NEW;
-                resultList.add(0,rt);
+                resultList.add(0, rt);
             }
             reader.close();
             if(resultList.size()==0)
                 return(TRUE);
-            Date lFirstDate = ((RecordTransaction)resultList.get(0)).TxDate;
-            Date lLastDate = ((RecordTransaction)resultList.get(resultList.size()-1)).TxDate;
-            String lSortCode = ((RecordTransaction)resultList.get(resultList.size()-1)).TxSortCode;
-            String lAccountNumber = ((RecordTransaction)resultList.get(resultList.size()-1)).TxAccountNumber;
+            Date lFirstDate = resultList.get(0).TxDate;
+            Date lLastDate = resultList.get(resultList.size()-1).TxDate;
+            String lSortCode = resultList.get(resultList.size()-1).TxSortCode;
+            String lAccountNumber = resultList.get(resultList.size()-1).TxAccountNumber;
             ArrayList<RecordTransaction> lInDBList = MyDatabase.MyDB().getTxDateRange(lFirstDate, lLastDate,
                     lSortCode, lAccountNumber);
-
-            int DBIndex=0;
+    
             int FileIndex=0;
             RecordTransaction DBrec;
             RecordTransaction Filerec;
             while (FileIndex < resultList.size())
             {
-                Filerec = ((RecordTransaction)resultList.get(FileIndex));
+                Filerec = resultList.get(FileIndex);
                 Boolean lFound=FALSE;
                 for(int i=0;i<lInDBList.size();i++)
                 {
-                    DBrec = ((RecordTransaction)lInDBList.get(i));
+                    DBrec = lInDBList.get(i);
                     if(DBrec.Equals(Filerec))
                     {
                         lFound=TRUE;
                         if( (Filerec.TxFilename.compareTo(DBrec.TxFilename)!=0) ||
-                            (Filerec.TxLineNo != DBrec.TxLineNo) )
+                            (Filerec.TxLineNo.intValue() != DBrec.TxLineNo.intValue()) )
                         {
                             MyDB().updateFilenameLineNo(DBrec, Filerec);
                             DBrec.TxFilename = Filerec.TxFilename;
@@ -182,11 +180,11 @@ public class MyDownloads
             mylist.clear();
             File f = new File(downloadDirectory);
             File[] fl = f.listFiles();
-            for (int i = 0; i < fl.length; i++)
+            for (File aFl : fl)
             {
-                if (isBankFile(fl[i].getName()))
+                if (isBankFile(aFl.getName()))
                 {
-                    mylist.add(fl[i].getName());
+                    mylist.add(aFl.getName());
                 }
             }
             Collections.sort(mylist);

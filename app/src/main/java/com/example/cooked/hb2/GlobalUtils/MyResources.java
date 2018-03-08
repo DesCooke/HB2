@@ -1,11 +1,13 @@
 package com.example.cooked.hb2.GlobalUtils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 
 public class MyResources
 {
-    static Context _context;
+    @SuppressLint("StaticFieldLeak")
+    private static Context _context;
 
     public static void setContext(Context context)
     {

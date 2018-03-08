@@ -3,7 +3,6 @@ package com.example.cooked.hb2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,22 +17,18 @@ import java.util.ArrayList;
 
 public class activityPlanning extends AppCompatActivity
 {
-    private RecyclerView mPlannedList;
-    private ArrayList<RecordPlanned> mDataset;
-    private RecyclerView.LayoutManager mLayoutManagerCurrent;
-    private PlannedAdapter mPlannedAdapter;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         
         setTitle("Planning");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -50,12 +45,12 @@ public class activityPlanning extends AppCompatActivity
 
     protected void SetupRecyclerView()
     {
-        mDataset = MyDatabase.MyDB().getPlannedList();
-        mPlannedList = (RecyclerView) findViewById(R.id.plannedList);
+        ArrayList<RecordPlanned> mDataset = MyDatabase.MyDB().getPlannedList();
+        RecyclerView mPlannedList = findViewById(R.id.plannedList);
         mPlannedList.setHasFixedSize(true);
-        mLayoutManagerCurrent = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
         mPlannedList.setLayoutManager(mLayoutManagerCurrent);
-        mPlannedAdapter = new PlannedAdapter(mDataset);
+        PlannedAdapter mPlannedAdapter = new PlannedAdapter(mDataset);
         mPlannedList.setAdapter(mPlannedAdapter);
         mPlannedAdapter.setOnItemClickListener(new PlannedAdapter.OnItemClickListener()
         {

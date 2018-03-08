@@ -1,8 +1,7 @@
 package com.example.cooked.hb2;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,8 +24,8 @@ import com.example.cooked.hb2.GlobalUtils.MyInt;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 
 import java.util.Date;
+import java.util.Locale;
 
-import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 import static java.lang.Boolean.FALSE;
@@ -69,12 +68,13 @@ public class activityPlanningItem extends AppCompatActivity
     public String mActionType;
     public RecordPlanned mRecordPlanned;
     
+    @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning_item);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         
         mRecordPlanned = new RecordPlanned();
@@ -144,15 +144,15 @@ public class activityPlanningItem extends AppCompatActivity
         if (mActionType.compareTo("ADD") == 0)
         {
             setTitle("Add a new planned item");
-            edtPlanned.setText("<pick>");
-            edtSubCategoryName.setText("<pick>");
-            edtPlannedType.setText("<pick>");
+            edtPlanned.setText(R.string.pickText);
+            edtSubCategoryName.setText(R.string.pickText);
+            edtPlannedType.setText(R.string.pickText);
     
             MyString myString=new MyString();
             if(!dateUtils().DateToStr(new Date(), myString))
                 return;
             edtStartDate.setText(myString.Value);
-            edtEndDate.setText("31/12/2099");
+            edtEndDate.setText(R.string.dateEndOfTime);
             btnDelete.setVisibility(View.GONE);
         }
         if (mActionType.compareTo("EDIT") == 0)
@@ -161,15 +161,15 @@ public class activityPlanningItem extends AppCompatActivity
             Integer lPlannedId=getIntent().getIntExtra("PlannedId", 0);
             if(lPlannedId==0)
             {
-                edtPlanned.setText("<pick>");
-                edtSubCategoryName.setText("<pick>");
-                edtPlannedType.setText("<pick>");
+                edtPlanned.setText(R.string.pickText);
+                edtSubCategoryName.setText(R.string.pickText);
+                edtPlannedType.setText(R.string.pickText);
 
                 MyString myString=new MyString();
                 if(!dateUtils().DateToStr(new Date(), myString))
                     return;
                 edtStartDate.setText(myString.Value);
-                edtEndDate.setText("31/12/2099");
+                edtEndDate.setText(R.string.dateEndOfTime);
             }
             else
             {
@@ -198,15 +198,8 @@ public class activityPlanningItem extends AppCompatActivity
 
                 edtMatchType.getEditText().setText(mRecordPlanned.mMatchingTxType);
                 edtMatchDescription.getEditText().setText(mRecordPlanned.mMatchingTxDescription);
-                if(mRecordPlanned.mMatchingTxAmount < 0.00)
-                {
-                    edtMatchAmount.getEditText().setText("-" + String.format("%.2f", mRecordPlanned.mMatchingTxAmount*-1));
-                }
-                else
-                {
-                    edtMatchAmount.getEditText().setText(String.format("%.2f", mRecordPlanned.mMatchingTxAmount));
-                }
-
+                String lText = String.format(Locale.UK, "%.2f", mRecordPlanned.mMatchingTxAmount);
+                edtMatchAmount.getEditText().setText(lText);
 
                 MyMonday.Value = mRecordPlanned.mMonday;
                 MyTuesday.Value = mRecordPlanned.mTuesday;
@@ -426,7 +419,7 @@ public class activityPlanningItem extends AppCompatActivity
     
     public void pickPlannedType(View view)
     {
-        edtPlanned.setText("<pick>");
+        edtPlanned.setText(R.string.pickText);
         DialogPlannedTypePicker ppp = new DialogPlannedTypePicker(this);
         ppp.edtPlannedType = edtPlannedType;
         ppp.mPlannedType = mPlannedType;

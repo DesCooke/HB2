@@ -21,4 +21,8 @@
     <string name="DayCaption">Day: %s</string>
     <string name="DaysCaption">Days: %s</string>
     <string name="DayAndMonth">Day: %s, Month: %s</string>
+    <string name="pickText"><![CDATA[<pick>]]></string>
+    <string name="dateEndOfTime">31/12/2099</string>
+    <string name="AmountZero">0.00</string>
+    <string name="captionDate">Date</string>
 </resources>

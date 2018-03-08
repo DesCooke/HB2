@@ -2,9 +2,6 @@ package com.example.cooked.hb2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -13,25 +10,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
-import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 
 public class activityTransactionItem extends AppCompatActivity
 {
@@ -58,20 +51,20 @@ public class activityTransactionItem extends AppCompatActivity
         try
         {
             setContentView(R.layout.activity_transaction_item);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar toolbar =  findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
     
             MySubCategoryId = new MyInt();
-            edtTxDate = (TextView) findViewById(R.id.edtTxDate);
-            edtTxDescription = (EditText) findViewById(R.id.edtDescription);
-            edtTxAmount = (EditText) findViewById(R.id.edtTxAmount);
-            edtCategory = (TextView) findViewById(R.id.edtCategory);
-            edtComments = (TextView) findViewById(R.id.edtComments);
-            edtBudgetYear = (TextView) findViewById(R.id.edtBudgetYear);
-            edtBudgetMonth = (TextView) findViewById(R.id.edtBudgetMonth);
-            btnOk = (Button) findViewById(R.id.btnOk);
-            btnDelete = (Button) findViewById(R.id.btnDelete);
-            btnCreatePlanned = (Button) findViewById(R.id.btnCreatePlanned);
+            edtTxDate = findViewById(R.id.edtTxDate);
+            edtTxDescription =  findViewById(R.id.edtDescription);
+            edtTxAmount = findViewById(R.id.edtTxAmount);
+            edtCategory =  findViewById(R.id.edtCategory);
+            edtComments =  findViewById(R.id.edtComments);
+            edtBudgetYear =  findViewById(R.id.edtBudgetYear);
+            edtBudgetMonth =  findViewById(R.id.edtBudgetMonth);
+            btnOk = findViewById(R.id.btnOk);
+            btnDelete = findViewById(R.id.btnDelete);
+            btnCreatePlanned =  findViewById(R.id.btnCreatePlanned);
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
@@ -96,7 +89,7 @@ public class activityTransactionItem extends AppCompatActivity
                 dateUtils().DateToStr(originalRecord.TxDate, lDateStr);
                 edtTxDate.setText(lDateStr.Value);
                 edtTxDescription.setText(originalRecord.TxDescription);
-                edtTxAmount.setText(Float.toString(originalRecord.TxAmount));
+                edtTxAmount.setText(String.format(Locale.UK, "%.2f", originalRecord.TxAmount));
                 MySubCategoryId.Value = originalRecord.CategoryId;
                 edtCategory.setText(originalRecord.SubCategoryName);
                 edtComments.setText(originalRecord.Comments);
@@ -105,22 +98,11 @@ public class activityTransactionItem extends AppCompatActivity
                 if (originalRecord.BudgetMonth == 0)
                     originalRecord.BudgetMonth = dateUtils().CurrentBudgetMonth();
     
-                edtBudgetYear.setText(Integer.toString(originalRecord.BudgetYear));
-                edtBudgetMonth.setText(Integer.toString(originalRecord.BudgetMonth));
+                edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
+                edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
     
                 btnDelete.setVisibility(View.VISIBLE);
                 btnCreatePlanned.setVisibility(View.VISIBLE);
-/*                if(originalRecord.TxSortCode.compareTo("Cash")!=0)
-                {
-                    edtTxDate.setFocusable(FALSE);
-                    edtTxDate.setEnabled(FALSE);
-                    edtTxDescription.setFocusable(FALSE);
-                    edtTxDescription.setEnabled(FALSE);
-                    edtTxAmount.setFocusable(FALSE);
-                    edtTxAmount.setEnabled(FALSE);
-                    btnDelete.setVisibility(GONE);
-                }
-  */
             }
     
     
@@ -148,8 +130,8 @@ public class activityTransactionItem extends AppCompatActivity
                         originalRecord.BudgetYear = dateUtils().GetBudgetYear(originalRecord.TxDate);
                         originalRecord.BudgetMonth = dateUtils().GetBudgetMonth(originalRecord.TxDate);
     
-                        edtBudgetYear.setText(Integer.toString(originalRecord.BudgetYear));
-                        edtBudgetMonth.setText(Integer.toString(originalRecord.BudgetMonth));
+                        edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
+                        edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
                     }
                 }
             });
@@ -160,7 +142,6 @@ public class activityTransactionItem extends AppCompatActivity
                 {
                     try
                     {
-                        RecordTransaction rt;
                         originalRecord.TxDate = new Date();
                         originalRecord.TxDate = dateUtils().StrToDate(edtTxDate.getText().toString());
                         originalRecord.TxDescription = edtTxDescription.getText().toString();
@@ -272,13 +253,13 @@ public class activityTransactionItem extends AppCompatActivity
             return;
         edtTxDate.setText(myString.Value);
         edtTxDescription.setText("");
-        edtTxAmount.setText("0.00");
+        edtTxAmount.setText(R.string.AmountZero);
         edtCategory.setText("");
         edtComments.setText("");
         Integer lMonth = dateUtils().CurrentBudgetMonth();
         Integer lYear = dateUtils().CurrentBudgetYear();
-        edtBudgetYear.setText(lYear.toString());
-        edtCategory.setText(lMonth.toString());
+        edtBudgetYear.setText(String.format(Locale.UK, "%d", lYear));
+        edtCategory.setText(String.format(Locale.UK, "%d", lMonth));
     }
 
     public void pickDateTime(View view)
@@ -286,7 +267,7 @@ public class activityTransactionItem extends AppCompatActivity
         try
         {
             DialogDatePicker ddp=new DialogDatePicker(this);
-            ddp.txtStartDate=(TextView) findViewById(R.id.edtTxDate);
+            ddp.txtStartDate= findViewById(R.id.edtTxDate);
             Date date=dateUtils().StrToDate(ddp.txtStartDate.getText().toString() );
             ddp.setInitialDate(date);
             ddp.show();
