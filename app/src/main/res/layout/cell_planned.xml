@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cell_full"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,7 +14,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="PlannedType"
+        android:text="@string/captionPlannedType"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cell_SubcategoryName" />
 
@@ -26,7 +25,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="PlannedName"
+        android:text="@string/captionPlannedName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,7 +36,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="cell_SubcategoryName"
+        android:text="@string/captionSubCategoryName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cell_PlannedName" />
 
@@ -48,7 +47,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="Bank Account"
+        android:text="@string/captionBankAccount"
         app:layout_constraintStart_toEndOf="@+id/cell_SubcategoryName"
         app:layout_constraintTop_toBottomOf="@+id/cell_PlannedName" />
 
@@ -59,7 +58,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="Planned"
+        android:text="@string/captionPlanned"
         app:layout_constraintStart_toEndOf="@+id/cell_PlannedType"
         app:layout_constraintTop_toBottomOf="@+id/cell_SubcategoryName" />
 
@@ -70,7 +69,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="StartDate"
+        android:text="@string/captionStartDate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cell_Planned" />
 
@@ -81,7 +80,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="EndDate"
+        android:text="@string/captionEndDate"
         app:layout_constraintStart_toEndOf="@+id/cell_StartDate"
         app:layout_constraintTop_toBottomOf="@+id/cell_Planned" />
 
@@ -92,7 +91,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="MatchingType"
+        android:text="@string/captionMatchingType"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cell_StartDate" />
 
@@ -103,7 +102,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="MatchingDescription"
+        android:text="@string/captionMatchingDescription"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cell_MatchingType" />
 
@@ -114,7 +113,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="MatchingAmount"
+        android:text="@string/captionMatchingAmount"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cell_MatchingDescription" />
 

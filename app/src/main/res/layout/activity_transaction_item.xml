@@ -33,7 +33,7 @@
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         tools:ignore="SmallSp"/>
 
-    <EditText
+    <TextView
         android:id="@+id/edtTxDate"
         android:layout_width="366dp"
         android:layout_height="50dp"
@@ -54,10 +54,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Description"
+        android:text="@string/captionDescription"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtTxDate" />
+        app:layout_constraintTop_toBottomOf="@+id/edtTxDate"
+        tools:ignore="SmallSp"/>
 
     <EditText
         android:id="@+id/edtDescription"
@@ -67,22 +68,38 @@
         android:layout_marginStart="8dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name"
+        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblDescription"
         tools:ignore="LabelFor"/>
 
     <TextView
-        android:id="@+id/lblTxDate4"
+        android:id="@+id/lblCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Category"
+        android:text="@string/captionCategory"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtTxAmount" />
+        app:layout_constraintTop_toBottomOf="@+id/edtTxAmount"
+        tools:ignore="SmallSp"/>
+
+    <TextView
+        android:id="@+id/edtCategory"
+        android:layout_width="368dp"
+        android:layout_height="57dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:onClick="pickCategory"
+        android:text=""
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lblCategory"
+        tools:ignore="LabelFor"/>
 
     <TextView
         android:id="@+id/lblComments"
@@ -90,26 +107,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Comments"
+        android:text="@string/captionComments"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtCategory"/>
-
-    <EditText
-        android:id="@+id/edtCategory"
-        android:layout_width="368dp"
-        android:layout_height="57dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:editable="false"
-        android:onClick="pickCategory"
-        android:text="edtCategory"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblTxDate4"
-        tools:ignore="LabelFor"/>
+        app:layout_constraintTop_toBottomOf="@+id/edtCategory"
+        tools:ignore="SmallSp"/>
 
     <EditText
         android:id="@+id/edtComments"
@@ -117,12 +119,13 @@
         android:layout_height="57dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:text="edtComments"
+        android:text=""
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblComments"
-        tools:ignore="LabelFor"/>
+        tools:ignore="LabelFor"
+        android:inputType="text"/>
 
     <TextView
         android:id="@+id/lblAmount"
@@ -130,10 +133,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Amount"
+        android:text="@string/captionAmount"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/edtDescription"
+        tools:ignore="SmallSp"/>
 
     <TextView
         android:id="@+id/lblBudget"
@@ -141,10 +145,11 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
-        android:text="Budget"
+        android:text="@string/captionBudgetPeriod"
         android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtDescription"/>
+        app:layout_constraintTop_toBottomOf="@+id/edtDescription"
+        tools:ignore="SmallSp"/>
 
     <EditText
         android:id="@+id/edtTxAmount"
@@ -154,7 +159,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:onClick="selectAll"
-        android:text="0.00"
+        android:text=""
         android:textAlignment="textEnd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblAmount"
@@ -168,7 +173,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:onClick="selectAll"
-        android:text="2018"
+        android:text=""
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblAmount"
@@ -182,7 +187,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:onClick="selectAll"
-        android:text="02"
+        android:text=""
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toStartOf="@+id/edtBudgetYear"
         app:layout_constraintTop_toBottomOf="@+id/lblAmount"
@@ -194,7 +199,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
-        android:text="Ok"
+        android:text="@string/captionOk"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtComments"/>
 
@@ -204,7 +209,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
-        android:text="Delete"
+        android:text="@string/captionDelete"
         app:layout_constraintEnd_toStartOf="@+id/btnOk"
         app:layout_constraintTop_toBottomOf="@+id/edtComments"/>
 
@@ -214,7 +219,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
-        android:text="Create Planned"
+        android:text="@string/captionCreatePlanned"
         app:layout_constraintEnd_toStartOf="@+id/btnDelete"
         app:layout_constraintTop_toBottomOf="@+id/edtComments" />
 

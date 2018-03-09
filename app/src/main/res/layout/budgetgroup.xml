@@ -9,7 +9,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1">
 
         <ImageView
@@ -21,19 +21,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/btn_star"/>
+            app:srcCompat="@android:drawable/btn_star"
+            android:contentDescription="@string/cdBtnStar"/>
 
         <TextView
             android:id="@+id/heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="hello world"
+            android:text="@string/captionBudgetGroupHeading"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/indicator"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SmallSp"/>
 
         <TextView
             android:id="@+id/budget_summary"
@@ -41,14 +43,15 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="8dp"
-            android:layout_toRightOf="@id/sequence"
-            android:text="£100.00/£55.00/£45.00"
+            android:layout_toEndOf="@id/sequence"
+            android:text="@string/captionBudgetSummary"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.571" />
+            app:layout_constraintVertical_bias="0.571"
+            tools:ignore="SmallSp"/>
 
     </android.support.constraint.ConstraintLayout>
 
