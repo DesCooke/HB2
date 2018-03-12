@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="budgetHeader">#025883</color>
     <color name="budgetSubHeader">#7ccaf1</color>
+    <color name="textLowLight">#c2c3c4</color>
+    <color name="textNormal">#000000</color>
 </resources>

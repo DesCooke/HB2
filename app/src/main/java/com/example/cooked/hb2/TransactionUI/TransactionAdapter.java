@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
@@ -101,9 +102,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        try {
-            
-            
+        try
+        {
+    
+    
             holder.mTxSeqNo.setText(rec.TxSeqNo.toString());
             holder.mTxAdded.setText(rec.TxAdded.toString());
             holder.mTxFilename.setText(rec.TxFilename);
@@ -111,40 +113,36 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rec.TxDate));
             holder.mTxType.setText(rec.TxType);
             holder.mBankAccount.setText(rec.TxSortCode + " " + rec.TxAccountNumber);
-            if(rec.TxDescription.length() > 0)
+            if (rec.TxDescription.length() > 0)
             {
                 holder.mTxDescription.setVisibility(View.VISIBLE);
                 holder.mTxDescription.setText("Description: " + rec.TxDescription);
-            }
-            else
+            } else
             {
                 holder.mTxDescription.setVisibility(View.GONE);
             }
             holder.mSubCategoryName.setText("Category: " + rec.SubCategoryName);
-
-            if(rec.Comments.length() > 0)
+    
+            if (rec.Comments.length() > 0)
             {
                 holder.mComments.setVisibility(View.VISIBLE);
                 holder.mComments.setText("Comments: " + rec.Comments);
-            }
-            else
+            } else
             {
                 holder.mComments.setVisibility(View.GONE);
             }
             holder.mBudget.setText(dateUtils().BudgetAsString(rec.BudgetYear, rec.BudgetMonth));
-            if(rec.TxAmount < 0.00)
+            if (rec.TxAmount < 0.00)
             {
-                holder.mTxAmount.setText("Amount -£" + String.format("%.2f", rec.TxAmount*-1));
-            }
-            else
+                holder.mTxAmount.setText("Amount -£" + String.format("%.2f", rec.TxAmount * -1));
+            } else
             {
                 holder.mTxAmount.setText("Amount £" + String.format("%.2f", rec.TxAmount));
             }
-            if(rec.HideBalance)
+            if (rec.HideBalance)
             {
                 holder.mTxBalance.setVisibility(View.INVISIBLE);
-            }
-            else
+            } else
             {
                 holder.mTxBalance.setVisibility(View.VISIBLE);
                 if (rec.TxBalance < 0.00)
@@ -166,7 +164,23 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                     }
                 }
             });
-
+            int lColor = MainActivity.context.getResources().getColor(R.color.textNormal);
+            if (rec.TxType.compareTo("Planned") == 0)
+                lColor = MainActivity.context.getResources().getColor(R.color.textLowLight);
+    
+            holder.mTxSeqNo.setTextColor(lColor);
+            holder.mTxAdded.setTextColor(lColor);
+            holder.mTxFilename.setTextColor(lColor);
+            holder.mTxLineNo.setTextColor(lColor);
+            holder.mTxDate.setTextColor(lColor);
+            holder.mTxType.setTextColor(lColor);
+            holder.mBankAccount.setTextColor(lColor);
+            holder.mTxDescription.setTextColor(lColor);
+            holder.mTxAmount.setTextColor(lColor);
+            holder.mTxBalance.setTextColor(lColor);
+            holder.mSubCategoryName.setTextColor(lColor);
+            holder.mComments.setTextColor(lColor);
+            holder.mBudget.setTextColor(lColor);
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in TransactionAdapter.onBindViewHolder", e.getMessage());

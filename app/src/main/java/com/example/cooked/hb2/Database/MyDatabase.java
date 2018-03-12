@@ -14,6 +14,8 @@ import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
@@ -186,7 +188,8 @@ public class MyDatabase extends SQLiteOpenHelper
         try
         {
             ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pSubCatgegoryId);
-
+            Float lTotal = 0.00f;
+            int lRecTotal = 0;
             if (rta != null)
             {
                 for (int i = 0; i < rta.size(); i++)
@@ -194,8 +197,40 @@ public class MyDatabase extends SQLiteOpenHelper
                     RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
                     if (sc != null)
                         rta.get(i).SubCategoryName = sc.SubCategoryName;
+                    lTotal += rta.get(i).TxAmount;
                 }
             }
+            
+            Float lCount = 0.00f;
+            ArrayList<RecordTransaction> rpl = tablePlanned.getPlannedTransForSubCategoryId(pBudgetMonth, pBudgetYear, pSubCatgegoryId);
+            for(int i=0;i<rpl.size();i++)
+            {
+                if(rta.size()==0)
+                {
+                    rta.add(rpl.get(i));
+                }
+                else
+                {
+                    lCount += rpl.get(i).TxAmount;
+                    if (lTotal > 0.00f)
+                    {
+                        if (lCount > (lTotal + 0.00005f))
+                            rta.add(rpl.get(i));
+                    }
+                    if (lTotal < 0.00f)
+                    {
+                        if (lCount < (lTotal - 0.00005f))
+                            rta.add(rpl.get(i));
+                    }
+                }
+            }
+            Collections.sort(rta, new Comparator<RecordTransaction>()
+            {
+                public int compare(RecordTransaction o1, RecordTransaction o2)
+                {
+                    return o2.TxDate.compareTo(o1.TxDate);
+                }
+            });
             return (rta);
         }
         catch (Exception e)

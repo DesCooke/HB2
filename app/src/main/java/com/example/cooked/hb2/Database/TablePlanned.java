@@ -220,6 +220,79 @@ class TablePlanned extends TableBase
         return list;
     }
 
+    ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId)
+    {
+        ArrayList<RecordPlanned> list;
+        try
+        {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                try (Cursor cursor = db.query("tblPlanned", new String[]{"PlannedId", "PlannedType",
+                        "PlannedName", "SubCategoryId", "SortCode", "AccountNo", "PlannedDate",
+                        "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
+                        "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "StartDate",
+                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount"},
+                    "SubCategoryId=?",
+                    new String[]{Integer.toString(pSubCategoryId)},
+                    null, null, "PlannedName", null))
+                {
+                    list = new ArrayList<>();
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            if (cursor.getCount() > 0)
+                            {
+                                cursor.moveToFirst();
+                                do
+                                {
+                                    RecordPlanned lrec =
+                                        new RecordPlanned
+                                            (
+                                                Integer.parseInt(cursor.getString(0)),
+                                                Integer.parseInt(cursor.getString(1)),
+                                                cursor.getString(2),
+                                                Integer.parseInt(cursor.getString(3)),
+                                                cursor.getString(4),
+                                                cursor.getString(5),
+                                                new Date(Long.parseLong(cursor.getString(6))),
+                                                Integer.parseInt(cursor.getString(7)),
+                                                Integer.parseInt(cursor.getString(8)),
+                                                Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
+                                                Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
+                                                Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
+                                                Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
+                                                Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
+                                                Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
+                                                Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
+                                                new Date(Long.parseLong(cursor.getString(16))),
+                                                new Date(Long.parseLong(cursor.getString(17))),
+                                                cursor.getString(18),
+                                                cursor.getString(19),
+                                                Float.parseFloat(cursor.getString(20))
+                                            );
+                                    list.add(lrec);
+                                } while (cursor.moveToNext());
+                            }
+                        }
+                        finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                }
+            }
+            
+        }
+        catch (Exception e)
+        {
+            list = new ArrayList<>();
+            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
+        }
+
+        return list;
+    }
+
     ArrayList<RecordTransaction> getOutstandingList(String pSortCode, String pAccountNum, int pMonth, int pYear)
     {
         ArrayList<RecordBudget> budgetSpent;
@@ -351,6 +424,137 @@ class TablePlanned extends TableBase
         return list;
     }
 
+    ArrayList<RecordTransaction> getBothOutstandingList(int pMonth, int pYear, int pSubCategoryId)
+    {
+        ArrayList<RecordBudget> budgetSpent;
+        budgetSpent = new ArrayList<>();
+        ArrayList<RecordBudget> budgetFull;
+        ArrayList<RecordTransaction> list = new ArrayList<>();
+        try
+        {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                String l_SQL = "SELECT TxAmount FROM tblTransaction " +
+                    "WHERE TxAccountNumber IN ('Cash','00038840') " +
+                    "AND BudgetYear = " + pYear + " " +
+                    "AND BudgetMonth = " + pMonth + " " +
+                    "AND CategoryId = " + pSubCategoryId;
+        
+                Cursor cursor = db.rawQuery(l_SQL, null);
+    
+                if (cursor != null)
+                {
+                    try
+                    {
+                        if (cursor.getCount() > 0)
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                RecordBudget lrec =
+                                    new RecordBudget(
+                                        Integer.parseInt(cursor.getString(0)),
+                                        Float.parseFloat(cursor.getString(1)),
+                                        null
+                                    );
+                                budgetSpent.add(lrec);
+                            } while (cursor.moveToNext());
+                        }
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+
+            MyLog.WriteLogMessage("Budget Spent for " + pMonth + "/" + pYear);
+
+            for(int i=0;i<budgetSpent.size();i++) {
+                RecordBudget currBudget = budgetSpent.get(i);
+
+                RecordSubCategory lSubCategory = MyDatabase.MyDB().getSubCategory(currBudget.SubCategoryId);
+                MyLog.WriteLogMessage("   " + lSubCategory.SubCategoryName + "(" +
+                        currBudget.SubCategoryId + "), " + currBudget.Amount);
+            }
+
+            budgetFull = getBudgetList(pMonth, pYear);
+            MyLog.WriteLogMessage("Full Budget for " + pMonth + "/" + pYear);
+
+            for(int i=0;i<budgetFull.size();i++)
+            {
+                RecordBudget currBudget=budgetFull.get(i);
+
+                RecordSubCategory lSubCategory = MyDatabase.MyDB().getSubCategory(currBudget.SubCategoryId);
+                MyLog.WriteLogMessage("   " + lSubCategory.SubCategoryName + "(" +
+                  currBudget.SubCategoryId + "), " + currBudget.Amount);
+
+                boolean lFound=false;
+                Float lDiff = 0.00f;
+                for(int j=0;j<budgetSpent.size();j++)
+                {
+                    RecordBudget currSpend = budgetSpent.get(j);
+                    if(currSpend.SubCategoryId == currBudget.SubCategoryId)
+                    {
+                        lFound=true;
+                        lDiff = currBudget.Amount - currSpend.Amount;
+                        break;
+                    }
+                }
+                Float lAmount = 0.00f;
+                boolean lCreateTx = false;
+                if(!lFound)
+                {
+                    lAmount = currBudget.Amount;
+                    lCreateTx = true;
+                }
+                else
+                {
+                    if( lDiff > 0.001 || lDiff < -0.001)
+                    {
+                        lAmount = lDiff;
+                        lCreateTx = true;
+                    }
+                }
+                if(lCreateTx)
+                {
+                    if (currBudget.NextDueDate==null)
+                        currBudget.NextDueDate = new Date();
+                    RecordTransaction lrec=new RecordTransaction();
+                    lrec.TxSeqNo = 0;
+                    lrec.TxAdded = new Date();
+                    lrec.TxFilename = "planned";
+                    lrec.TxLineNo = 1;
+                    lrec.TxDate = currBudget.NextDueDate;
+                    lrec.TxType = "PP";
+                    lrec.TxSortCode = "Planned";
+                    lrec.TxAccountNumber = "Planned";
+                    lrec.TxAmount = lAmount;
+                    lrec.TxBalance = 0.00f;
+                    lrec.TxStatus = RecordTransaction.Status.NEW;
+                    lrec.CategoryId = currBudget.SubCategoryId;
+                    RecordSubCategory rs = MyDatabase.MyDB().getSubCategory(currBudget.SubCategoryId);
+                    lrec.SubCategoryName = rs.SubCategoryName;
+                    lrec.Comments = "Outstanding";
+                    lrec.BudgetYear = pYear;
+                    lrec.BudgetMonth = pMonth;
+                    list.add(lrec);
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
+        }
+        Collections.sort(list, new Comparator<RecordTransaction>() {
+            public int compare(RecordTransaction o1, RecordTransaction o2) {
+                return o1.TxDate.compareTo(o2.TxDate);
+            }
+        });
+        return list;
+    }
+    
     ArrayList<RecordBudget> getBudgetSpent(int pMonth, int pYear)
     {
         ArrayList<RecordBudget> budgetSpent = new ArrayList<>();
@@ -496,6 +700,63 @@ class TablePlanned extends TableBase
         }
 
         return(budgetFull);
+    }
+
+    ArrayList<RecordTransaction> getPlannedTransForSubCategoryId(int pMonth, int pYear, int pSubCategoryId)
+    {
+        ArrayList<RecordPlanned> plannedList;
+        ArrayList<RecordTransaction> budgetTrans = new ArrayList<>();
+    
+        Date lBudgetStart = DateUtils.dateUtils().BudgetStart(pMonth, pYear);
+        Date lBudgetEnd = DateUtils.dateUtils().BudgetEnd(pMonth, pYear);
+        Date lCurrentDate;
+
+        plannedList = getPlannedListForSubCategory(pSubCategoryId);
+        for(int i=0;i<plannedList.size();i++)
+        {
+            RecordPlanned rp = plannedList.get(i);
+
+            if(rp.mStartDate.getTime() <= lBudgetEnd.getTime() &&
+                    rp.mEndDate.getTime() >= lBudgetStart.getTime()) {
+                lCurrentDate = lBudgetStart;
+                Float lAmount = 0.00f;
+                Boolean lAtleastOne = false;
+                do {
+                    if(lCurrentDate.getTime() >= rp.mStartDate.getTime() &&
+                            lCurrentDate.getTime() <= rp.mEndDate.getTime())
+                    {
+                        if (isDue(rp, lCurrentDate))
+                        {
+                            RecordTransaction rt = new RecordTransaction();
+                            rt.TxSeqNo = 0;
+                            rt.TxAdded = new Date();
+                            rt.TxFilename = "Planned";
+                            rt.TxLineNo = 0;
+                            rt.TxDate = lCurrentDate;
+                            rt.TxType = "Planned";
+                            rt.TxSortCode = rp.mSortCode;
+                            rt.TxAccountNumber = rp.mAccountNo;
+                            rt.TxDescription = rp.mPlannedName;
+                            rt.TxAmount = rp.mMatchingTxAmount;
+                            rt.TxBalance = 0.00f;
+                            rt.CategoryId = pSubCategoryId;
+                            rt.SubCategoryName = MyDatabase.MyDB().getSubCategory(pSubCategoryId).SubCategoryName;
+                            rt.Comments = "planned";
+                            rt.BudgetYear = pYear;
+                            rt.BudgetMonth = pMonth;
+                            rt.HideBalance = true;
+                            budgetTrans.add(rt);
+                        }
+                    }
+
+                    Date lNewDate = new Date();
+                    DateUtils.dateUtils().AddDays(lCurrentDate, 1, lNewDate);
+                    lCurrentDate = lNewDate;
+                } while (lCurrentDate.getTime() <= lBudgetEnd.getTime());
+            }
+        }
+
+        return(budgetTrans);
     }
 
     RecordPlanned getSinglePlanned(Integer pPlannedId)
