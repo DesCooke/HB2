@@ -184,18 +184,36 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < mDatasetBudget.size(); i++)
             {
                 RecordBudgetGroup rbg = mDatasetBudget.get(i);
-                lTotal += rbg.total;
-                lSpent += rbg.spent;
-                lOutstanding += rbg.outstanding;
                 
                 if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_monthly_income)) == 0)
+                {
+                    lTotal += rbg.total;
+                    lSpent += rbg.spent;
+                    lOutstanding += rbg.outstanding;
                     l_BCIncome = rbg.total;
+                }
                 if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_monthly_expenses)) == 0)
+                {
+                    lTotal += rbg.total;
+                    lSpent += rbg.spent;
+                    lOutstanding += rbg.outstanding;
                     l_BCExpense = rbg.total * -1;
+                }
                 if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_extra_income)) == 0)
+                {
+                    lTotal += rbg.total;
+                    lSpent += rbg.spent;
+                    lOutstanding += rbg.outstanding;
                     l_BCEIncome = rbg.total;
+                }
                 if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_extra_expenses)) == 0)
+                {
+                    lTotal += rbg.total;
+                    lSpent += rbg.spent;
+                    lOutstanding += rbg.outstanding;
+    
                     l_BCEExpense = rbg.total * -1;
+                }
                 
             }
             String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f", lTotal, lSpent,

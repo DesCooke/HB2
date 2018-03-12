@@ -252,6 +252,7 @@ public class activityTransactionItem extends AppCompatActivity
         if(!dateUtils().DateToStr(new Date(), myString))
             return;
         edtTxDate.setText(myString.Value);
+        
         edtTxDescription.setText("");
         edtTxAmount.setText(R.string.AmountZero);
         edtCategory.setText("");
@@ -259,7 +260,7 @@ public class activityTransactionItem extends AppCompatActivity
         Integer lMonth = dateUtils().CurrentBudgetMonth();
         Integer lYear = dateUtils().CurrentBudgetYear();
         edtBudgetYear.setText(String.format(Locale.UK, "%d", lYear));
-        edtCategory.setText(String.format(Locale.UK, "%d", lMonth));
+        edtBudgetMonth.setText(String.format(Locale.UK, "%d", lMonth));
     }
 
     public void pickDateTime(View view)
