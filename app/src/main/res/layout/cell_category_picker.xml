@@ -35,6 +35,7 @@
         android:paddingRight="5sp"
         android:text="@string/captionSubCategoryName"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnEdit"

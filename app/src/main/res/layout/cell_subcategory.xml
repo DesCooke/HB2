@@ -28,9 +28,10 @@
         android:paddingRight="5sp"
         android:text="@string/captionSubCategoryName"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnEdit"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
