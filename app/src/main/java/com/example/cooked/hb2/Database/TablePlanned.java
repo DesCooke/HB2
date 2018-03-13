@@ -728,7 +728,7 @@ class TablePlanned extends TableBase
                         if (isDue(rp, lCurrentDate))
                         {
                             RecordTransaction rt = new RecordTransaction();
-                            rt.TxSeqNo = 0;
+                            rt.TxSeqNo = rp.mPlannedId;
                             rt.TxAdded = new Date();
                             rt.TxFilename = "Planned";
                             rt.TxLineNo = 0;

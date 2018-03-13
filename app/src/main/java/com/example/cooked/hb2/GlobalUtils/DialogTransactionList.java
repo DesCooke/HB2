@@ -14,6 +14,7 @@ import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.TransactionUI.TransactionAdapter;
+import com.example.cooked.hb2.activityPlanningItem;
 import com.example.cooked.hb2.activityTransactionItem;
 
 import java.util.ArrayList;
@@ -49,10 +50,20 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
             @Override
             public void onItemClick(View view, RecordTransaction obj)
             {
-                Intent intent = new Intent(MainActivity.context, activityTransactionItem.class);
-                intent.putExtra("ACTIONTYPE", "EDIT");
-                intent.putExtra("TxSeqNo", obj.TxSeqNo);
-                MainActivity.context.startActivity(intent);
+                if(obj.TxType.compareTo("Planned")==0)
+                {
+                    Intent intent = new Intent(MainActivity.context, activityPlanningItem.class);
+                    intent.putExtra("ACTIONTYPE", "EDIT");
+                    intent.putExtra("PlannedId", obj.TxSeqNo);
+                    MainActivity.context.startActivity(intent);
+                }
+                else
+                {
+                    Intent intent = new Intent(MainActivity.context, activityTransactionItem.class);
+                    intent.putExtra("ACTIONTYPE", "EDIT");
+                    intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                    MainActivity.context.startActivity(intent);
+                }
             }
         });
     }
