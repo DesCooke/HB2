@@ -58,14 +58,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:text="Dashboard">
+                    android:text="@string/dashboard">
 
                     <TextView
                         android:id="@+id/textView3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Dashboard"
+                        android:text="@string/dashboard"
                         android:textSize="18sp" />
 
                     <include
@@ -80,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:text="Current Account">
+                    android:text="@string/current_account">
 
                     <include
                         layout="@layout/content_tab_current"
@@ -100,7 +100,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Cash Account"
+                        android:text="@string/cash_account"
                         android:textSize="18sp" />
 
                     <android.support.v7.widget.RecyclerView
@@ -136,7 +136,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="General Savings"
+                        android:text="@string/general_savings"
                         android:textSize="18sp" />
 
                     <android.support.v7.widget.RecyclerView
@@ -158,7 +158,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Long Term Savings"
+                        android:text="@string/long_term_savings"
                         android:textSize="18sp" />
 
                     <android.support.v7.widget.RecyclerView
@@ -180,7 +180,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Family Savings"
+                        android:text="@string/family_savings"
                         android:textSize="18sp" />
 
                     <android.support.v7.widget.RecyclerView

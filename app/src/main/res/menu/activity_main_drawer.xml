@@ -7,32 +7,10 @@
         <item
             android:id="@+id/nav_category"
             android:icon="@drawable/category"
-            android:title="Category" />
+            android:title="@string/captionCategory" />
         <item
             android:id="@+id/nav_planning"
             android:icon="@drawable/plan"
-            android:title="Planning"/>
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow"/>
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools"/>
+            android:title="@string/captionPlanning"/>
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share"/>
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send"/>
-        </menu>
-    </item>
-
 </menu>

@@ -43,7 +43,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@id/sequence"
             android:text="@string/captionBudgetSummary"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="10sp"

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+                                             android:layout_height="match_parent">
 
     <RadioGroup
         android:id="@+id/rgPlannedType"
@@ -20,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Oneoff"
+            android:text="@string/oneoff"
             android:textSize="24sp" />
 
         <RadioButton
@@ -28,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Yearly"
+            android:text="@string/yearly"
             android:textSize="24sp" />
 
         <RadioButton
@@ -36,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Monthly"
+            android:text="@string/monthly"
             android:textSize="24sp" />
 
         <RadioButton
@@ -44,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Weekly"
+            android:text="@string/weekly"
             android:textSize="24sp" />
     </RadioGroup>
 
@@ -54,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Ok"
+        android:text="@string/ok"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rgPlannedType"/>
 
