@@ -29,6 +29,8 @@ public class RecordTransaction
     public Integer BudgetYear;
     public Integer BudgetMonth;
     public Boolean HideBalance;
+    public Boolean BalanceCorrect;
+    public Float TxBalanceShouldBe;
 
     RecordTransaction
             (
@@ -68,6 +70,8 @@ public class RecordTransaction
         BudgetYear = pBudgetYear;
         BudgetMonth = pBudgetMonth;
         HideBalance = pHideBalance;
+        BalanceCorrect = true;
+        TxBalanceShouldBe = 0.00f;
     }
     public RecordTransaction()
     {
@@ -89,6 +93,8 @@ public class RecordTransaction
         BudgetYear = 0;
         BudgetMonth = 0;
         HideBalance = false;
+        BalanceCorrect = true;
+        TxBalanceShouldBe = 0.00f;
     }
     public boolean Equals(RecordTransaction recTwo)
     {

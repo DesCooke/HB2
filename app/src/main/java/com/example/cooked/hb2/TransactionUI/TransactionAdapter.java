@@ -181,6 +181,24 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.mSubCategoryName.setTextColor(lColor);
             holder.mComments.setTextColor(lColor);
             holder.mBudget.setTextColor(lColor);
+            
+            if(rec.BalanceCorrect==false)
+            {
+              holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+              holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+              if(holder.mTxBalance.getVisibility() == View.VISIBLE)
+              {
+                  if (rec.TxBalance < 0.00)
+                  {
+                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1) + " -> " +
+                        ", -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
+                  } else
+                  {
+                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance) + " -> " +
+                        "£" + String.format("%.2f", rec.TxBalanceShouldBe));
+                  }
+              }
+            }
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in TransactionAdapter.onBindViewHolder", e.getMessage());

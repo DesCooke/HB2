@@ -167,8 +167,25 @@ public class MyDatabase extends SQLiteOpenHelper
     
             if (rta != null)
             {
+                Float lCurrentBalance=0.00f;
                 for (int i = 0; i < rta.size(); i++)
                 {
+                    rta.get(i).BalanceCorrect = true;
+                    if(i>0)
+                    {
+                        Float lDiff = lCurrentBalance - rta.get(i).TxBalance;
+                        if(lDiff < -0.005 || lDiff > 0.005)
+                        {
+                            rta.get(i).BalanceCorrect = false;
+                            rta.get(i).TxBalanceShouldBe = lCurrentBalance;
+                        }
+                        lCurrentBalance = lCurrentBalance - rta.get(i).TxAmount;
+                    }
+                    else
+                    {
+                        lCurrentBalance = rta.get(i).TxBalance - rta.get(i).TxAmount;
+                    }
+                    
                     RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
                     if (sc != null)
                         rta.get(i).SubCategoryName = sc.SubCategoryName;
