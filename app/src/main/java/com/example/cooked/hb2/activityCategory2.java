@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 /**
@@ -60,7 +61,7 @@ public class activityCategory2 extends Activity {
             
             child = new SubCategoryItem2();
             child.title = mDataset.get(i).SubCategoryName;
-            child.hint = mDataset.get(i).SubCategoryName;
+            child.hint = mDataset.get(i).SubCategoryId.toString();
                 
             item.items.add(child);
             
@@ -101,7 +102,12 @@ public class activityCategory2 extends Activity {
                 long id)
             {
                 Intent intent = new Intent();
-                intent.putExtra("editTextValue", "value_here");
+
+                String lSubCategoryName = ((TextView) v.findViewById(R.id.textTitle)).getText().toString();
+                String lSubCategoryId = ((TextView) v.findViewById(R.id.textHint)).getText().toString();
+                
+                intent.putExtra("SubCategoryName", lSubCategoryName);
+                intent.putExtra("SubCategoryId", lSubCategoryId);
                 setResult(RESULT_OK, intent);
                 finish();
                 return false;
