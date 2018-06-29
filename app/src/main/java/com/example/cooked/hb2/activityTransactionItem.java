@@ -311,11 +311,25 @@ public class activityTransactionItem extends AppCompatActivity
     {
         try
         {
-            cp.show();
+//            cp.show();
+            Intent intent = new Intent(getApplicationContext(), activityCategory2.class);
+            intent.putExtra("ACTIONTYPE", "EDIT");
+//            intent.putExtra("PlannedId", lPlannedId);
+            startActivityForResult(intent, 1969);
         }
         catch(Exception e)
         {
             ErrorDialog.Show("pickCategory", e.getMessage());
         }
     }
+    
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == 1969) {
+         if(resultCode == RESULT_OK) {
+             String lString= data.getStringExtra("editTextValue");
+             edtCategory.setText(lString);
+         }
+    }
+}
 }

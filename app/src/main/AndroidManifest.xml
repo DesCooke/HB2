@@ -52,6 +52,10 @@
             android:label="@string/title_activity_planning_item"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".activityCategory2"
+            android:label="@string/title_activity_category"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
