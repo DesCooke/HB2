@@ -251,6 +251,184 @@ class TableTransaction extends TableBase
         return list;
     }
 
+    Date getEarliestTxDate(String sortCode, String accountNum,
+                              Integer budgetMonth, Integer budgetYear)
+    {
+        try
+        {
+            MyLog.WriteLogMessage("getEarliestTxDate: ");
+
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                try
+                {
+                    String lSql = "select IFNULL(MIN(TxDate),0) FROM tblTransaction " +
+                            "WHERE TxSortCode = '" + sortCode + "' " +
+                            "AND TxAccountNumber = '" + accountNum + "' " +
+                            "AND BudgetYear in (" + budgetYear.toString() + ") " +
+                            "AND BudgetMonth in (" + budgetMonth.toString() + ") ";
+                    Cursor cursor = db.rawQuery(lSql, null);
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            cursor.moveToFirst();
+                            if (cursor.getCount() > 0)
+                            {
+                                String lString = cursor.getString(0);
+                                if (lString != null)
+                                    return(new Date(Long.parseLong(cursor.getString(0))));
+                            }
+                        }
+                        finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                }
+                finally
+                {
+                    db.close();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in getEarliestTxDate", e.getMessage());
+        }
+        return (new Date(0));
+    }
+
+    Date getLatestTxDate(String sortCode, String accountNum,
+                              Integer budgetMonth, Integer budgetYear)
+    {
+        try
+        {
+            MyLog.WriteLogMessage("getLatestTxDate: ");
+
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                try
+                {
+                    String lSql = "select IFNULL(MAX(TxDate),0) FROM tblTransaction " +
+                            "WHERE TxSortCode = '" + sortCode + "' " +
+                            "AND TxAccountNumber = '" + accountNum + "' " +
+                            "AND BudgetYear in (" + budgetYear.toString() + ") " +
+                            "AND BudgetMonth in (" + budgetMonth.toString() + ") ";
+                    Cursor cursor = db.rawQuery(lSql, null);
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            cursor.moveToFirst();
+                            if (cursor.getCount() > 0)
+                            {
+                                String lString = cursor.getString(0);
+                                if (lString != null)
+                                    return(new Date(Long.parseLong(cursor.getString(0))));
+                            }
+                        }
+                        finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                }
+                finally
+                {
+                    db.close();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in getLatestTxDate", e.getMessage());
+        }
+        return (new Date(0));
+    }
+
+
+    ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum,
+                                                    Integer budgetMonth, Integer budgetYear)
+    {
+        ArrayList<RecordTransaction> list;
+        try
+        {
+            Date mFromDate = getEarliestTxDate(sortCode, accountNum, budgetMonth, budgetYear);
+            Date mToDate = getLatestTxDate(sortCode, accountNum,budgetMonth, budgetYear);
+            if(mFromDate == new Date(0))
+                return(new ArrayList<>());
+            if(mToDate==new Date(0))
+                return(new ArrayList<>());
+
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
+                                "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
+                                "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
+                                "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
+                        "TxSortCode=? AND TxAccountNumber=? AND TxDate BETWEEN ? AND ?",
+                        new String[]{sortCode, accountNum, Long.toString(mFromDate.getTime()),
+                                Long.toString(mToDate.getTime())}, null, null, "TxDate desc, TxLineNo", null);
+                list = new ArrayList<>();
+                if (cursor != null)
+                {
+                    try
+                    {
+                        if (cursor.getCount() > 0)
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                RecordTransaction lrec =
+                                        new RecordTransaction
+                                                (
+                                                        Integer.parseInt(cursor.getString(0)),
+                                                        new Date(Long.parseLong(cursor.getString(1))),
+                                                        cursor.getString(2),
+                                                        Integer.parseInt(cursor.getString(3)),
+                                                        new Date(Long.parseLong(cursor.getString(4))),
+                                                        cursor.getString(5),
+                                                        cursor.getString(6),
+                                                        cursor.getString(7),
+                                                        cursor.getString(8),
+                                                        Float.parseFloat(cursor.getString(9)),
+                                                        Float.parseFloat(cursor.getString(10)),
+                                                        Integer.parseInt(cursor.getString(11)),
+                                                        cursor.getString(12),
+                                                        Integer.parseInt(cursor.getString(13)),
+                                                        Integer.parseInt(cursor.getString(14)),
+                                                        false
+                                                );
+                                list.add(lrec);
+                            } while (cursor.moveToNext());
+                        }
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            list = new ArrayList<>();
+            ErrorDialog.Show("Error in TableTransaction.getTransactionList", e.getMessage());
+        }
+        if (sortCode.compareTo("Cash") == 0)
+        {
+            Float lBal = 0.00f;
+            for (int i = list.size() - 1; i >= 0; i--)
+            {
+                lBal = lBal + list.get(i).TxAmount;
+                list.get(i).TxBalance = lBal;
+            }
+        }
+        return list;
+    }
+
     ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCategoryId)
     {
         ArrayList<RecordTransaction> list;

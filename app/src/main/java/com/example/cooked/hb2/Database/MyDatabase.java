@@ -200,6 +200,74 @@ public class MyDatabase extends SQLiteOpenHelper
         return(null);
     }
 
+    public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum,
+                                                           boolean showPlanned, Integer budgetMonth,
+                                                           Integer budgetYear)
+    {
+        try
+        {
+            ArrayList<RecordTransaction> rta = tableTransaction.getTransactionList(sortCode,
+                    accountNum, budgetMonth, budgetYear);
+
+            if (sortCode.compareTo("11-03-95") == 0)
+            {
+                if(showPlanned)
+                {
+                    int lBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+                    int lBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+                    ArrayList<RecordTransaction> rba = tablePlanned.getOutstandingList(sortCode, accountNum, lBudgetMonth, lBudgetYear);
+                    if (rba != null)
+                    {
+                        Float lBal = 0.00f;
+                        if (rta.size() > 0)
+                        {
+                            lBal = rta.get(0).TxBalance;
+                        }
+                        for (int i = 0; i < rba.size(); i++)
+                        {
+                            lBal = lBal + rba.get(i).TxAmount;
+                            rba.get(i).TxBalance = lBal;
+                            rta.add(0, rba.get(i));
+                        }
+                    }
+                }
+            }
+
+            if (rta != null)
+            {
+                Float lCurrentBalance=0.00f;
+                for (int i = 0; i < rta.size(); i++)
+                {
+                    rta.get(i).BalanceCorrect = true;
+                    if(i>0)
+                    {
+                        Float lDiff = lCurrentBalance - rta.get(i).TxBalance;
+                        if(lDiff < -0.005 || lDiff > 0.005)
+                        {
+                            rta.get(i).BalanceCorrect = false;
+                            rta.get(i).TxBalanceShouldBe = lCurrentBalance;
+                        }
+                        lCurrentBalance = lCurrentBalance - rta.get(i).TxAmount;
+                    }
+                    else
+                    {
+                        lCurrentBalance = rta.get(i).TxBalance - rta.get(i).TxAmount;
+                    }
+
+                    RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
+                    if (sc != null)
+                        rta.get(i).SubCategoryName = sc.SubCategoryName;
+                }
+            }
+            return (rta);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getTransactionList", e.getMessage());
+        }
+        return(null);
+    }
+
     public ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCatgegoryId)
     {
         try
