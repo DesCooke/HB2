@@ -81,13 +81,17 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private FloatingActionButton fab;
     private TextView txtBudgetTitle;
+    private TextView txtBankAccountTitle;
+    private TextView txtCashAccountTitle;
     private TextView txtSubTitle;
-    
-    private Switch sw_show_planned;
     
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
-    
+    private Integer mCurrentBABudgetYear;
+    private Integer mCurrentBABudgetMonth;
+    private Integer mCurrentCABudgetYear;
+    private Integer mCurrentCABudgetMonth;
+
     private TextView lblMonthlyExpense;
     private TextView lblMonthlyIncome;
     private TextView lblMonthlyTotal;
@@ -125,7 +129,11 @@ public class MainActivity extends AppCompatActivity
             
             mCurrentBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
             mCurrentBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
-            
+            mCurrentBABudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+            mCurrentBABudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+            mCurrentCABudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+            mCurrentCABudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+
             setupBudget();
             
             setupTabs();
@@ -162,7 +170,55 @@ public class MainActivity extends AppCompatActivity
         }
         setupBudget();
     }
-    
+
+    private void IncreaseBABudgetPeriod(View view)
+    {
+        mCurrentBABudgetMonth++;
+        if (mCurrentBABudgetMonth > 12)
+        {
+            mCurrentBABudgetMonth = 1;
+            mCurrentBABudgetYear++;
+        }
+        setupBudget();
+        setupBankAccountView();
+    }
+
+    private void DecreaseBABudgetPeriod(View view)
+    {
+        mCurrentBABudgetMonth--;
+        if (mCurrentBABudgetMonth < 1)
+        {
+            mCurrentBABudgetMonth = 12;
+            mCurrentBABudgetYear--;
+        }
+        setupBudget();
+        setupBankAccountView();
+    }
+
+    private void IncreaseCABudgetPeriod(View view)
+    {
+        mCurrentCABudgetMonth++;
+        if (mCurrentCABudgetMonth > 12)
+        {
+            mCurrentCABudgetMonth = 1;
+            mCurrentCABudgetYear++;
+        }
+        setupBudget();
+        setupCashView();
+    }
+
+    private void DecreaseCABudgetPeriod(View view)
+    {
+        mCurrentCABudgetMonth--;
+        if (mCurrentCABudgetMonth < 1)
+        {
+            mCurrentCABudgetMonth = 12;
+            mCurrentCABudgetYear--;
+        }
+        setupBudget();
+        setupCashView();
+    }
+
     private void setupBudget()
     {
         try
@@ -170,7 +226,15 @@ public class MainActivity extends AppCompatActivity
             String lTitle = DateUtils.dateUtils().MonthAsText(mCurrentBudgetMonth) + " / " +
                 mCurrentBudgetYear.toString();
             txtBudgetTitle.setText(lTitle);
-            
+
+            lTitle = DateUtils.dateUtils().MonthAsText(mCurrentBABudgetMonth) + " / " +
+                    mCurrentBABudgetYear.toString();
+            txtBankAccountTitle.setText(lTitle);
+
+            lTitle = DateUtils.dateUtils().MonthAsText(mCurrentCABudgetMonth) + " / " +
+                    mCurrentCABudgetYear.toString();
+            txtCashAccountTitle.setText(lTitle);
+
             mDatasetBudget = MyDatabase.MyDB().getBudget(mCurrentBudgetMonth, mCurrentBudgetYear);
             
             Float lTotal = 0.00f;
@@ -331,6 +395,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         
         txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
+        txtBankAccountTitle = findViewById(R.id.txtBankAccountTitle);
+        txtCashAccountTitle = findViewById(R.id.txtCashAccountTitle);
         txtSubTitle = findViewById(R.id.txtSubTitle);
     
         ImageButton imgLeft = findViewById(R.id.imgLeft);
@@ -352,7 +418,47 @@ public class MainActivity extends AppCompatActivity
                 IncreaseBudgetPeriod(view);
             }
         });
-        
+
+        ImageButton imgLeftBA = findViewById(R.id.imgLeftBA);
+        imgLeftBA.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                DecreaseBABudgetPeriod(view);
+            }
+        });
+
+        ImageButton imgRightBA = findViewById(R.id.imgRightBA);
+        imgRightBA.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                IncreaseBABudgetPeriod(view);
+            }
+        });
+
+        ImageButton imgLeftCA = findViewById(R.id.imgLeftCA);
+        imgLeftCA.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                DecreaseCABudgetPeriod(view);
+            }
+        });
+
+        ImageButton imgRightCA = findViewById(R.id.imgRightCA);
+        imgRightCA.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                IncreaseCABudgetPeriod(view);
+            }
+        });
+
         lblMonthlyExpense = findViewById(R.id.lblMonthlyExpense);
         lblMonthlyIncome = findViewById(R.id.lblMonthlyIncome);
         lblMonthlyTotal = findViewById(R.id.lblMonthlyTotal);
@@ -360,16 +466,6 @@ public class MainActivity extends AppCompatActivity
         lblExtraIncome = findViewById(R.id.lblExtraIncome);
         lblExtraTotal = findViewById(R.id.lblExtraTotal);
         lblBudgetTotal = findViewById(R.id.lblBudgetTotal);
-        
-        sw_show_planned = findViewById(R.id.sw_show_planned);
-        sw_show_planned.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                ToggleShowPlanned(view);
-            }
-        });
         
         fab = findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
@@ -526,39 +622,79 @@ public class MainActivity extends AppCompatActivity
         lList.get(0).selected = true;
         return (lList);
     }
-    
+
+    private void setupBankAccountView()
+    {
+        ArrayList<RecordTransaction> mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", false, mCurrentBABudgetMonth, mCurrentBABudgetYear);
+        mTransactionListCurrent =  findViewById(R.id.transactionListCurrent);
+        mTransactionListCurrent.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManagerButton = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
+        mTransactionListButton.setLayoutManager(mLayoutManagerButton);
+        RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
+        mTransactionListCurrent.setLayoutManager(mLayoutManagerCurrent);
+
+        TransactionAdapter mTransactionAdapterCurrent = new TransactionAdapter(mDatasetCurrent);
+        mTransactionListCurrent.setAdapter(mTransactionAdapterCurrent);
+        mTransactionAdapterCurrent.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void setupCashView()
+    {
+        ArrayList<RecordTransaction> mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash", false, mCurrentCABudgetMonth, mCurrentCABudgetYear);
+        mTransactionListCash = findViewById(R.id.transactionListCash);
+        mTransactionListCash.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManagerCash = new LinearLayoutManager(this);
+        mTransactionListCash.setLayoutManager(mLayoutManagerCash);
+
+        TransactionAdapter mTransactionAdapterCash = new TransactionAdapter(mDatasetCash);
+        mTransactionListCash.setAdapter(mTransactionAdapterCash);
+        mTransactionAdapterCash.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
+
+
+    }
+
     private void setupRecyclerViews()
     {
         mDatasetButton = getButtonList();
-        ArrayList<RecordTransaction> mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", sw_show_planned.isChecked());
         ArrayList<RecordTransaction> mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830", false);
         ArrayList<RecordTransaction> mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503", false);
         ArrayList<RecordTransaction> mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361", false);
-        ArrayList<RecordTransaction> mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash", false);
-        
+
         mTransactionListButton = findViewById(R.id.buttonList);
-        mTransactionListCurrent =  findViewById(R.id.transactionListCurrent);
         mTransactionListGeneral = findViewById(R.id.transactionListGeneral);
         mTransactionListLongTerm =  findViewById(R.id.transactionListLongTerm);
         mTransactionListFamily = findViewById(R.id.transactionListFamily);
-        mTransactionListCash = findViewById(R.id.transactionListCash);
-        
+
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mTransactionListButton.setHasFixedSize(true);
-        mTransactionListCurrent.setHasFixedSize(true);
         mTransactionListGeneral.setHasFixedSize(true);
         mTransactionListLongTerm.setHasFixedSize(true);
         mTransactionListFamily.setHasFixedSize(true);
-        mTransactionListCash.setHasFixedSize(true);
-    
-        RecyclerView.LayoutManager mLayoutManagerButton = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
-        mTransactionListButton.setLayoutManager(mLayoutManagerButton);
-        
+
+
         // use a linear layout manager
-        RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
-        mTransactionListCurrent.setLayoutManager(mLayoutManagerCurrent);
-    
+
         RecyclerView.LayoutManager mLayoutManagerGeneral = new LinearLayoutManager(this);
         mTransactionListGeneral.setLayoutManager(mLayoutManagerGeneral);
     
@@ -568,9 +704,6 @@ public class MainActivity extends AppCompatActivity
         RecyclerView.LayoutManager mLayoutManagerFamily = new LinearLayoutManager(this);
         mTransactionListFamily.setLayoutManager(mLayoutManagerFamily);
     
-        RecyclerView.LayoutManager mLayoutManagerCash = new LinearLayoutManager(this);
-        mTransactionListCash.setLayoutManager(mLayoutManagerCash);
-        
         mTransactionAdapterButton = new ImageAdapter(mDatasetButton);
         mTransactionListButton.setAdapter(mTransactionAdapterButton);
         
@@ -592,20 +725,7 @@ public class MainActivity extends AppCompatActivity
         
         
         // specify an adapter (see also next example)
-        TransactionAdapter mTransactionAdapterCurrent = new TransactionAdapter(mDatasetCurrent);
-        mTransactionListCurrent.setAdapter(mTransactionAdapterCurrent);
-        mTransactionAdapterCurrent.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(View view, RecordTransaction obj)
-            {
-                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
-                intent.putExtra("ACTIONTYPE", "EDIT");
-                intent.putExtra("TxSeqNo", obj.TxSeqNo);
-                startActivity(intent);
-            }
-        });
-    
+
         TransactionAdapter mTransactionAdapterGeneral = new TransactionAdapter(mDatasetGeneral);
         mTransactionListGeneral.setAdapter(mTransactionAdapterGeneral);
         mTransactionAdapterGeneral.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
@@ -648,21 +768,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
     
-        TransactionAdapter mTransactionAdapterCash = new TransactionAdapter(mDatasetCash);
-        mTransactionListCash.setAdapter(mTransactionAdapterCash);
-        mTransactionAdapterCash.setOnItemClickListener(new TransactionAdapter.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(View view, RecordTransaction obj)
-            {
-                Intent intent = new Intent(getApplicationContext(), activityTransactionItem.class);
-                intent.putExtra("ACTIONTYPE", "EDIT");
-                intent.putExtra("TxSeqNo", obj.TxSeqNo);
-                startActivity(intent);
-            }
-        });
-        
-        
+        setupBankAccountView();
+        setupCashView();
     }
     
     @SuppressWarnings("StatementWithEmptyBody")

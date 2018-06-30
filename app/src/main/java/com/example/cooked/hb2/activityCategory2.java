@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordSubCategory;
+import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.Widgets.AnimatedExpandableListView;
 import com.example.cooked.hb2.Widgets.AnimatedExpandableListView.AnimatedExpandableListAdapter;
 
@@ -12,11 +13,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Parcelable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 /**
@@ -26,7 +33,7 @@ import android.widget.TextView;
  * where each group has from 1 to 100 children (so the first group will have one
  * child, the second will have two children and so on...).
  */
-public class activityCategory2 extends Activity {
+public class activityCategory2 extends AppCompatActivity {
     private AnimatedExpandableListView listView;
     private ExampleAdapter adapter;
     public ArrayList<RecordSubCategory> mDataset;
@@ -35,14 +42,23 @@ public class activityCategory2 extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_list2);
-        
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        setTitle("Categories");
+
+        setupForm();
+    }
+
+    private void setupForm()
+    {
         mDataset = MyDatabase.MyDB().getSubCategoryList(0);
 
         List<CategoryItem2> items = new ArrayList<CategoryItem2>();
-        
+
         // Populate our list with groups and it's children
         String lLastCategoryName="";
-        
+
         CategoryItem2 item;
         SubCategoryItem2 child;
         item = new CategoryItem2();
@@ -54,25 +70,25 @@ public class activityCategory2 extends Activity {
                 item = new CategoryItem2();
                 items.add(item);
             }
-    
+
             if(lLastCategoryName.compareTo(mDataset.get(i).CategoryName)!=0)
                 item.title = mDataset.get(i).CategoryName;
-            
+
             child = new SubCategoryItem2();
             child.title = mDataset.get(i).SubCategoryName;
-            child.hint = mDataset.get(i).SubCategoryName;
-                
+            child.hint = mDataset.get(i).SubCategoryId.toString();
+
             item.items.add(child);
-            
+
             lLastCategoryName = mDataset.get(i).CategoryName;
         }
-        
+
         adapter = new ExampleAdapter(this);
         adapter.setData(items);
-        
+
         listView = (AnimatedExpandableListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
-        
+
         // In order to show animations, we need to use a custom click handler
         // for our ExpandableListView.
         listView.setOnGroupClickListener(new OnGroupClickListener() {
@@ -90,26 +106,79 @@ public class activityCategory2 extends Activity {
                 return true;
             }
         });
-        
-        
+
+
         listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
         {
             @Override
             public boolean onChildClick(
-                ExpandableListView parent, View v,
-                int groupPosition, int childPosition,
-                long id)
+                    ExpandableListView parent, View v,
+                    int groupPosition, int childPosition,
+                    long id)
             {
                 Intent intent = new Intent();
-                intent.putExtra("editTextValue", "value_here");
+
+                String lSubCategoryName = ((TextView) v.findViewById(R.id.textTitle)).getText().toString();
+                String lSubCategoryId = ((TextView) v.findViewById(R.id.textHint)).getText().toString();
+
+                intent.putExtra("SubCategoryName", lSubCategoryName);
+                intent.putExtra("SubCategoryId", lSubCategoryId);
                 setResult(RESULT_OK, intent);
                 finish();
                 return false;
             }
         });
 
+
     }
-    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        try
+        {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.categoryselection_menu, menu);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in activityCategory2::onCreateOptionsMenu", e.getMessage());
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        try
+        {
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
+
+            //noinspection SimplifiableIfStatement
+            if (id == R.id.action_maintaincategories)
+            {
+                Intent intent = new Intent(this, activityCategory.class);
+                startActivity(intent);
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in activityCategory2::onOptionsItemSelected", e.getMessage());
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+        setupForm();
+    }
+
+
     private static class CategoryItem2
     {
         String title;

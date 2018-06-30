@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingRight="10dp"
-    android:paddingLeft="50dp">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:paddingEnd="10dp"
+              android:paddingStart="50dp">
 
-    <TextView
-        android:id="@+id/textTitle"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textHint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sub Category Name"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <TextView
+            android:id="@+id/textHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SubCatetgoryId"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </LinearLayout>
 

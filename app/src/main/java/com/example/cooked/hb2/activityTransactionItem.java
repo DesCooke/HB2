@@ -327,8 +327,10 @@ public class activityTransactionItem extends AppCompatActivity
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == 1969) {
          if(resultCode == RESULT_OK) {
-             String lString= data.getStringExtra("editTextValue");
-             edtCategory.setText(lString);
+             String lSubCategoryName= data.getStringExtra("SubCategoryName");
+             String lSubCategoryId= data.getStringExtra("SubCategoryId");
+             MySubCategoryId.Value = Integer.parseInt(lSubCategoryId);
+             edtCategory.setText(lSubCategoryName);
          }
     }
 }

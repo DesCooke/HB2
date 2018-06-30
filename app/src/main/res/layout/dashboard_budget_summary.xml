@@ -1,104 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
                                              android:background="@android:drawable/alert_light_frame"
                                              app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
         android:id="@+id/label1"
-        android:layout_width="wrap_content"
+        android:layout_width="122dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="0dp"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
         android:text="@string/monthly_income"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/label2"
-        android:layout_width="wrap_content"
+        android:layout_width="186dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
         android:text="@string/monthly_expense"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label1"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label1" />
 
     <TextView
         android:id="@+id/label3"
-        android:layout_width="wrap_content"
+        android:layout_width="181dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
         android:text="@string/amount_left"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label2"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label2" />
 
     <TextView
         android:id="@+id/label4"
-        android:layout_width="wrap_content"
+        android:layout_width="210dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
         android:layout_marginTop="8dp"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
         android:text="@string/extra_income"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label3"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label3" />
 
     <TextView
         android:id="@+id/label5"
-        android:layout_width="wrap_content"
+        android:layout_width="255dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
         android:text="@string/extra_expense"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label4"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label4" />
 
     <TextView
         android:id="@+id/label6"
-        android:layout_width="wrap_content"
+        android:layout_width="178dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
         android:text="@string/extra_left"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label5"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label5" />
 
     <TextView
         android:id="@+id/label7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:layout_height="20dp"
         android:layout_marginTop="8dp"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
         android:text="@string/final_budget_balance_this_month"
-        android:textAlignment="center"
+        android:textAlignment="textStart"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label6"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label6" />
 
     <TextView
         android:id="@+id/lblMonthlyIncome"
@@ -109,7 +89,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/lblMonthlyExpense"
@@ -120,7 +100,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyIncome"/>
+        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyIncome" />
 
     <TextView
         android:id="@+id/lblMonthlyTotal"
@@ -131,7 +111,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyExpense"/>
+        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyExpense" />
 
     <TextView
         android:id="@+id/lblExtraIncome"
@@ -143,7 +123,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyTotal"/>
+        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyTotal" />
 
     <TextView
         android:id="@+id/lblExtraExpense"
@@ -154,7 +134,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblExtraIncome"/>
+        app:layout_constraintTop_toBottomOf="@+id/lblExtraIncome" />
 
     <TextView
         android:id="@+id/lblExtraTotal"
@@ -165,7 +145,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblExtraExpense"/>
+        app:layout_constraintTop_toBottomOf="@+id/lblExtraExpense" />
 
     <TextView
         android:id="@+id/lblBudgetTotal"
@@ -177,6 +157,6 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblExtraTotal"/>
+        app:layout_constraintTop_toBottomOf="@+id/lblExtraTotal" />
 
 </android.support.constraint.ConstraintLayout>
