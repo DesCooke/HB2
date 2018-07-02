@@ -352,6 +352,7 @@ class TableTransaction extends TableBase
                                                     Integer budgetMonth, Integer budgetYear)
     {
         ArrayList<RecordTransaction> list;
+        Float lBalance=0.00f;
         try
         {
             Date mFromDate = getEarliestTxDate(sortCode, accountNum, budgetMonth, budgetYear);
@@ -408,6 +409,29 @@ class TableTransaction extends TableBase
                     {
                         cursor.close();
                     }
+                    String lSql = "select IFNULL(SUM(TxAmount),0) FROM tblTransaction " +
+                            "WHERE TxSortCode = '" + sortCode + "' " +
+                            "AND TxAccountNumber = '" + accountNum + "' " +
+                            "AND TxDate <= " + Long.toString(mToDate.getTime()).toString() + " ";
+                    Cursor cursor2 = db.rawQuery(lSql, null);
+                    if (cursor2 != null)
+                    {
+                        try
+                        {
+                            cursor2.moveToFirst();
+                            if (cursor2.getCount() > 0)
+                            {
+                                String lString = cursor2.getString(0);
+                                if (lString != null)
+                                    lBalance = Float.parseFloat(cursor2.getString(0));
+                            }
+                        }
+                        finally
+                        {
+                            cursor2.close();
+                        }
+                    }
+                    
                 }
             }
 
@@ -419,11 +443,11 @@ class TableTransaction extends TableBase
         }
         if (sortCode.compareTo("Cash") == 0)
         {
-            Float lBal = 0.00f;
-            for (int i = list.size() - 1; i >= 0; i--)
+            Float lBal = lBalance;
+            for (int i = 0; i<list.size(); i++)
             {
-                lBal = lBal + list.get(i).TxAmount;
                 list.get(i).TxBalance = lBal;
+                lBal = lBal - list.get(i).TxAmount;
             }
         }
         return list;
