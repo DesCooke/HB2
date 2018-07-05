@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HB(2.04)</string>
+    <string name="app_name">HB(2.05/10)</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -117,4 +117,8 @@
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
     <string name="action_maintaincategories">Maintain Categories</string>
+    <string name="title_activity_common">Common Transactions</string>
+    <string name="captionCommon">Common Transactions</string>
+    <string name="captionLastDate">Last Date Used</string>
+    <string name="captionCreateCommon">Create</string>
 </resources>

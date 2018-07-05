@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.cooked.hb2.activityTransactionItem">
+    tools:context="com.example.cooked.hb2.activityCommonItem">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/captionDate"
+        android:text="@string/captionLastDate"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
@@ -139,18 +139,6 @@
         app:layout_constraintTop_toBottomOf="@+id/edtDescription"
         tools:ignore="SmallSp"/>
 
-    <TextView
-        android:id="@+id/lblBudget"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/captionBudgetPeriod"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtDescription"
-        tools:ignore="SmallSp"/>
-
     <EditText
         android:id="@+id/edtTxAmount"
         android:layout_width="95dp"
@@ -162,34 +150,6 @@
         android:text=""
         android:textAlignment="textEnd"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblAmount"
-        tools:ignore="LabelFor"/>
-
-    <EditText
-        android:id="@+id/edtBudgetYear"
-        android:layout_width="53dp"
-        android:layout_height="42dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:onClick="selectAll"
-        android:text=""
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblAmount"
-        tools:ignore="LabelFor"/>
-
-    <EditText
-        android:id="@+id/edtBudgetMonth"
-        android:layout_width="43dp"
-        android:layout_height="42dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:onClick="selectAll"
-        android:text=""
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toStartOf="@+id/edtBudgetYear"
         app:layout_constraintTop_toBottomOf="@+id/lblAmount"
         tools:ignore="LabelFor"/>
 
@@ -211,16 +171,6 @@
         android:layout_marginTop="8dp"
         android:text="@string/captionDelete"
         app:layout_constraintEnd_toStartOf="@+id/btnOk"
-        app:layout_constraintTop_toBottomOf="@+id/edtComments"/>
-
-    <Button
-        android:id="@+id/btnPlanned"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Planned"
-        app:layout_constraintEnd_toStartOf="@+id/btnDelete"
         app:layout_constraintTop_toBottomOf="@+id/edtComments"/>
 
 </android.support.constraint.ConstraintLayout>
