@@ -21,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -30,6 +29,7 @@ import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordButton;
+import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity
     private final String KEY_RECYCLER_STATE_CASH = "recycler_state_cash";
     
     private RecyclerView mTransactionListButton;
+    private RecyclerView mTransactionListCommonButton;
     private RecyclerView mTransactionListCurrent;
     private RecyclerView mTransactionListGeneral;
     private RecyclerView mTransactionListLongTerm;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity
     
     private ArrayList<RecordBudgetGroup> mDatasetBudget;
     private ArrayList<RecordButton> mDatasetButton;
+    private ArrayList<RecordButton> mDatasetCommonButton;
     
     private Bundle mButtonViewState;
     private Bundle mCurrentViewState;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity
     
     private BudgetAdapter budgetAdapter;
     private ImageAdapter mTransactionAdapterButton;
+    private ImageAdapter mTransactionAdapterCommonButton;
     private Toolbar toolbar;
     private FloatingActionButton fab;
     private TextView txtBudgetTitle;
@@ -623,11 +626,26 @@ public class MainActivity extends AppCompatActivity
         return (lList);
     }
 
+    private ArrayList<RecordButton> getCommonButtonList()
+    {
+        ArrayList<RecordButton> lList = new ArrayList<>();
+        ArrayList<RecordCommon> lItems = MyDatabase.MyDB().getCommonTransactionList();
+        MyLog.WriteLogMessage("Common Button List - count " + lItems.size());
+        for(int i=0;i<lItems.size();i++)
+        {
+            MyLog.WriteLogMessage("   " + lItems.get(i).TxDescription);
+            lList.add(new RecordButton(i, R.drawable.button, lItems.get(i).TxDescription));
+        }
+        return (lList);
+    }
+
     private void setupBankAccountView()
     {
         ArrayList<RecordTransaction> mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", false, mCurrentBABudgetMonth, mCurrentBABudgetYear);
         mTransactionListCurrent =  findViewById(R.id.transactionListCurrent);
         mTransactionListCurrent.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManagerCommonButton = new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false);
+        mTransactionListCommonButton.setLayoutManager(mLayoutManagerCommonButton);
         RecyclerView.LayoutManager mLayoutManagerButton = new GridLayoutManager(this, 2, LinearLayoutManager.HORIZONTAL, false);
         mTransactionListButton.setLayoutManager(mLayoutManagerButton);
         RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
@@ -676,6 +694,7 @@ public class MainActivity extends AppCompatActivity
     private void setupRecyclerViews()
     {
         mDatasetButton = getButtonList();
+        mDatasetCommonButton = getCommonButtonList();
         ArrayList<RecordTransaction> mDatasetGeneral = MyDatabase.MyDB().getTransactionList("11-18-11", "01446830", false);
         ArrayList<RecordTransaction> mDatasetLongTerm = MyDatabase.MyDB().getTransactionList("11-03-94", "02621503", false);
         ArrayList<RecordTransaction> mDatasetFamily = MyDatabase.MyDB().getTransactionList("11-03-94", "11522361", false);
@@ -684,6 +703,7 @@ public class MainActivity extends AppCompatActivity
         mTransactionListGeneral = findViewById(R.id.transactionListGeneral);
         mTransactionListLongTerm =  findViewById(R.id.transactionListLongTerm);
         mTransactionListFamily = findViewById(R.id.transactionListFamily);
+        mTransactionListCommonButton = findViewById(R.id.commonButtonList);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -691,6 +711,7 @@ public class MainActivity extends AppCompatActivity
         mTransactionListGeneral.setHasFixedSize(true);
         mTransactionListLongTerm.setHasFixedSize(true);
         mTransactionListFamily.setHasFixedSize(true);
+        mTransactionListCommonButton.setHasFixedSize(true);
 
 
         // use a linear layout manager
@@ -723,6 +744,20 @@ public class MainActivity extends AppCompatActivity
             }
         });
         
+        mTransactionAdapterCommonButton = new ImageAdapter(mDatasetCommonButton);
+        mTransactionListCommonButton.setAdapter(mTransactionAdapterCommonButton);
+        mTransactionAdapterCommonButton.setOnItemClickListener(new ImageAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordButton obj)
+            {
+                MyLog.WriteLogMessage("Setting TEMPLATEDESC to " + obj.buttonText);
+                Intent intent = new Intent(MainActivity.this, activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "ADD");
+                intent.putExtra("TEMPLATEDESC", obj.buttonText);
+                startActivity(intent);
+            }
+        });
         
         // specify an adapter (see also next example)
 
@@ -785,9 +820,15 @@ public class MainActivity extends AppCompatActivity
             {
                 Intent intent = new Intent(this, activityCategory.class);
                 startActivity(intent);
-            } else if (id == R.id.nav_planning)
+            }
+            if (id == R.id.nav_planning)
             {
                 Intent intent = new Intent(this, activityPlanning.class);
+                startActivity(intent);
+            }
+            if (id == R.id.nav_common)
+            {
+                Intent intent = new Intent(this, activityCommon.class);
                 startActivity(intent);
             }
             

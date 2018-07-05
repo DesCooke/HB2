@@ -30,12 +30,13 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
     private TableSubCategory tableSubCategory;
     private TablePlanned tablePlanned;
+    private TableCommon tableCommon;
     //endregion
     
     //region statics
@@ -58,6 +59,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableCategory = new TableCategory(this);
             tableSubCategory = new TableSubCategory(this);
             tablePlanned = new TablePlanned(this);
+            tableCommon = new TableCommon(this);
         }
         catch(Exception e)
         {
@@ -75,6 +77,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableCategory.onCreate(db);
             tableSubCategory.onCreate(db);
             tablePlanned.onCreate(db);
+            tableCommon.onCreate(db);
         }
         catch(Exception e)
         {
@@ -95,6 +98,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableCategory.onUpgrade(db, oldVersion, newVersion);
             tableSubCategory.onUpgrade(db, oldVersion, newVersion);
             tablePlanned.onUpgrade(db, oldVersion, newVersion);
+            tableCommon.onUpgrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -112,6 +116,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableCategory.onDowngrade(db, oldVersion, newVersion);
             tableSubCategory.onDowngrade(db, oldVersion, newVersion);
             tablePlanned.onDowngrade(db, oldVersion, newVersion);
+            tableCommon.onDowngrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -679,7 +684,84 @@ public class MyDatabase extends SQLiteOpenHelper
         return(null);
     }
     //endregion
-  
+ 
+     //region TableCommon Functions
+    public void addCommonTransaction(RecordCommon rt)
+    {
+        tableCommon.addTransaction(rt);
+    }
+    public void deleteCommonTransaction(RecordCommon rt)
+    {
+        tableCommon.deleteTransaction(rt);
+    }
+
+    public void updateCommonTransaction(RecordCommon rt)
+    {
+        tableCommon.updateTransaction(rt);
+    }
+
+    public ArrayList<RecordCommon> getCommonTransactionList()
+    {
+        try
+        {
+            ArrayList<RecordCommon> rta = tableCommon.getTransactionList();
+            for (int i = 0; i < rta.size(); i++)
+            {
+                RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
+                if (sc != null)
+                    rta.get(i).SubCategoryName = sc.SubCategoryName;
+            }
+            return (rta);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getCommonTransactionList", e.getMessage());
+        }
+        return(null);
+    }
+
+    public RecordCommon getSingleCommonTransaction(Integer pTxSeqNo)
+    {
+        try
+        {
+            RecordCommon rt = tableCommon.getSingleCommonTransaction(pTxSeqNo);
+            if (rt != null)
+            {
+                RecordSubCategory sc = tableSubCategory.getSubCategory(rt.CategoryId);
+                if (sc != null)
+                    rt.SubCategoryName = sc.SubCategoryName;
+            }
+            return (rt);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getSingleCommonTransaction", e.getMessage());
+        }
+        return(null);
+    }
+
+    public RecordCommon getSingleCommonTransaction(String pTxDescription)
+    {
+        try
+        {
+            RecordCommon rt = tableCommon.getSingleCommonTransaction(pTxDescription);
+            if (rt != null)
+            {
+                RecordSubCategory sc = tableSubCategory.getSubCategory(rt.CategoryId);
+                if (sc != null)
+                    rt.SubCategoryName = sc.SubCategoryName;
+            }
+            return (rt);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getSingleCommonTransaction", e.getMessage());
+        }
+        return(null);
+    }
+    //endregion
+    
+   
     
  }
 

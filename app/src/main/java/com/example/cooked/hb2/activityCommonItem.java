@@ -11,14 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCommon;
-import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
-import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 
 import java.util.Calendar;
@@ -29,7 +26,7 @@ import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 
-public class activityTransactionItem extends AppCompatActivity
+public class activityCommonItem extends AppCompatActivity
 {
     public String actionType;
     public TextView edtTxDate;
@@ -37,16 +34,12 @@ public class activityTransactionItem extends AppCompatActivity
     public EditText edtTxAmount;
     public TextView edtCategory;
     public TextView edtComments;
-    public TextView edtBudgetYear;
-    public TextView edtBudgetMonth;
     public MyInt MySubCategoryId;
     public Button btnOk;
     public Button btnDelete;
-    public Button btnCreatePlanned;
     public CategoryPicker cp;
     public Integer txSeqNo;
-    public RecordTransaction originalRecord;
-    public int templateSeqNo;
+    public RecordCommon originalRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,8 +47,7 @@ public class activityTransactionItem extends AppCompatActivity
         super.onCreate(savedInstanceState);
         try
         {
-            templateSeqNo=-1;
-            setContentView(R.layout.activity_transaction_item);
+            setContentView(R.layout.activity_common_item);
             Toolbar toolbar =  findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
     
@@ -65,11 +57,8 @@ public class activityTransactionItem extends AppCompatActivity
             edtTxAmount = findViewById(R.id.edtTxAmount);
             edtCategory =  findViewById(R.id.edtCategory);
             edtComments =  findViewById(R.id.edtComments);
-            edtBudgetYear =  findViewById(R.id.edtBudgetYear);
-            edtBudgetMonth =  findViewById(R.id.edtBudgetMonth);
             btnOk = findViewById(R.id.btnOk);
             btnDelete = findViewById(R.id.btnDelete);
-            btnCreatePlanned = findViewById(R.id.btnPlanned);
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
@@ -79,28 +68,16 @@ public class activityTransactionItem extends AppCompatActivity
             actionType = getIntent().getStringExtra("ACTIONTYPE");
             if (actionType.compareTo("ADD") == 0)
             {
-                originalRecord = new RecordTransaction();
-                setTitle("Add a new Cash Transaction");
+                originalRecord = new RecordCommon();
+                setTitle("Add a new Common Transaction");
                 btnDelete.setVisibility(GONE);
-                btnCreatePlanned.setVisibility(GONE);
                 setDefaults();
-                String lTemplateDesc = getIntent().getStringExtra("TEMPLATEDESC");
-                if(lTemplateDesc!=null)
-                {
-                    MyLog.WriteLogMessage("Received TEMPLATEDESC of " + lTemplateDesc);
-
-                    setDefaultsForTemplate(lTemplateDesc);
-                }
-                else
-                {
-                    MyLog.WriteLogMessage("Did not receive a TEMPLATEDESC");
-                }
             }
             if (actionType.compareTo("EDIT") == 0)
             {
-                setTitle("Amend Transaction");
+                setTitle("Amend Common Transaction");
                 txSeqNo = getIntent().getIntExtra("TxSeqNo", 0);
-                originalRecord = MyDB().getSingleTransaction(txSeqNo);
+                originalRecord = MyDB().getSingleCommonTransaction(txSeqNo);
                 MyString lDateStr = new MyString();
                 dateUtils().DateToStr(originalRecord.TxDate, lDateStr);
                 edtTxDate.setText(lDateStr.Value);
@@ -109,16 +86,8 @@ public class activityTransactionItem extends AppCompatActivity
                 MySubCategoryId.Value = originalRecord.CategoryId;
                 edtCategory.setText(originalRecord.SubCategoryName);
                 edtComments.setText(originalRecord.Comments);
-                if (originalRecord.BudgetYear == 0)
-                    originalRecord.BudgetYear = dateUtils().CurrentBudgetYear();
-                if (originalRecord.BudgetMonth == 0)
-                    originalRecord.BudgetMonth = dateUtils().CurrentBudgetMonth();
-    
-                edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
-                edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
     
                 btnDelete.setVisibility(View.VISIBLE);
-                btnCreatePlanned.setVisibility(View.VISIBLE);
             }
     
     
@@ -142,12 +111,6 @@ public class activityTransactionItem extends AppCompatActivity
                     if (s.length() != 0)
                     {
                         originalRecord.TxDate = dateUtils().StrToDate(edtTxDate.getText().toString());
-                        
-                        originalRecord.BudgetYear = dateUtils().GetBudgetYear(originalRecord.TxDate);
-                        originalRecord.BudgetMonth = dateUtils().GetBudgetMonth(originalRecord.TxDate);
-    
-                        edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
-                        edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
                     }
                 }
             });
@@ -165,36 +128,19 @@ public class activityTransactionItem extends AppCompatActivity
                         originalRecord.CategoryId = MySubCategoryId.Value;
                         originalRecord.SubCategoryName = edtCategory.getText().toString();
                         originalRecord.Comments = edtComments.getText().toString();
-                        originalRecord.BudgetYear = Integer.parseInt(edtBudgetYear.getText().toString());
-                        originalRecord.BudgetMonth = Integer.parseInt(edtBudgetMonth.getText().toString());
                         if (actionType.compareTo("ADD") == 0)
                         {
-                            originalRecord.TxType = "Cash";
-                            originalRecord.TxAdded = Calendar.getInstance().getTime();
-                            originalRecord.TxStatus = RecordTransaction.Status.NEW;
-                            originalRecord.TxBalance = Float.parseFloat("0.00");
-                            originalRecord.TxSortCode = "Cash";
-                            originalRecord.TxAccountNumber = "Cash";
-                            originalRecord.TxLineNo = MyDB().getNextTxLineNo(originalRecord.TxDate);
-                            originalRecord.TxFilename = "Cash";
                             originalRecord.TxSeqNo = 0; // will be auto generated
-                            MyDB().addTransaction(originalRecord);
-                            if(templateSeqNo!=-1)
-                            {
-                               RecordCommon lrc = MyDB().getSingleCommonTransaction(templateSeqNo);
-                               lrc.TxDate = originalRecord.TxDate;
-                               MyDB().updateCommonTransaction(lrc);
-                            }
-                            
+                            MyDB().addCommonTransaction(originalRecord);
                         }
                         if (actionType.compareTo("EDIT") == 0)
                         {
-                            MyDB().updateTransaction(originalRecord);
+                            MyDB().updateCommonTransaction(originalRecord);
                         }
                     }
                     catch(Exception e)
                     {
-                        ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
+                        ErrorDialog.Show("Error in activityCommonItem::onClick", e.getMessage());
                     }
                     finish();
                 }
@@ -205,67 +151,19 @@ public class activityTransactionItem extends AppCompatActivity
                 {
                     try
                     {
-                        MyDB().deleteTransaction(originalRecord);
+                        MyDB().deleteCommonTransaction(originalRecord);
                     }
                     catch(Exception e)
                     {
-                        ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
+                        ErrorDialog.Show("Error in activityCommonItem::onClick", e.getMessage());
                     }
                     finish();
                 }
             });
-            btnCreatePlanned.setOnClickListener(new View.OnClickListener()
-            {
-                public void onClick(View v)
-                {
-                    try
-                    {
-                        createPlanned(v);
-                    }
-                    catch(Exception e)
-                    {
-                        ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
-                    }
-                }
-            });
-/*
-            final Button button = findViewById(R.id.btnOk);
-            button.setOnClickListener(new View.OnClickListener()
-            {
-                public void onClick(View v)
-                {
-                    try
-                    {
-                        RecordCategory rc;
-                        rc = new RecordCategory();
-                        rc.CategoryName = edtCategoryName.getEditText().getText().toString();
-                        if (actionType.compareTo("ADD") == 0)
-                        {
-                            MyDB().addCategory(rc);
-                        }
-
-                        if (actionType.compareTo("EDIT") == 0)
-                        {
-                            rc.CategoryId = categoryId;
-                            MyDB().updateCategory(rc);
-
-                        }
-
-
-                        //setResult(RESULT_OK, intent);
-                    }
-                    catch(Exception e)
-                    {
-                        ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
-                    }
-                    finish();
-                }
-            });
-            */
         }
         catch(Exception e)
         {
-            ErrorDialog.Show("Error in activityTransactionItem::onCreate", e.getMessage());
+            ErrorDialog.Show("Error in activityCommonItem::onCreate", e.getMessage());
         }
     }
 
@@ -282,32 +180,6 @@ public class activityTransactionItem extends AppCompatActivity
         edtComments.setText("");
         Integer lMonth = dateUtils().CurrentBudgetMonth();
         Integer lYear = dateUtils().CurrentBudgetYear();
-        edtBudgetYear.setText(String.format(Locale.UK, "%d", lYear));
-        edtBudgetMonth.setText(String.format(Locale.UK, "%d", lMonth));
-    }
-
-    public void setDefaultsForTemplate(String argTemplate)
-    {
-        RecordCommon lRecordCommon = MyDatabase.MyDB().getSingleCommonTransaction(argTemplate);
-        if (lRecordCommon == null)
-            return;
-       
-        templateSeqNo = lRecordCommon.TxSeqNo;
-        edtTxDescription.setText(lRecordCommon.TxDescription);
-        edtTxAmount.setText(lRecordCommon.TxAmount.toString());
-        edtCategory.setText(lRecordCommon.SubCategoryName);
-        edtComments.setText(lRecordCommon.Comments);
-
-        MyString lDateStr = new MyString();
-        dateUtils().DateToStr(lRecordCommon.TxDate, lDateStr);
-        edtTxDate.setText(lDateStr.Value);
-        originalRecord.BudgetYear = dateUtils().GetBudgetYear(lRecordCommon.TxDate);
-        originalRecord.BudgetMonth = dateUtils().GetBudgetMonth(lRecordCommon.TxDate);
-    
-        edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
-        edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
-
-        MySubCategoryId.Value = lRecordCommon.CategoryId;
     }
 
     public void pickDateTime(View view)
@@ -319,22 +191,6 @@ public class activityTransactionItem extends AppCompatActivity
             Date date=dateUtils().StrToDate(ddp.txtStartDate.getText().toString() );
             ddp.setInitialDate(date);
             ddp.show();
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("pickDateTime", e.getMessage());
-        }
-    }
-
-    public void createPlanned(View view)
-    {
-        try
-        {
-            int lPlannedId = MyDB().createPlanned(originalRecord.TxSeqNo);
-            Intent intent = new Intent(getApplicationContext(), activityPlanningItem.class);
-            intent.putExtra("ACTIONTYPE", "EDIT");
-            intent.putExtra("PlannedId", lPlannedId);
-            startActivity(intent);
         }
         catch(Exception e)
         {

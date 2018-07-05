@@ -12,5 +12,9 @@
             android:id="@+id/nav_planning"
             android:icon="@drawable/plan"
             android:title="@string/captionPlanning"/>
+        <item
+            android:id="@+id/nav_common"
+            android:icon="@drawable/common"
+            android:title="@string/captionCommon"/>
     </group>
 </menu>
