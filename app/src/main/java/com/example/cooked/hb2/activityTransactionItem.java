@@ -13,14 +13,17 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCommon;
+import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
+import com.example.cooked.hb2.GlobalUtils.DialogUpdatePlannedQ;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -47,7 +50,8 @@ public class activityTransactionItem extends AppCompatActivity
     public Integer txSeqNo;
     public RecordTransaction originalRecord;
     public int templateSeqNo;
-
+    DialogUpdatePlannedQ dialogUpdatePlannedQ;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -70,6 +74,8 @@ public class activityTransactionItem extends AppCompatActivity
             btnOk = findViewById(R.id.btnOk);
             btnDelete = findViewById(R.id.btnDelete);
             btnCreatePlanned = findViewById(R.id.btnPlanned);
+            
+            dialogUpdatePlannedQ = new DialogUpdatePlannedQ(this);
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
@@ -156,6 +162,7 @@ public class activityTransactionItem extends AppCompatActivity
             {
                 public void onClick(View v)
                 {
+                    boolean lOkToFinish=true;
                     try
                     {
                         originalRecord.TxDate = new Date();
@@ -191,12 +198,49 @@ public class activityTransactionItem extends AppCompatActivity
                         {
                             MyDB().updateTransaction(originalRecord);
                         }
+                        MyLog.WriteLogMessage("VV: MySubCategoryId.Value is " + MySubCategoryId.Value);
+                        if(MySubCategoryId.Value != 0)
+                        {
+                            Date lNow = Calendar.getInstance().getTime();
+                            ArrayList<RecordPlanned> lrpa = MyDatabase.MyDB().getPlannedListForSubCategory(MySubCategoryId.Value);
+                            MyLog.WriteLogMessage("VV: There are " + lrpa + " planned items");
+                            for(int i=0;i<lrpa.size();i++)
+                            {
+                                RecordPlanned lrp=lrpa.get(i);
+                                MyLog.WriteLogMessage("VV: Checking " + lrp.mPlanned);
+                                
+                                MyLog.WriteLogMessage("VV:    Start " + lrp.mStartDate.toString());
+                                MyLog.WriteLogMessage("VV:    End " + lrp.mEndDate.toString());
+                                if( lrp.mStartDate.before(lNow) && lrp.mEndDate.after(lNow) )
+                                {
+                                    MyLog.WriteLogMessage("VV:    Type " + lrp.mPlannedType);
+                                    if (lrp.mPlannedType == RecordPlanned.mPTMonthly)
+                                    {
+                                        MyLog.WriteLogMessage("VV:    Amount " + lrp.mMatchingTxAmount);
+                                        if( (lrp.mMatchingTxAmount > 0 && originalRecord.TxAmount > 0) ||
+                                          (lrp.mMatchingTxAmount < 0 && originalRecord.TxAmount < 0) )
+                                        {
+                                            if( lrp.mMatchingTxAmount.compareTo(originalRecord.TxAmount)!=0 )
+                                            {
+                                                lOkToFinish=false;
+                                                dialogUpdatePlannedQ.plannedAmount = lrp.mMatchingTxAmount;
+                                                dialogUpdatePlannedQ.thisTransactionAmount = originalRecord.TxAmount;
+                                                dialogUpdatePlannedQ.plannedId = lrp.mPlannedId;
+                                                dialogUpdatePlannedQ.planned = lrp.mPlannedName;
+                                                dialogUpdatePlannedQ.show();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     catch(Exception e)
                     {
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
                     }
-                    finish();
+                    if(lOkToFinish)
+                        finish();
                 }
             });
             btnDelete.setOnClickListener(new View.OnClickListener()
@@ -286,6 +330,12 @@ public class activityTransactionItem extends AppCompatActivity
         edtBudgetMonth.setText(String.format(Locale.UK, "%d", lMonth));
     }
 
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+    }
+    
     public void setDefaultsForTemplate(String argTemplate)
     {
         RecordCommon lRecordCommon = MyDatabase.MyDB().getSingleCommonTransaction(argTemplate);
