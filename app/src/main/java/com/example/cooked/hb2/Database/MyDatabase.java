@@ -504,6 +504,29 @@ public class MyDatabase extends SQLiteOpenHelper
         return(null);
     }
 
+    public ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId)
+    {
+        try
+        {
+            ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedListForSubCategory(pSubCategoryId);
+            if (rpa != null)
+            {
+                for (int i = 0; i < rpa.size(); i++)
+                {
+                    RecordSubCategory sc = tableSubCategory.getSubCategory(rpa.get(i).mSubCategoryId);
+                    if (sc != null)
+                        rpa.get(i).mSubCategoryName = sc.SubCategoryName;
+                }
+            }
+            return (rpa);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getPlannedListForSubCategory", e.getMessage());
+        }
+        return(null);
+    }
+
     public RecordPlanned getSinglePlanned(Integer pPlannedId)
     {
         try

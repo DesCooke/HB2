@@ -220,7 +220,7 @@ class TablePlanned extends TableBase
         return list;
     }
 
-    ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId)
+    public ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId)
     {
         ArrayList<RecordPlanned> list;
         try

@@ -184,18 +184,20 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             
             if(rec.BalanceCorrect==false)
             {
-              holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
-              holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+              //holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+              //holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
               if(holder.mTxBalance.getVisibility() == View.VISIBLE)
               {
                   if (rec.TxBalance < 0.00)
                   {
-                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1) + " -> " +
-                        ", -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
+//                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1) + " -> " +
+//                        ", -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
+                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
                   } else
                   {
-                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance) + " -> " +
-                        "£" + String.format("%.2f", rec.TxBalanceShouldBe));
+//                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance) + " -> " +
+//                        "£" + String.format("%.2f", rec.TxBalanceShouldBe));
+                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalanceShouldBe));
                   }
               }
             }
