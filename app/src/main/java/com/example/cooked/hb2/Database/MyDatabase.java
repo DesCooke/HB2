@@ -481,11 +481,11 @@ public class MyDatabase extends SQLiteOpenHelper
         tablePlanned.updatePlanned(rp);
     }
 
-    public ArrayList<RecordPlanned> getPlannedList()
+    public ArrayList<RecordPlanned> getPlannedList(boolean activeOnly)
     {
         try
         {
-            ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedList();
+            ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedList(activeOnly);
             if (rpa != null)
             {
                 for (int i = 0; i < rpa.size(); i++)

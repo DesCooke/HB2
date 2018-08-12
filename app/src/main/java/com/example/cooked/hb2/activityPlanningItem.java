@@ -46,6 +46,7 @@ public class activityPlanningItem extends AppCompatActivity
     public TextInputLayout edtMatchAmount;
     public Button btnOk;
     public Button btnDelete;
+    public Button btnCopyToNew;
     public MyInt MySubCategoryId;
     public MyInt MyDay;
     public MyInt MyMonth;
@@ -103,6 +104,7 @@ public class activityPlanningItem extends AppCompatActivity
         edtMatchAmount = findViewById(R.id.edtMatchAmount);
         btnOk = findViewById(R.id.btnOk);
         btnDelete = findViewById(R.id.btnDelete);
+        btnCopyToNew = findViewById(R.id.btnCopyToNew);
 
 
 
@@ -154,6 +156,7 @@ public class activityPlanningItem extends AppCompatActivity
             edtStartDate.setText(myString.Value);
             edtEndDate.setText(R.string.dateEndOfTime);
             btnDelete.setVisibility(View.GONE);
+            btnCopyToNew.setVisibility(View.GONE);
         }
         if (mActionType.compareTo("EDIT") == 0)
         {
@@ -348,6 +351,22 @@ public class activityPlanningItem extends AppCompatActivity
         {
             MyDB().deletePlanned(mRecordPlanned);
             finish();
+        }
+        catch(Exception e)
+        {
+            ErrorDialog.Show("deleteItem", e.getMessage());
+        }
+    }
+
+    public void copyToNew(View view)
+    {
+        try
+        {
+            setTitle("Add a new planned item");
+            mActionType = "ADD";
+            mRecordPlanned.mPlannedId = 0;
+            btnDelete.setVisibility(View.GONE);
+            btnCopyToNew.setVisibility(View.GONE);
         }
         catch(Exception e)
         {
