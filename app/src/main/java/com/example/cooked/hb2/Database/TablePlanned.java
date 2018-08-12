@@ -11,6 +11,7 @@ import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -148,20 +149,29 @@ class TablePlanned extends TableBase
         executeSQL(lSql, "TablePlanned::deletePlanned", null);
     }
     
-    ArrayList<RecordPlanned> getPlannedList()
+    ArrayList<RecordPlanned> getPlannedList(boolean activeOnly)
     {
         ArrayList<RecordPlanned> list;
         try
         {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
-                try (Cursor cursor = db.query("tblPlanned", new String[]{"PlannedId", "PlannedType",
-                        "PlannedName", "SubCategoryId", "SortCode", "AccountNo", "PlannedDate",
-                        "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
-                        "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "StartDate",
-                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount"},
-                    null,
-                    null, null, null, "PlannedName", null))
+                String l_SQL = "SELECT PlannedId, PlannedType, PlannedName, SubCategoryId, " +
+                        "SortCode, AccountNo, PlannedDate, PlannedMonth,PlannedDay,Monday, " +
+                        "Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, StartDate, " +
+                        "EndDate, MatchingTxType, MatchingTxDescription, MatchingTxAmount " +
+                        " FROM tblPlanned ";
+                if (activeOnly)
+                {
+                    Date currentTime = Calendar.getInstance().getTime();
+
+                    l_SQL = l_SQL +  "WHERE " + Long.toString(currentTime.getTime()) +
+                            " between StartDate and EndDate ";
+                }
+                l_SQL = l_SQL + "ORDER BY PlannedName";
+
+                Cursor cursor = db.rawQuery(l_SQL, null);
+                try
                 {
                     list = new ArrayList<>();
                     if (cursor != null)
@@ -208,8 +218,17 @@ class TablePlanned extends TableBase
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    list = new ArrayList<>();
+                    ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
+                }
             }
-            
+            catch (Exception e)
+            {
+                list = new ArrayList<>();
+                ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
+            }
         }
         catch (Exception e)
         {
@@ -653,7 +672,7 @@ class TablePlanned extends TableBase
         Date lBudgetEnd = DateUtils.dateUtils().BudgetEnd(pMonth, pYear);
         Date lCurrentDate;
 
-        plannedList = getPlannedList();
+        plannedList = getPlannedList(false);
         for(int i=0;i<plannedList.size();i++)
         {
             RecordPlanned rp = plannedList.get(i);
