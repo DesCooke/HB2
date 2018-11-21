@@ -30,7 +30,8 @@ class TableCategoryBudget extends TableBase
         String lSql =
                 "CREATE TABLE tblCategoryBudget " +
                         " (" +
-                        "   CategoryId INTEGER PRIMARY KEY, " +
+                        "   RecordId INTEGER PRIMARY KEY," +
+                        "   CategoryId INTEGER, " +
                         "   BudgetMonth INTEGER, " +
                         "   BudgetYear INTEGER, " +
                         "   BudgetAmount REAL " +
@@ -39,12 +40,22 @@ class TableCategoryBudget extends TableBase
         executeSQL(lSql, "TableCategoryBudget::onCreate", db);
     }
 
+    private int getNextRecordId()
+    {
+        String lSql = "SELECT MAX(RecordId) FROM tblCategoryBudget ";
+
+        return (getMaxPlus1(lSql, "TableCategoryBudget::getNextRecordId"));
+    }
+
     void addCategoryBudget(RecordCategoryBudget rcb)
     {
+        int lNextRecordId = getNextRecordId();
+
         String lSql =
                 "INSERT INTO tblCategoryBudget " +
-                        "(CategoryId, BudgetMonth, BudgetYear, BudgetAmount) " +
+                        "(RecordId, CategoryId, BudgetMonth, BudgetYear, BudgetAmount) " +
                         "VALUES (" +
+                        Integer.toString(lNextRecordId) + ", " +
                         Integer.toString(rcb.CategoryId) + "," +
                         rcb.BudgetMonth.toString() + "," +
                         rcb.BudgetYear.toString() + "," +
@@ -147,6 +158,11 @@ class TableCategoryBudget extends TableBase
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         if (oldVersion == 11 && newVersion == 12)
+        {
+            MyLog.WriteLogMessage("Creating table tblCategoryBudget");
+            onCreate(db);
+        }
+        if (oldVersion == 12 && newVersion == 13)
         {
             MyLog.WriteLogMessage("Creating table tblCategoryBudget");
             onCreate(db);
