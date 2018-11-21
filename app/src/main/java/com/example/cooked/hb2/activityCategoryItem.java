@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Switch;
 
 import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
@@ -18,6 +20,8 @@ public class activityCategoryItem extends AppCompatActivity
     public String actionType;
     public Integer categoryId;
     public TextInputLayout edtCategoryName;
+    public Switch swGroupedBudget;
+    public Spinner spDefaultBudgetType;
     
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,6 +35,11 @@ public class activityCategoryItem extends AppCompatActivity
     
             edtCategoryName = findViewById(R.id.edtCategoryName);
             Button btnDelete = findViewById(R.id.btnDelete);
+            swGroupedBudget = findViewById(R.id.swGroupedBudget);
+            spDefaultBudgetType = findViewById(R.id.spDefaultBudgetType);
+
+            swGroupedBudget.setChecked(false);
+            spDefaultBudgetType.setVisibility(View.GONE);
 
             setTitle("<Unknown>");
             actionType = getIntent().getStringExtra("ACTIONTYPE");
@@ -49,6 +58,14 @@ public class activityCategoryItem extends AppCompatActivity
                     edtCategoryName.getEditText().setText(lCategoryName);
                 }
                 btnDelete.setVisibility(View.VISIBLE);
+
+                RecordCategory rc = MyDB().getCategory(categoryId);
+                swGroupedBudget.setChecked(rc.GroupedBudget);
+                if(rc.GroupedBudget)
+                {
+                    spDefaultBudgetType.setVisibility(View.VISIBLE);
+                    spDefaultBudgetType.setSelection(rc.DefaultBudgetType);
+                }
             }
             
             btnDelete.setOnClickListener(new View.OnClickListener()
@@ -73,7 +90,29 @@ public class activityCategoryItem extends AppCompatActivity
                     finish();
                 }
          });
-            
+
+            swGroupedBudget.setOnClickListener(new View.OnClickListener()
+            {
+                public void onClick(View v)
+                {
+                    try
+                    {
+                        if(swGroupedBudget.isChecked())
+                        {
+                            spDefaultBudgetType.setVisibility(View.VISIBLE);
+                    }
+                        else
+                        {
+                            spDefaultBudgetType.setVisibility(View.GONE);
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
+                    }
+                }
+            });
+
             final Button button = findViewById(R.id.btnOk);
             button.setOnClickListener(new View.OnClickListener()
             {
@@ -92,8 +131,12 @@ public class activityCategoryItem extends AppCompatActivity
                         if (actionType.compareTo("EDIT") == 0)
                         {
                             rc.CategoryId = categoryId;
+                            rc.GroupedBudget = swGroupedBudget.isChecked();
+                            rc.DefaultBudgetType=0;
+                            if(rc.GroupedBudget)
+                                rc.DefaultBudgetType=spDefaultBudgetType.getSelectedItemPosition();
+
                             MyDB().updateCategory(rc);
-                        
                         }
                         
 

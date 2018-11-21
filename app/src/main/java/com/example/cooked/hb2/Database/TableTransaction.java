@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Float.parseFloat;
 
 class TableTransaction extends TableBase
 {
@@ -214,8 +215,8 @@ class TableTransaction extends TableBase
                                             cursor.getString(6),
                                             cursor.getString(7),
                                             cursor.getString(8),
-                                            Float.parseFloat(cursor.getString(9)),
-                                            Float.parseFloat(cursor.getString(10)),
+                                            parseFloat(cursor.getString(9)),
+                                            parseFloat(cursor.getString(10)),
                                             Integer.parseInt(cursor.getString(11)),
                                             cursor.getString(12),
                                             Integer.parseInt(cursor.getString(13)),
@@ -393,8 +394,8 @@ class TableTransaction extends TableBase
                                                         cursor.getString(6),
                                                         cursor.getString(7),
                                                         cursor.getString(8),
-                                                        Float.parseFloat(cursor.getString(9)),
-                                                        Float.parseFloat(cursor.getString(10)),
+                                                        parseFloat(cursor.getString(9)),
+                                                        parseFloat(cursor.getString(10)),
                                                         Integer.parseInt(cursor.getString(11)),
                                                         cursor.getString(12),
                                                         Integer.parseInt(cursor.getString(13)),
@@ -423,7 +424,7 @@ class TableTransaction extends TableBase
                             {
                                 String lString = cursor2.getString(0);
                                 if (lString != null)
-                                    lBalance = Float.parseFloat(cursor2.getString(0));
+                                    lBalance = parseFloat(cursor2.getString(0));
                             }
                         }
                         finally
@@ -489,8 +490,8 @@ class TableTransaction extends TableBase
                                             cursor.getString(6),
                                             cursor.getString(7),
                                             cursor.getString(8),
-                                            Float.parseFloat(cursor.getString(9)),
-                                            Float.parseFloat(cursor.getString(10)),
+                                            parseFloat(cursor.getString(9)),
+                                            parseFloat(cursor.getString(10)),
                                             Integer.parseInt(cursor.getString(11)),
                                             cursor.getString(12),
                                             Integer.parseInt(cursor.getString(13)),
@@ -516,6 +517,7 @@ class TableTransaction extends TableBase
         }
         return list;
     }
+
     ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode,
                                                 String lAccountNumber)
     {
@@ -555,8 +557,8 @@ class TableTransaction extends TableBase
                                                 cursor.getString(6),
                                                 cursor.getString(7),
                                                 cursor.getString(8),
-                                                Float.parseFloat(cursor.getString(9)),
-                                                Float.parseFloat(cursor.getString(10)),
+                                                parseFloat(cursor.getString(9)),
+                                                parseFloat(cursor.getString(10)),
                                                 Integer.parseInt(cursor.getString(11)),
                                                 cursor.getString(12),
                                                 Integer.parseInt(cursor.getString(13)),
@@ -615,8 +617,8 @@ class TableTransaction extends TableBase
                                         cursor.getString(6),
                                         cursor.getString(7),
                                         cursor.getString(8),
-                                        Float.parseFloat(cursor.getString(9)),
-                                        Float.parseFloat(cursor.getString(10)),
+                                        parseFloat(cursor.getString(9)),
+                                        parseFloat(cursor.getString(10)),
                                         Integer.parseInt(cursor.getString(11)),
                                         cursor.getString(12),
                                         Integer.parseInt(cursor.getString(13)),
@@ -663,4 +665,132 @@ class TableTransaction extends TableBase
                 "Downgrading from " + Integer.toString(oldVersion) +
                 " down to " + Integer.toString(newVersion) );
     }
+
+    Float getCategoryBudgetSameMonthLastYear(Integer pBudgetYear, Integer pBudgetMonth, Integer pCategoryId)
+    {
+        Float lTotal = 0.00f;
+
+        try
+        {
+            pBudgetYear=pBudgetYear-1;
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                String lString =
+                        "SELECT SUM(TxAmount) " +
+                        "FROM tblTransaction a, tblSubCategory b " +
+                        "WHERE a.BudgetMonth = " + pBudgetMonth.toString() + " " +
+                        "AND a.BudgetYear = " + pBudgetYear.toString() + " " +
+                        "AND a.CategoryId = b.SubCategoryId " +
+                        "AND b.CategoryId = " + pCategoryId.toString();
+                Cursor cursor = db.rawQuery(lString, null);
+                if (cursor != null)
+                {
+                    try
+                    {
+                        cursor.moveToFirst();
+                        lTotal=Float.parseFloat(cursor.getString(0));
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TableTransaction.getBudgetList", e.getMessage());
+        }
+        return lTotal;
+    }
+
+    Float getCategoryBudgetLastMonth(Integer pBudgetYear, Integer pBudgetMonth, Integer pCategoryId)
+    {
+        Float lTotal = 0.00f;
+
+        try
+        {
+            pBudgetMonth=pBudgetMonth-1;
+            if(pBudgetMonth<1) {
+                pBudgetMonth = 12;
+                pBudgetYear--;
+            }
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                String lString =
+                        "SELECT SUM(TxAmount) " +
+                                "FROM tblTransaction a, tblSubCategory b " +
+                                "WHERE a.BudgetMonth = " + pBudgetMonth.toString() + " " +
+                                "AND a.BudgetYear = " + pBudgetYear.toString() + " " +
+                                "AND a.CategoryId = b.SubCategoryId " +
+                                "AND b.CategoryId = " + pCategoryId.toString();
+                Cursor cursor = db.rawQuery(lString, null);
+                if (cursor != null)
+                {
+                    try
+                    {
+                        cursor.moveToFirst();
+                        lTotal=Float.parseFloat(cursor.getString(0));
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TableTransaction.getBudgetList", e.getMessage());
+        }
+        return lTotal;
+    }
+
+    float getCategoryBudgetAverage(Integer pCategoryId)
+    {
+        float lTotal = 0.00f;
+        float lAverage = 0.00f;
+        float lCount=0.0f;
+
+        try
+        {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                String lString =
+                        "SELECT BudgetYear, BudgetMonth, SUM(TxAmount) " +
+                        "FROM tblTransaction a, tblSubCategory b " +
+                        "WHERE a.CategoryId = b.SubCategoryId " +
+                        "AND b.CategoryId = " + pCategoryId.toString() + " " +
+                        "GROUP BY BudgetYear, BudgetMonth ";
+                Cursor cursor = db.rawQuery(lString, null);
+                if (cursor != null)
+                {
+                    try
+                    {
+                        cursor.moveToFirst();
+                        do {
+                            lTotal=lTotal + Float.parseFloat(cursor.getString(2));
+                            lCount=lCount+1.00f;
+                        } while(cursor.moveToNext());
+                        if(lCount>0)
+                            if(lTotal>0.001 || lTotal<-0.001)
+                              lAverage=lTotal / lCount;
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TableTransaction.getBudgetList", e.getMessage());
+        }
+        return lAverage;
+    }
+
 }

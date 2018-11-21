@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HB(2.06/10)</string>
+    <string name="app_name">HB(2.07/11)</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -122,4 +122,10 @@
     <string name="captionLastDate">Last Date Used</string>
     <string name="captionCreateCommon">Create</string>
     <string name="Cancel">Cancel</string>
+    <string name="grouped_budget">Grouped Budget</string>
+    <string-array name="defaultbudgettypes">
+        <item>Same Month Last Year</item>
+        <item>Last Month</item>
+        <item>Average</item>
+    </string-array>
 </resources>
