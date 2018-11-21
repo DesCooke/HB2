@@ -1,28 +1,38 @@
 package com.example.cooked.hb2.Budget;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.cooked.hb2.Database.MyDatabase;
+import com.example.cooked.hb2.Database.RecordCategory;
+import com.example.cooked.hb2.Database.RecordCategoryBudget;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 
 public class BudgetAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     private ArrayList<RecordBudgetGroup> budgetList;
-    
 
     public BudgetAdapter(Context context, ArrayList<RecordBudgetGroup> pBudgetList) {
         try
@@ -65,9 +75,9 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
             TextView childItem = view.findViewById(R.id.childItem);
             childItem.setText(detailInfo.budgetItemName.trim());
             TextView budget_summary = view.findViewById(R.id.budget_summary);
-
-            String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f",detailInfo.total, detailInfo.spent,
-                    detailInfo.outstanding);
+            String lText = String.format(Locale.ENGLISH,
+                    "£%.2f / £%.2f / £%.2f",
+                    detailInfo.total, detailInfo.spent, detailInfo.outstanding);
             budget_summary.setText(lText);
     
             return view;
@@ -134,13 +144,68 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
 
         try
         {
-            RecordBudgetGroup headerInfo = (RecordBudgetGroup) getGroup(groupPosition);
+            final RecordBudgetGroup headerInfo = (RecordBudgetGroup) getGroup(groupPosition);
             if (view == null)
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.budgetgroup, parent, false);
     
             LinearLayout cellbudgetgroup = view.findViewById(R.id.cellbudgetgroup);
             ImageView image = view.findViewById(R.id.indicator);
             TextView budget_summary = view.findViewById(R.id.budget_summary);
+
+            if(headerInfo.groupedBudget) {
+
+                RecordCategoryBudget rcb = MyDatabase.MyDB().getCategoryBudget(
+                        headerInfo.CategoryId, headerInfo.BudgetMonth,
+                        headerInfo.BudgetYear);
+                if (rcb.BudgetMonth == 0) {
+                    rcb.CategoryId = headerInfo.CategoryId;
+                    rcb.BudgetMonth = headerInfo.BudgetMonth;
+                    rcb.BudgetYear = headerInfo.BudgetYear;
+                    rcb.BudgetAmount = -250.00f;
+                    if(headerInfo.DefaultBudgetType==RecordCategory.mDBTSameMonthLastYear)
+                    {
+                        rcb.BudgetAmount=MyDatabase.MyDB().getCategoryBudgetSameMonthLastYear(rcb.BudgetYear,
+                                rcb.BudgetMonth, rcb.CategoryId);
+                    }
+                    if(headerInfo.DefaultBudgetType==RecordCategory.mDBTAverage)
+                    {
+                        rcb.BudgetAmount=MyDatabase.MyDB().getCategoryBudgetAverage(rcb.CategoryId);
+                    }
+                    if(headerInfo.DefaultBudgetType==RecordCategory.mDBTLastMonth)
+                    {
+                        rcb.BudgetAmount=MyDatabase.MyDB().getCategoryBudgetLastMonth(rcb.BudgetYear,
+                                rcb.BudgetMonth, rcb.CategoryId);
+                    }
+                    if(rcb.BudgetAmount>=-0.00001 && rcb.BudgetAmount <=0.00001)
+                    {
+                        int lYear=rcb.BudgetYear;
+                        int lMonth=rcb.BudgetMonth;
+                        while(rcb.BudgetAmount>=-0.00001 && rcb.BudgetAmount <=0.00001) {
+                            rcb.BudgetAmount = MyDatabase.MyDB().getCategoryBudgetLastMonth(lYear,
+                                    lMonth, rcb.CategoryId);
+                            if(rcb.BudgetAmount < -0.00001)
+                                break;
+                            if(rcb.BudgetAmount > 0.00001)
+                                break;
+                            lMonth--;
+                            if(lMonth==0)
+                            {
+                                lYear--;
+                                lMonth=12;
+                            }
+                            if(lYear<2000)
+                                break;
+                        }
+                    }
+                    if(rcb.BudgetAmount<-0.00001 || rcb.BudgetAmount >0.00001) {
+                        MyDatabase.MyDB().addCategoryBudget(rcb);
+                    }
+                }
+                headerInfo.total = rcb.BudgetAmount;
+                headerInfo.outstanding = headerInfo.total - headerInfo.spent;
+            }
+
+
 
             String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f",headerInfo.total, headerInfo.spent,
                     headerInfo.outstanding);
@@ -164,7 +229,69 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
                 heading.setTextColor(Color.BLACK);
                 budget_summary.setTextColor(Color.BLACK);
             }
-    if (image != null)
+            Button btnBudget = view.findViewById(R.id.btnBudget);
+            if(headerInfo.groupedBudget) {
+                btnBudget.setText(String.format(Locale.ENGLISH, "£%.2f", headerInfo.total));
+                btnBudget.setFocusable(false);
+                btnBudget.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("Select a Budget for the Group");
+
+                        final EditText input = new EditText(context);
+                        input.setText(String.format(Locale.ENGLISH, "%.2f", headerInfo.total));
+
+                        input.setInputType(InputType.TYPE_CLASS_NUMBER |
+                                InputType.TYPE_NUMBER_FLAG_DECIMAL |
+                                InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        builder.setView(input);
+
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String m_Text = input.getText().toString();
+                                RecordCategoryBudget rcb = MyDatabase.MyDB().getCategoryBudget(
+                                        headerInfo.CategoryId, headerInfo.BudgetMonth,
+                                        headerInfo.BudgetYear);
+                                if(rcb.BudgetMonth==0)
+                                {
+                                    Toast.makeText(context, "Budget for Category/Period Added", LENGTH_LONG).show();
+
+                                    rcb.CategoryId = headerInfo.CategoryId;
+                                    rcb.BudgetMonth = headerInfo.BudgetMonth;
+                                    rcb.BudgetYear = headerInfo.BudgetYear;
+                                    rcb.BudgetAmount = Float.valueOf(m_Text);
+
+                                    MyDatabase.MyDB().addCategoryBudget(rcb);
+                                }
+                                else
+                                {
+                                    Toast.makeText(context, "Budget for Category/Period Updated", LENGTH_LONG).show();
+                                    rcb.BudgetAmount = Float.valueOf(m_Text);
+
+                                    MyDatabase.MyDB().updateCategoryBudget(rcb);
+                                }
+                                headerInfo.total = Float.valueOf(m_Text);
+                                headerInfo.outstanding = headerInfo.total - headerInfo.spent;
+                            }
+                        });
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                        builder.show();                    }
+                });
+            }
+            else
+            {
+                btnBudget.setVisibility(View.GONE);
+            }
+
+            if (image != null)
     {
         if (getChildrenCount(groupPosition) == 0)
         {

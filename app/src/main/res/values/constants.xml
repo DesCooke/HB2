@@ -6,5 +6,4 @@
     <string name="download_directory">/storage/emulated/0/Download</string>
     <string name="tx_archive_directory">/storage/emulated/0/HB/txarchive</string>
     <string name="end_of_time">31/12/2099</string>
-
 </resources>

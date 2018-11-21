@@ -31,7 +31,9 @@ class TableCategory extends TableBase
             "CREATE TABLE tblCategory " +
                 " (" +
                 "   CategoryId INTEGER PRIMARY KEY, " +
-                "   CategoryName TEXT " +
+                "   CategoryName TEXT, " +
+                "   GroupedBudget INTEGER, " +
+                "   DefaultBudgetType INTEGER " +
                 ") ";
         
         executeSQL(lSql, "TableCategory::onCreate", db);
@@ -50,19 +52,28 @@ class TableCategory extends TableBase
         
         String lSql =
             "INSERT INTO tblCategory " +
-                "(CategoryId, CategoryName) " +
+                "(CategoryId, CategoryName, GroupedBudget, DefaultBudgetType) " +
                 "VALUES (" +
                 Integer.toString(rc.CategoryId) + "," +
-                "'" + rc.CategoryName + "') ";
+                "'" + rc.CategoryName + "', " +
+                rc.GroupedBudget.toString() + "," +
+                rc.DefaultBudgetType.toString() + " " +
+                ") ";
         
         executeSQL(lSql, "TableCategory::addCategory", null);
     }
     
     void updateCategory(RecordCategory rc)
     {
+        Integer lGroupedBudget=0;
+        if(rc.GroupedBudget)
+            lGroupedBudget=1;
+
         String lSql =
             "UPDATE tblCategory " +
-                "  SET CategoryName = '" + rc.CategoryName + "' " +
+                "  SET CategoryName = '" + rc.CategoryName + "', " +
+                "      GroupedBudget = " + lGroupedBudget.toString() + ", " +
+                "      DefaultBudgetType = " + rc.DefaultBudgetType.toString() + " " +
                 "WHERE CategoryId = " + rc.CategoryId.toString();
         
         executeSQL(lSql, "TableCategory::updateCategory", null);
@@ -87,7 +98,7 @@ class TableCategory extends TableBase
                 try
                 {
                     String lString =
-                        "SELECT CategoryId, CategoryName " +
+                        "SELECT CategoryId, CategoryName, GroupedBudget, DefaultBudgetType " +
                             "FROM tblCategory " +
                             "ORDER BY CategoryName";
                     Cursor cursor = db.rawQuery(lString, null);
@@ -99,12 +110,18 @@ class TableCategory extends TableBase
                             cursor.moveToFirst();
                             do
                             {
+                                Boolean lGroupedBudget=false;
+                                if ( Integer.parseInt(cursor.getString(2))==1 )
+                                    lGroupedBudget=true;
+
                                 list.add
                                     (
                                         new RecordCategory
                                             (
                                                 Integer.parseInt(cursor.getString(0)),
-                                                cursor.getString(1)
+                                                cursor.getString(1),
+                                                    lGroupedBudget,
+                                                Integer.parseInt(cursor.getString(3))
                                             )
                                     );
                             } while (cursor.moveToNext());
@@ -128,15 +145,72 @@ class TableCategory extends TableBase
         }
         return list;
     }
-    
-    
+
+    RecordCategory getCategory(Integer pCategoryId)
+    {
+        RecordCategory item;
+        try
+        {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                try
+                {
+                    String lString =
+                            "SELECT CategoryId, CategoryName, GroupedBudget, DefaultBudgetType " +
+                                    "FROM tblCategory " +
+                                    "WHERE CategoryId = " + pCategoryId.toString();
+                    Cursor cursor = db.rawQuery(lString, null);
+                    item = new RecordCategory();
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            cursor.moveToFirst();
+                            Boolean lGroupedBudget=false;
+                            if ( Integer.parseInt(cursor.getString(2))==1 )
+                                lGroupedBudget=true;
+
+                                item= new RecordCategory
+                                                        (
+                                                                Integer.parseInt(cursor.getString(0)),
+                                                                cursor.getString(1),
+                                                                lGroupedBudget,
+                                                                Integer.parseInt(cursor.getString(3))
+                                                        );
+                        }
+                        finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                }
+                finally
+                {
+                    db.close();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            item = new RecordCategory();
+            ErrorDialog.Show("Error in TableCategory.getCategory", e.getMessage());
+        }
+        return item;
+    }
+
+
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         if (oldVersion == 1 && newVersion == 2)
         {
             MyLog.WriteLogMessage("Creating table tblCategory");
-            
             onCreate(db);
+        }
+        if (oldVersion == 10 && newVersion == 11)
+        {
+            MyLog.WriteLogMessage("Adding Grouped Budget");
+            db.execSQL("ALTER TABLE tblCategory ADD COLUMN GroupedBudget INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE tblCategory ADD COLUMN DefaultBudgetType INTEGER DEFAULT 0");
         }
     }
 

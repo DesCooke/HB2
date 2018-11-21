@@ -52,6 +52,14 @@
             app:layout_constraintVertical_bias="0.571"
             tools:ignore="SmallSp"/>
 
+        <Button
+            android:id="@+id/btnBudget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Budget"
+            app:layout_constraintEnd_toStartOf="@+id/budget_summary"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>
