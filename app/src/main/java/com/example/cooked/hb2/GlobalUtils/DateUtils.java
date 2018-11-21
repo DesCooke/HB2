@@ -145,6 +145,7 @@ public class DateUtils
         }
         return (new Date());
     }
+
     public Integer CurrentBudgetYear()
     {
         try
@@ -341,6 +342,7 @@ public class DateUtils
             return (false);
         }
     }
+
     public boolean DateToStr(Date date, MyString retString)
     {
         try
@@ -354,5 +356,9 @@ public class DateUtils
             return (false);
         }
     }
-    
+
+    public Long StripTimeElement(Long argDate)
+    {
+        return(argDate-(argDate%86400000));
+    }
 }
