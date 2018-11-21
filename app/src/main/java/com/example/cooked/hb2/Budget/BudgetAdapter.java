@@ -66,8 +66,7 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                              View view, ViewGroup parent) {
-        try
-        {
+        try {
             RecordBudgetItem detailInfo = (RecordBudgetItem) getChild(groupPosition, childPosition);
             if (view == null)
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.budgetitem, parent, false);
@@ -75,10 +74,16 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
             TextView childItem = view.findViewById(R.id.childItem);
             childItem.setText(detailInfo.budgetItemName.trim());
             TextView budget_summary = view.findViewById(R.id.budget_summary);
-            String lText = String.format(Locale.ENGLISH,
-                    "£%.2f / £%.2f / £%.2f",
-                    detailInfo.total, detailInfo.spent, detailInfo.outstanding);
-            budget_summary.setText(lText);
+            if (detailInfo.groupedBudget == false) {
+                String lText = String.format(Locale.ENGLISH,
+                        "£%.2f / £%.2f / £%.2f",
+                        detailInfo.total, detailInfo.spent, detailInfo.outstanding);
+                budget_summary.setText(lText);
+            } else
+            {
+                String lText = String.format(Locale.ENGLISH,"£%.2f", detailInfo.spent);
+                budget_summary.setText(lText);
+            }
     
             return view;
         }
@@ -274,6 +279,8 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
                                 }
                                 headerInfo.total = Float.valueOf(m_Text);
                                 headerInfo.outstanding = headerInfo.total - headerInfo.spent;
+                                if(headerInfo.lMainActivity!=null)
+                                    headerInfo.lMainActivity.setupBudget();
                             }
                         });
                         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

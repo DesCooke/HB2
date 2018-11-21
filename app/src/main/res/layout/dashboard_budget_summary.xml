@@ -1,162 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-                                             android:layout_height="wrap_content"
-                                             android:background="@android:drawable/alert_light_frame"
-                                             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:layout_height="wrap_content"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        android:id="@+id/label1"
-        android:layout_width="122dp"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/monthly_income"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@android:drawable/alert_light_frame">
 
-    <TextView
-        android:id="@+id/label2"
-        android:layout_width="186dp"
-        android:layout_height="wrap_content"
-        android:text="@string/monthly_expense"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label1" />
+        <TextView
+            android:id="@+id/label1"
+            android:layout_width="122dp"
+            android:layout_height="wrap_content"
+            android:text="@string/monthly_income"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/label3"
-        android:layout_width="181dp"
-        android:layout_height="wrap_content"
-        android:text="@string/amount_left"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label2" />
+        <TextView
+            android:id="@+id/label2"
+            android:layout_width="186dp"
+            android:layout_height="wrap_content"
+            android:text="@string/monthly_expense"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label1" />
 
-    <TextView
-        android:id="@+id/label4"
-        android:layout_width="210dp"
+        <TextView
+            android:id="@+id/lblExtraExpense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblExtraIncome" />
+
+        <TextView
+            android:id="@+id/label6"
+            android:layout_width="178dp"
+            android:layout_height="wrap_content"
+            android:text="@string/extra_left"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label5" />
+
+        <TextView
+            android:id="@+id/label5"
+            android:layout_width="255dp"
+            android:layout_height="wrap_content"
+            android:text="@string/extra_expense"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label4" />
+
+        <TextView
+            android:id="@+id/lblMonthlyIncome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lblMonthlyExpense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblMonthlyIncome" />
+
+        <TextView
+            android:id="@+id/lblExtraIncome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblMonthlyTotal" />
+
+        <TextView
+            android:id="@+id/lblExtraTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblExtraExpense" />
+
+        <TextView
+            android:id="@+id/lblBudgetTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblExtraTotal" />
+
+        <TextView
+            android:id="@+id/label4"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/extra_income"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label3" />
+
+        <TextView
+            android:id="@+id/lblMonthlyTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblMonthlyExpense" />
+
+        <TextView
+            android:id="@+id/label3"
+            android:layout_width="181dp"
+            android:layout_height="wrap_content"
+            android:text="@string/amount_left"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label2" />
+
+        <TextView
+            android:id="@+id/label7"
+            android:layout_width="280dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/final_budget_balance_this_month"
+            android:textAlignment="textStart"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label6" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/extra_income"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label3" />
+        android:background="@android:drawable/alert_light_frame"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
-    <TextView
-        android:id="@+id/label5"
-        android:layout_width="255dp"
-        android:layout_height="wrap_content"
-        android:text="@string/extra_expense"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label4" />
+        <TextView
+            android:id="@+id/txtNotes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="top|start"
+            android:maxLines="500"
+            android:minLines="1"
+            android:padding="10dp"
+            android:scrollbars="vertical"
+            android:text="@string/notes"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/label6"
-        android:layout_width="178dp"
-        android:layout_height="wrap_content"
-        android:text="@string/extra_left"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label5" />
-
-    <TextView
-        android:id="@+id/label7"
-        android:layout_width="280dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/final_budget_balance_this_month"
-        android:textAlignment="textStart"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label6" />
-
-    <TextView
-        android:id="@+id/lblMonthlyIncome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/_0_00"
-        android:textAlignment="textEnd"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/lblMonthlyExpense"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/_0_00"
-        android:textAlignment="textEnd"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyIncome" />
-
-    <TextView
-        android:id="@+id/lblMonthlyTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/_0_00"
-        android:textAlignment="textEnd"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyExpense" />
-
-    <TextView
-        android:id="@+id/lblExtraIncome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/_0_00"
-        android:textAlignment="textEnd"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblMonthlyTotal" />
-
-    <TextView
-        android:id="@+id/lblExtraExpense"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/_0_00"
-        android:textAlignment="textEnd"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblExtraIncome" />
-
-    <TextView
-        android:id="@+id/lblExtraTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/_0_00"
-        android:textAlignment="textEnd"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblExtraExpense" />
-
-    <TextView
-        android:id="@+id/lblBudgetTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/_0_00"
-        android:textAlignment="textEnd"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblExtraTotal" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

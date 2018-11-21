@@ -123,6 +123,7 @@
     <string name="captionCreateCommon">Create</string>
     <string name="Cancel">Cancel</string>
     <string name="grouped_budget">Grouped Budget</string>
+    <string name="notes">Notes</string>
     <string-array name="defaultbudgettypes">
         <item>Same Month Last Year</item>
         <item>Last Month</item>

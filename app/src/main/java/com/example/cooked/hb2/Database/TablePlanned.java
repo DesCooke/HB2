@@ -163,10 +163,13 @@ class TablePlanned extends TableBase
                         " FROM tblPlanned ";
                 if (activeOnly)
                 {
-                    Date currentTime = Calendar.getInstance().getTime();
+                    Integer lCurrBudgetMonth=DateUtils.dateUtils().CurrentBudgetMonth();
+                    Integer lCurrBudgetYear=DateUtils.dateUtils().CurrentBudgetYear();
+                    Date lBudgetStart=DateUtils.dateUtils().BudgetStart(lCurrBudgetMonth, lCurrBudgetYear);
+                    Date lBudgetEnd=DateUtils.dateUtils().BudgetEnd(lCurrBudgetMonth, lCurrBudgetYear);
 
-                    l_SQL = l_SQL +  "WHERE " + Long.toString(currentTime.getTime()) +
-                            " between StartDate and EndDate ";
+                    l_SQL = l_SQL +  "WHERE StartDate < " + Long.toString(lBudgetEnd.getTime()) +
+                            " AND EndDate > " + Long.toString(lBudgetStart.getTime()) + " " ;
                 }
                 l_SQL = l_SQL + "ORDER BY PlannedName";
 

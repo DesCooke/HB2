@@ -1,6 +1,7 @@
 package com.example.cooked.hb2.Budget;
 
 import com.example.cooked.hb2.Database.RecordCategory;
+import com.example.cooked.hb2.MainActivity;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,7 @@ public class RecordBudgetGroup
     public Integer BudgetMonth;
     public Integer BudgetYear;
     public Integer DefaultBudgetType;
+    public MainActivity lMainActivity;
 
     public RecordBudgetGroup()
     {
@@ -31,5 +33,6 @@ public class RecordBudgetGroup
         outstanding = 0.00f;
         groupedBudget = false;
         DefaultBudgetType = RecordCategory.mDBTSameMonthLastYear;
+        lMainActivity=null;
     }
 }
