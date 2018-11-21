@@ -630,7 +630,7 @@ class TablePlanned extends TableBase
     {
         if(prp.mPlannedType==mPTOneOff)
         {
-            return prp.mPlannedDate == pDate;
+            return prp.mPlannedDate.getTime() == pDate.getTime();
         }
         if(prp.mPlannedType==mPTYearly) {
             MyInt lDay = new MyInt();

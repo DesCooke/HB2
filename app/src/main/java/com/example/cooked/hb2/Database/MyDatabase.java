@@ -664,7 +664,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.budgetItemName = scl.get(j).SubCategoryName;
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.total = rb2.Amount;
-                        if(rbi.groupedBudget==false &&
+                        if(!rbi.groupedBudget &&
                             (rbi.spent < 0.00f && rbi.total > rbi.spent) ||
                             (rbi.spent > 0.00f && rbi.total < rbi.spent) )
                         {
