@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<RecordBudgetGroup> mDatasetBudget;
     private ArrayList<RecordButton> mDatasetButton;
     private ArrayList<RecordButton> mDatasetCommonButton;
-    
+
+    public TextView txtNotes;
     private Bundle mButtonViewState;
     private Bundle mCurrentViewState;
     private Bundle mGeneralViewState;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity
     private TextView txtBudgetTitle;
     private TextView txtBankAccountTitle;
     private TextView txtCashAccountTitle;
-    private TextView txtSubTitle;
+    private TextView txtBudgetSubTitle;
     
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
@@ -224,10 +225,12 @@ public class MainActivity extends AppCompatActivity
         setupCashView();
     }
 
-    private void setupBudget()
+    public void setupBudget()
     {
         try
         {
+            MyDatabase.MyDB().txtNotes = txtNotes;
+
             String lTitle = DateUtils.dateUtils().MonthAsText(mCurrentBudgetMonth) + " / " +
                 mCurrentBudgetYear.toString();
             txtBudgetTitle.setText(lTitle);
@@ -241,7 +244,7 @@ public class MainActivity extends AppCompatActivity
             txtCashAccountTitle.setText(lTitle);
 
             mDatasetBudget = MyDatabase.MyDB().getBudget(mCurrentBudgetMonth, mCurrentBudgetYear);
-            
+
             Float lTotal = 0.00f;
             Float lSpent = 0.00f;
             Float lOutstanding = 0.00f;
@@ -253,41 +256,36 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < mDatasetBudget.size(); i++)
             {
                 RecordBudgetGroup rbg = mDatasetBudget.get(i);
-                
+                rbg.lMainActivity=this;
+
                 if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_monthly_income)) == 0)
                 {
-                    lTotal += rbg.total;
-                    lSpent += rbg.spent;
-                    lOutstanding += rbg.outstanding;
                     l_BCIncome = rbg.total;
                 }
                 if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_monthly_expenses)) == 0)
                 {
-                    lTotal += rbg.total;
-                    lSpent += rbg.spent;
-                    lOutstanding += rbg.outstanding;
+                    lTotal += (rbg.total*-1);
+                    lSpent += (rbg.spent*-1);
+                    lOutstanding += (rbg.outstanding*-1);
                     l_BCExpense = rbg.total * -1;
                 }
                 if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_extra_income)) == 0)
                 {
-                    lTotal += rbg.total;
-                    lSpent += rbg.spent;
-                    lOutstanding += rbg.outstanding;
                     l_BCEIncome = rbg.total;
                 }
                 if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_extra_expenses)) == 0)
                 {
-                    lTotal += rbg.total;
-                    lSpent += rbg.spent;
-                    lOutstanding += rbg.outstanding;
-    
+                    lTotal += (rbg.total*-1);
+                    lSpent += (rbg.spent*-1);
+                    lOutstanding += (rbg.outstanding*-1);
                     l_BCEExpense = rbg.total * -1;
                 }
+
                 
             }
             String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f", lTotal, lSpent,
                 lOutstanding);
-            txtSubTitle.setText(lText);
+            txtBudgetSubTitle.setText(lText);
             
             lblMonthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCIncome));
             lblMonthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCExpense));
@@ -404,8 +402,9 @@ public class MainActivity extends AppCompatActivity
         txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
         txtBankAccountTitle = findViewById(R.id.txtBankAccountTitle);
         txtCashAccountTitle = findViewById(R.id.txtCashAccountTitle);
-        txtSubTitle = findViewById(R.id.txtSubTitle);
-    
+        txtBudgetSubTitle = findViewById(R.id.txtBudgetSubTitle);
+        txtNotes = findViewById(R.id.txtNotes);
+
         ImageButton imgLeft = findViewById(R.id.imgLeft);
         imgLeft.setOnClickListener(new View.OnClickListener()
         {

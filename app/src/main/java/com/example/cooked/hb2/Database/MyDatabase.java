@@ -3,6 +3,7 @@ package com.example.cooked.hb2.Database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.TextView;
 
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
@@ -17,6 +18,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 
@@ -38,6 +40,7 @@ public class MyDatabase extends SQLiteOpenHelper
     private TableSubCategory tableSubCategory;
     private TablePlanned tablePlanned;
     private TableCommon tableCommon;
+    public TextView txtNotes;
     //endregion
     
     //region statics
@@ -605,7 +608,9 @@ public class MyDatabase extends SQLiteOpenHelper
         try
         {
             RecordBudgetGroup rbg;
-    
+
+            ArrayList<RecordBudgetGroup> localList = new ArrayList<RecordBudgetGroup>();
+
             for (int i = 0; i < cl.size(); i++)
             {
                 rbg = new RecordBudgetGroup();
@@ -641,6 +646,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     {
                         // Yes there is - have we spent anything of it?
                         rbi = new RecordBudgetItem();
+                        rbi.groupedBudget = rbg.groupedBudget;
                         rbi.spent = 0.00f;
                 
                         for (int l = 0; l < rbspent.size(); l++)
@@ -658,17 +664,29 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.budgetItemName = scl.get(j).SubCategoryName;
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.total = rb2.Amount;
-                        rbi.outstanding = rbi.total - rbi.spent;
-                        
-                        rbg.total += rbi.total;
-                        rbg.outstanding += rbi.outstanding;
+                        if(rbi.groupedBudget==false &&
+                            (rbi.spent < 0.00f && rbi.total > rbi.spent) ||
+                            (rbi.spent > 0.00f && rbi.total < rbi.spent) )
+                        {
+                            if(txtNotes!=null)
+                            {
+                                String lLine=
+                                        "Gone over budget on " + rbi.budgetItemName + ", " +
+                                        "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbi.total) +
+                                        ", New " + String.format(Locale.ENGLISH, "£%.2f", rbi.spent);
+                                String lCurrText = txtNotes.getText().toString();
 
-                        mainGroup.total += rbi.total;
-                        mainGroup.outstanding += rbi.outstanding;
+                                if(!lCurrText.contains(lLine))
+                                  txtNotes.setText(txtNotes.getText() + "\n" + lLine);
+                            }
+                            rbi.total = rbi.spent;
+                        }
+                        rbi.outstanding = rbi.total - rbi.spent;
 
                         rbi.RecCount = 0;
                         rbg.budgetItems.add(rbi);
-                    } else
+                    }
+                    else
                     {
                     /*
                     Nope - unplanned expense
@@ -685,21 +703,14 @@ public class MyDatabase extends SQLiteOpenHelper
                         {
                     
                             rbi = new RecordBudgetItem();
-                    
+
+                            rbi.groupedBudget = rbg.groupedBudget;
                             rbi.budgetItemName = scl.get(j).SubCategoryName;
                             rbi.SubCategoryId = scl.get(j).SubCategoryId;
                             rbi.total = rb2.Amount;
                             rbi.spent = rb2.Amount;
                             rbi.outstanding = rbi.total - rb2.Amount;
-                            
-                            rbg.total += rbi.total;
-                            rbg.spent += rbi.total;
-                            rbg.outstanding += rbi.outstanding;
-                            
-                            mainGroup.total += rbi.total;
-                            mainGroup.spent += rbi.spent;
-                            mainGroup.outstanding += rbi.outstanding;
-                            
+
                             rbi.RecCount = 0;
                             rbg.budgetItems.add(rbi);
                         }
@@ -707,7 +718,50 @@ public class MyDatabase extends SQLiteOpenHelper
             
                 }
                 if (rbg.budgetItems.size() > 0)
-                    lList.add(rbg);
+                    localList.add(rbg);
+            }
+            mainGroup.total=0.00f;
+            mainGroup.spent=0.00f;
+            mainGroup.outstanding=0.00f;
+            for(int i=0;i<localList.size();i++)
+            {
+                rbg=localList.get(i);
+                if(rbg.groupedBudget==false)
+                {
+                    rbg.total=0.00f;
+                    rbg.spent=0.00f;
+                    rbg.outstanding=0.00f;
+                    for (int j = 0; j < rbg.budgetItems.size(); j++)
+                    {
+                        RecordBudgetItem rbi = rbg.budgetItems.get(j);
+                        rbg.total += rbi.total;
+                        rbg.spent += rbi.spent;
+                        rbg.outstanding += rbi.outstanding;
+                    }
+                }
+                else
+                {
+                    rbg.total=0.00f;
+                    rbg.spent=0.00f;
+                    rbg.outstanding=0.00f;
+                    for (int j = 0; j < rbg.budgetItems.size(); j++)
+                    {
+                        RecordBudgetItem rbi = rbg.budgetItems.get(j);
+                        rbg.spent += rbi.spent;
+                    }
+                    RecordCategoryBudget rcb = MyDatabase.MyDB().tableCategoryBudget.getCategoryBudget(
+                            rbg.CategoryId, pMonth, pYear);
+                    rbg.total = rcb.BudgetAmount;
+                    rbg.outstanding = rbg.total - rbg.spent;
+                }
+                mainGroup.total+=rbg.total;
+                mainGroup.spent+=rbg.spent;
+                mainGroup.outstanding+=rbg.outstanding;
+            }
+            for(int i=0;i<localList.size();i++)
+            {
+                rbg = localList.get(i);
+                lList.add(rbg);
             }
         }
         catch (Exception e)

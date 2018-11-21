@@ -8,6 +8,7 @@ public class RecordBudgetItem
     public Float total;
     public Float spent;
     public Float outstanding;
+    public Boolean groupedBudget;
 
     public RecordBudgetItem()
     {
@@ -17,5 +18,6 @@ public class RecordBudgetItem
         total=0.00f;
         spent = 0.00f;
         outstanding = 0.00f;
+        groupedBudget = false;
     }
 }
