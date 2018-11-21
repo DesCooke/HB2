@@ -92,7 +92,7 @@ class TablePlanned extends TableBase
                 Integer.toString(rp.mSubCategoryId) + "," +
                     "'" + rp.mSortCode + "'," +
                     "'" + rp.mAccountNo + "'," +
-                Long.toString(rp.mPlannedDate.getTime()) + "," +
+                Long.toString(DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate.getTime())) + "," +
                 Integer.toString(rp.mPlannedMonth) + "," +
                 Integer.toString(rp.mPlannedDay) + "," +
                 Integer.toString(rp.mMonday?1:0) + "," +
@@ -120,7 +120,7 @@ class TablePlanned extends TableBase
                         " SubCategoryId = " + Integer.toString(rp.mSubCategoryId) + "," +
                         " SortCode = '" + rp.mSortCode + "'," +
                         " AccountNo = '" + rp.mAccountNo + "'," +
-                        " PlannedDate = " + Long.toString(rp.mPlannedDate.getTime()) + "," +
+                        " PlannedDate = " + Long.toString(DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate.getTime())) + "," +
                         " PlannedMonth = " + Integer.toString(rp.mPlannedMonth) + "," +
                         " PlannedDay = " + Integer.toString(rp.mPlannedDay) + "," +
                         " Monday = " + Integer.toString(rp.mMonday ? 1 : 0) + "," +
@@ -186,6 +186,10 @@ class TablePlanned extends TableBase
                                 cursor.moveToFirst();
                                 do
                                 {
+                                    Long lOrigDate=Long.parseLong(cursor.getString(6));
+                                    Date lDate=new Date(lOrigDate);
+                                    Long lNewDate=DateUtils.dateUtils().StripTimeElement(lOrigDate);
+                                    lDate=new Date(lNewDate);
                                     RecordPlanned lrec =
                                         new RecordPlanned
                                             (
@@ -195,7 +199,7 @@ class TablePlanned extends TableBase
                                                 Integer.parseInt(cursor.getString(3)),
                                                 cursor.getString(4),
                                                 cursor.getString(5),
-                                                new Date(Long.parseLong(cursor.getString(6))),
+                                                lDate,
                                                 Integer.parseInt(cursor.getString(7)),
                                                 Integer.parseInt(cursor.getString(8)),
                                                 Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
@@ -277,7 +281,7 @@ class TablePlanned extends TableBase
                                                 Integer.parseInt(cursor.getString(3)),
                                                 cursor.getString(4),
                                                 cursor.getString(5),
-                                                new Date(Long.parseLong(cursor.getString(6))),
+                                                new Date(DateUtils.dateUtils().StripTimeElement(Long.parseLong(cursor.getString(6)))),
                                                 Integer.parseInt(cursor.getString(7)),
                                                 Integer.parseInt(cursor.getString(8)),
                                                 Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
@@ -810,7 +814,7 @@ class TablePlanned extends TableBase
                                     Integer.parseInt(cursor.getString(3)),
                                     cursor.getString(4),
                                     cursor.getString(5),
-                                    new Date(Long.parseLong(cursor.getString(6))),
+                                    new Date(DateUtils.dateUtils().StripTimeElement(Long.parseLong(cursor.getString(6)))),
                                     Integer.parseInt(cursor.getString(7)),
                                     Integer.parseInt(cursor.getString(8)),
                                     Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
