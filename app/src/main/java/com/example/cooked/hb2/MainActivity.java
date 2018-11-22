@@ -229,6 +229,8 @@ public class MainActivity extends AppCompatActivity
     {
         try
         {
+            txtNotes.setText("Notes");
+
             MyDatabase.MyDB().txtNotes = txtNotes;
 
             String lTitle = DateUtils.dateUtils().MonthAsText(mCurrentBudgetMonth) + " / " +

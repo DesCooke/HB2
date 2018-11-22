@@ -20,7 +20,7 @@
             android:layout_marginStart="8dp"
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/captionBudget"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/imgRight"
             app:layout_constraintStart_toEndOf="@+id/imgLeft"
             app:layout_constraintTop_toTopOf="parent" />
@@ -41,12 +41,12 @@
             android:id="@+id/txtBudgetTitle"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="5"
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/captionBudgetTitle"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/imgRight"
             app:layout_constraintStart_toEndOf="@+id/imgLeft"
             app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -55,17 +55,17 @@
             android:id="@+id/txtBudgetSubTitle"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="5"
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/captionBudgetSubTitle"
-            android:textSize="10sp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/imgRight"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/imgLeft"
             app:layout_constraintTop_toBottomOf="@+id/txtBudgetTitle"
-            tools:ignore="SmallSp"/>
+            tools:ignore="SmallSp" />
 
         <ImageButton
             android:id="@+id/imgRight"
