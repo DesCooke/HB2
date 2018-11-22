@@ -207,6 +207,13 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
                     }
                 }
                 headerInfo.total = rcb.BudgetAmount;
+
+                if(     (headerInfo.spent < 0.00f && headerInfo.total.floatValue() > headerInfo.spent.floatValue()) ||
+                        (headerInfo.spent.floatValue() > 0.00f && headerInfo.total.floatValue()< headerInfo.spent.floatValue()) )
+                {
+                    headerInfo.total = headerInfo.spent;
+                }
+
                 headerInfo.outstanding = headerInfo.total - headerInfo.spent;
             }
 

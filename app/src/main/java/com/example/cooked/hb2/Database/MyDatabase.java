@@ -665,8 +665,8 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.total = rb2.Amount;
                         if(!rbi.groupedBudget &&
-                            (rbi.spent < 0.00f && rbi.total > rbi.spent) ||
-                            (rbi.spent > 0.00f && rbi.total < rbi.spent) )
+                            (rbi.spent.floatValue() < 0.00f && rbi.total.floatValue() > rbi.spent.floatValue()) ||
+                            (rbi.spent.floatValue() > 0.00f && rbi.total.floatValue() < rbi.spent.floatValue()) )
                         {
                             if(txtNotes!=null)
                             {
@@ -752,6 +752,22 @@ public class MyDatabase extends SQLiteOpenHelper
                     RecordCategoryBudget rcb = MyDatabase.MyDB().tableCategoryBudget.getCategoryBudget(
                             rbg.CategoryId, pMonth, pYear);
                     rbg.total = rcb.BudgetAmount;
+                    if(     (rbg.spent < 0.00f && rbg.total > rbg.spent) ||
+                            (rbg.spent > 0.00f && rbg.total < rbg.spent) )
+                    {
+                        if(txtNotes!=null)
+                        {
+                            String lLine=
+                                    "Gone over budget on " + rbg.budgetGroupName + ", " +
+                                            "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbg.total) +
+                                            ", New " + String.format(Locale.ENGLISH, "£%.2f", rbg.spent);
+                            String lCurrText = txtNotes.getText().toString();
+
+                            if(!lCurrText.contains(lLine))
+                                txtNotes.setText(txtNotes.getText() + "\n" + lLine);
+                        }
+                        rbg.total = rbg.spent;
+                    }
                     rbg.outstanding = rbg.total - rbg.spent;
                 }
                 mainGroup.total+=rbg.total;
