@@ -30,60 +30,80 @@
         android:id="@+id/btnOk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
         android:text="@string/ok"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radExpense" />
 
     <RadioButton
         android:id="@+id/radMonthly"
-        android:layout_width="182dp"
+        android:layout_width="150dp"
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/monthly"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName" />
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
     <RadioButton
         android:id="@+id/radExtra"
-        android:layout_width="165dp"
+        android:layout_width="150dp"
         android:layout_height="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/extra"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName" />
-
-    <RadioButton
-        android:id="@+id/radIncome"
-        android:layout_width="183dp"
-        android:layout_height="31dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/income"
+        android:text="@string/extra"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radMonthly" />
 
     <RadioButton
-        android:id="@+id/radExpense"
-        android:layout_width="167dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="8dp"
+        android:id="@+id/radIncome"
+        android:layout_width="150dp"
+        android:layout_height="31dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/income"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView16" />
+
+    <RadioButton
+        android:id="@+id/radExpense"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/expense"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radExtra" />
+        app:layout_constraintTop_toBottomOf="@+id/radIncome" />
 
     <Button
         android:id="@+id/btnDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
         android:text="@string/delete"
         app:layout_constraintEnd_toStartOf="@+id/btnOk"
         app:layout_constraintTop_toBottomOf="@+id/radExpense" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Recurring/One Off"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Income/Expense"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName" />
 
 </android.support.constraint.ConstraintLayout>
