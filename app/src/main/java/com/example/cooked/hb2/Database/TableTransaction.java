@@ -326,17 +326,17 @@ class TableTransaction extends TableBase
                             "AND TxAccountNumber = '" + accountNum + "' " +
                             "AND BudgetMonth = " + lLastBudgetMonth.toString() + " " +
                             "AND BudgetYear = " + lLastBudgetYear.toString() + " " +
-                            "ORDER BY TxDate desc, TxLineNo";
+                            "ORDER BY TxDate, TxLineNo";
                     Cursor cursor = db.rawQuery(lSql, null);
                     if (cursor != null)
                     {
                         try
                         {
                             cursor.moveToFirst();
-                            Float lCurrTxAmount=cursor.getFloat(1);
-                            Float lCurrTxBalance=cursor.getFloat(0);
                             do
                             {
+                                Float lCurrTxAmount=cursor.getFloat(0);
+                                Float lCurrTxBalance=cursor.getFloat(1);
                                 if(lFirstRecord)
                                 {
                                     lFirstRecord=false;
@@ -344,7 +344,7 @@ class TableTransaction extends TableBase
                                 }
                                 else
                                 {
-                                    lBalance=lBalance+lCurrTxAmount;
+                                    lBalance=lBalance-lCurrTxAmount;
                                 }
                             }
                             while(cursor.moveToNext());
@@ -454,7 +454,7 @@ class TableTransaction extends TableBase
                             {
                                 if(includeThisBudgetOnly)
                                 {
-                                    lCurrBalance += parseFloat(cursor.getString(9));
+                                    lCurrBalance -= parseFloat(cursor.getString(9));
                                 }
                                 else
                                 {
