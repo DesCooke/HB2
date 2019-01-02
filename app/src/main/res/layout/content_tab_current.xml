@@ -64,11 +64,19 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <Switch
+        android:id="@+id/swIncludeThisBudgetOnly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Include This Budget Only" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/transactionListCurrent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp"/>
+        tools:layout_editor_absoluteY="8dp">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

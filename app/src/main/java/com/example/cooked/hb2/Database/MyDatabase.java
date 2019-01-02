@@ -32,7 +32,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -231,12 +231,12 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum,
                                                            boolean showPlanned, Integer budgetMonth,
-                                                           Integer budgetYear)
+                                                           Integer budgetYear, Boolean includeThisBudgetOnly)
     {
         try
         {
             ArrayList<RecordTransaction> rta = tableTransaction.getTransactionList(sortCode,
-                    accountNum, budgetMonth, budgetYear);
+                    accountNum, budgetMonth, budgetYear, includeThisBudgetOnly);
 
             if (sortCode.compareTo("11-03-95") == 0)
             {
@@ -653,7 +653,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         {
                             if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId)
                             {
-                            /* yes - update spent totals */
+                                /* yes - update spent totals */
                                 rbi.spent = rbspent.get(l).Amount;
                                 rbg.spent += rbi.spent;
                                 mainGroup.spent += rbi.spent;
@@ -664,6 +664,10 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.budgetItemName = scl.get(j).SubCategoryName;
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.total = rb2.Amount;
+                        if(rb2.AutoMatchTransaction)
+                            if(rbi.spent < -0.0001 || rbi.spent > -0.0001)
+                                rbi.total = rbi.spent;
+
                         if(!rbi.groupedBudget &&
                             (rbi.spent.floatValue() < 0.00f && rbi.total.floatValue() > rbi.spent.floatValue()) ||
                             (rbi.spent.floatValue() > 0.00f && rbi.total.floatValue() < rbi.spent.floatValue()) )
@@ -797,7 +801,18 @@ public class MyDatabase extends SQLiteOpenHelper
             ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
             ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
             ArrayList<RecordCategory> cl = tableCategory.getCategoryList();
-    
+
+            for(int i=0;i<rbspent.size();i++)
+            {
+                for(int j=0; j<rb.size();j++)
+                {
+                    if(rbspent.get(i).SubCategoryId==rb.get(j).SubCategoryId)
+                    {
+                        rbspent.get(i).AutoMatchTransaction=rb.get(j).AutoMatchTransaction;
+                    }
+                }
+            }
+
             mrbg = new RecordBudgetGroup();
             mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_monthly_expenses);
             mrbg.divider = true;

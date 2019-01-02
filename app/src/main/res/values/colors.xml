@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303f9f</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
     <color name="budgetHeader">#025883</color>
     <color name="budgetSubHeader">#7ccaf1</color>
     <color name="textLowLight">#c2c3c4</color>

@@ -300,6 +300,74 @@ class TableTransaction extends TableBase
         return (new Date(0));
     }
 
+    Float getBalanceAtStartOf(String sortCode, String accountNum,
+                           Integer pBudgetMonth, Integer pBudgetYear)
+    {
+        boolean lFirstRecord=true;
+        float lBalance=0.00f;
+        try
+        {
+            MyLog.WriteLogMessage("getBalanceAtStartOf: ");
+
+            Integer lLastBudgetMonth=pBudgetMonth;
+            Integer lLastBudgetYear=pBudgetYear;
+            lLastBudgetMonth--;
+            if(lLastBudgetMonth==0)
+            {
+                lLastBudgetMonth=12;
+                lLastBudgetYear--;
+            }
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                try
+                {
+                    String lSql = "select TxAmount, TxBalance FROM tblTransaction " +
+                            "WHERE TxSortCode = '" + sortCode + "' " +
+                            "AND TxAccountNumber = '" + accountNum + "' " +
+                            "AND BudgetMonth = " + lLastBudgetMonth.toString() + " " +
+                            "AND BudgetYear = " + lLastBudgetYear.toString() + " " +
+                            "ORDER BY TxDate desc, TxLineNo";
+                    Cursor cursor = db.rawQuery(lSql, null);
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            cursor.moveToFirst();
+                            Float lCurrTxAmount=cursor.getFloat(1);
+                            Float lCurrTxBalance=cursor.getFloat(0);
+                            do
+                            {
+                                if(lFirstRecord)
+                                {
+                                    lFirstRecord=false;
+                                    lBalance=lCurrTxBalance;
+                                }
+                                else
+                                {
+                                    lBalance=lBalance+lCurrTxAmount;
+                                }
+                            }
+                            while(cursor.moveToNext());
+                        }
+                        finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                }
+                finally
+                {
+                    db.close();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in getBalanceAtStartOf", e.getMessage());
+        }
+        return (lBalance);
+    }
+
     Date getLatestTxDate(String sortCode, String accountNum,
                               Integer budgetMonth, Integer budgetYear)
     {
@@ -350,7 +418,8 @@ class TableTransaction extends TableBase
 
 
     ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum,
-                                                    Integer budgetMonth, Integer budgetYear)
+                                                    Integer budgetMonth, Integer budgetYear,
+                                                    Boolean includeThisBudgetOnly)
     {
         ArrayList<RecordTransaction> list;
         Float lBalance=0.00f;
@@ -358,6 +427,7 @@ class TableTransaction extends TableBase
         {
             Date mFromDate = getEarliestTxDate(sortCode, accountNum, budgetMonth, budgetYear);
             Date mToDate = getLatestTxDate(sortCode, accountNum,budgetMonth, budgetYear);
+            Float lCurrBalance = getBalanceAtStartOf(sortCode, accountNum, budgetMonth, budgetYear);
             if(mFromDate == new Date(0))
                 return(new ArrayList<>());
             if(mToDate==new Date(0))
@@ -382,27 +452,40 @@ class TableTransaction extends TableBase
                             cursor.moveToFirst();
                             do
                             {
-                                RecordTransaction lrec =
-                                        new RecordTransaction
-                                                (
-                                                        Integer.parseInt(cursor.getString(0)),
-                                                        new Date(Long.parseLong(cursor.getString(1))),
-                                                        cursor.getString(2),
-                                                        Integer.parseInt(cursor.getString(3)),
-                                                        new Date(Long.parseLong(cursor.getString(4))),
-                                                        cursor.getString(5),
-                                                        cursor.getString(6),
-                                                        cursor.getString(7),
-                                                        cursor.getString(8),
-                                                        parseFloat(cursor.getString(9)),
-                                                        parseFloat(cursor.getString(10)),
-                                                        Integer.parseInt(cursor.getString(11)),
-                                                        cursor.getString(12),
-                                                        Integer.parseInt(cursor.getString(13)),
-                                                        Integer.parseInt(cursor.getString(14)),
-                                                        false
-                                                );
-                                list.add(lrec);
+                                if(includeThisBudgetOnly)
+                                {
+                                    lCurrBalance += parseFloat(cursor.getString(9));
+                                }
+                                else
+                                {
+                                    lCurrBalance = parseFloat(cursor.getString(10));
+                                }
+                                int lBudgetYear=Integer.parseInt(cursor.getString(13));
+                                int lBudgetMonth=Integer.parseInt(cursor.getString(14));
+                                if(includeThisBudgetOnly==false ||
+                                        (includeThisBudgetOnly && lBudgetYear==budgetYear && lBudgetMonth == budgetMonth)) {
+                                    RecordTransaction lrec =
+                                            new RecordTransaction
+                                                    (
+                                                            Integer.parseInt(cursor.getString(0)),
+                                                            new Date(Long.parseLong(cursor.getString(1))),
+                                                            cursor.getString(2),
+                                                            Integer.parseInt(cursor.getString(3)),
+                                                            new Date(Long.parseLong(cursor.getString(4))),
+                                                            cursor.getString(5),
+                                                            cursor.getString(6),
+                                                            cursor.getString(7),
+                                                            cursor.getString(8),
+                                                            parseFloat(cursor.getString(9)),
+                                                            lCurrBalance,
+                                                            Integer.parseInt(cursor.getString(11)),
+                                                            cursor.getString(12),
+                                                            Integer.parseInt(cursor.getString(13)),
+                                                            Integer.parseInt(cursor.getString(14)),
+                                                            false
+                                                    );
+                                    list.add(lrec);
+                                }
                             } while (cursor.moveToNext());
                         }
                     }

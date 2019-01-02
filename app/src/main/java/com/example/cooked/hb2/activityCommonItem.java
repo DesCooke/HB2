@@ -32,7 +32,7 @@ public class activityCommonItem extends AppCompatActivity
     public TextView edtTxDate;
     public EditText edtTxDescription;
     public EditText edtTxAmount;
-    public TextView edtCategory;
+    public TextView tvCategory;
     public TextView edtComments;
     public MyInt MySubCategoryId;
     public Button btnOk;
@@ -55,14 +55,14 @@ public class activityCommonItem extends AppCompatActivity
             edtTxDate = findViewById(R.id.edtTxDate);
             edtTxDescription =  findViewById(R.id.edtDescription);
             edtTxAmount = findViewById(R.id.edtTxAmount);
-            edtCategory =  findViewById(R.id.edtCategory);
+            tvCategory =  findViewById(R.id.edtCategory);
             edtComments =  findViewById(R.id.edtComments);
             btnOk = findViewById(R.id.btnOk);
             btnDelete = findViewById(R.id.btnDelete);
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
-            cp.edtSubCategoryName = edtCategory;
+            cp.tvSubCategoryName = tvCategory;
     
             setTitle("<Unknown>");
             actionType = getIntent().getStringExtra("ACTIONTYPE");
@@ -84,7 +84,7 @@ public class activityCommonItem extends AppCompatActivity
                 edtTxDescription.setText(originalRecord.TxDescription);
                 edtTxAmount.setText(String.format(Locale.UK, "%.2f", originalRecord.TxAmount));
                 MySubCategoryId.Value = originalRecord.CategoryId;
-                edtCategory.setText(originalRecord.SubCategoryName);
+                tvCategory.setText(originalRecord.SubCategoryName);
                 edtComments.setText(originalRecord.Comments);
     
                 btnDelete.setVisibility(View.VISIBLE);
@@ -126,7 +126,7 @@ public class activityCommonItem extends AppCompatActivity
                         originalRecord.TxDescription = edtTxDescription.getText().toString();
                         originalRecord.TxAmount = Float.parseFloat(edtTxAmount.getText().toString());
                         originalRecord.CategoryId = MySubCategoryId.Value;
-                        originalRecord.SubCategoryName = edtCategory.getText().toString();
+                        originalRecord.SubCategoryName = tvCategory.getText().toString();
                         originalRecord.Comments = edtComments.getText().toString();
                         if (actionType.compareTo("ADD") == 0)
                         {
@@ -176,7 +176,7 @@ public class activityCommonItem extends AppCompatActivity
         
         edtTxDescription.setText("");
         edtTxAmount.setText(R.string.AmountZero);
-        edtCategory.setText("");
+        tvCategory.setText("");
         edtComments.setText("");
         Integer lMonth = dateUtils().CurrentBudgetMonth();
         Integer lYear = dateUtils().CurrentBudgetYear();
@@ -233,7 +233,7 @@ public class activityCommonItem extends AppCompatActivity
              String lSubCategoryName= data.getStringExtra("SubCategoryName");
              String lSubCategoryId= data.getStringExtra("SubCategoryId");
              MySubCategoryId.Value = Integer.parseInt(lSubCategoryId);
-             edtCategory.setText(lSubCategoryName);
+             tvCategory.setText(lSubCategoryName);
          }
     }
 }

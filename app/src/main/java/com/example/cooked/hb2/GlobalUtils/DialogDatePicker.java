@@ -3,6 +3,7 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,6 +19,7 @@ import java.util.Date;
 public class DialogDatePicker extends Dialog implements View.OnClickListener
 {
     public TextView txtStartDate;
+    public TextInputLayout tilStartDate;
     private DateUtils dateUtils;
     private DatePicker datePicker;
     private boolean setInitialDate;
@@ -79,7 +81,10 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
                     MyString ms=new MyString();
                     if(!dateUtils.DatePickerToStr(datePicker, ms))
                         return;
-                    txtStartDate.setText(ms.Value);
+                    if(txtStartDate!=null)
+                        txtStartDate.setText(ms.Value);
+                    if(tilStartDate!=null)
+                        tilStartDate.getEditText().setText(ms.Value);
                     break;
                 default:
                     break;
