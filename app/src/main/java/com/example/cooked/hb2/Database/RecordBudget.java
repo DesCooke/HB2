@@ -7,17 +7,20 @@ class RecordBudget
     int SubCategoryId;
     Float Amount;
     Date NextDueDate;
+    Boolean AutoMatchTransaction;
 
     RecordBudget
             (
                     int pSubCategoryId,
                     Float pAmount,
-                    Date pNextDueDate
+                    Date pNextDueDate,
+                    Boolean pAutoMatchTransaction
             )
     {
         SubCategoryId = pSubCategoryId;
         Amount = pAmount;
         NextDueDate = pNextDueDate;
+        AutoMatchTransaction = pAutoMatchTransaction;
     }
 
 }

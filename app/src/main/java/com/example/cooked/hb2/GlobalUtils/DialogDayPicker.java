@@ -16,6 +16,7 @@ import com.example.cooked.hb2.R;
 public class DialogDayPicker extends Dialog implements View.OnClickListener
 {
     public TextView edtText;
+    public TextInputLayout tilText;
     public MyInt mDay;
 
     public DialogDayPicker(Activity a)
@@ -62,7 +63,10 @@ public class DialogDayPicker extends Dialog implements View.OnClickListener
                     {
                         String lFormat = MainActivity.context.getString(R.string.DayCaption);
                         String lText = String.format(lFormat, myDay.getEditText().getText());
-                        edtText.setText(lText);
+                        if(edtText != null)
+                            edtText.setText(lText);
+                        if(tilText != null)
+                            tilText.getEditText().setText(lText);
                         mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
                     }
                 }

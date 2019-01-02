@@ -16,6 +16,7 @@ import com.example.cooked.hb2.R;
 public class DialogMonthDayPicker extends Dialog implements View.OnClickListener
 {
     public TextView edtText;
+    public TextInputLayout tilText;
     public MyInt mMonth;
     public MyInt mDay;
 
@@ -63,7 +64,10 @@ public class DialogMonthDayPicker extends Dialog implements View.OnClickListener
                     String lCaption = MainActivity.context.getString(R.string.DayAndMonth);
                     String lText = String.format(lCaption, myDay.getEditText().getText(),
                         myMonth.getEditText().getText());
-                    edtText.setText(lText);
+                    if(edtText != null)
+                        edtText.setText(lText);
+                    if(tilText != null)
+                        tilText.getEditText().setText(lText);
                     mMonth.Value = Integer.valueOf(myMonth.getEditText().getText().toString());
                     mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
                 }

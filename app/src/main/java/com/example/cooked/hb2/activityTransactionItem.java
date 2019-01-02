@@ -38,7 +38,7 @@ public class activityTransactionItem extends AppCompatActivity
     public TextView edtTxDate;
     public EditText edtTxDescription;
     public EditText edtTxAmount;
-    public TextView edtCategory;
+    public TextView tvCategory;
     public TextView edtComments;
     public TextView edtBudgetYear;
     public TextView edtBudgetMonth;
@@ -67,7 +67,7 @@ public class activityTransactionItem extends AppCompatActivity
             edtTxDate = findViewById(R.id.edtTxDate);
             edtTxDescription =  findViewById(R.id.edtDescription);
             edtTxAmount = findViewById(R.id.edtTxAmount);
-            edtCategory =  findViewById(R.id.edtCategory);
+            tvCategory =  findViewById(R.id.edtCategory);
             edtComments =  findViewById(R.id.edtComments);
             edtBudgetYear =  findViewById(R.id.edtBudgetYear);
             edtBudgetMonth =  findViewById(R.id.edtBudgetMonth);
@@ -79,7 +79,7 @@ public class activityTransactionItem extends AppCompatActivity
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
-            cp.edtSubCategoryName = edtCategory;
+            cp.tvSubCategoryName = tvCategory;
     
             setTitle("<Unknown>");
             actionType = getIntent().getStringExtra("ACTIONTYPE");
@@ -113,7 +113,7 @@ public class activityTransactionItem extends AppCompatActivity
                 edtTxDescription.setText(originalRecord.TxDescription);
                 edtTxAmount.setText(String.format(Locale.UK, "%.2f", originalRecord.TxAmount));
                 MySubCategoryId.Value = originalRecord.CategoryId;
-                edtCategory.setText(originalRecord.SubCategoryName);
+                tvCategory.setText(originalRecord.SubCategoryName);
                 edtComments.setText(originalRecord.Comments);
                 if (originalRecord.BudgetYear == 0)
                     originalRecord.BudgetYear = dateUtils().CurrentBudgetYear();
@@ -170,7 +170,7 @@ public class activityTransactionItem extends AppCompatActivity
                         originalRecord.TxDescription = edtTxDescription.getText().toString();
                         originalRecord.TxAmount = Float.parseFloat(edtTxAmount.getText().toString());
                         originalRecord.CategoryId = MySubCategoryId.Value;
-                        originalRecord.SubCategoryName = edtCategory.getText().toString();
+                        originalRecord.SubCategoryName = tvCategory.getText().toString();
                         originalRecord.Comments = edtComments.getText().toString();
                         originalRecord.BudgetYear = Integer.parseInt(edtBudgetYear.getText().toString());
                         originalRecord.BudgetMonth = Integer.parseInt(edtBudgetMonth.getText().toString());
@@ -322,7 +322,7 @@ public class activityTransactionItem extends AppCompatActivity
         
         edtTxDescription.setText("");
         edtTxAmount.setText(R.string.AmountZero);
-        edtCategory.setText("");
+        tvCategory.setText("");
         edtComments.setText("");
         Integer lMonth = dateUtils().CurrentBudgetMonth();
         Integer lYear = dateUtils().CurrentBudgetYear();
@@ -345,7 +345,7 @@ public class activityTransactionItem extends AppCompatActivity
         templateSeqNo = lRecordCommon.TxSeqNo;
         edtTxDescription.setText(lRecordCommon.TxDescription);
         edtTxAmount.setText(lRecordCommon.TxAmount.toString());
-        edtCategory.setText(lRecordCommon.SubCategoryName);
+        tvCategory.setText(lRecordCommon.SubCategoryName);
         edtComments.setText(lRecordCommon.Comments);
 
         MyString lDateStr = new MyString();
@@ -427,7 +427,7 @@ public class activityTransactionItem extends AppCompatActivity
              String lSubCategoryName= data.getStringExtra("SubCategoryName");
              String lSubCategoryId= data.getStringExtra("SubCategoryId");
              MySubCategoryId.Value = Integer.parseInt(lSubCategoryId);
-             edtCategory.setText(lSubCategoryName);
+             tvCategory.setText(lSubCategoryName);
          }
     }
 }

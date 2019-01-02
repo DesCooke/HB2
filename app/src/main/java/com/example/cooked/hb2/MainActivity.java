@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -68,7 +69,8 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mTransactionListFamily;
     private RecyclerView mTransactionListCash;
     private ExpandableListView budgetListView;
-    
+
+    private Switch swIncludeThisBudgetOnly;
     private ArrayList<RecordBudgetGroup> mDatasetBudget;
     private ArrayList<RecordButton> mDatasetButton;
     private ArrayList<RecordButton> mDatasetCommonButton;
@@ -211,6 +213,11 @@ public class MainActivity extends AppCompatActivity
         }
         setupBudget();
         setupCashView();
+    }
+
+    private void ToggleIncludeThisBudgetOnly(View view)
+    {
+        setupBankAccountView();
     }
 
     private void DecreaseCABudgetPeriod(View view)
@@ -474,7 +481,18 @@ public class MainActivity extends AppCompatActivity
         lblExtraIncome = findViewById(R.id.lblExtraIncome);
         lblExtraTotal = findViewById(R.id.lblExtraTotal);
         lblBudgetTotal = findViewById(R.id.lblBudgetTotal);
-        
+
+        swIncludeThisBudgetOnly = findViewById(R.id.swIncludeThisBudgetOnly);
+        swIncludeThisBudgetOnly.setChecked(true);
+        swIncludeThisBudgetOnly.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                ToggleIncludeThisBudgetOnly(view);
+            }
+        });
+
         fab = findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener()
@@ -646,7 +664,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setupBankAccountView()
     {
-        ArrayList<RecordTransaction> mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", false, mCurrentBABudgetMonth, mCurrentBABudgetYear);
+        ArrayList<RecordTransaction> mDatasetCurrent = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", false, mCurrentBABudgetMonth, mCurrentBABudgetYear, swIncludeThisBudgetOnly.isChecked());
         mTransactionListCurrent =  findViewById(R.id.transactionListCurrent);
         mTransactionListCurrent.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManagerCommonButton = new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false);
@@ -673,7 +691,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setupCashView()
     {
-        ArrayList<RecordTransaction> mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash", false, mCurrentCABudgetMonth, mCurrentCABudgetYear);
+        ArrayList<RecordTransaction> mDatasetCash = MyDatabase.MyDB().getTransactionList("Cash", "Cash", false, mCurrentCABudgetMonth, mCurrentCABudgetYear, false);
         mTransactionListCash = findViewById(R.id.transactionListCash);
         mTransactionListCash.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManagerCash = new LinearLayoutManager(this);

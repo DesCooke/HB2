@@ -3,6 +3,7 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.example.cooked.hb2.R;
 public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
 {
     public TextView edtText;
+    public TextInputLayout tilText;
     public MyBoolean mMonday;
     public MyBoolean mTuesday;
     public MyBoolean mWednesday;
@@ -93,8 +95,11 @@ public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
 
             String lCaption= MainActivity.context.getString(R.string.DaysCaption);
             String lText = String.format(lCaption, lString);
-            edtText.setText(lText);
-            
+            if(edtText != null)
+                edtText.setText(lText);
+            if(tilText != null)
+                tilText.getEditText().setText(lText);
+
             dismiss();
         }
         catch(Exception e)

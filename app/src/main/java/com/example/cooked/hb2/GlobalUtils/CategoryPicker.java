@@ -3,10 +3,12 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.CategoryUI.CategoryPickerAdapter;
@@ -22,7 +24,9 @@ public class CategoryPicker extends Dialog implements View.OnClickListener
 {
     public ArrayList<RecordSubCategory> mDataset;
     public MyInt MySubCategoryId;
-    public TextView edtSubCategoryName;
+    public TextInputLayout tilSubCategoryName;
+    public TextView tvSubCategoryName;
+    public EditText etSubCategoryName;
 
     public CategoryPicker(Activity a)
     {
@@ -69,7 +73,12 @@ public class CategoryPicker extends Dialog implements View.OnClickListener
             public void onItemClick(View view, RecordSubCategory obj)
             {
                 MySubCategoryId.Value = obj.SubCategoryId;
-                edtSubCategoryName.setText(obj.SubCategoryName);
+                if(tilSubCategoryName!=null)
+                    tilSubCategoryName.getEditText().setText(obj.SubCategoryName);
+                if(tvSubCategoryName!=null)
+                    tvSubCategoryName.setText(obj.SubCategoryName);
+                if(etSubCategoryName!=null)
+                    etSubCategoryName.setText(obj.SubCategoryName);
                 dismiss();
             }
         });

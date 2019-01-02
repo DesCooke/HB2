@@ -3,6 +3,7 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import com.example.cooked.hb2.R;
 public class DialogPlannedTypePicker extends Dialog implements View.OnClickListener
 {
     public TextView edtPlannedType;
+    public TextInputLayout tilPlannedType;
     public MyInt mPlannedType;
 
 
@@ -63,8 +65,11 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
               mPlannedType.Value = RecordPlanned.mPTMonthly;
             if(radWeekly.isChecked())
               mPlannedType.Value = RecordPlanned.mPTWeekly;
-            edtPlannedType.setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
-            
+            if(edtPlannedType != null)
+              edtPlannedType.setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
+            if(tilPlannedType != null)
+                tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
+
             dismiss();
         }
         catch(Exception e)
