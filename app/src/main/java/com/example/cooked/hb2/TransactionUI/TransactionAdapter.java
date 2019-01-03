@@ -192,12 +192,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                   {
 //                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1) + " -> " +
 //                        ", -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
-                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
+                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1));
                   } else
                   {
 //                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance) + " -> " +
 //                        "£" + String.format("%.2f", rec.TxBalanceShouldBe));
-                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalanceShouldBe));
+                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance));
                   }
               }
             }

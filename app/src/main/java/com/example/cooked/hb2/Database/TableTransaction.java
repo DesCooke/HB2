@@ -4,13 +4,23 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.GlobalUtils.MyResources;
+import com.example.cooked.hb2.GlobalUtils.MyString;
+import com.example.cooked.hb2.R;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.lang.Float.parseFloat;
 
 class TableTransaction extends TableBase
@@ -179,7 +189,97 @@ class TableTransaction extends TableBase
         
         executeSQL(lSql, "TableTransaction::deleteTransaction", null);
     }
-    
+
+    void dumpTransactionTable()
+    {
+        try
+        {
+            if(MyResources.R()==null)
+                return;
+
+            fixUnassignedBudget();
+
+            String homeDirectory = MyResources.R().getString(R.string.home_directory);
+            String dumpFilename = MyResources.R().getString(R.string.table_dump_tblTransaction);
+
+            // create a File object from it
+            File file=new File(homeDirectory + '/' + dumpFilename);
+            if(file.exists())
+               file.delete();
+
+            File dir = new File(homeDirectory);
+            if (!dir.exists())
+                dir.mkdir();
+
+            if (!file.createNewFile())
+                throw new Exception("file.CreateNewFile() returned false");
+
+            String timeStamp=DateFormat.getDateTimeInstance().format(new Date());
+
+            FileWriter fw = new FileWriter(file, /*append*/ TRUE);
+
+
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                try
+                {
+                    BufferedWriter bw=new BufferedWriter(fw);
+
+                    bw.write("TxSortCode,TxAccountNumber,TxDate,TxLineNo," +
+                                  "CategoryId,Comments,BudgetYear,BudgetMonth," +
+                                  "TxDescription,TxAmount,TxBalance\n");
+
+                    String lSql = "select TxSortCode,TxAccountNumber,TxDate,TxLineNo, " +
+                            "CategoryId,Comments,BudgetYear,BudgetMonth," +
+                            "TxDescription,TxAmount,TxBalance " +
+                            "FROM tblTransaction " +
+                            "ORDER BY TxSortCode, TxAccountNumber,TxDate,TxLineNo ";
+                    Cursor cursor = db.rawQuery(lSql, null);
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                Date lTxDate = new Date(Long.parseLong(cursor.getString(2)));
+                                MyString lDateStr = new MyString();
+                                dateUtils().DateToStr(lTxDate, lDateStr);
+
+                                bw.write("\"" + cursor.getString(0) + "\"," +
+                                        "\"" + cursor.getString(1) + "\"," +
+                                        "\"" + lDateStr.Value + "\"," +
+                                        cursor.getString(3) + "," +
+                                        cursor.getString(4) + "," +
+                                        "\"" + cursor.getString(5) + "\"," +
+                                        cursor.getString(6) + "," +
+                                        cursor.getString(7) + "," +
+                                        cursor.getString(8) + "," +
+                                        cursor.getString(9) + "," +
+                                        cursor.getString(10) + "\n"
+                                );
+                            }
+                            while(cursor.moveToNext());
+                        }
+                        finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                    bw.flush();
+                    bw.close();
+                }
+                finally
+                {
+                    db.close();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TableTransaction.dumpTransactionTable", e.getMessage());
+        }
+    }
     ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
         ArrayList<RecordTransaction> list;
@@ -301,53 +401,39 @@ class TableTransaction extends TableBase
     }
 
     Float getBalanceAtStartOf(String sortCode, String accountNum,
-                           Integer pBudgetMonth, Integer pBudgetYear)
+                              Integer pBudgetMonth, Integer pBudgetYear)
     {
-        boolean lFirstRecord=true;
-        float lBalance=0.00f;
+        Date lDate = DateUtils.dateUtils().BudgetStart(pBudgetMonth, pBudgetYear);
+        return(getBalanceAt(sortCode, accountNum, lDate));
+    }
+
+    Float getBalanceAt(String sortCode, String accountNum,
+                           Date pDate)
+    {
+        float lBalance=324.27f + 27.86f;
         try
         {
             MyLog.WriteLogMessage("getBalanceAtStartOf: ");
 
-            Integer lLastBudgetMonth=pBudgetMonth;
-            Integer lLastBudgetYear=pBudgetYear;
-            lLastBudgetMonth--;
-            if(lLastBudgetMonth==0)
-            {
-                lLastBudgetMonth=12;
-                lLastBudgetYear--;
-            }
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 try
                 {
-                    String lSql = "select TxAmount, TxBalance FROM tblTransaction " +
+                    String lSql = "SELECT SUM(TxAmount) FROM tblTransaction " +
                             "WHERE TxSortCode = '" + sortCode + "' " +
                             "AND TxAccountNumber = '" + accountNum + "' " +
-                            "AND BudgetMonth = " + lLastBudgetMonth.toString() + " " +
-                            "AND BudgetYear = " + lLastBudgetYear.toString() + " " +
-                            "ORDER BY TxDate desc, TxLineNo";
+                            "AND TxDate < " + pDate.getTime() + " " +
+                            "ORDER BY TxDate, TxLineNo";
                     Cursor cursor = db.rawQuery(lSql, null);
                     if (cursor != null)
                     {
                         try
                         {
-                            cursor.moveToFirst();
-                            Float lCurrTxAmount=cursor.getFloat(1);
-                            Float lCurrTxBalance=cursor.getFloat(0);
-                            do
+                            if(cursor.getCount() > 0)
                             {
-                                if(lFirstRecord)
-                                {
-                                    lFirstRecord=false;
-                                    lBalance=lCurrTxBalance;
-                                }
-                                else
-                                {
-                                    lBalance=lBalance+lCurrTxAmount;
-                                }
+                                cursor.moveToFirst();
+                                lBalance = lBalance + cursor.getFloat(0);
                             }
-                            while(cursor.moveToNext());
                         }
                         finally
                         {
@@ -363,7 +449,7 @@ class TableTransaction extends TableBase
         }
         catch (Exception e)
         {
-            ErrorDialog.Show("Error in getBalanceAtStartOf", e.getMessage());
+            ErrorDialog.Show("Error in getBalanceAt", e.getMessage());
         }
         return (lBalance);
     }
@@ -427,7 +513,6 @@ class TableTransaction extends TableBase
         {
             Date mFromDate = getEarliestTxDate(sortCode, accountNum, budgetMonth, budgetYear);
             Date mToDate = getLatestTxDate(sortCode, accountNum,budgetMonth, budgetYear);
-            Float lCurrBalance = getBalanceAtStartOf(sortCode, accountNum, budgetMonth, budgetYear);
             if(mFromDate == new Date(0))
                 return(new ArrayList<>());
             if(mToDate==new Date(0))
@@ -452,18 +537,11 @@ class TableTransaction extends TableBase
                             cursor.moveToFirst();
                             do
                             {
-                                if(includeThisBudgetOnly)
-                                {
-                                    lCurrBalance += parseFloat(cursor.getString(9));
-                                }
-                                else
-                                {
-                                    lCurrBalance = parseFloat(cursor.getString(10));
-                                }
                                 int lBudgetYear=Integer.parseInt(cursor.getString(13));
                                 int lBudgetMonth=Integer.parseInt(cursor.getString(14));
                                 if(includeThisBudgetOnly==false ||
-                                        (includeThisBudgetOnly && lBudgetYear==budgetYear && lBudgetMonth == budgetMonth)) {
+                                        (includeThisBudgetOnly && lBudgetYear==budgetYear && lBudgetMonth == budgetMonth))
+                                {
                                     RecordTransaction lrec =
                                             new RecordTransaction
                                                     (
@@ -477,7 +555,7 @@ class TableTransaction extends TableBase
                                                             cursor.getString(7),
                                                             cursor.getString(8),
                                                             parseFloat(cursor.getString(9)),
-                                                            lCurrBalance,
+                                                            0.00f,
                                                             Integer.parseInt(cursor.getString(11)),
                                                             cursor.getString(12),
                                                             Integer.parseInt(cursor.getString(13)),
@@ -487,35 +565,23 @@ class TableTransaction extends TableBase
                                     list.add(lrec);
                                 }
                             } while (cursor.moveToNext());
+
+                            if(list.size()>0)
+                            {
+                                Date lFirstDate = list.get(list.size()-1).TxDate;
+                                Float lCurrBalance = getBalanceAt(sortCode, accountNum, lFirstDate);
+                                for (int i = list.size() - 1; i >= 0; i--) {
+                                    RecordTransaction rt = list.get(i);
+                                    lCurrBalance = lCurrBalance + rt.TxAmount;
+                                    rt.TxBalance = lCurrBalance;
+                                }
+                            }
                         }
                     }
                     finally
                     {
                         cursor.close();
                     }
-                    String lSql = "select IFNULL(SUM(TxAmount),0) FROM tblTransaction " +
-                            "WHERE TxSortCode = '" + sortCode + "' " +
-                            "AND TxAccountNumber = '" + accountNum + "' " +
-                            "AND TxDate <= " + Long.toString(mToDate.getTime()).toString() + " ";
-                    Cursor cursor2 = db.rawQuery(lSql, null);
-                    if (cursor2 != null)
-                    {
-                        try
-                        {
-                            cursor2.moveToFirst();
-                            if (cursor2.getCount() > 0)
-                            {
-                                String lString = cursor2.getString(0);
-                                if (lString != null)
-                                    lBalance = parseFloat(cursor2.getString(0));
-                            }
-                        }
-                        finally
-                        {
-                            cursor2.close();
-                        }
-                    }
-                    
                 }
             }
 
@@ -524,15 +590,6 @@ class TableTransaction extends TableBase
         {
             list = new ArrayList<>();
             ErrorDialog.Show("Error in TableTransaction.getTransactionList", e.getMessage());
-        }
-        if (sortCode.compareTo("Cash") == 0)
-        {
-            Float lBal = lBalance;
-            for (int i = 0; i<list.size(); i++)
-            {
-                list.get(i).TxBalance = lBal;
-                lBal = lBal - list.get(i).TxAmount;
-            }
         }
         return list;
     }
@@ -599,6 +656,61 @@ class TableTransaction extends TableBase
             ErrorDialog.Show("Error in TableTransaction.getBudgetList", e.getMessage());
         }
         return list;
+    }
+
+    void fixUnassignedBudget()
+    {
+        ArrayList<RecordTransactionDate> list;
+        try
+        {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                String lString =
+                        "SELECT TxSeqNo, TxDate " +
+                                "FROM tblTransaction  " +
+                                "WHERE BudgetMonth = 0 OR BudgetYear = 0";
+                Cursor cursor = db.rawQuery(lString, null);
+
+                list = new ArrayList<>();
+                if (cursor != null)
+                {
+                    try
+                    {
+                        if (cursor.getCount() > 0)
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                Integer lTxSeqNo = Integer.parseInt(cursor.getString(0));
+                                Date lTxDate = new Date(Long.parseLong(cursor.getString(1)));
+                                RecordTransactionDate rtd = new RecordTransactionDate(lTxSeqNo, lTxDate);
+                                list.add(rtd);
+                            } while (cursor.moveToNext());
+                        }
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+
+                    for(int i=0;i<list.size();i++)
+                    {
+                        RecordTransactionDate rtd=list.get(i);
+                        int lBudgetYear=DateUtils.dateUtils().GetBudgetYear(rtd.TxDate);
+                        int lBudgetMonth=DateUtils.dateUtils().GetBudgetMonth(rtd.TxDate);
+                        String lSQL = "UPDATE tblTransaction SET BudgetMonth = " + lBudgetMonth + ", " +
+                                  "BudgetYear = " + lBudgetYear + " " +
+                                "WHERE TxSeqNo = " + rtd.TxSeqNo;
+                        db.execSQL(lSQL);
+                    }
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TableTransaction.getUnassignedBudget", e.getMessage());
+        }
     }
 
     ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode,
