@@ -130,4 +130,6 @@
         <item>Last Month</item>
         <item>Average</item>
     </string-array>
+    <string name="title_activity_account_list">account_list</string>
+    <string name="accounts">Accounts</string>
 </resources>

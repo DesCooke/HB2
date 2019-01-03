@@ -9,7 +9,7 @@
                                              android:background="@android:drawable/dialog_holo_light_frame">
 
     <TextView
-        android:id="@+id/celltx_TxSeqNo"
+        android:id="@+id/cellac_s"
         android:layout_width="50dp"
         android:layout_height="10dp"
         android:layout_weight="1"

@@ -2,7 +2,7 @@ package com.example.cooked.hb2.Database;
 
 import java.util.Date;
 
-class RecordAccount
+public class RecordAccount
 {
     public Integer AcSeqNo;
     public String AcSortCode;

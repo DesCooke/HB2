@@ -858,6 +858,11 @@ public class MainActivity extends AppCompatActivity
             {
                 MyDatabase.MyDB().dumpDatabase();
             }
+            if (id == R.id.nav_account)
+            {
+                Intent intent = new Intent(this, activityAccount.class);
+                startActivity(intent);
+            }
 
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
