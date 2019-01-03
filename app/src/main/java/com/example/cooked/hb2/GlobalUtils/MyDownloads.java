@@ -102,7 +102,7 @@ public class MyDownloads
                 rt.TxType = row[1];
                 rt.TxSortCode = row[2].substring(1);
                 rt.TxAccountNumber = row[3];
-                rt.TxDescription = row[4];
+                rt.TxDescription = row[4].replace("'", "");
                 if (row[5].length() > 0) {
                     rt.TxAmount = Float.parseFloat(row[5])*-1;
                 }

@@ -854,7 +854,11 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(this, activityCommon.class);
                 startActivity(intent);
             }
-            
+            if (id == R.id.nav_databasedump)
+            {
+                MyDatabase.MyDB().dumpDatabase();
+            }
+
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }

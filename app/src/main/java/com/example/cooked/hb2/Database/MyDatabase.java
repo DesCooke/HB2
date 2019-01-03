@@ -32,7 +32,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 16;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -40,9 +40,10 @@ public class MyDatabase extends SQLiteOpenHelper
     private TableSubCategory tableSubCategory;
     private TablePlanned tablePlanned;
     private TableCommon tableCommon;
+    private TableAccount tableAccount;
     public TextView txtNotes;
     //endregion
-    
+
     //region statics
     public static MyDatabase MyDB()
     {
@@ -65,6 +66,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableSubCategory = new TableSubCategory(this);
             tablePlanned = new TablePlanned(this);
             tableCommon = new TableCommon(this);
+            tableAccount = new TableAccount(this);
         }
         catch(Exception e)
         {
@@ -84,6 +86,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableSubCategory.onCreate(db);
             tablePlanned.onCreate(db);
             tableCommon.onCreate(db);
+            tableAccount.onCreate(db);
         }
         catch(Exception e)
         {
@@ -106,6 +109,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableSubCategory.onUpgrade(db, oldVersion, newVersion);
             tablePlanned.onUpgrade(db, oldVersion, newVersion);
             tableCommon.onUpgrade(db, oldVersion, newVersion);
+            tableAccount.onUpgrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -125,6 +129,7 @@ public class MyDatabase extends SQLiteOpenHelper
             tableSubCategory.onDowngrade(db, oldVersion, newVersion);
             tablePlanned.onDowngrade(db, oldVersion, newVersion);
             tableCommon.onDowngrade(db, oldVersion, newVersion);
+            tableAccount.onDowngrade(db, oldVersion, newVersion);
         }
         catch(Exception e)
         {
@@ -132,6 +137,12 @@ public class MyDatabase extends SQLiteOpenHelper
         }
     }
     //endregion
+
+    //region Dump database
+    public void dumpDatabase()
+    {
+        tableTransaction.dumpTransactionTable();
+    }
 
     //region Transaction Functions
     public void addTransaction(RecordTransaction rt)
@@ -169,7 +180,7 @@ public class MyDatabase extends SQLiteOpenHelper
         try
         {
             ArrayList<RecordTransaction> rta = tableTransaction.getTransactionList(sortCode, accountNum);
-    
+
             if (sortCode.compareTo("11-03-95") == 0)
             {
                 if(showPlanned)
@@ -193,7 +204,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     }
                 }
             }
-    
+
             if (rta != null)
             {
                 Float lCurrentBalance=0.00f;
@@ -214,7 +225,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     {
                         lCurrentBalance = rta.get(i).TxBalance - rta.get(i).TxAmount;
                     }
-                    
+
                     RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
                     if (sc != null)
                         rta.get(i).SubCategoryName = sc.SubCategoryName;
@@ -264,25 +275,8 @@ public class MyDatabase extends SQLiteOpenHelper
 
             if (rta != null)
             {
-                Float lCurrentBalance=0.00f;
                 for (int i = 0; i < rta.size(); i++)
                 {
-                    rta.get(i).BalanceCorrect = true;
-                    if(i>0)
-                    {
-                        Float lDiff = lCurrentBalance - rta.get(i).TxBalance;
-                        if(lDiff < -0.005 || lDiff > 0.005)
-                        {
-                            rta.get(i).BalanceCorrect = false;
-                            rta.get(i).TxBalanceShouldBe = lCurrentBalance;
-                        }
-                        lCurrentBalance = lCurrentBalance - rta.get(i).TxAmount;
-                    }
-                    else
-                    {
-                        lCurrentBalance = rta.get(i).TxBalance - rta.get(i).TxAmount;
-                    }
-
                     RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
                     if (sc != null)
                         rta.get(i).SubCategoryName = sc.SubCategoryName;
@@ -314,7 +308,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     lTotal += rta.get(i).TxAmount;
                 }
             }
-            
+
             Float lCount = 0.00f;
             ArrayList<RecordTransaction> rpl = tablePlanned.getPlannedTransForSubCategoryId(pBudgetMonth, pBudgetYear, pSubCatgegoryId);
             for(int i=0;i<rpl.size();i++)
@@ -362,7 +356,7 @@ public class MyDatabase extends SQLiteOpenHelper
     public void updateFilenameLineNo(RecordTransaction dbRec, RecordTransaction fileRec)
     {
         tableTransaction.updateFilenameLineNo(dbRec, fileRec);
-        
+
     }
 
     public int getNextTxLineNo(Date pDate)
@@ -390,7 +384,25 @@ public class MyDatabase extends SQLiteOpenHelper
         return(null);
     }
     //endregion
-    
+
+    //region Account Functions
+    public void addAccount(RecordAccount ra)
+    {
+        tableAccount.addAccount(ra);
+    }
+
+    public void deleteAccount(RecordAccount ra)
+    {
+        tableAccount.deleteAccount(ra);
+    }
+
+    public void updateTransaction(RecordAccount ra)
+    {
+        tableAccount.updateAccount(ra);
+    }
+
+    //endregion
+
     //region Category functions
     public void addCategory(RecordCategory rc) { tableCategory.addCategory(rc);}
 
@@ -463,9 +475,9 @@ public class MyDatabase extends SQLiteOpenHelper
     {
         return tableSubCategory.getSubCategoryList(pCategoryId);
     }
-    
+
     //endregion
-    
+
     //region Planned Functions
     public void addPlanned(RecordPlanned rp)
     {
@@ -490,7 +502,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 rp.mSubCategoryId = rt.CategoryId;
                 rp.mSortCode = rt.TxSortCode;
                 rp.mAccountNo = rt.TxAccountNumber;
-        
+
                 rp.mPlannedDate = rt.TxDate;
                 rp.mPlannedMonth = 0;
                 Calendar c = Calendar.getInstance();
@@ -503,30 +515,30 @@ public class MyDatabase extends SQLiteOpenHelper
                 rp.mFriday = false;
                 rp.mSaturday = false;
                 rp.mSunday = false;
-        
+
                 rp.mStartDate = rt.TxDate;
                 rp.mEndDate = dateUtils().StrToDate(MainActivity.context.getString(R.string.end_of_time));
-        
+
                 rp.mMatchingTxType = rt.TxType;
                 rp.mMatchingTxDescription = rt.TxDescription;
                 rp.mMatchingTxAmount = rt.TxAmount;
-        
+
                 rp.mPlanned = "";
                 rp.mSubCategoryName = rt.SubCategoryName;
-        
+
                 tablePlanned.addPlanned(rp);
-        
+
                 return (rp.mPlannedId);
-        
+
             }
         }
         catch (Exception e)
         {
             ErrorDialog.Show("Error in MyDatabase.createPlanned", e.getMessage());
         }
-        
+
         return(0);
-        
+
     }
 
     public void updatePlanned(RecordPlanned rp)
@@ -599,7 +611,7 @@ public class MyDatabase extends SQLiteOpenHelper
         }
         return(null);
     }
-    
+
     private void ProcessGroup(Integer pMonth, Integer pYear,
                               ArrayList<RecordCategory> cl, ArrayList<RecordBudget> rb,
                               ArrayList<RecordBudget> rbspent, RecordBudgetGroup mainGroup,
@@ -621,7 +633,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 rbg.RecCount = 0;
                 rbg.groupedBudget = cl.get(i).GroupedBudget;
                 rbg.DefaultBudgetType = cl.get(i).DefaultBudgetType;
-        
+
                 ArrayList<RecordSubCategory> scl = tableSubCategory.getSubCategoryList(rbg.CategoryId);
                 RecordBudgetItem rbi;
                 RecordBudget rb2;
@@ -630,8 +642,8 @@ public class MyDatabase extends SQLiteOpenHelper
                     // ignore if not for the selected category type
                     if (scl.get(j).SubCategoryType.intValue() != pCategoryType.intValue())
                         continue;
-    
-                    
+
+
                     //Is there a planned transaction for this sub category?
                     rb2 = null;
                     for (int k = 0; k < rb.size(); k++)
@@ -648,7 +660,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi = new RecordBudgetItem();
                         rbi.groupedBudget = rbg.groupedBudget;
                         rbi.spent = 0.00f;
-                
+
                         for (int l = 0; l < rbspent.size(); l++)
                         {
                             if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId)
@@ -660,7 +672,7 @@ public class MyDatabase extends SQLiteOpenHelper
                                 break;
                             }
                         }
-                
+
                         rbi.budgetItemName = scl.get(j).SubCategoryName;
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.total = rb2.Amount;
@@ -705,7 +717,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         }
                         if (rb2 != null)
                         {
-                    
+
                             rbi = new RecordBudgetItem();
 
                             rbi.groupedBudget = rbg.groupedBudget;
@@ -719,7 +731,7 @@ public class MyDatabase extends SQLiteOpenHelper
                             rbg.budgetItems.add(rbi);
                         }
                     }
-            
+
                 }
                 if (rbg.budgetItems.size() > 0)
                     localList.add(rbg);
@@ -788,16 +800,16 @@ public class MyDatabase extends SQLiteOpenHelper
         {
             ErrorDialog.Show("Error in MyDatabase.processGroup", e.getMessage());
         }
-        
+
     }
     public ArrayList<RecordBudgetGroup> getBudget(Integer pMonth, Integer pYear)
     {
         try
         {
             ArrayList<RecordBudgetGroup> lList = new ArrayList<>();
-    
+
             RecordBudgetGroup mrbg;
-    
+
             ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
             ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
             ArrayList<RecordCategory> cl = tableCategory.getCategoryList();
@@ -818,36 +830,36 @@ public class MyDatabase extends SQLiteOpenHelper
             mrbg.divider = true;
             lList.add(mrbg);
             ProcessGroup(pMonth, pYear, cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTMonthlyExpense);
-    
+
             mrbg = new RecordBudgetGroup();
             mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_monthly_income);
             mrbg.divider = true;
             lList.add(mrbg);
             ProcessGroup(pMonth, pYear, cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTMonthlyIncome);
-    
+
             mrbg = new RecordBudgetGroup();
             mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_extra_expenses);
             mrbg.divider = true;
             lList.add(mrbg);
             ProcessGroup(pMonth, pYear, cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTExtraExpense);
-    
+
             mrbg = new RecordBudgetGroup();
             mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_extra_income);
             mrbg.divider = true;
             lList.add(mrbg);
             ProcessGroup(pMonth, pYear, cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTExtraIncome);
-    
+
             return (lList);
         }
         catch (Exception e)
         {
             ErrorDialog.Show("Error in MyDatabase.getbudget", e.getMessage());
         }
-        
+
         return(null);
     }
     //endregion
- 
+
      //region TableCommon Functions
     public void addCommonTransaction(RecordCommon rt)
     {
@@ -923,7 +935,7 @@ public class MyDatabase extends SQLiteOpenHelper
         return(null);
     }
     //endregion
-    
+
    
     
  }
