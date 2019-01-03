@@ -401,6 +401,22 @@ public class MyDatabase extends SQLiteOpenHelper
         tableAccount.updateAccount(ra);
     }
 
+    public ArrayList<RecordAccount> getAccountList()
+    {
+        ArrayList<RecordAccount> raa = tableTransaction.getAccountList();
+        for(int i=0;i<raa.size();i++)
+        {
+            RecordAccount ra=raa.get(i);
+            if(tableAccount.accountExists(ra.AcSortCode, ra.AcAccountNumber)==false)
+            {
+                ra.AcDescription="<notset>";
+                ra.AcStartingBalance=0.00f;
+                tableAccount.addAccount(ra);
+            }
+        }
+        return(tableAccount.getAccountList());
+    }
+
     //endregion
 
     //region Category functions

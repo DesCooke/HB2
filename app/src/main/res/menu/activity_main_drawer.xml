@@ -20,5 +20,9 @@
             android:id="@+id/nav_databasedump"
             android:icon="@drawable/databasedump"
             android:title="@string/database_dump" />
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/bankaccount"
+            android:title="@string/accounts" />
     </group>
 </menu>

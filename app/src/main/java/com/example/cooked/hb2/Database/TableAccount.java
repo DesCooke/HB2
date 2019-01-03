@@ -158,7 +158,7 @@ class TableAccount extends TableBase
         return list;
     }
 
-    RecordAccount getSingleTransaction(Integer pAcSeqNo)
+    RecordAccount getSingleAccount(Integer pAcSeqNo)
     {
         try
         {
@@ -200,6 +200,41 @@ class TableAccount extends TableBase
             ErrorDialog.Show("Error in TableAccount.getAcountItem", e.getMessage());
         }
         return (null);
+    }
+
+    public boolean accountExists(String pSortCode, String pAccountNumber)
+    {
+        try
+        {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                String lSql = "select AcSortCode " +
+                        "FROM tblAccount " +
+                        "WHERE AcSortCode = '" + pSortCode + "' " +
+                        "AND AcAccountNumber = '" + pAccountNumber + "'";
+                Cursor cursor = db.rawQuery(lSql, null);
+                if (cursor != null)
+                {
+                    try
+                    {
+                        if (cursor.getCount() > 0)
+                        {
+                            return(true);
+                        }
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TableAccount.accountExists", e.getMessage());
+        }
+        return(false);
     }
 
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
