@@ -593,14 +593,7 @@ class TableTransaction extends TableBase
                                 list.add(0, r1);
 
                                 RecordTransaction r2 = new RecordTransaction();
-                                if (lStartBalance<0.00f)
-                                {
-                                    r2.TxDescription = "Starting Balance -£" + String.format("%.2f", lStartBalance * -1);
-                                }
-                                else
-                                {
-                                    r2.TxDescription = "Starting Balance £" + String.format("%.2f", lStartBalance);
-                                }
+                                r2.TxDescription = String.format("%.2f", lStartBalance);
                                 list.add(r2);
                             }
                         }

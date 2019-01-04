@@ -10,7 +10,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -47,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static java.lang.Boolean.FALSE;
+import static java.lang.Math.abs;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener
@@ -92,7 +91,8 @@ public class MainActivity extends AppCompatActivity
     private TextView txtBankAccountTitle;
     private TextView txtCashAccountTitle;
     private TextView txtBudgetSubTitle;
-    
+
+
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
     private Integer mCurrentBABudgetYear;
@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity
     private TextView lblExtraIncome;
     private TextView lblExtraTotal;
     private TextView lblBudgetTotal;
+    private TextView tvStartingBalance;
+    private TextView tvMonthlyLeftOverLabel;
+    private TextView tvExtraLeftOverLabel;
 
     public int mSelectedButton;
     
@@ -298,12 +301,54 @@ public class MainActivity extends AppCompatActivity
             
             lblMonthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCIncome));
             lblMonthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCExpense));
-            lblMonthlyTotal.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCIncome-l_BCExpense));
+            lblMonthlyTotal.setText(String.format(Locale.ENGLISH, "£%.2f", abs(l_BCIncome-l_BCExpense)));
+            if( (l_BCIncome-l_BCExpense) > 0.00f)
+            {
+                tvMonthlyLeftOverLabel.setText("Monthly Underspend by...");
+            }
+            else
+            {
+                if( (l_BCIncome-l_BCExpense) < 0.00f)
+                {
+                    tvMonthlyLeftOverLabel.setText("Monthly Overspend by...");
+                }
+                else
+                {
+                    {
+                        tvMonthlyLeftOverLabel.setText("Monthly income matches expense");
+                    }
+                }
+            }
             
             lblExtraIncome.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCEIncome));
             lblExtraExpense.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCEExpense));
-            lblExtraTotal.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCEIncome - l_BCEExpense));
-            
+            lblExtraTotal.setText(String.format(Locale.ENGLISH, "£%.2f", abs(l_BCEIncome - l_BCEExpense)));
+            if( (l_BCEIncome-l_BCEExpense) > 0.00f)
+            {
+                tvExtraLeftOverLabel.setText("Extra Underspend by...");
+            }
+            else
+            {
+                if( (l_BCEIncome-l_BCEExpense) < 0.00f)
+                {
+                    tvExtraLeftOverLabel.setText("Extra Overspend by...");
+                }
+                else
+                {
+                    {
+                        tvExtraLeftOverLabel.setText("Extra income matches expense");
+                    }
+                }
+            }
+
+            ArrayList<RecordTransaction> lData = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", false, mCurrentBABudgetMonth, mCurrentBABudgetYear, swIncludeThisBudgetOnly.isChecked());
+            tvStartingBalance.setText("£0.00");
+            if(lData.size()>0)
+            {
+                Float lStartBalance=Float.parseFloat(lData.get(lData.size()-1).TxDescription);
+                tvStartingBalance.setText(String.format(Locale.ENGLISH, "£%.2f", lStartBalance));
+            }
+
             lblBudgetTotal.setText(String.format(Locale.ENGLISH, "£%.2f",
                 (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense)));
             
@@ -474,13 +519,16 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        lblMonthlyExpense = findViewById(R.id.lblMonthlyExpense);
-        lblMonthlyIncome = findViewById(R.id.lblMonthlyIncome);
-        lblMonthlyTotal = findViewById(R.id.lblMonthlyTotal);
-        lblExtraExpense = findViewById(R.id.lblExtraExpense);
-        lblExtraIncome = findViewById(R.id.lblExtraIncome);
-        lblExtraTotal = findViewById(R.id.lblExtraTotal);
-        lblBudgetTotal = findViewById(R.id.lblBudgetTotal);
+        lblMonthlyExpense = findViewById(R.id.tvMonthlyExpense);
+        lblMonthlyIncome = findViewById(R.id.tvMonthlyIncome);
+        lblMonthlyTotal = findViewById(R.id.tvMonthlyLeftOver);
+        lblExtraExpense = findViewById(R.id.tvExtraExpense);
+        lblExtraIncome = findViewById(R.id.tvExtraIncome);
+        lblExtraTotal = findViewById(R.id.tvExtraLeftOver);
+        lblBudgetTotal = findViewById(R.id.tvFinalBudgetBalance);
+        tvStartingBalance = findViewById(R.id.tvStartingBalance);
+        tvMonthlyLeftOverLabel = findViewById(R.id.tvMonthlyLeftOverLabel);
+        tvExtraLeftOverLabel = findViewById(R.id.tvExtraLeftOverLabel);
 
         swIncludeThisBudgetOnly = findViewById(R.id.swIncludeThisBudgetOnly);
         swIncludeThisBudgetOnly.setChecked(true);

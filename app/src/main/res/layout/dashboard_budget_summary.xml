@@ -13,156 +13,198 @@
         android:background="@android:drawable/alert_light_frame">
 
         <TextView
-            android:id="@+id/label1"
+            android:id="@+id/tvStartingBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvMonthlyIncomeLabel"
             android:layout_width="122dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/monthly_income"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/tvStartingBalanceLabel" />
 
         <TextView
-            android:id="@+id/label2"
+            android:id="@+id/tvMonthlyExpenseLabel"
             android:layout_width="186dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:text="@string/monthly_expense"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label1" />
+            app:layout_constraintTop_toBottomOf="@+id/tvMonthlyIncomeLabel" />
 
         <TextView
-            android:id="@+id/lblExtraExpense"
+            android:id="@+id/tvExtraExpense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
             android:text="@string/_0_00"
             android:textAlignment="textEnd"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblExtraIncome" />
+            app:layout_constraintTop_toBottomOf="@+id/tvExtraIncome" />
 
         <TextView
-            android:id="@+id/label6"
+            android:id="@+id/tvExtraLeftOverLabel"
             android:layout_width="178dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:text="@string/extra_left"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label5" />
+            app:layout_constraintTop_toBottomOf="@+id/tvExtraExpenseLabel" />
 
         <TextView
-            android:id="@+id/label5"
+            android:id="@+id/tvExtraExpenseLabel"
             android:layout_width="255dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:text="@string/extra_expense"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label4" />
+            app:layout_constraintTop_toBottomOf="@+id/tvExtraIncomeLabel" />
 
         <TextView
-            android:id="@+id/lblMonthlyIncome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/_0_00"
-            android:textAlignment="textEnd"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/lblMonthlyExpense"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/_0_00"
-            android:textAlignment="textEnd"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblMonthlyIncome" />
-
-        <TextView
-            android:id="@+id/lblExtraIncome"
+            android:id="@+id/tvMonthlyIncome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
             android:text="@string/_0_00"
             android:textAlignment="textEnd"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblMonthlyTotal" />
+            app:layout_constraintTop_toBottomOf="@+id/tvStartingBalance" />
 
         <TextView
-            android:id="@+id/lblExtraTotal"
+            android:id="@+id/tvMonthlyExpense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
             android:text="@string/_0_00"
             android:textAlignment="textEnd"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblExtraExpense" />
+            app:layout_constraintTop_toBottomOf="@+id/tvMonthlyIncome" />
 
         <TextView
-            android:id="@+id/lblBudgetTotal"
+            android:id="@+id/tvExtraIncome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
             android:text="@string/_0_00"
             android:textAlignment="textEnd"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblExtraTotal" />
+            app:layout_constraintTop_toBottomOf="@+id/tvMonthlyLeftOver" />
 
         <TextView
-            android:id="@+id/label4"
+            android:id="@+id/tvExtraLeftOver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvExtraExpense" />
+
+        <TextView
+            android:id="@+id/tvFinalBudgetBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:text="@string/_0_00"
+            android:textAlignment="textEnd"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvExtraLeftOver" />
+
+        <TextView
+            android:id="@+id/tvExtraIncomeLabel"
             android:layout_width="210dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/extra_income"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label3" />
+            app:layout_constraintTop_toBottomOf="@+id/tvMonthlyLeftOverLabel" />
 
         <TextView
-            android:id="@+id/lblMonthlyTotal"
+            android:id="@+id/tvMonthlyLeftOver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
             android:text="@string/_0_00"
             android:textAlignment="textEnd"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lblMonthlyExpense" />
+            app:layout_constraintTop_toBottomOf="@+id/tvMonthlyExpense" />
 
         <TextView
-            android:id="@+id/label3"
+            android:id="@+id/tvMonthlyLeftOverLabel"
             android:layout_width="181dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:text="@string/amount_left"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label2" />
+            app:layout_constraintTop_toBottomOf="@+id/tvMonthlyExpenseLabel" />
 
         <TextView
-            android:id="@+id/label7"
+            android:id="@+id/tvFinalBudgetBalanceLabel"
             android:layout_width="280dp"
             android:layout_height="20dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/final_budget_balance_this_month"
             android:textAlignment="textStart"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label6" />
+            app:layout_constraintTop_toBottomOf="@+id/tvExtraLeftOverLabel" />
+
+        <TextView
+            android:id="@+id/tvStartingBalanceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Starting Balance"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
