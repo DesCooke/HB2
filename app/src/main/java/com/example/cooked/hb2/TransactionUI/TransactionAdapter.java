@@ -217,7 +217,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             {
                 ViewHolder2 vh2 = (ViewHolder2)holder;
 
-                vh2.mTxDescription.setText(rec.TxDescription);
+                Float lBalance = Float.parseFloat(rec.TxDescription);
+                String lStartingOrEnding="Starting";
+                if(position==0)
+                    lStartingOrEnding="Ending";
+
+                if(lBalance<0.00f) {
+                    vh2.mTxDescription.setText(lStartingOrEnding + " Balance -£" + String.format("%.2f", lBalance * -1));
+                }
+                else
+                {
+                    vh2.mTxDescription.setText(lStartingOrEnding + " Balance £" + String.format("%.2f", lBalance));
+                }
             }
         }
         catch (Exception e) {

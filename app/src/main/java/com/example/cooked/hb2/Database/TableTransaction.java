@@ -582,14 +582,7 @@ class TableTransaction extends TableBase
                                     rt.TxBalance = lCurrBalance;
                                 }
                                 RecordTransaction r1 = new RecordTransaction();
-                                if (list.get(0).TxBalance<0.00f)
-                                {
-                                    r1.TxDescription = "Ending Balance -£" + String.format("%.2f", list.get(0).TxBalance * -1);
-                                }
-                                else
-                                {
-                                    r1.TxDescription = "Ending Balance £" + String.format("%.2f", list.get(0).TxBalance);
-                                }
+                                r1.TxDescription = list.get(0).TxBalance.toString();
                                 list.add(0, r1);
 
                                 RecordTransaction r2 = new RecordTransaction();
