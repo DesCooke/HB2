@@ -410,7 +410,10 @@ class TableTransaction extends TableBase
     Float getBalanceAt(String sortCode, String accountNum,
                            Date pDate)
     {
-        float lBalance=324.27f + 27.86f;
+        RecordAccount ra=MyDatabase.MyDB().getAccountItemByAccountNumber(sortCode, accountNum);
+        float lBalance = ra.AcStartingBalance;
+
+        //float lBalance=324.27f + 27.86f;
         try
         {
             MyLog.WriteLogMessage("getBalanceAtStartOf: ");
@@ -509,6 +512,8 @@ class TableTransaction extends TableBase
     {
         ArrayList<RecordTransaction> list;
         Float lBalance=0.00f;
+        Float lCurrBalance=0.00f;
+        Float lStartBalance=0.00f;
         try
         {
             Date mFromDate = getEarliestTxDate(sortCode, accountNum, budgetMonth, budgetYear);
@@ -569,12 +574,34 @@ class TableTransaction extends TableBase
                             if(list.size()>0)
                             {
                                 Date lFirstDate = list.get(list.size()-1).TxDate;
-                                Float lCurrBalance = getBalanceAt(sortCode, accountNum, lFirstDate);
+                                lStartBalance = getBalanceAt(sortCode, accountNum, lFirstDate);
+                                lCurrBalance=lStartBalance;
                                 for (int i = list.size() - 1; i >= 0; i--) {
                                     RecordTransaction rt = list.get(i);
                                     lCurrBalance = lCurrBalance + rt.TxAmount;
                                     rt.TxBalance = lCurrBalance;
                                 }
+                                RecordTransaction r1 = new RecordTransaction();
+                                if (list.get(0).TxBalance<0.00f)
+                                {
+                                    r1.TxDescription = "Ending Balance -£" + String.format("%.2f", list.get(0).TxBalance * -1);
+                                }
+                                else
+                                {
+                                    r1.TxDescription = "Ending Balance £" + String.format("%.2f", list.get(0).TxBalance);
+                                }
+                                list.add(0, r1);
+
+                                RecordTransaction r2 = new RecordTransaction();
+                                if (lStartBalance<0.00f)
+                                {
+                                    r2.TxDescription = "Starting Balance -£" + String.format("%.2f", lStartBalance * -1);
+                                }
+                                else
+                                {
+                                    r2.TxDescription = "Starting Balance £" + String.format("%.2f", lStartBalance);
+                                }
+                                list.add(r2);
                             }
                         }
                     }

@@ -45,19 +45,19 @@
         <activity
             android:name=".activityPlanning"
             android:label="@string/title_activity_planning"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activityCommon"
             android:label="@string/title_activity_common"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activityCommonItem"
             android:label="@string/title_activity_common"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activityPlanningItem"
             android:label="@string/title_activity_planning_item"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activityCategory2"
             android:label="@string/title_activity_category"
@@ -65,6 +65,10 @@
         <activity
             android:name=".activityAccount"
             android:label="@string/title_activity_account_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activityAccountItem"
+            android:label="@string/title_activity_account_item"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
