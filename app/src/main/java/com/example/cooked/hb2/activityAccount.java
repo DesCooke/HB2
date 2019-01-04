@@ -45,11 +45,9 @@ public class activityAccount extends AppCompatActivity {
             @Override
             public void onItemClick(View view, RecordAccount obj)
             {
-                /*
-                Intent intent = new Intent(getApplicationContext(), activityCommonItem.class);
-                intent.putExtra("ACTIONTYPE", "EDIT");
-                intent.putExtra("TxSeqNo", obj.TxSeqNo);
-                startActivity(intent);*/
+                Intent intent = new Intent(getApplicationContext(), activityAccountItem.class);
+                intent.putExtra("AcSeqNo", obj.AcSeqNo);
+                startActivity(intent);
             }
         });
 

@@ -93,9 +93,9 @@ class TableAccount extends TableBase
                     "UPDATE tblAccount " +
                             "SET AcDescription = '" + ra.AcDescription + "', " +
                             " AcStartingBalance = " + ra.AcStartingBalance.toString() + " " +
-                            "WHERE TxSeqNo = " + Integer.toString(ra.AcSeqNo);
+                            "WHERE AcSeqNo = " + Integer.toString(ra.AcSeqNo);
 
-        executeSQL(lSql, "TableAccount::updateTransaction", null);
+        executeSQL(lSql, "TableAccount::updateAccount", null);
 
     }
 
@@ -184,6 +184,51 @@ class TableAccount extends TableBase
                                                 cursor.getString(3),
                                                 parseFloat(cursor.getString(4))
                                         )
+                            );
+                        }
+                    }
+                    finally
+                    {
+                        cursor.close();
+                    }
+                }
+            }
+
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TableAccount.getAcountItem", e.getMessage());
+        }
+        return (null);
+    }
+
+    RecordAccount getAccountItemByAccountNum(String pAcSortCode, String pAcAccountNumber)
+    {
+        try
+        {
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, AcStartingBalance " +
+                        "FROM tblAccount " +
+                        "WHERE AcSortCode = '" + pAcSortCode + "' " +
+                        "AND AcAccountNumber = '" + pAcAccountNumber + "'";
+                Cursor cursor = db.rawQuery(lSql, null);
+                if (cursor != null)
+                {
+                    try
+                    {
+                        if (cursor.getCount() > 0)
+                        {
+                            cursor.moveToFirst();
+                            return (
+                                    new RecordAccount
+                                            (
+                                                    Integer.parseInt(cursor.getString(0)),
+                                                    cursor.getString(1),
+                                                    cursor.getString(2),
+                                                    cursor.getString(3),
+                                                    parseFloat(cursor.getString(4))
+                                            )
                             );
                         }
                     }

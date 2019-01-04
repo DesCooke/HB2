@@ -396,7 +396,7 @@ public class MyDatabase extends SQLiteOpenHelper
         tableAccount.deleteAccount(ra);
     }
 
-    public void updateTransaction(RecordAccount ra)
+    public void updateAccount(RecordAccount ra)
     {
         tableAccount.updateAccount(ra);
     }
@@ -415,6 +415,15 @@ public class MyDatabase extends SQLiteOpenHelper
             }
         }
         return(tableAccount.getAccountList());
+    }
+
+    public RecordAccount getAccountItem(int pAcSeqNo)
+    {
+        return(tableAccount.getSingleAccount(pAcSeqNo));
+    }
+    public RecordAccount getAccountItemByAccountNumber(String pSortCode, String pAccountNum)
+    {
+        return(tableAccount.getAccountItemByAccountNum(pSortCode,pAccountNum));
     }
 
     //endregion

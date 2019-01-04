@@ -132,4 +132,7 @@
     </string-array>
     <string name="title_activity_account_list">account_list</string>
     <string name="accounts">Accounts</string>
+    <string name="title_activity_account_item">activityAccountItem</string>
+    <string name="accountDescription">Description</string>
+    <string name="accountStartingBalance">Starting Balance</string>
 </resources>

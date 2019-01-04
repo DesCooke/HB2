@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 
-public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder>
+public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     private ArrayList<RecordTransaction> mDataset;
     private OnItemClickListener mOnItemClickListener;
@@ -35,7 +35,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    static class ViewHolder extends RecyclerView.ViewHolder
+    static class ViewHolder1 extends RecyclerView.ViewHolder
     {
         // each data item is just a string in this case
         TextView mTxSeqNo;
@@ -53,7 +53,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         TextView mBudget;
         ConstraintLayout mFull;
 
-        ViewHolder(View v)
+        ViewHolder1(View v)
         {
             super(v);
 
@@ -74,6 +74,25 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder
+    static class ViewHolder2 extends RecyclerView.ViewHolder
+    {
+        // each data item is just a string in this case
+        TextView mTxDescription;
+        ConstraintLayout mFull;
+
+        ViewHolder2(View v)
+        {
+            super(v);
+
+            mTxDescription = v.findViewById(R.id.cell_info);
+            mFull = v.findViewById(R.id.celltx_full);
+        }
+    }
+
+
     // Provide a suitable constructor (depends on the kind of dataset)
     public TransactionAdapter(ArrayList<RecordTransaction> lDataset)
     {
@@ -82,124 +101,123 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     // Create new views (invoked by the layout manager)
     @Override
-    public TransactionAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                      int viewType)
     {
+        if(viewType==1)
+        {
+            // create a new view
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_transaction, parent, false);
+            // set the view's size, margins, paddings and layout parameters
+            return new ViewHolder1(v);
+        }
         // create a new view
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_transaction, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_balance, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        return new ViewHolder(v);
+        return new ViewHolder2(v);
     }
+
 
     // Replace the contents of a view (invoked by the layout manager)
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position)
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position)
     {
         final RecordTransaction rec;
 
-         rec = mDataset.get(position);
+        rec = mDataset.get(position);
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         try
         {
-    
-    
-            holder.mTxSeqNo.setText(rec.TxSeqNo.toString());
-            holder.mTxAdded.setText(rec.TxAdded.toString());
-            holder.mTxFilename.setText(rec.TxFilename);
-            holder.mTxLineNo.setText(rec.TxLineNo.toString());
-            holder.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rec.TxDate));
-            holder.mTxType.setText(rec.TxType);
-            holder.mBankAccount.setText(rec.TxSortCode + " " + rec.TxAccountNumber);
-            if (rec.TxDescription.length() > 0)
+            if(holder.getItemViewType()==1)
             {
-                holder.mTxDescription.setVisibility(View.VISIBLE);
-                holder.mTxDescription.setText("Description: " + rec.TxDescription);
-            } else
-            {
-                holder.mTxDescription.setVisibility(View.GONE);
-            }
-            holder.mSubCategoryName.setText("Category: " + rec.SubCategoryName);
-    
-            if (rec.Comments.length() > 0)
-            {
-                holder.mComments.setVisibility(View.VISIBLE);
-                holder.mComments.setText("Comments: " + rec.Comments);
-            } else
-            {
-                holder.mComments.setVisibility(View.GONE);
-            }
-            holder.mBudget.setText(dateUtils().BudgetAsString(rec.BudgetYear, rec.BudgetMonth));
-            if (rec.TxAmount < 0.00)
-            {
-                holder.mTxAmount.setText("Amount -£" + String.format("%.2f", rec.TxAmount * -1));
-            } else
-            {
-                holder.mTxAmount.setText("Amount £" + String.format("%.2f", rec.TxAmount));
-            }
-            if (rec.HideBalance)
-            {
-                holder.mTxBalance.setVisibility(View.INVISIBLE);
-            } else
-            {
-                holder.mTxBalance.setVisibility(View.VISIBLE);
-                if (rec.TxBalance < 0.00)
-                {
-                    holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1));
-                } else
-                {
-                    holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance));
+                ViewHolder1 vh1 = (ViewHolder1)holder;
+                vh1.mTxSeqNo.setText(rec.TxSeqNo.toString());
+                vh1.mTxAdded.setText(rec.TxAdded.toString());
+                vh1.mTxFilename.setText(rec.TxFilename);
+                vh1.mTxLineNo.setText(rec.TxLineNo.toString());
+                vh1.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rec.TxDate));
+                vh1.mTxType.setText(rec.TxType);
+                vh1.mBankAccount.setText(rec.TxSortCode + " " + rec.TxAccountNumber);
+                if (rec.TxDescription.length() > 0) {
+                    vh1.mTxDescription.setVisibility(View.VISIBLE);
+                    vh1.mTxDescription.setText("Description: " + rec.TxDescription);
+                } else {
+                    vh1.mTxDescription.setVisibility(View.GONE);
                 }
-            }
-            holder.mFull.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    if (mOnItemClickListener != null)
-                    {
-                        mOnItemClickListener.onItemClick(view, rec);
+                vh1.mSubCategoryName.setText("Category: " + rec.SubCategoryName);
+
+                if (rec.Comments.length() > 0) {
+                    vh1.mComments.setVisibility(View.VISIBLE);
+                    vh1.mComments.setText("Comments: " + rec.Comments);
+                } else {
+                    vh1.mComments.setVisibility(View.GONE);
+                }
+                vh1.mBudget.setText(dateUtils().BudgetAsString(rec.BudgetYear, rec.BudgetMonth));
+                if (rec.TxAmount < 0.00) {
+                    vh1.mTxAmount.setText("Amount -£" + String.format("%.2f", rec.TxAmount * -1));
+                } else {
+                    vh1.mTxAmount.setText("Amount £" + String.format("%.2f", rec.TxAmount));
+                }
+                if (rec.HideBalance) {
+                    vh1.mTxBalance.setVisibility(View.INVISIBLE);
+                } else {
+                    vh1.mTxBalance.setVisibility(View.VISIBLE);
+                    if (rec.TxBalance < 0.00) {
+                        vh1.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1));
+                    } else {
+                        vh1.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance));
                     }
                 }
-            });
-            int lColor = MainActivity.context.getResources().getColor(R.color.textNormal);
-            if (rec.TxType.compareTo("Planned") == 0)
-                lColor = MainActivity.context.getResources().getColor(R.color.textLowLight);
-    
-            holder.mTxSeqNo.setTextColor(lColor);
-            holder.mTxAdded.setTextColor(lColor);
-            holder.mTxFilename.setTextColor(lColor);
-            holder.mTxLineNo.setTextColor(lColor);
-            holder.mTxDate.setTextColor(lColor);
-            holder.mTxType.setTextColor(lColor);
-            holder.mBankAccount.setTextColor(lColor);
-            holder.mTxDescription.setTextColor(lColor);
-            holder.mTxAmount.setTextColor(lColor);
-            holder.mTxBalance.setTextColor(lColor);
-            holder.mSubCategoryName.setTextColor(lColor);
-            holder.mComments.setTextColor(lColor);
-            holder.mBudget.setTextColor(lColor);
-            
-            if(rec.BalanceCorrect==false)
-            {
-              //holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
-              //holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
-              if(holder.mTxBalance.getVisibility() == View.VISIBLE)
-              {
-                  if (rec.TxBalance < 0.00)
-                  {
+                vh1.mFull.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (mOnItemClickListener != null) {
+                            mOnItemClickListener.onItemClick(view, rec);
+                        }
+                    }
+                });
+                int lColor = MainActivity.context.getResources().getColor(R.color.textNormal);
+                if (rec.TxType.compareTo("Planned") == 0)
+                    lColor = MainActivity.context.getResources().getColor(R.color.textLowLight);
+
+                vh1.mTxSeqNo.setTextColor(lColor);
+                vh1.mTxAdded.setTextColor(lColor);
+                vh1.mTxFilename.setTextColor(lColor);
+                vh1.mTxLineNo.setTextColor(lColor);
+                vh1.mTxDate.setTextColor(lColor);
+                vh1.mTxType.setTextColor(lColor);
+                vh1.mBankAccount.setTextColor(lColor);
+                vh1.mTxDescription.setTextColor(lColor);
+                vh1.mTxAmount.setTextColor(lColor);
+                vh1.mTxBalance.setTextColor(lColor);
+                vh1.mSubCategoryName.setTextColor(lColor);
+                vh1.mComments.setTextColor(lColor);
+                vh1.mBudget.setTextColor(lColor);
+
+                if (rec.BalanceCorrect == false) {
+                    //holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+                    //holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+                    if (vh1.mTxBalance.getVisibility() == View.VISIBLE) {
+                        if (rec.TxBalance < 0.00) {
 //                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1) + " -> " +
 //                        ", -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
-                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1));
-                  } else
-                  {
+                            vh1.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1));
+                        } else {
 //                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance) + " -> " +
 //                        "£" + String.format("%.2f", rec.TxBalanceShouldBe));
-                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance));
-                  }
-              }
+                            vh1.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance));
+                        }
+                    }
+                }
+            }
+            if(holder.getItemViewType()==2)
+            {
+                ViewHolder2 vh2 = (ViewHolder2)holder;
+
+                vh2.mTxDescription.setText(rec.TxDescription);
             }
         }
         catch (Exception e) {
@@ -207,6 +225,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        // Just as an example, return 0 or 2 depending on position
+        // Note that unlike in ListView adapters, types don't have to be contiguous
+        if(mDataset.get(position).TxSeqNo!=0)
+        {
+            return(1);
+        }
+        return(2);
+    }
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount()
