@@ -403,8 +403,52 @@ class TableTransaction extends TableBase
     Float getBalanceAtStartOf(String sortCode, String accountNum,
                               Integer pBudgetMonth, Integer pBudgetYear)
     {
-        Date lDate = DateUtils.dateUtils().BudgetStart(pBudgetMonth, pBudgetYear);
-        return(getBalanceAt(sortCode, accountNum, lDate));
+        RecordAccount ra=MyDatabase.MyDB().getAccountItemByAccountNumber(sortCode, accountNum);
+        float lBalance = ra.AcStartingBalance;
+        try
+        {
+            MyLog.WriteLogMessage("getBalanceAt: ");
+
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                try
+                {
+                    String lSql = "SELECT SUM(TxAmount) FROM tblTransaction " +
+                            "WHERE TxSortCode = '" + sortCode + "' " +
+                            "AND TxAccountNumber = '" + accountNum + "' " +
+                            "AND " +
+                            " ( " +
+                            "   ( BudgetYear < " + pBudgetYear + ") OR " +
+                            "   ( BudgetYear = " + pBudgetYear + " AND BudgetMonth < " + pBudgetMonth + ") " +
+                            " ) ";
+                    Cursor cursor = db.rawQuery(lSql, null);
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            if(cursor.getCount() > 0)
+                            {
+                                cursor.moveToFirst();
+                                lBalance = lBalance + cursor.getFloat(0);
+                            }
+                        }
+                        finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                }
+                finally
+                {
+                    db.close();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in getBalanceAtStartOf", e.getMessage());
+        }
+        return (lBalance);
     }
 
     Float getBalanceAt(String sortCode, String accountNum,
@@ -416,7 +460,7 @@ class TableTransaction extends TableBase
         //float lBalance=324.27f + 27.86f;
         try
         {
-            MyLog.WriteLogMessage("getBalanceAtStartOf: ");
+            MyLog.WriteLogMessage("getBalanceAt: ");
 
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
@@ -425,8 +469,7 @@ class TableTransaction extends TableBase
                     String lSql = "SELECT SUM(TxAmount) FROM tblTransaction " +
                             "WHERE TxSortCode = '" + sortCode + "' " +
                             "AND TxAccountNumber = '" + accountNum + "' " +
-                            "AND TxDate < " + pDate.getTime() + " " +
-                            "ORDER BY TxDate, TxLineNo";
+                            "AND TxDate < " + pDate.getTime() + " ";
                     Cursor cursor = db.rawQuery(lSql, null);
                     if (cursor != null)
                     {
@@ -573,8 +616,15 @@ class TableTransaction extends TableBase
 
                             if(list.size()>0)
                             {
-                                Date lFirstDate = list.get(list.size()-1).TxDate;
-                                lStartBalance = getBalanceAt(sortCode, accountNum, lFirstDate);
+                                if(includeThisBudgetOnly)
+                                {
+                                    lStartBalance = getBalanceAtStartOf(sortCode, accountNum, budgetMonth, budgetYear);
+                                }
+                                else
+                                {
+                                    Date lFirstDate = list.get(list.size() - 1).TxDate;
+                                    lStartBalance = getBalanceAt(sortCode, accountNum, lFirstDate);
+                                }
                                 lCurrBalance=lStartBalance;
                                 for (int i = list.size() - 1; i >= 0; i--) {
                                     RecordTransaction rt = list.get(i);
