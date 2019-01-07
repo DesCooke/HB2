@@ -135,4 +135,5 @@
     <string name="title_activity_account_item">activityAccountItem</string>
     <string name="accountDescription">Description</string>
     <string name="accountStartingBalance">Starting Balance</string>
+    <string name="title_activity_planned_tx">activityPlannedTx</string>
 </resources>
