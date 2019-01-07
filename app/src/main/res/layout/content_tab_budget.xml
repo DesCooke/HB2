@@ -13,71 +13,54 @@
         android:layout_height="wrap_content">
 
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/captionBudget"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/imgRight"
-            app:layout_constraintStart_toEndOf="@+id/imgLeft"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageButton
             android:id="@+id/imgLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
+            android:contentDescription="@string/cdNone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView9"
-            app:srcCompat="@android:drawable/ic_media_rew"
-            android:contentDescription="@string/cdNone"/>
-
-        <TextView
-            android:id="@+id/txtBudgetTitle"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="5"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/captionBudgetTitle"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/imgRight"
-            app:layout_constraintStart_toEndOf="@+id/imgLeft"
-            app:layout_constraintTop_toBottomOf="@+id/textView9" />
-
-        <TextView
-            android:id="@+id/txtBudgetSubTitle"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="5"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/captionBudgetSubTitle"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/imgRight"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/imgLeft"
-            app:layout_constraintTop_toBottomOf="@+id/txtBudgetTitle"
-            tools:ignore="SmallSp" />
+            app:srcCompat="@android:drawable/ic_media_rew" />
 
         <ImageButton
             android:id="@+id/imgRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
+            android:contentDescription="@string/cdNone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView9"
-            app:srcCompat="@android:drawable/ic_media_ff"
-            android:contentDescription="@string/cdNone"/>
+            app:srcCompat="@android:drawable/ic_media_ff" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="69dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/captionBudget"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/imgRight"
+            app:layout_constraintStart_toEndOf="@+id/imgLeft"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtBudgetTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/captionBudgetTitle"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imgRight"
+            app:layout_constraintStart_toEndOf="@+id/imgLeft"
+            app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     </android.support.constraint.ConstraintLayout>
 

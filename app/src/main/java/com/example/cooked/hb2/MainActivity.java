@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity
     private TextView txtBudgetTitle;
     private TextView txtBankAccountTitle;
     private TextView txtCashAccountTitle;
-    private TextView txtBudgetSubTitle;
 
 
     private Integer mCurrentBudgetYear;
@@ -295,10 +294,7 @@ public class MainActivity extends AppCompatActivity
 
                 
             }
-            String lText = String.format(Locale.ENGLISH, "£%.2f / £%.2f / £%.2f", lTotal, lSpent,
-                lOutstanding);
-            txtBudgetSubTitle.setText(lText);
-            
+
             lblMonthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCIncome));
             lblMonthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCExpense));
             lblMonthlyTotal.setText(String.format(Locale.ENGLISH, "£%.2f", abs(l_BCIncome-l_BCExpense)));
@@ -343,14 +339,15 @@ public class MainActivity extends AppCompatActivity
 
             ArrayList<RecordTransaction> lData = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", false, mCurrentBABudgetMonth, mCurrentBABudgetYear, swIncludeThisBudgetOnly.isChecked());
             tvStartingBalance.setText("£0.00");
+            Float lStartBalance=0.00f;
             if(lData.size()>0)
             {
-                Float lStartBalance=Float.parseFloat(lData.get(lData.size()-1).TxDescription);
+                lStartBalance=Float.parseFloat(lData.get(lData.size()-1).TxDescription);
                 tvStartingBalance.setText(String.format(Locale.ENGLISH, "£%.2f", lStartBalance));
             }
 
             lblBudgetTotal.setText(String.format(Locale.ENGLISH, "£%.2f",
-                (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense)));
+                lStartBalance + (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense)));
             
             //get reference of the ExpandableListView
             budgetListView = findViewById(R.id.budgetList);
@@ -456,7 +453,6 @@ public class MainActivity extends AppCompatActivity
         txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
         txtBankAccountTitle = findViewById(R.id.txtBankAccountTitle);
         txtCashAccountTitle = findViewById(R.id.txtCashAccountTitle);
-        txtBudgetSubTitle = findViewById(R.id.txtBudgetSubTitle);
         txtNotes = findViewById(R.id.txtNotes);
 
         ImageButton imgLeft = findViewById(R.id.imgLeft);

@@ -702,7 +702,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.total = rb2.Amount;
                         if(rb2.AutoMatchTransaction)
-                            if(rbi.spent < -0.0001 || rbi.spent > -0.0001)
+                            if(rbi.spent < -0.0001 || rbi.spent > 0.0001)
                                 rbi.total = rbi.spent;
 
                         if(!rbi.groupedBudget &&
