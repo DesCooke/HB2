@@ -69,6 +69,10 @@
         <activity
             android:name=".activityAccountItem"
             android:label="@string/title_activity_account_item"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activityPlannedTx"
+            android:label="@string/title_activity_planned_tx"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
