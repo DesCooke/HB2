@@ -51,7 +51,6 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.ViewHolder
         {
             super(v);
 
-            mTxSeqNo =  v.findViewById(R.id.celltx_TxSeqNo);
             mTxDate = v.findViewById(R.id.celltx_TxDate);
             mTxDescription = v.findViewById(R.id.celltx_TxDescription);
             mTxAmount = v.findViewById(R.id.celltx_TxAmount);
@@ -93,7 +92,6 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.ViewHolder
         {
     
     
-            holder.mTxSeqNo.setText(rec.TxSeqNo.toString());
             holder.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rec.TxDate));
             if (rec.TxDescription.length() > 0)
             {
@@ -133,7 +131,6 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.ViewHolder
             });
             int lColor = MainActivity.context.getResources().getColor(R.color.textNormal);
     
-            holder.mTxSeqNo.setTextColor(lColor);
             holder.mTxDate.setTextColor(lColor);
             holder.mTxDescription.setTextColor(lColor);
             holder.mTxAmount.setTextColor(lColor);
