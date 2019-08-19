@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,13 +27,16 @@ import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.Adapters.ViewPagerMainAdapter;
 import com.example.cooked.hb2.Budget.BudgetAdapter;
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Database.MyDatabase;
+import com.example.cooked.hb2.Database.RecordAccount;
 import com.example.cooked.hb2.Database.RecordButton;
 import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.Fragments.FragmentTabsStore;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
@@ -52,7 +57,11 @@ public class MainActivity extends AppCompatActivity
 {
     @SuppressLint("StaticFieldLeak")
     public static Context context;
-    
+
+    private ViewPager view_pager;
+    private TabLayout tab_layout;
+    private TabHost _host;
+
     private final String KEY_RECYCLER_STATE_BUTTON = "recycler_state_button";
     private final String KEY_RECYCLER_STATE_CURRENT = "recycler_state_current";
     private final String KEY_RECYCLER_STATE_GENERAL = "recycler_state_general";
@@ -123,7 +132,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        
+
         setupStatics(this);
         
         if (!MyPermission.checkIfAlreadyHavePermission(this))
@@ -134,7 +143,8 @@ public class MainActivity extends AppCompatActivity
             
             if (MyDownloads.MyDL().CollectFiles() == FALSE)
                 return;
-            
+
+
             setupActivity();
             
             mCurrentBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
@@ -158,7 +168,8 @@ public class MainActivity extends AppCompatActivity
             ErrorDialog.Show("Error in MainActivity::onCreate", e.getMessage());
         }
     }
-    
+
+
     private void IncreaseBudgetPeriod(View view)
     {
         mCurrentBudgetMonth++;
@@ -449,7 +460,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        
+        _host = findViewById(R.id.mainTabHost);
+
         txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
         txtBankAccountTitle = findViewById(R.id.txtBankAccountTitle);
         txtCashAccountTitle = findViewById(R.id.txtCashAccountTitle);
@@ -553,45 +565,44 @@ public class MainActivity extends AppCompatActivity
     
     private void setupTabs()
     {
-        TabHost host = findViewById(R.id.mainTabHost);
-        host.setup();
+        _host.setup();
         
-        TabHost.TabSpec spec = host.newTabSpec("Dashboard");
+        TabHost.TabSpec spec = _host.newTabSpec("Dashboard");
         spec.setContent(R.id.tabDasboard);
         spec.setIndicator("Dashboard");
-        host.addTab(spec);
+        _host.addTab(spec);
         
-        spec = host.newTabSpec("Current");
+        spec = _host.newTabSpec("Current");
         spec.setContent(R.id.tabCurrentAccount);
         spec.setIndicator("Current");
-        host.addTab(spec);
+        _host.addTab(spec);
         
-        spec = host.newTabSpec("Cash");
+        spec = _host.newTabSpec("Cash");
         spec.setContent(R.id.tabCashAccount);
         spec.setIndicator("Cash");
-        host.addTab(spec);
+        _host.addTab(spec);
         
-        spec = host.newTabSpec("Budget");
+        spec = _host.newTabSpec("Budget");
         spec.setContent(R.id.tabBudget);
         spec.setIndicator("Budget");
-        host.addTab(spec);
+        _host.addTab(spec);
         
-        spec = host.newTabSpec("General");
+        spec = _host.newTabSpec("General");
         spec.setContent(R.id.tabGeneralSavings);
         spec.setIndicator("General");
-        host.addTab(spec);
+        _host.addTab(spec);
         
-        spec = host.newTabSpec("Long Term");
+        spec = _host.newTabSpec("Long Term");
         spec.setContent(R.id.tabLongTermSavings);
         spec.setIndicator("Long Term");
-        host.addTab(spec);
+        _host.addTab(spec);
         
-        spec = host.newTabSpec("Family");
+        spec = _host.newTabSpec("Family");
         spec.setContent(R.id.tabFamilySavings);
         spec.setIndicator("Family");
-        host.addTab(spec);
-        
-        host.setOnTabChangedListener(new TabHost.OnTabChangeListener()
+        _host.addTab(spec);
+
+        _host.setOnTabChangedListener(new TabHost.OnTabChangeListener()
         {
             @Override
             public void onTabChanged(String tabId)
@@ -605,6 +616,24 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+
+
+        ArrayList<RecordAccount> list = MyDatabase.MyDB().getAccountList();
+
+        view_pager = findViewById(R.id.viewpager_main);
+        ViewPagerMainAdapter adapter =
+                new ViewPagerMainAdapter(getSupportFragmentManager());
+        adapter.addFragment(FragmentTabsStore.newInstance(), "Dashboard");
+        for(int i=0;i<list.size();i++)
+        {
+            adapter.addFragment(FragmentTabsStore.newInstance(), list.get(i).AcDescription);
+        }
+        view_pager.setAdapter(adapter);
+
+        tab_layout = findViewById(R.id.tab_main);
+        tab_layout.setupWithViewPager(view_pager);
+
     }
     
     @Override
@@ -667,8 +696,14 @@ public class MainActivity extends AppCompatActivity
             int id = item.getItemId();
             
             //noinspection SimplifiableIfStatement
-            if (id == R.id.action_settings)
+            if (id == R.id.toggle_views)
             {
+                int lNewControls=mTransactionListButton.getVisibility();
+                int lOldControls=view_pager.getVisibility();
+                view_pager.setVisibility(lNewControls);
+                tab_layout.setVisibility(lNewControls);
+                _host.setVisibility(lOldControls);
+                mTransactionListButton.setVisibility(lOldControls);
                 return true;
             }
         }
@@ -800,14 +835,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(View view, RecordButton obj)
             {
-                TabHost host = findViewById(R.id.mainTabHost);
-                host.setCurrentTab(obj.buttonId);
-                for (int i = 0; i < mDatasetButton.size(); i++)
-                    mDatasetButton.get(i).selected = false;
-                obj.selected = true;
+                if(_host.getVisibility()== View.VISIBLE)
+                {
+                    _host.setCurrentTab(obj.buttonId);
+                    for (int i = 0; i < mDatasetButton.size(); i++)
+                        mDatasetButton.get(i).selected = false;
+                    obj.selected = true;
 
-                mTransactionAdapterButton.notifyDataSetChanged();
-                
+                    mTransactionAdapterButton.notifyDataSetChanged();
+                }
             }
         });
         

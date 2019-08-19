@@ -9,4 +9,5 @@
     <color name="textNormal">#000000</color>
     <color name="textError">#ff0000</color>
     <color name="balance">#bae8f7</color>
+    <color name="grey_10">#e6e6e6</color>
 </resources>

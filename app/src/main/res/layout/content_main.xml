@@ -9,6 +9,13 @@
     tools:context="com.example.cooked.hb2.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/buttonList"
         android:layout_width="match_parent"
