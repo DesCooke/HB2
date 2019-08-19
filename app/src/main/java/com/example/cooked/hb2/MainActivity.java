@@ -462,6 +462,9 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         _host = findViewById(R.id.mainTabHost);
 
+
+
+
         txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
         txtBankAccountTitle = findViewById(R.id.txtBankAccountTitle);
         txtCashAccountTitle = findViewById(R.id.txtCashAccountTitle);
@@ -634,6 +637,8 @@ public class MainActivity extends AppCompatActivity
         tab_layout = findViewById(R.id.tab_main);
         tab_layout.setupWithViewPager(view_pager);
 
+        view_pager.setVisibility(View.GONE);
+        tab_layout.setVisibility(View.GONE);
     }
     
     @Override
