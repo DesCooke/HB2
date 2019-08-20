@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
+import com.example.cooked.hb2.Budget.RecordBudgetMonth;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
+import static java.lang.Math.abs;
 
 // derived from SQLiteOpenHelper because it give lots of features like - upgrade/downgrade
 // automatically handles the creation and recreation of the database
@@ -827,6 +829,75 @@ public class MyDatabase extends SQLiteOpenHelper
         }
 
     }
+
+    public RecordBudgetMonth getBudgetMonth(Integer pMonth, Integer pYear, boolean pIncludeThisBudgetOnly)
+    {
+        RecordBudgetMonth rbm = new RecordBudgetMonth();
+
+        rbm.budgetGroups = getBudget(pMonth, pYear);
+
+        Float lTotal = 0.00f;
+        Float lSpent = 0.00f;
+        Float lOutstanding = 0.00f;
+
+        Float l_BCIncome = 0.00f;
+        Float l_BCExpense = 0.00f;
+        Float l_BCEIncome = 0.00f;
+        Float l_BCEExpense = 0.00f;
+        for (int i = 0; i < rbm.budgetGroups.size(); i++)
+        {
+            RecordBudgetGroup rbg = rbm.budgetGroups.get(i);
+
+            if (rbg.budgetGroupName.compareTo(MainActivity.context.getString(R.string.budget_header_monthly_income)) == 0)
+            {
+                l_BCIncome = rbg.total;
+            }
+            if (rbg.budgetGroupName.compareTo(MainActivity.context.getString(R.string.budget_header_monthly_expenses)) == 0)
+            {
+                lTotal += (rbg.total*-1);
+                lSpent += (rbg.spent*-1);
+                lOutstanding += (rbg.outstanding*-1);
+                l_BCExpense = rbg.total * -1;
+            }
+            if (rbg.budgetGroupName.compareTo(MainActivity.context.getString(R.string.budget_header_extra_income)) == 0)
+            {
+                l_BCEIncome = rbg.total;
+            }
+            if (rbg.budgetGroupName.compareTo(MainActivity.context.getString(R.string.budget_header_extra_expenses)) == 0)
+            {
+                lTotal += (rbg.total*-1);
+                lSpent += (rbg.spent*-1);
+                lOutstanding += (rbg.outstanding*-1);
+                l_BCEExpense = rbg.total * -1;
+            }
+
+
+        }
+
+        rbm.monthlyIncome = l_BCIncome;
+        rbm.monthlyExpense = l_BCExpense;
+        rbm.amountLeft = l_BCIncome-l_BCExpense;
+
+        rbm.extraIncome = l_BCEIncome;
+        rbm.extraExpense = l_BCEExpense;
+        rbm.extraLeft = l_BCEIncome - l_BCEExpense;
+
+        ArrayList<RecordTransaction> lData =
+                getTransactionList("11-03-95", "00038840", false,
+                        pMonth, pYear, pIncludeThisBudgetOnly);
+
+        Float lStartBalance=0.00f;
+        if(lData.size()>0)
+            lStartBalance=Float.parseFloat(lData.get(lData.size()-1).TxDescription);
+        rbm.startingBalance = lStartBalance;
+
+        rbm.finalBudgetBalanceThisMonth =
+                rbm.startingBalance +
+                        (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense);
+
+        return(rbm);
+    }
+
     public ArrayList<RecordBudgetGroup> getBudget(Integer pMonth, Integer pYear)
     {
         try

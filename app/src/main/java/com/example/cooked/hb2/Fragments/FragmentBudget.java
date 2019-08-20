@@ -8,19 +8,19 @@ import android.view.ViewGroup;
 
 import com.example.cooked.hb2.R;
 
-public class FragmentTabsStore extends Fragment {
+public class FragmentBudget extends Fragment {
 
-    public FragmentTabsStore() {
+    public FragmentBudget() {
     }
 
-    public static FragmentTabsStore newInstance() {
-        FragmentTabsStore fragment = new FragmentTabsStore();
+    public static FragmentBudget newInstance() {
+        FragmentBudget fragment = new FragmentBudget();
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_tabs_store, container, false);
+        View root = inflater.inflate(R.layout.fragment_budget, container, false);
 
         return root;
     }

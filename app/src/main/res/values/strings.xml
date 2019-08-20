@@ -90,7 +90,6 @@
     <string name="extra">Extra</string>
     <string name="income">Income</string>
     <string name="expense">Expense</string>
-    <string name="dashboard">Dashboard</string>
     <string name="general_savings">General Savings</string>
     <string name="long_term_savings">Long Term Savings</string>
     <string name="family_savings">Family Savings</string>
@@ -137,4 +136,8 @@
     <string name="accountStartingBalance">Starting Balance</string>
     <string name="title_activity_planned_tx">activityPlannedTx</string>
     <string name="mauris_sagittis_non_elit">Mauris sagittis non elit</string>
+    <string name="budget">Budget</string>
+    <string name="account">Account</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="starting_balance">Starting Balance</string>
 </resources>

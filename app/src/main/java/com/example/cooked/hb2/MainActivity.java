@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -31,12 +32,15 @@ import com.example.cooked.hb2.Adapters.ViewPagerMainAdapter;
 import com.example.cooked.hb2.Budget.BudgetAdapter;
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
+import com.example.cooked.hb2.Budget.RecordBudgetMonth;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordAccount;
 import com.example.cooked.hb2.Database.RecordButton;
 import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.Database.RecordTransaction;
-import com.example.cooked.hb2.Fragments.FragmentTabsStore;
+import com.example.cooked.hb2.Fragments.FragmentAccount;
+import com.example.cooked.hb2.Fragments.FragmentBudget;
+import com.example.cooked.hb2.Fragments.FragmentDashboard;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager view_pager;
     private TabLayout tab_layout;
     private TabHost _host;
+    private boolean _newMode;
 
     private final String KEY_RECYCLER_STATE_BUTTON = "recycler_state_button";
     private final String KEY_RECYCLER_STATE_CURRENT = "recycler_state_current";
@@ -68,7 +73,8 @@ public class MainActivity extends AppCompatActivity
     private final String KEY_RECYCLER_STATE_LONGTERM = "recycler_state_longterm";
     private final String KEY_RECYCLER_STATE_FAMILY = "recycler_state_family";
     private final String KEY_RECYCLER_STATE_CASH = "recycler_state_cash";
-    
+
+    private FragmentDashboard _fragmentDashboard;
     private RecyclerView mTransactionListButton;
     private RecyclerView mTransactionListCommonButton;
     private RecyclerView mTransactionListCurrent;
@@ -82,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<RecordBudgetGroup> mDatasetBudget;
     private ArrayList<RecordButton> mDatasetButton;
     private ArrayList<RecordButton> mDatasetCommonButton;
+    private RecordBudgetMonth mDatasetBudgetMonth;
 
     public TextView txtNotes;
     private Bundle mButtonViewState;
@@ -132,7 +139,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
+        _newMode=false;
         setupStatics(this);
         
         if (!MyPermission.checkIfAlreadyHavePermission(this))
@@ -161,7 +168,8 @@ public class MainActivity extends AppCompatActivity
             setupNavigationSideBar();
             
             setupRecyclerViews();
-            
+
+            checkMode();
         }
         catch (Exception e)
         {
@@ -169,7 +177,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void checkMode()
+    {
+        if(_newMode)
+        {
+            _host.setVisibility(View.GONE);
+            mTransactionListButton.setVisibility(View.GONE);
 
+            view_pager.getLayoutParams().height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
+            view_pager.requestLayout();
+            view_pager.setVisibility(View.VISIBLE);
+            tab_layout.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            view_pager.setVisibility(View.GONE);
+            tab_layout.setVisibility(View.GONE);
+
+            _host.setVisibility(View.VISIBLE);
+            mTransactionListButton.setVisibility(View.VISIBLE);
+        }
+    }
     private void IncreaseBudgetPeriod(View view)
     {
         mCurrentBudgetMonth++;
@@ -265,57 +293,22 @@ public class MainActivity extends AppCompatActivity
                     mCurrentCABudgetYear.toString();
             txtCashAccountTitle.setText(lTitle);
 
-            mDatasetBudget = MyDatabase.MyDB().getBudget(mCurrentBudgetMonth, mCurrentBudgetYear);
+            mDatasetBudgetMonth = MyDatabase.MyDB().getBudgetMonth(mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
 
-            Float lTotal = 0.00f;
-            Float lSpent = 0.00f;
-            Float lOutstanding = 0.00f;
-            
-            Float l_BCIncome = 0.00f;
-            Float l_BCExpense = 0.00f;
-            Float l_BCEIncome = 0.00f;
-            Float l_BCEExpense = 0.00f;
-            for (int i = 0; i < mDatasetBudget.size(); i++)
-            {
-                RecordBudgetGroup rbg = mDatasetBudget.get(i);
-                rbg.lMainActivity=this;
+            mDatasetBudget = mDatasetBudgetMonth.budgetGroups;
 
-                if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_monthly_income)) == 0)
-                {
-                    l_BCIncome = rbg.total;
-                }
-                if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_monthly_expenses)) == 0)
-                {
-                    lTotal += (rbg.total*-1);
-                    lSpent += (rbg.spent*-1);
-                    lOutstanding += (rbg.outstanding*-1);
-                    l_BCExpense = rbg.total * -1;
-                }
-                if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_extra_income)) == 0)
-                {
-                    l_BCEIncome = rbg.total;
-                }
-                if (rbg.budgetGroupName.compareTo(getString(R.string.budget_header_extra_expenses)) == 0)
-                {
-                    lTotal += (rbg.total*-1);
-                    lSpent += (rbg.spent*-1);
-                    lOutstanding += (rbg.outstanding*-1);
-                    l_BCEExpense = rbg.total * -1;
-                }
+            _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
 
-                
-            }
-
-            lblMonthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCIncome));
-            lblMonthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCExpense));
-            lblMonthlyTotal.setText(String.format(Locale.ENGLISH, "£%.2f", abs(l_BCIncome-l_BCExpense)));
-            if( (l_BCIncome-l_BCExpense) > 0.00f)
+            lblMonthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.monthlyIncome));
+            lblMonthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.monthlyExpense));
+            lblMonthlyTotal.setText(String.format(Locale.ENGLISH, "£%.2f", abs(mDatasetBudgetMonth.amountLeft)));
+            if( (mDatasetBudgetMonth.amountLeft) > 0.00f)
             {
                 tvMonthlyLeftOverLabel.setText("Monthly Underspend by...");
             }
             else
             {
-                if( (l_BCIncome-l_BCExpense) < 0.00f)
+                if( (mDatasetBudgetMonth.amountLeft) < 0.00f)
                 {
                     tvMonthlyLeftOverLabel.setText("Monthly Overspend by...");
                 }
@@ -327,16 +320,16 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             
-            lblExtraIncome.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCEIncome));
-            lblExtraExpense.setText(String.format(Locale.ENGLISH, "£%.2f", l_BCEExpense));
-            lblExtraTotal.setText(String.format(Locale.ENGLISH, "£%.2f", abs(l_BCEIncome - l_BCEExpense)));
-            if( (l_BCEIncome-l_BCEExpense) > 0.00f)
+            lblExtraIncome.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.extraIncome));
+            lblExtraExpense.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.extraExpense));
+            lblExtraTotal.setText(String.format(Locale.ENGLISH, "£%.2f", abs(mDatasetBudgetMonth.extraLeft)));
+            if( (mDatasetBudgetMonth.extraLeft) > 0.00f)
             {
                 tvExtraLeftOverLabel.setText("Extra Underspend by...");
             }
             else
             {
-                if( (l_BCEIncome-l_BCEExpense) < 0.00f)
+                if( (mDatasetBudgetMonth.extraLeft) < 0.00f)
                 {
                     tvExtraLeftOverLabel.setText("Extra Overspend by...");
                 }
@@ -348,17 +341,9 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-            ArrayList<RecordTransaction> lData = MyDatabase.MyDB().getTransactionList("11-03-95", "00038840", false, mCurrentBABudgetMonth, mCurrentBABudgetYear, swIncludeThisBudgetOnly.isChecked());
-            tvStartingBalance.setText("£0.00");
-            Float lStartBalance=0.00f;
-            if(lData.size()>0)
-            {
-                lStartBalance=Float.parseFloat(lData.get(lData.size()-1).TxDescription);
-                tvStartingBalance.setText(String.format(Locale.ENGLISH, "£%.2f", lStartBalance));
-            }
+            tvStartingBalance.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.startingBalance));
 
-            lblBudgetTotal.setText(String.format(Locale.ENGLISH, "£%.2f",
-                lStartBalance + (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense)));
+            lblBudgetTotal.setText(String.format(Locale.ENGLISH, "£%.2f",mDatasetBudgetMonth.finalBudgetBalanceThisMonth));
             
             //get reference of the ExpandableListView
             budgetListView = findViewById(R.id.budgetList);
@@ -627,10 +612,13 @@ public class MainActivity extends AppCompatActivity
         view_pager = findViewById(R.id.viewpager_main);
         ViewPagerMainAdapter adapter =
                 new ViewPagerMainAdapter(getSupportFragmentManager());
-        adapter.addFragment(FragmentTabsStore.newInstance(), "Dashboard");
+
+        _fragmentDashboard = FragmentDashboard.newInstance();
+        adapter.addFragment(_fragmentDashboard, "Dashboard");
+        adapter.addFragment(FragmentBudget.newInstance(), "Budget");
         for(int i=0;i<list.size();i++)
         {
-            adapter.addFragment(FragmentTabsStore.newInstance(), list.get(i).AcDescription);
+            adapter.addFragment(FragmentAccount.newInstance(), list.get(i).AcDescription);
         }
         view_pager.setAdapter(adapter);
 
@@ -703,12 +691,8 @@ public class MainActivity extends AppCompatActivity
             //noinspection SimplifiableIfStatement
             if (id == R.id.toggle_views)
             {
-                int lNewControls=mTransactionListButton.getVisibility();
-                int lOldControls=view_pager.getVisibility();
-                view_pager.setVisibility(lNewControls);
-                tab_layout.setVisibility(lNewControls);
-                _host.setVisibility(lOldControls);
-                mTransactionListButton.setVisibility(lOldControls);
+                _newMode = ! _newMode;
+                checkMode();
                 return true;
             }
         }

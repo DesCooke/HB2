@@ -18,7 +18,7 @@
             android:layout_height="80dp"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="@string/mauris_sagittis_non_elit"
+            android:text="@string/account"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#131111"
             android:textSize="36sp"
@@ -26,30 +26,6 @@
             android:visibility="visible"
             tools:visibility="visible" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@string/mauris_sagittis_non_elit"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#131111"
-            android:textSize="36sp"
-            android:typeface="normal"
-            android:visibility="visible"
-            tools:visibility="visible" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@string/mauris_sagittis_non_elit"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#131111"
-            android:textSize="36sp"
-            android:typeface="normal"
-            android:visibility="visible"
-            tools:visibility="visible" />
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>
