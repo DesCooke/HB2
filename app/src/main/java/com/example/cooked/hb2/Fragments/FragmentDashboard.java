@@ -26,6 +26,7 @@ public class FragmentDashboard extends Fragment {
     private TextView _extraLeft;
     private TextView _lblExtraLeft;
     private TextView _finalBudgetBalanceThisMonth;
+    private RecordBudgetMonth _rbm;
 
     public FragmentDashboard() {
     }
@@ -50,24 +51,29 @@ public class FragmentDashboard extends Fragment {
         _lblExtraLeft = root.findViewById(R.id.dbbs_lblExtraLeft);
         _finalBudgetBalanceThisMonth = root.findViewById(R.id.dbbs_FinalBudgetBalanceThisMonth);
 
+        populate();
         return root;
     }
 
     public void PopulateForm(RecordBudgetMonth rbm)
     {
-        if(_monthlyIncome==null)
+        _rbm = rbm;
+        if (_monthlyIncome == null)
             return;
-
-        _monthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", rbm.monthlyIncome));
-        _monthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", rbm.monthlyExpense));
-        _amountLeft.setText(String.format(Locale.ENGLISH, "£%.2f", abs(rbm.amountLeft)));
-        if( (rbm.amountLeft) > 0.00f)
+        populate();
+    }
+    private void populate()
+    {
+        _monthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.monthlyIncome));
+        _monthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.monthlyExpense));
+        _amountLeft.setText(String.format(Locale.ENGLISH, "£%.2f", abs(_rbm.amountLeft)));
+        if( (_rbm.amountLeft) > 0.00f)
         {
             _lblAmountLeft.setText("Monthly Underspend by...");
         }
         else
         {
-            if( (rbm.amountLeft) < 0.00f)
+            if( (_rbm.amountLeft) < 0.00f)
             {
                 _lblAmountLeft.setText("Monthly Overspend by...");
             }
@@ -79,16 +85,16 @@ public class FragmentDashboard extends Fragment {
             }
         }
 
-        _extraIncome.setText(String.format(Locale.ENGLISH, "£%.2f", rbm.extraIncome));
-        _extraExpense.setText(String.format(Locale.ENGLISH, "£%.2f", rbm.extraExpense));
-        _extraLeft.setText(String.format(Locale.ENGLISH, "£%.2f", abs(rbm.extraLeft)));
-        if( (rbm.extraLeft) > 0.00f)
+        _extraIncome.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.extraIncome));
+        _extraExpense.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.extraExpense));
+        _extraLeft.setText(String.format(Locale.ENGLISH, "£%.2f", abs(_rbm.extraLeft)));
+        if( (_rbm.extraLeft) > 0.00f)
         {
             _lblExtraLeft.setText("Extra Underspend by...");
         }
         else
         {
-            if( (rbm.extraLeft) < 0.00f)
+            if( (_rbm.extraLeft) < 0.00f)
             {
                 _lblExtraLeft.setText("Extra Overspend by...");
             }
@@ -100,9 +106,9 @@ public class FragmentDashboard extends Fragment {
             }
         }
 
-        _startingBalance.setText(String.format(Locale.ENGLISH, "£%.2f", rbm.startingBalance));
+        _startingBalance.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.startingBalance));
 
-        _finalBudgetBalanceThisMonth.setText(String.format(Locale.ENGLISH, "£%.2f",rbm.finalBudgetBalanceThisMonth));
+        _finalBudgetBalanceThisMonth.setText(String.format(Locale.ENGLISH, "£%.2f",_rbm.finalBudgetBalanceThisMonth));
 
     }
 }

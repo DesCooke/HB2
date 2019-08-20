@@ -693,6 +693,7 @@ public class MainActivity extends AppCompatActivity
             {
                 _newMode = ! _newMode;
                 checkMode();
+                _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
                 return true;
             }
         }
