@@ -37,10 +37,8 @@ public class FragmentDashboard extends Fragment {
         return fragment;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
-
+    private void initComponent(View root)
+    {
         _startingBalance = root.findViewById(R.id.dbbs_StartingBalance);
         _monthlyIncome = root.findViewById(R.id.dbbs_MonthlyIncome);
         _monthlyExpense = root.findViewById(R.id.dbbs_MonthlyExpense);
@@ -52,6 +50,14 @@ public class FragmentDashboard extends Fragment {
         _lblExtraLeft = root.findViewById(R.id.dbbs_lblExtraLeft);
         _finalBudgetBalanceThisMonth = root.findViewById(R.id.dbbs_FinalBudgetBalanceThisMonth);
         _notes = root.findViewById(R.id.dbbs_Notes);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        initComponent(root);
 
         populate();
         return root;

@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity
     private final String KEY_RECYCLER_STATE_CASH = "recycler_state_cash";
 
     private FragmentDashboard _fragmentDashboard;
+    private FragmentBudget _fragmentBudget;
     private RecyclerView mTransactionListButton;
     private RecyclerView mTransactionListCommonButton;
     private RecyclerView mTransactionListCurrent;
@@ -298,6 +299,7 @@ public class MainActivity extends AppCompatActivity
             mDatasetBudget = mDatasetBudgetMonth.budgetGroups;
 
             _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
+            _fragmentBudget.PopulateForm(mDatasetBudgetMonth);
 
             lblMonthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.monthlyIncome));
             lblMonthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.monthlyExpense));
@@ -615,7 +617,10 @@ public class MainActivity extends AppCompatActivity
 
         _fragmentDashboard = FragmentDashboard.newInstance();
         adapter.addFragment(_fragmentDashboard, "Dashboard");
-        adapter.addFragment(FragmentBudget.newInstance(), "Budget");
+
+        _fragmentBudget = FragmentBudget.newInstance();
+        adapter.addFragment(_fragmentBudget, "Budget");
+
         for(int i=0;i<list.size();i++)
         {
             adapter.addFragment(FragmentAccount.newInstance(), list.get(i).AcDescription);
@@ -694,6 +699,7 @@ public class MainActivity extends AppCompatActivity
                 _newMode = ! _newMode;
                 checkMode();
                 _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
+                _fragmentBudget.PopulateForm(mDatasetBudgetMonth);
                 return true;
             }
         }

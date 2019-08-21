@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.cooked.hb2.Adapters.BudgetListSectioned;
+import com.example.cooked.hb2.Budget.RecordBudgetListItem;
 import com.example.cooked.hb2.Budget.RecordBudgetMonth;
 import com.example.cooked.hb2.R;
 
@@ -19,20 +21,29 @@ public class FragmentBudget extends Fragment {
 
     private RecyclerView recyclerView;
     private BudgetListSectioned mAdapter;
+    private RecordBudgetMonth _rbm;
 
     public FragmentBudget() {
     }
 
-    public void populate(RecordBudgetMonth recordBudgetMonth) {
+    public void PopulateForm(RecordBudgetMonth recordBudgetMonth)
+    {
+        _rbm=recordBudgetMonth;
         //set data and list adapter
-        mAdapter = new BudgetListSectioned(this, recordBudgetMonth);
+        if (recyclerView == null)
+            return;
+        populate();
+    }
+    private void populate()
+    {
+        mAdapter = new BudgetListSectioned(getActivity(), _rbm);
         recyclerView.setAdapter(mAdapter);
 
         // on item list clicked
-        mAdapter.setOnItemClickListener(new AdapterListSectioned.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new BudgetListSectioned.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, People obj, int position) {
-                Snackbar.make(parent_view, "Item " + obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
+            public void onItemClick(View view, RecordBudgetListItem obj, int position) {
+                //Snackbar.make(parent_view, "Item " + obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
@@ -55,6 +66,8 @@ public class FragmentBudget extends Fragment {
         View root = inflater.inflate(R.layout.fragment_budget, container, false);
 
         initComponent(root);
+
+        populate();
 
         return root;
     }
