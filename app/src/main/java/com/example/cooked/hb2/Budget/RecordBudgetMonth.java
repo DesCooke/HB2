@@ -16,4 +16,5 @@ public class RecordBudgetMonth
     public Float extraLeft;
     public Float finalBudgetBalanceThisMonth;
     public ArrayList<RecordBudgetGroup> budgetGroups;
+    public String notes;
 }

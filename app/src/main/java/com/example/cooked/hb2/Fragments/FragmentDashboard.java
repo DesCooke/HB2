@@ -26,6 +26,7 @@ public class FragmentDashboard extends Fragment {
     private TextView _extraLeft;
     private TextView _lblExtraLeft;
     private TextView _finalBudgetBalanceThisMonth;
+    private TextView _notes;
     private RecordBudgetMonth _rbm;
 
     public FragmentDashboard() {
@@ -50,6 +51,7 @@ public class FragmentDashboard extends Fragment {
         _extraLeft = root.findViewById(R.id.dbbs_ExtraLeft);
         _lblExtraLeft = root.findViewById(R.id.dbbs_lblExtraLeft);
         _finalBudgetBalanceThisMonth = root.findViewById(R.id.dbbs_FinalBudgetBalanceThisMonth);
+        _notes = root.findViewById(R.id.dbbs_Notes);
 
         populate();
         return root;
@@ -110,5 +112,6 @@ public class FragmentDashboard extends Fragment {
 
         _finalBudgetBalanceThisMonth.setText(String.format(Locale.ENGLISH, "£%.2f",_rbm.finalBudgetBalanceThisMonth));
 
+        _notes.setText(_rbm.notes);
     }
 }

@@ -43,6 +43,7 @@ public class MyDatabase extends SQLiteOpenHelper
     private TablePlanned tablePlanned;
     private TableCommon tableCommon;
     private TableAccount tableAccount;
+    public String Notes;
     public TextView txtNotes;
     //endregion
 
@@ -96,6 +97,27 @@ public class MyDatabase extends SQLiteOpenHelper
         }
     }
 
+    private void addToNotes(String comment)
+    {
+        if(txtNotes!=null)
+        {
+            if (txtNotes.getText().length() == 0)
+            {
+                txtNotes.setText(comment);
+            } else
+            {
+                txtNotes.setText(txtNotes.getText() + "\n" + comment);
+            }
+        }
+
+        if (Notes.length() == 0)
+        {
+            Notes = comment;
+        } else
+        {
+            Notes = Notes + "\n" + comment;
+        }
+    }
     // called when the version number increases
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
@@ -711,17 +733,12 @@ public class MyDatabase extends SQLiteOpenHelper
                             (rbi.spent.floatValue() < 0.00f && rbi.total.floatValue() > rbi.spent.floatValue()) ||
                             (rbi.spent.floatValue() > 0.00f && rbi.total.floatValue() < rbi.spent.floatValue()) )
                         {
-                            if(txtNotes!=null)
-                            {
-                                String lLine=
+                            String lLine=
                                         "Gone over budget on " + rbi.budgetItemName + ", " +
                                         "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbi.total) +
                                         ", New " + String.format(Locale.ENGLISH, "£%.2f", rbi.spent);
-                                String lCurrText = txtNotes.getText().toString();
+                            addToNotes(lLine);
 
-                                if(!lCurrText.contains(lLine))
-                                  txtNotes.setText(txtNotes.getText() + "\n" + lLine);
-                            }
                             rbi.total = rbi.spent;
                         }
                         rbi.outstanding = rbi.total - rbi.spent;
@@ -798,17 +815,11 @@ public class MyDatabase extends SQLiteOpenHelper
                     if(     (rbg.spent < 0.00f && rbg.total > rbg.spent) ||
                             (rbg.spent > 0.00f && rbg.total < rbg.spent) )
                     {
-                        if(txtNotes!=null)
-                        {
-                            String lLine=
+                        String lLine=
                                     "Gone over budget on " + rbg.budgetGroupName + ", " +
                                             "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbg.total) +
                                             ", New " + String.format(Locale.ENGLISH, "£%.2f", rbg.spent);
-                            String lCurrText = txtNotes.getText().toString();
-
-                            if(!lCurrText.contains(lLine))
-                                txtNotes.setText(txtNotes.getText() + "\n" + lLine);
-                        }
+                        addToNotes(lLine);
                         rbg.total = rbg.spent;
                     }
                     rbg.outstanding = rbg.total - rbg.spent;
@@ -832,6 +843,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public RecordBudgetMonth getBudgetMonth(Integer pMonth, Integer pYear, boolean pIncludeThisBudgetOnly)
     {
+        Notes = "";
         RecordBudgetMonth rbm = new RecordBudgetMonth();
 
         rbm.budgetGroups = getBudget(pMonth, pYear);
@@ -895,6 +907,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 rbm.startingBalance +
                         (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense);
 
+        rbm.notes = Notes;
         return(rbm);
     }
 
