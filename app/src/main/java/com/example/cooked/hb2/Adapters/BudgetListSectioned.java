@@ -5,12 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Budget.RecordBudgetListItem;
 import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.GlobalUtils.Tools;
+import com.example.cooked.hb2.GlobalUtils.ViewAnimation;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
@@ -84,10 +87,12 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public static class BudgetClassViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
+        public ImageButton bt_expand;
 
         public BudgetClassViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.title);
+            bt_expand = (ImageButton) v.findViewById(R.id.bt_expand);
         }
     }
 
@@ -117,7 +122,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        RecordBudgetListItem rbli = _items.get(position);
+        final RecordBudgetListItem rbli = _items.get(position);
         if (holder instanceof BudgetItemViewHolder) {
             BudgetItemViewHolder view = (BudgetItemViewHolder) holder;
 
@@ -140,11 +145,29 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             else
             {
-                BudgetClassViewHolder view = (BudgetClassViewHolder) holder;
+                final BudgetClassViewHolder view = (BudgetClassViewHolder) holder;
                 view.title.setText(rbli.ItemName);
+                view.bt_expand.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean show = toggleLayoutExpand(!rbli.Expanded, v);
+                        _items.get(position).Expanded = show;
+                    }
+                });
             }
         }
     }
+
+    private boolean toggleLayoutExpand(boolean show, View view) {
+        Tools.toggleArrow(show, view);
+//        if (show) {
+//            ViewAnimation.expand(lyt_expand);
+//        } else {
+ //           ViewAnimation.collapse(lyt_expand);
+ //       }
+        return show;
+    }
+
 
     @Override
     public int getItemCount() {

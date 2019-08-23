@@ -30,6 +30,19 @@
             android:layout_width="@dimen/spacing_large"
             android:layout_height="0dp" />
 
+        <ImageButton
+            android:id="@+id/bt_expand"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/bt_expand"
+            android:tint="@color/grey_60"
+            app:srcCompat="@drawable/ic_expand_arrow" />
+
+        <View
+            android:layout_width="@dimen/spacing_large"
+            android:layout_height="0dp" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
