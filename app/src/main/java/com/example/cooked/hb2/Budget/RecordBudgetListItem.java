@@ -5,5 +5,4 @@ public class RecordBudgetListItem
     public int ItemType;
     public String ItemName;
     public Object Data;
-    public Boolean Expanded;
 }
