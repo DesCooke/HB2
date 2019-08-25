@@ -24,11 +24,20 @@
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text=""
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:gravity="center_vertical"
+            android:text="@string/captionOk"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/grey_60" />
+
+        <ImageButton
+            android:id="@+id/bt_expand"
+            android:layout_width="@dimen/cellButtonMedium"
+            android:layout_height="@dimen/cellButtonMedium"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/grey_40"
+            app:srcCompat="@drawable/ic_expand_arrow" />
 
         <View
             android:layout_width="@dimen/spacing_large"

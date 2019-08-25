@@ -5,12 +5,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Budget.RecordBudgetListItem;
 import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                 rbli.ItemType = BUDGET_CLASS;
             rbli.ItemName = rbg.budgetGroupName;
             rbli.Data = rbg;
+            rbli.Expanded = new Boolean(false);
             _items.add(rbli);
             for(int j=0;j<rbg.budgetItems.size();j++)
             {
@@ -57,6 +60,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                 rbli.ItemType = BUDGET_ITEM;
                 rbli.ItemName = rbi.budgetItemName;
                 rbli.Data = rbi;
+                rbli.Expanded = new Boolean(false);
                 _items.add(rbli);
             }
         }
@@ -75,19 +79,23 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public static class BudgetGroupViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
+        public ImageButton bt_expand;
 
         public BudgetGroupViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.title);
+            bt_expand = v.findViewById(R.id.bt_expand);
         }
     }
 
     public static class BudgetClassViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
+        public ImageButton bt_expand;
 
         public BudgetClassViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.title);
+            bt_expand = v.findViewById(R.id.bt_expand);
         }
     }
 
@@ -117,9 +125,9 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        RecordBudgetListItem rbli = _items.get(position);
+        final RecordBudgetListItem rbli = _items.get(position);
         if (holder instanceof BudgetItemViewHolder) {
-            BudgetItemViewHolder view = (BudgetItemViewHolder) holder;
+            final BudgetItemViewHolder view = (BudgetItemViewHolder) holder;
 
             view.title.setText(rbli.ItemName);
             view.titleParent.setOnClickListener(new View.OnClickListener() {
@@ -137,13 +145,47 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             {
                 BudgetGroupViewHolder view = (BudgetGroupViewHolder) holder;
                 view.title.setText(rbli.ItemName);
+                if(view.bt_expand!=null)
+                {
+                    view.bt_expand.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            boolean show = toggleLayoutExpand(!rbli.Expanded, v);
+                            _items.get(position).Expanded = show;
+                        }
+                    });
+                }
             }
             else
             {
                 BudgetClassViewHolder view = (BudgetClassViewHolder) holder;
                 view.title.setText(rbli.ItemName);
+                if(view.bt_expand!=null)
+                {
+                    view.bt_expand.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            boolean show = toggleLayoutExpand(!rbli.Expanded, v);
+                            _items.get(position).Expanded = show;
+                        }
+                    });
+                }
             }
         }
+    }
+
+    private boolean toggleLayoutExpand(boolean show, View view) {
+        Tools.toggleArrow(show, view);
+//        if (show) {
+//            ViewAnimation.expand(lyt_expand);
+//        } else {
+//            ViewAnimation.collapse(lyt_expand);
+//        }
+        return show;
     }
 
     @Override
