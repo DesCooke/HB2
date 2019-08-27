@@ -294,10 +294,9 @@ public class MainActivity extends AppCompatActivity
                     mCurrentCABudgetYear.toString();
             txtCashAccountTitle.setText(lTitle);
 
-            mDatasetBudgetMonth = MyDatabase.MyDB().getBudgetMonth(mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
+            mDatasetBudget = MyDatabase.MyDB().getBudgetMonth(mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
 
-            mDatasetBudget = mDatasetBudgetMonth.budgetGroups;
-
+            mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth(mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
             _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
             _fragmentBudget.PopulateForm(mDatasetBudgetMonth);
 

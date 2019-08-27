@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.Budget.RecordBudgetClass;
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Budget.RecordBudgetMonth;
@@ -841,13 +842,84 @@ public class MyDatabase extends SQLiteOpenHelper
 
     }
 
-    public RecordBudgetMonth getBudgetMonth(Integer pMonth, Integer pYear, boolean pIncludeThisBudgetOnly)
+
+    public ArrayList<RecordBudgetGroup> getBudgetMonth(Integer pMonth, Integer pYear, boolean pIncludeThisBudgetOnly)
     {
         Notes = "";
         RecordBudgetMonth rbm = new RecordBudgetMonth();
 
-        rbm.budgetGroups = getBudget(pMonth, pYear);
+        return (getBudget(pMonth, pYear));
+    }
 
+    public RecordBudgetMonth getDatasetBudgetMonth(Integer pMonth, Integer pYear, boolean pIncludeThisBudgetOnly)
+    {
+        Notes = "";
+        RecordBudgetMonth rbm = new RecordBudgetMonth();
+
+        try
+        {
+
+            RecordBudgetGroup mrbg;
+
+            ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
+            ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
+            ArrayList<RecordCategory> cl = tableCategory.getCategoryList();
+
+            for(int i=0;i<rbspent.size();i++)
+            {
+                for(int j=0; j<rb.size();j++)
+                {
+                    if(rbspent.get(i).SubCategoryId==rb.get(j).SubCategoryId)
+                    {
+                        rbspent.get(i).AutoMatchTransaction=rb.get(j).AutoMatchTransaction;
+                    }
+                }
+            }
+
+
+
+            rbm.budgetClasses = new ArrayList<>();
+
+/*
+    private void ProcessGroup(Integer pMonth, Integer pYear,
+                              ArrayList<RecordCategory> cl, ArrayList<RecordBudget> rb,
+                              ArrayList<RecordBudget> rbspent, RecordBudgetGroup mainGroup,
+                              ArrayList<RecordBudgetGroup> lList, Integer pCategoryType)
+
+ */
+
+            RecordBudgetClass rbc = new RecordBudgetClass();
+            rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_monthly_expenses);
+            rbm.budgetClasses.add(rbc);
+            rbc.budgetGroups = new ArrayList<>();
+            ProcessGroup(pMonth, pYear, cl, rb, rbspent, null, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyExpense);
+
+            rbc = new RecordBudgetClass();
+            rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_monthly_income);
+            rbm.budgetClasses.add(rbc);
+            rbc.budgetGroups = new ArrayList<>();
+            ProcessGroup(pMonth, pYear, cl, rb, rbspent, null, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyIncome);
+
+            rbc = new RecordBudgetClass();
+            rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_extra_expenses);
+            rbm.budgetClasses.add(rbc);
+            rbc.budgetGroups = new ArrayList<>();
+            ProcessGroup(pMonth, pYear, cl, rb, rbspent, null, rbc.budgetGroups, RecordSubCategory.mSCTExtraExpense);
+
+            rbc = new RecordBudgetClass();
+            rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_extra_income);
+            rbm.budgetClasses.add(rbc);
+            rbc.budgetGroups = new ArrayList<>();
+            ProcessGroup(pMonth, pYear, cl, rb, rbspent, null, rbc.budgetGroups, RecordSubCategory.mSCTExtraIncome);
+
+            return (rbm);
+        }
+        catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDatabase.getDatasetBudgetMonth", e.getMessage());
+        }
+
+    /*
         Float lTotal = 0.00f;
         Float lSpent = 0.00f;
         Float lOutstanding = 0.00f;
@@ -909,6 +981,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
         rbm.notes = Notes;
         return(rbm);
+*/
     }
 
     public ArrayList<RecordBudgetGroup> getBudget(Integer pMonth, Integer pYear)
