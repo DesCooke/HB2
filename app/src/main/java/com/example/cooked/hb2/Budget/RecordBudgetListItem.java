@@ -6,4 +6,5 @@ public class RecordBudgetListItem
     public String ItemName;
     public Object Data;
     public Boolean Expanded;
+    public Boolean Visible;
 }

@@ -47,8 +47,13 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
 
             RecordBudgetListItem rbli=new RecordBudgetListItem();
             rbli.ItemType = BUDGET_GROUP;
+            rbli.Expanded = false;
+            rbli.Visible = false;
             if(rbg.divider)
+            {
                 rbli.ItemType = BUDGET_CLASS;
+                rbli.Visible = true;
+            }
             rbli.ItemName = rbg.budgetGroupName;
             rbli.Data = rbg;
             rbli.Expanded = new Boolean(false);
@@ -60,7 +65,8 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                 rbli.ItemType = BUDGET_ITEM;
                 rbli.ItemName = rbi.budgetItemName;
                 rbli.Data = rbi;
-                rbli.Expanded = new Boolean(false);
+                rbli.Expanded = false;
+                rbli.Visible = false;
                 _items.add(rbli);
             }
         }
@@ -80,22 +86,26 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     public static class BudgetGroupViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public ImageButton bt_expand;
+        public View titleParent;
 
         public BudgetGroupViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.title);
             bt_expand = v.findViewById(R.id.bt_expand);
+            titleParent = v.findViewById(R.id.titleParent);
         }
     }
 
     public static class BudgetClassViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public ImageButton bt_expand;
+        public View titleParent;
 
         public BudgetClassViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.title);
             bt_expand = v.findViewById(R.id.bt_expand);
+            titleParent = v.findViewById(R.id.titleParent);
         }
     }
 
@@ -129,6 +139,10 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         if (holder instanceof BudgetItemViewHolder) {
             final BudgetItemViewHolder view = (BudgetItemViewHolder) holder;
 
+            view.titleParent.setVisibility(View.VISIBLE);
+            if(rbli.Visible==false)
+                view.titleParent.setVisibility(View.GONE);
+
             view.title.setText(rbli.ItemName);
             view.titleParent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -144,6 +158,11 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             if (holder instanceof BudgetGroupViewHolder)
             {
                 BudgetGroupViewHolder view = (BudgetGroupViewHolder) holder;
+
+                view.titleParent.setVisibility(View.VISIBLE);
+                if(rbli.Visible==false)
+                    view.titleParent.setVisibility(View.GONE);
+
                 view.title.setText(rbli.ItemName);
                 if(view.bt_expand!=null)
                 {
@@ -162,6 +181,11 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             {
                 BudgetClassViewHolder view = (BudgetClassViewHolder) holder;
                 view.title.setText(rbli.ItemName);
+
+                view.titleParent.setVisibility(View.VISIBLE);
+                if(rbli.Visible==false)
+                    view.titleParent.setVisibility(View.GONE);
+
                 if(view.bt_expand!=null)
                 {
                     view.bt_expand.setOnClickListener(new View.OnClickListener()
