@@ -24,7 +24,6 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -33,51 +32,13 @@ import static android.widget.Toast.LENGTH_LONG;
 public class BudgetAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private RecordBudgetMonth _rbm;
-    private List<RecordBudgetListItem> _items;
+    private ArrayList<RecordBudgetGroup> budgetList;
 
-    public BudgetAdapter(Context context, RecordBudgetMonth rbm) {
+    public BudgetAdapter(Context context, ArrayList<RecordBudgetGroup> pBudgetList) {
         try
         {
             this.context = context;
-            this._rbm = rbm;
-            _items = new ArrayList<>();
-            for(int i=0;i<_rbm.budgetClasses.size();i++)
-            {
-                RecordBudgetClass rbc=_rbm.budgetClasses.get(i);
-
-                RecordBudgetListItem rbli=new RecordBudgetListItem();
-                rbli.ItemType = this.context.getResources().getInteger(R.integer.budget_class);
-                rbli.Expanded = false;
-                rbli.Visible = true;
-                rbli.ItemName = rbc.budgetClassName;
-                rbli.Data = rbc;
-                _items.add(rbli);
-
-                for(int j=0;j<rbc.budgetGroups.size();j++)
-                {
-                    RecordBudgetGroup rbg=rbc.budgetGroups.get(j);
-                    rbli=new RecordBudgetListItem();
-                    rbli.ItemType = this.context.getResources().getInteger(R.integer.budget_group);
-                    rbli.Expanded = false;
-                    rbli.Visible = false;
-                    rbli.ItemName = rbg.budgetGroupName;
-                    rbli.Data = rbg;
-                    _items.add(rbli);
-
-                    for (int k = 0; k < rbg.budgetItems.size(); k++)
-                    {
-                        RecordBudgetItem rbi = rbg.budgetItems.get(k);
-                        rbli = new RecordBudgetListItem();
-                        rbli.ItemType = this.context.getResources().getInteger(R.integer.budget_item);
-                        rbli.ItemName = rbi.budgetItemName;
-                        rbli.Data = rbi;
-                        rbli.Expanded = false;
-                        rbli.Visible = false;
-                        _items.add(rbli);
-                    }
-                }
-            }
+            this.budgetList = pBudgetList;
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in BudgetAdapter::BudgetAdapter", e.getMessage());
@@ -88,8 +49,8 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
     public Object getChild(int groupPosition, int childPosition) {
         try
         {
-            ArrayList<RecordBudgetItem> budgetItemList = _rbmbudgetList.get(groupPosition).budgetItems;
-            return budgetItemList.size();
+            ArrayList<RecordBudgetItem> budgetItemList = budgetList.get(groupPosition).budgetItems;
+            return budgetItemList.get(childPosition);
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in BudgetAdapter::getChild", e.getMessage());
@@ -123,7 +84,7 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
                 String lText = String.format(Locale.ENGLISH,"£%.2f", detailInfo.spent);
                 budget_summary.setText(lText);
             }
-    
+
             return view;
         }
         catch (Exception e) {
@@ -191,7 +152,7 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
             final RecordBudgetGroup headerInfo = (RecordBudgetGroup) getGroup(groupPosition);
             if (view == null)
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.budgetgroup, parent, false);
-    
+
             LinearLayout cellbudgetgroup = view.findViewById(R.id.cellbudgetgroup);
             ImageView image = view.findViewById(R.id.indicator);
             TextView budget_summary = view.findViewById(R.id.budget_summary);
@@ -268,7 +229,7 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
                     headerInfo.budgetGroupName.compareTo(context.getResources().getString(R.string.budget_header_monthly_income))==0 ||
                     headerInfo.budgetGroupName.compareTo(context.getResources().getString(R.string.budget_header_extra_expenses))==0 ||
                     headerInfo.budgetGroupName.compareTo(context.getResources().getString(R.string.budget_header_extra_income))==0
-                    )
+            )
             {
                 cellbudgetgroup.setBackgroundColor(ContextCompat.getColor(context, R.color.budgetHeader));
                 heading.setTextColor(Color.WHITE);
@@ -345,25 +306,25 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
             }
 
             if (image != null)
-    {
-        if (getChildrenCount(groupPosition) == 0)
-        {
-            image.setVisibility(View.INVISIBLE);
-        }
-        else
-        {
-            image.setVisibility(View.VISIBLE);
-            if(isLastChild)
             {
-                image.setImageResource(R.drawable.expanded);
-            }
-            else
-            {
-                image.setImageResource(R.drawable.collapsed);
-            }
-            
-        }
-    }            return view;
+                if (getChildrenCount(groupPosition) == 0)
+                {
+                    image.setVisibility(View.INVISIBLE);
+                }
+                else
+                {
+                    image.setVisibility(View.VISIBLE);
+                    if(isLastChild)
+                    {
+                        image.setImageResource(R.drawable.expanded);
+                    }
+                    else
+                    {
+                        image.setImageResource(R.drawable.collapsed);
+                    }
+
+                }
+            }            return view;
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in BudgetAdapter::getGroupView", e.getMessage());

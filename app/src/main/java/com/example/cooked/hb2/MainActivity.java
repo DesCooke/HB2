@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<RecordButton> mDatasetButton;
     private ArrayList<RecordButton> mDatasetCommonButton;
     private RecordBudgetMonth mDatasetBudgetMonth;
+    private ArrayList<RecordBudgetGroup> mDatasetBudget;
 
     public TextView txtNotes;
     private Bundle mButtonViewState;
@@ -293,9 +294,15 @@ public class MainActivity extends AppCompatActivity
                     mCurrentCABudgetYear.toString();
             txtCashAccountTitle.setText(lTitle);
 
-            mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth(mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
-            _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
-            _fragmentBudget.PopulateForm(mDatasetBudgetMonth);
+            mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
+                    (mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
+            if(_fragmentDashboard!=null)
+                _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
+            if(_fragmentBudget!=null)
+                _fragmentBudget.PopulateForm(mDatasetBudgetMonth);
+
+            mDatasetBudget = MyDatabase.MyDB().getBudgetMonth
+                    (mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
 
             lblMonthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.monthlyIncome));
             lblMonthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", mDatasetBudgetMonth.monthlyExpense));
@@ -347,7 +354,7 @@ public class MainActivity extends AppCompatActivity
             budgetListView = findViewById(R.id.budgetList);
             
             // create the adapter by passing your ArrayList data
-            budgetAdapter = new BudgetAdapter(MainActivity.this, mDatasetBudgetMonth);
+            budgetAdapter = new BudgetAdapter(MainActivity.this, mDatasetBudget);
             
             if (budgetAdapter == null)
             {
@@ -372,16 +379,16 @@ public class MainActivity extends AppCompatActivity
                 public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id)
                 {
                     //get the group header
-                    RecordBudgetGroup budgetGroupInfo = mDatasetBudget.get(groupPosition);
+//                    RecordBudgetGroup budgetGroupInfo = mDatasetBudget.get(groupPosition);
                     //get the child info
-                    RecordBudgetItem budgetItemInfo = budgetGroupInfo.budgetItems.get(childPosition);
+  //                  RecordBudgetItem budgetItemInfo = budgetGroupInfo.budgetItems.get(childPosition);
                     //display it or do something with it
                     DialogTransactionList dtl = new DialogTransactionList(MainActivity.this);
                     try
                     {
                         dtl.budgetYear = mCurrentBudgetYear;
                         dtl.budgetMonth = mCurrentBudgetMonth;
-                        dtl.subCategoryId = budgetItemInfo.SubCategoryId;
+    //                    dtl.subCategoryId = budgetItemInfo.SubCategoryId;
                         dtl.GetTrans();
                         dtl.show();
                     }
@@ -399,7 +406,7 @@ public class MainActivity extends AppCompatActivity
                 public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id)
                 {
                     //get the group header
-                    RecordBudgetGroup budgetGroupInfo = mDatasetBudget.get(groupPosition);
+                    //RecordBudgetGroup budgetGroupInfo = mDatasetBudget.get(groupPosition);
                     //display it or do something with it
                     return false;
                 }
