@@ -24,6 +24,7 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -32,13 +33,51 @@ import static android.widget.Toast.LENGTH_LONG;
 public class BudgetAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private ArrayList<RecordBudgetGroup> budgetList;
+    private RecordBudgetMonth _rbm;
+    private List<RecordBudgetListItem> _items;
 
-    public BudgetAdapter(Context context, ArrayList<RecordBudgetGroup> pBudgetList) {
+    public BudgetAdapter(Context context, RecordBudgetMonth rbm) {
         try
         {
             this.context = context;
-            this.budgetList = pBudgetList;
+            this._rbm = rbm;
+            _items = new ArrayList<>();
+            for(int i=0;i<_rbm.budgetClasses.size();i++)
+            {
+                RecordBudgetClass rbc=_rbm.budgetClasses.get(i);
+
+                RecordBudgetListItem rbli=new RecordBudgetListItem();
+                rbli.ItemType = this.context.getResources().getInteger(R.integer.budget_class);
+                rbli.Expanded = false;
+                rbli.Visible = true;
+                rbli.ItemName = rbc.budgetClassName;
+                rbli.Data = rbc;
+                _items.add(rbli);
+
+                for(int j=0;j<rbc.budgetGroups.size();j++)
+                {
+                    RecordBudgetGroup rbg=rbc.budgetGroups.get(j);
+                    rbli=new RecordBudgetListItem();
+                    rbli.ItemType = this.context.getResources().getInteger(R.integer.budget_group);
+                    rbli.Expanded = false;
+                    rbli.Visible = false;
+                    rbli.ItemName = rbg.budgetGroupName;
+                    rbli.Data = rbg;
+                    _items.add(rbli);
+
+                    for (int k = 0; k < rbg.budgetItems.size(); k++)
+                    {
+                        RecordBudgetItem rbi = rbg.budgetItems.get(k);
+                        rbli = new RecordBudgetListItem();
+                        rbli.ItemType = this.context.getResources().getInteger(R.integer.budget_item);
+                        rbli.ItemName = rbi.budgetItemName;
+                        rbli.Data = rbi;
+                        rbli.Expanded = false;
+                        rbli.Visible = false;
+                        _items.add(rbli);
+                    }
+                }
+            }
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in BudgetAdapter::BudgetAdapter", e.getMessage());
@@ -49,8 +88,8 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
     public Object getChild(int groupPosition, int childPosition) {
         try
         {
-            ArrayList<RecordBudgetItem> budgetItemList = budgetList.get(groupPosition).budgetItems;
-            return budgetItemList.get(childPosition);
+            ArrayList<RecordBudgetItem> budgetItemList = _rbmbudgetList.get(groupPosition).budgetItems;
+            return budgetItemList.size();
         }
         catch (Exception e) {
             ErrorDialog.Show("Error in BudgetAdapter::getChild", e.getMessage());

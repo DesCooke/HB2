@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity
     private ExpandableListView budgetListView;
 
     private Switch swIncludeThisBudgetOnly;
-    private ArrayList<RecordBudgetGroup> mDatasetBudget;
     private ArrayList<RecordButton> mDatasetButton;
     private ArrayList<RecordButton> mDatasetCommonButton;
     private RecordBudgetMonth mDatasetBudgetMonth;
@@ -294,8 +293,6 @@ public class MainActivity extends AppCompatActivity
                     mCurrentCABudgetYear.toString();
             txtCashAccountTitle.setText(lTitle);
 
-            mDatasetBudget = MyDatabase.MyDB().getBudgetMonth(mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
-
             mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth(mCurrentBudgetMonth, mCurrentBudgetYear, swIncludeThisBudgetOnly.isChecked());
             _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
             _fragmentBudget.PopulateForm(mDatasetBudgetMonth);
@@ -350,7 +347,7 @@ public class MainActivity extends AppCompatActivity
             budgetListView = findViewById(R.id.budgetList);
             
             // create the adapter by passing your ArrayList data
-            budgetAdapter = new BudgetAdapter(MainActivity.this, mDatasetBudget);
+            budgetAdapter = new BudgetAdapter(MainActivity.this, mDatasetBudgetMonth);
             
             if (budgetAdapter == null)
             {

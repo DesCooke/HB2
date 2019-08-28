@@ -664,7 +664,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
     private void ProcessGroup(Integer pMonth, Integer pYear,
                               ArrayList<RecordCategory> cl, ArrayList<RecordBudget> rb,
-                              ArrayList<RecordBudget> rbspent, RecordBudgetGroup mainGroup,
+                              ArrayList<RecordBudget> rbspent, RecordBudgetClass rbc,
                               ArrayList<RecordBudgetGroup> lList, Integer pCategoryType)
     {
         try
@@ -718,7 +718,7 @@ public class MyDatabase extends SQLiteOpenHelper
                                 /* yes - update spent totals */
                                 rbi.spent = rbspent.get(l).Amount;
                                 rbg.spent += rbi.spent;
-                                mainGroup.spent += rbi.spent;
+                                rbc.spent += rbi.spent;
                                 break;
                             }
                         }
@@ -781,9 +781,9 @@ public class MyDatabase extends SQLiteOpenHelper
                 if (rbg.budgetItems.size() > 0)
                     localList.add(rbg);
             }
-            mainGroup.total=0.00f;
-            mainGroup.spent=0.00f;
-            mainGroup.outstanding=0.00f;
+            rbc.total=0.00f;
+            rbc.spent=0.00f;
+            rbc.outstanding=0.00f;
             for(int i=0;i<localList.size();i++)
             {
                 rbg=localList.get(i);
@@ -825,9 +825,9 @@ public class MyDatabase extends SQLiteOpenHelper
                     }
                     rbg.outstanding = rbg.total - rbg.spent;
                 }
-                mainGroup.total+=rbg.total;
-                mainGroup.spent+=rbg.spent;
-                mainGroup.outstanding+=rbg.outstanding;
+                rbc.total+=rbg.total;
+                rbc.spent+=rbg.spent;
+                rbc.outstanding+=rbg.outstanding;
             }
             for(int i=0;i<localList.size();i++)
             {
@@ -842,14 +842,6 @@ public class MyDatabase extends SQLiteOpenHelper
 
     }
 
-
-    public ArrayList<RecordBudgetGroup> getBudgetMonth(Integer pMonth, Integer pYear, boolean pIncludeThisBudgetOnly)
-    {
-        Notes = "";
-        RecordBudgetMonth rbm = new RecordBudgetMonth();
-
-        return (getBudget(pMonth, pYear));
-    }
 
     public RecordBudgetMonth getDatasetBudgetMonth(Integer pMonth, Integer pYear, boolean pIncludeThisBudgetOnly)
     {
@@ -880,46 +872,36 @@ public class MyDatabase extends SQLiteOpenHelper
 
             rbm.budgetClasses = new ArrayList<>();
 
-/*
-    private void ProcessGroup(Integer pMonth, Integer pYear,
-                              ArrayList<RecordCategory> cl, ArrayList<RecordBudget> rb,
-                              ArrayList<RecordBudget> rbspent, RecordBudgetGroup mainGroup,
-                              ArrayList<RecordBudgetGroup> lList, Integer pCategoryType)
-
- */
-
             RecordBudgetClass rbc = new RecordBudgetClass();
             rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_monthly_expenses);
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();
-            ProcessGroup(pMonth, pYear, cl, rb, rbspent, null, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyExpense);
+            ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyExpense);
 
             rbc = new RecordBudgetClass();
             rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_monthly_income);
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();
-            ProcessGroup(pMonth, pYear, cl, rb, rbspent, null, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyIncome);
+            ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyIncome);
 
             rbc = new RecordBudgetClass();
             rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_extra_expenses);
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();
-            ProcessGroup(pMonth, pYear, cl, rb, rbspent, null, rbc.budgetGroups, RecordSubCategory.mSCTExtraExpense);
+            ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTExtraExpense);
 
             rbc = new RecordBudgetClass();
             rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_extra_income);
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();
-            ProcessGroup(pMonth, pYear, cl, rb, rbspent, null, rbc.budgetGroups, RecordSubCategory.mSCTExtraIncome);
+            ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTExtraIncome);
 
-            return (rbm);
         }
         catch (Exception e)
         {
             ErrorDialog.Show("Error in MyDatabase.getDatasetBudgetMonth", e.getMessage());
         }
 
-    /*
         Float lTotal = 0.00f;
         Float lSpent = 0.00f;
         Float lOutstanding = 0.00f;
@@ -928,31 +910,31 @@ public class MyDatabase extends SQLiteOpenHelper
         Float l_BCExpense = 0.00f;
         Float l_BCEIncome = 0.00f;
         Float l_BCEExpense = 0.00f;
-        for (int i = 0; i < rbm.budgetGroups.size(); i++)
+        for (int i = 0; i < rbm.budgetClasses.size(); i++)
         {
-            RecordBudgetGroup rbg = rbm.budgetGroups.get(i);
+            RecordBudgetClass rbc = rbm.budgetClasses.get(i);
 
-            if (rbg.budgetGroupName.compareTo(MainActivity.context.getString(R.string.budget_header_monthly_income)) == 0)
+            if (rbc.budgetClassName.compareTo(MainActivity.context.getString(R.string.budget_header_monthly_income)) == 0)
             {
-                l_BCIncome = rbg.total;
+                l_BCIncome = rbc.total;
             }
-            if (rbg.budgetGroupName.compareTo(MainActivity.context.getString(R.string.budget_header_monthly_expenses)) == 0)
+            if (rbc.budgetClassName.compareTo(MainActivity.context.getString(R.string.budget_header_monthly_expenses)) == 0)
             {
-                lTotal += (rbg.total*-1);
-                lSpent += (rbg.spent*-1);
-                lOutstanding += (rbg.outstanding*-1);
-                l_BCExpense = rbg.total * -1;
+                lTotal += (rbc.total*-1);
+                lSpent += (rbc.spent*-1);
+                lOutstanding += (rbc.outstanding*-1);
+                l_BCExpense = rbc.total * -1;
             }
-            if (rbg.budgetGroupName.compareTo(MainActivity.context.getString(R.string.budget_header_extra_income)) == 0)
+            if (rbc.budgetClassName.compareTo(MainActivity.context.getString(R.string.budget_header_extra_income)) == 0)
             {
-                l_BCEIncome = rbg.total;
+                l_BCEIncome = rbc.total;
             }
-            if (rbg.budgetGroupName.compareTo(MainActivity.context.getString(R.string.budget_header_extra_expenses)) == 0)
+            if (rbc.budgetClassName.compareTo(MainActivity.context.getString(R.string.budget_header_extra_expenses)) == 0)
             {
-                lTotal += (rbg.total*-1);
-                lSpent += (rbg.spent*-1);
-                lOutstanding += (rbg.outstanding*-1);
-                l_BCEExpense = rbg.total * -1;
+                lTotal += (rbc.total*-1);
+                lSpent += (rbc.spent*-1);
+                lOutstanding += (rbc.outstanding*-1);
+                l_BCEExpense = rbc.total * -1;
             }
 
 
@@ -980,66 +962,11 @@ public class MyDatabase extends SQLiteOpenHelper
                         (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense);
 
         rbm.notes = Notes;
+
         return(rbm);
-*/
+
     }
 
-    public ArrayList<RecordBudgetGroup> getBudget(Integer pMonth, Integer pYear)
-    {
-        try
-        {
-            ArrayList<RecordBudgetGroup> lList = new ArrayList<>();
-
-            RecordBudgetGroup mrbg;
-
-            ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
-            ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
-            ArrayList<RecordCategory> cl = tableCategory.getCategoryList();
-
-            for(int i=0;i<rbspent.size();i++)
-            {
-                for(int j=0; j<rb.size();j++)
-                {
-                    if(rbspent.get(i).SubCategoryId==rb.get(j).SubCategoryId)
-                    {
-                        rbspent.get(i).AutoMatchTransaction=rb.get(j).AutoMatchTransaction;
-                    }
-                }
-            }
-
-            mrbg = new RecordBudgetGroup();
-            mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_monthly_expenses);
-            mrbg.divider = true;
-            lList.add(mrbg);
-            ProcessGroup(pMonth, pYear, cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTMonthlyExpense);
-
-            mrbg = new RecordBudgetGroup();
-            mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_monthly_income);
-            mrbg.divider = true;
-            lList.add(mrbg);
-            ProcessGroup(pMonth, pYear, cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTMonthlyIncome);
-
-            mrbg = new RecordBudgetGroup();
-            mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_extra_expenses);
-            mrbg.divider = true;
-            lList.add(mrbg);
-            ProcessGroup(pMonth, pYear, cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTExtraExpense);
-
-            mrbg = new RecordBudgetGroup();
-            mrbg.budgetGroupName = MainActivity.context.getString(R.string.budget_header_extra_income);
-            mrbg.divider = true;
-            lList.add(mrbg);
-            ProcessGroup(pMonth, pYear, cl, rb, rbspent, mrbg, lList, RecordSubCategory.mSCTExtraIncome);
-
-            return (lList);
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in MyDatabase.getbudget", e.getMessage());
-        }
-
-        return(null);
-    }
     //endregion
 
      //region TableCommon Functions

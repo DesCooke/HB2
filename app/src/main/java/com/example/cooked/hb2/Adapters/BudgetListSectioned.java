@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.Budget.RecordBudgetClass;
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Budget.RecordBudgetListItem;
@@ -18,12 +19,11 @@ import com.example.cooked.hb2.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.cooked.hb2.MainActivity.context;
+
 public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 
-    private final int BUDGET_CLASS = 0;
-    private final int BUDGET_GROUP = 1;
-    private final int BUDGET_ITEM = 2;
     private RecordBudgetMonth _rbm;
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
@@ -41,33 +41,40 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         _rbm = recordBudgetMonth;
         ctx = context;
         _items = new ArrayList<>();
-        for(int i=0;i<_rbm.budgetGroups.size();i++)
+        for(int i=0;i<_rbm.budgetClasses.size();i++)
         {
-            RecordBudgetGroup rbg=_rbm.budgetGroups.get(i);
+            RecordBudgetClass rbc=_rbm.budgetClasses.get(i);
 
             RecordBudgetListItem rbli=new RecordBudgetListItem();
-            rbli.ItemType = BUDGET_GROUP;
+            rbli.ItemType = context.getResources().getInteger(R.integer.budget_class);
             rbli.Expanded = false;
-            rbli.Visible = false;
-            if(rbg.divider)
-            {
-                rbli.ItemType = BUDGET_CLASS;
-                rbli.Visible = true;
-            }
-            rbli.ItemName = rbg.budgetGroupName;
-            rbli.Data = rbg;
-            rbli.Expanded = new Boolean(false);
+            rbli.Visible = true;
+            rbli.ItemName = rbc.budgetClassName;
+            rbli.Data = rbc;
             _items.add(rbli);
-            for(int j=0;j<rbg.budgetItems.size();j++)
+
+            for(int j=0;j<rbc.budgetGroups.size();j++)
             {
-                RecordBudgetItem rbi=rbg.budgetItems.get(j);
+                RecordBudgetGroup rbg=rbc.budgetGroups.get(j);
                 rbli=new RecordBudgetListItem();
-                rbli.ItemType = BUDGET_ITEM;
-                rbli.ItemName = rbi.budgetItemName;
-                rbli.Data = rbi;
+                rbli.ItemType = context.getResources().getInteger(R.integer.budget_group);
                 rbli.Expanded = false;
                 rbli.Visible = false;
+                rbli.ItemName = rbg.budgetGroupName;
+                rbli.Data = rbg;
                 _items.add(rbli);
+
+                for (int k = 0; k < rbg.budgetItems.size(); k++)
+                {
+                    RecordBudgetItem rbi = rbg.budgetItems.get(k);
+                    rbli = new RecordBudgetListItem();
+                    rbli.ItemType = context.getResources().getInteger(R.integer.budget_item);
+                    rbli.ItemName = rbi.budgetItemName;
+                    rbli.Data = rbi;
+                    rbli.Expanded = false;
+                    rbli.Visible = false;
+                    _items.add(rbli);
+                }
             }
         }
     }
@@ -112,13 +119,13 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-        if (viewType == BUDGET_CLASS) {
+        if (viewType == context.getResources().getInteger(R.integer.budget_class)) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_class, parent, false);
             vh = new BudgetClassViewHolder(v);
         }
         else
         {
-            if(viewType==BUDGET_GROUP)
+            if(viewType==context.getResources().getInteger(R.integer.budget_group))
             {
                 View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_group, parent, false);
                 vh = new BudgetGroupViewHolder(v);
