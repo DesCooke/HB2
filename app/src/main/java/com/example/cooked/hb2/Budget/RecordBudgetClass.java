@@ -33,4 +33,12 @@ public class RecordBudgetClass
         DefaultBudgetType = RecordCategory.mDBTSameMonthLastYear;
         lMainActivity=null;
     }
+    
+    public void ExpandChildren()
+    {
+        for(int i=0;i<budgetGroups.size();i++)
+        {
+            budgetGroups.get(i).Expanded = true;
+        }
+    }
 }

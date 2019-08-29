@@ -171,6 +171,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             if (holder instanceof BudgetGroupViewHolder)
             {
                 BudgetGroupViewHolder view = (BudgetGroupViewHolder) holder;
+                RecordBudgetGroup rbg= (RecordBudgetGroup)rbli.Data;
 
                 view.titleParent.setVisibility(View.VISIBLE);
                 if(rbli.Visible==false)

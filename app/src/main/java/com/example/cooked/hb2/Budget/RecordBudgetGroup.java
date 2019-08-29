@@ -20,9 +20,11 @@ public class RecordBudgetGroup
     public Integer BudgetYear;
     public Integer DefaultBudgetType;
     public MainActivity lMainActivity;
+    public boolean Expanded;
 
     public RecordBudgetGroup()
     {
+        Expanded = false;
         budgetItems = new ArrayList<>();
         budgetGroupName = "";
         divider=false;
