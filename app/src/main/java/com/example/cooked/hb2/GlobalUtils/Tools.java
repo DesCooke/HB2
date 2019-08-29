@@ -2,8 +2,14 @@ package com.example.cooked.hb2.GlobalUtils;
 
 import android.view.View;
 
+import java.util.Locale;
+
 public class Tools
 {
+    public static String moneyFormat(Float value)
+    {
+        return(String.format(Locale.ENGLISH, "£%.2f", value));
+    }
     public static boolean toggleArrow(View view) {
         if (view.getRotation() == 0) {
             view.animate().setDuration(200).rotation(180);

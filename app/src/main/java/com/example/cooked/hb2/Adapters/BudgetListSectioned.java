@@ -107,12 +107,18 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         public TextView title;
         public ImageButton bt_expand;
         public View titleParent;
+        public TextView txtTotal;
+        public TextView txtSpent;
+        public TextView txtOutstanding;
 
         public BudgetClassViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.title);
             bt_expand = v.findViewById(R.id.bt_expand);
             titleParent = v.findViewById(R.id.titleParent);
+            txtTotal = v.findViewById(R.id.txtTotal);
+            txtSpent = v.findViewById(R.id.txtSpent);
+            txtOutstanding = v.findViewById(R.id.txtOutstanding);
         }
     }
 
@@ -188,6 +194,10 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             {
                 BudgetClassViewHolder view = (BudgetClassViewHolder) holder;
                 view.title.setText(rbli.ItemName);
+                RecordBudgetClass rbc = (RecordBudgetClass)rbli.Data;
+                view.txtTotal.setText("Total: " + Tools.moneyFormat(rbc.total));
+                view.txtSpent.setText("Spent: " + Tools.moneyFormat(rbc.spent));
+                view.txtOutstanding.setText("Outstanding: " + Tools.moneyFormat(rbc.outstanding));
 
                 view.titleParent.setVisibility(View.VISIBLE);
                 if(rbli.Visible==false)
