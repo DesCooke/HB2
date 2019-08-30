@@ -70,6 +70,15 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/bt_edit"
+            android:layout_width="@dimen/cell_height_medium"
+            android:layout_height="@dimen/cell_height_medium"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/bt_expand"
+            android:tint="@color/grey_40"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <ImageButton
             android:id="@+id/bt_expand"
             android:layout_width="@dimen/cell_height_medium"
             android:layout_height="@dimen/cell_height_medium"

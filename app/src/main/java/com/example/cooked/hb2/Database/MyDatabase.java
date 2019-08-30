@@ -1158,51 +1158,7 @@ public class MyDatabase extends SQLiteOpenHelper
             ErrorDialog.Show("Error in MyDatabase.getDatasetBudgetMonth", e.getMessage());
         }
 
-        Float lTotal = 0.00f;
-        Float lSpent = 0.00f;
-        Float lOutstanding = 0.00f;
-
-        Float l_BCIncome = 0.00f;
-        Float l_BCExpense = 0.00f;
-        Float l_BCEIncome = 0.00f;
-        Float l_BCEExpense = 0.00f;
-        for (int i = 0; i < rbm.budgetClasses.size(); i++)
-        {
-            RecordBudgetClass rbc = rbm.budgetClasses.get(i);
-
-            if (rbc.budgetClassName.compareTo(MainActivity.context.getString(R.string.budget_header_monthly_income)) == 0)
-            {
-                l_BCIncome = rbc.total;
-            }
-            if (rbc.budgetClassName.compareTo(MainActivity.context.getString(R.string.budget_header_monthly_expenses)) == 0)
-            {
-                lTotal += (rbc.total*-1);
-                lSpent += (rbc.spent*-1);
-                lOutstanding += (rbc.outstanding*-1);
-                l_BCExpense = rbc.total * -1;
-            }
-            if (rbc.budgetClassName.compareTo(MainActivity.context.getString(R.string.budget_header_extra_income)) == 0)
-            {
-                l_BCEIncome = rbc.total;
-            }
-            if (rbc.budgetClassName.compareTo(MainActivity.context.getString(R.string.budget_header_extra_expenses)) == 0)
-            {
-                lTotal += (rbc.total*-1);
-                lSpent += (rbc.spent*-1);
-                lOutstanding += (rbc.outstanding*-1);
-                l_BCEExpense = rbc.total * -1;
-            }
-
-
-        }
-
-        rbm.monthlyIncome = l_BCIncome;
-        rbm.monthlyExpense = l_BCExpense;
-        rbm.amountLeft = l_BCIncome-l_BCExpense;
-
-        rbm.extraIncome = l_BCEIncome;
-        rbm.extraExpense = l_BCEExpense;
-        rbm.extraLeft = l_BCEIncome - l_BCEExpense;
+        rbm.RefreshTotals();
 
         ArrayList<RecordTransaction> lData =
                 getTransactionList("11-03-95", "00038840", false,
@@ -1215,7 +1171,8 @@ public class MyDatabase extends SQLiteOpenHelper
 
         rbm.finalBudgetBalanceThisMonth =
                 rbm.startingBalance +
-                        (l_BCIncome-l_BCExpense) + (l_BCEIncome - l_BCEExpense);
+                        (rbm.monthlyIncome-rbm.monthlyExpense) +
+                        (rbm.extraIncome - rbm.extraExpense);
 
         rbm.notes = Notes;
 

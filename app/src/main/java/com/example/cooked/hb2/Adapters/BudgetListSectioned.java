@@ -1,31 +1,42 @@
 package com.example.cooked.hb2.Adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cooked.hb2.Budget.RecordBudgetClass;
 import com.example.cooked.hb2.Budget.RecordBudgetGroup;
 import com.example.cooked.hb2.Budget.RecordBudgetItem;
 import com.example.cooked.hb2.Budget.RecordBudgetListItem;
 import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.Database.MyDatabase;
+import com.example.cooked.hb2.Database.RecordCategoryBudget;
 import com.example.cooked.hb2.GlobalUtils.Tools;
+import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static com.example.cooked.hb2.MainActivity.context;
 
 public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 
     private List<RecordBudgetListItem> _items;
+    public MainActivity lMainActivity;
 
     public interface OnItemClickListener {
         void onItemClick(View view, RecordBudgetListItem obj, int position);
@@ -71,15 +82,18 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     public static class BudgetGroupViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         ImageButton bt_expand;
+        ImageButton bt_edit;
         View titleParent;
         TextView txtTotal;
         TextView txtSpent;
         TextView txtOutstanding;
 
+
         BudgetGroupViewHolder(View v) {
             super(v);
             title = v.findViewById(R.id.title);
             bt_expand = v.findViewById(R.id.bt_expand);
+            bt_edit = v.findViewById(R.id.bt_edit);
             titleParent = v.findViewById(R.id.titleParent);
             txtTotal = v.findViewById(R.id.txtTotal);
             txtSpent = v.findViewById(R.id.txtSpent);
@@ -152,10 +166,79 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                 BudgetGroupViewHolder view = (BudgetGroupViewHolder) holder;
                 view.title.setText(rbli.ItemName);
                 final RecordBudgetGroup rbg = (RecordBudgetGroup)rbli.Data;
+                view.bt_edit.setVisibility(View.GONE);
+                if(rbg.groupedBudget)
+                {
+                    view.bt_edit.setTag(rbli);
+                    view.bt_edit.setVisibility(View.VISIBLE);
+                    view.bt_edit.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v)
+                        {
+                            RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
+                            final int pos = _items.indexOf(rbli1);
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle("Select a Budget for the Group");
+
+                            final Float origAmount = rbg.total;
+                            final EditText input = new EditText(context);
+                            input.setText(String.format(Locale.ENGLISH, "%.2f", rbg.total));
+
+                            input.setInputType(InputType.TYPE_CLASS_NUMBER |
+                                    InputType.TYPE_NUMBER_FLAG_DECIMAL |
+                                    InputType.TYPE_NUMBER_FLAG_SIGNED);
+                            builder.setView(input);
+
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String m_Text = input.getText().toString();
+                                    RecordCategoryBudget rcb = MyDatabase.MyDB().getCategoryBudget(
+                                            rbg.CategoryId, rbg.BudgetMonth,
+                                            rbg.BudgetYear);
+                                    if(rcb.BudgetMonth==0)
+                                    {
+                                        Toast.makeText(context, "Budget for Category/Period Added", LENGTH_LONG).show();
+
+                                        rcb.CategoryId = rbg.CategoryId;
+                                        rcb.BudgetMonth = rbg.BudgetMonth;
+                                        rcb.BudgetYear = rbg.BudgetYear;
+                                        rcb.BudgetAmount = Float.valueOf(m_Text);
+
+                                        MyDatabase.MyDB().addCategoryBudget(rcb);
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(context, "Budget for Category/Period Updated", LENGTH_LONG).show();
+                                        rcb.BudgetAmount = Float.valueOf(m_Text);
+
+                                        MyDatabase.MyDB().updateCategoryBudget(rcb);
+                                    }
+                                    rbg.total = Float.valueOf(m_Text);
+                                    rbg.outstanding = rbg.total - rbg.spent;
+
+                                    notifyItemChanged(pos);
+                                    if(lMainActivity!=null)
+                                        lMainActivity.fragmentsRefresh();
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                            builder.show();
+                        }
+                    });
+                }
                 view.txtTotal.setText(context.getString(R.string.total_line,Tools.moneyFormat(rbg.total)));
                 view.txtSpent.setText(context.getString(R.string.spent_line,Tools.moneyFormat(rbg.spent)));
                 view.txtOutstanding.setText(context.getString(R.string.outstanding_line,Tools.moneyFormat(rbg.outstanding)));
                 view.titleParent.setVisibility(View.VISIBLE);
+
                 if(view.bt_expand!=null)
                 {
                     view.bt_expand.setTag(rbli);

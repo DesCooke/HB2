@@ -63,6 +63,11 @@ public class FragmentDashboard extends Fragment {
         return root;
     }
 
+    public void RefreshForm(RecordBudgetMonth rbm)
+    {
+        PopulateForm(rbm);
+    }
+
     public void PopulateForm(RecordBudgetMonth rbm)
     {
         _rbm = rbm;

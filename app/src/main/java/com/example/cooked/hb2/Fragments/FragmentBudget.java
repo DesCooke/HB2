@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import com.example.cooked.hb2.Adapters.BudgetListSectioned;
 import com.example.cooked.hb2.Budget.RecordBudgetListItem;
 import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 import java.util.List;
@@ -26,10 +27,24 @@ public class FragmentBudget extends Fragment {
     private RecordBudgetMonth _rbm;
     private NestedScrollView _nsv;
     private LinearLayout _ll;
+    public MainActivity lMainActivity;
 
     public FragmentBudget() {
     }
 
+    public void SetMainActivity(MainActivity ma)
+    {
+        lMainActivity = ma;
+    }
+
+    public void RefreshForm(RecordBudgetMonth recordBudgetMonth)
+    {
+        _rbm=recordBudgetMonth;
+        //set data and list adapter
+        if (recyclerView == null)
+            return;
+        populate();
+    }
     public void PopulateForm(RecordBudgetMonth recordBudgetMonth)
     {
         _rbm=recordBudgetMonth;
@@ -41,6 +56,7 @@ public class FragmentBudget extends Fragment {
     private void populate()
     {
         mAdapter = new BudgetListSectioned(getActivity(), _rbm);
+        mAdapter.lMainActivity=lMainActivity;
         recyclerView.setAdapter(mAdapter);
 /*
         recyclerView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));

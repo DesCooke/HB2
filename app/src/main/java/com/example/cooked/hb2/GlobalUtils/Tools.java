@@ -10,6 +10,14 @@ public class Tools
     {
         return(String.format(Locale.ENGLISH, "£%.2f", value));
     }
+
+    public static String expenseFormat(Float value)
+    {
+        if(value==0.00)
+            return(String.format(Locale.ENGLISH, "£%.2f", value));
+        return(String.format(Locale.ENGLISH, "£%.2f", value*-1));
+    }
+
     public static boolean toggleArrow(View view) {
         if (view.getRotation() == 0) {
             view.animate().setDuration(200).rotation(180);
