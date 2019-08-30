@@ -676,6 +676,7 @@ public class MyDatabase extends SQLiteOpenHelper
             for (int i = 0; i < cl.size(); i++)
             {
                 rbg = new RecordBudgetGroup();
+                rbg.BudgetClassId = rbc.BudgetClassId;
                 rbg.BudgetGroupId = rbc.budgetGroups.size()+1;
                 rbg.BudgetMonth = pMonth;
                 rbg.BudgetYear = pYear;
@@ -709,6 +710,8 @@ public class MyDatabase extends SQLiteOpenHelper
                     {
                         // Yes there is - have we spent anything of it?
                         rbi = new RecordBudgetItem();
+                        rbi.BudgetClassId = rbc.BudgetClassId;
+                        rbi.BudgetGroupId = rbg.BudgetGroupId;
                         rbi.BudgetItemId = rbg.budgetItems.size()+1;
                         rbi.groupedBudget = rbg.groupedBudget;
                         rbi.spent = 0.00f;
@@ -767,6 +770,8 @@ public class MyDatabase extends SQLiteOpenHelper
 
                             rbi = new RecordBudgetItem();
 
+                            rbi.BudgetClassId = rbc.BudgetClassId;
+                            rbi.BudgetGroupId = rbg.BudgetGroupId;
                             rbi.groupedBudget = rbg.groupedBudget;
                             rbi.budgetItemName = scl.get(j).SubCategoryName;
                             rbi.SubCategoryId = scl.get(j).SubCategoryId;

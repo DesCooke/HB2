@@ -141,4 +141,7 @@
     <string name="dashboard">Dashboard</string>
     <string name="starting_balance">Starting Balance</string>
     <string name="bt_expand">bt_expand</string>
+    <string name="total_line">Total: %1$s</string>
+    <string name="spent_line">Spent: %1$s</string>
+    <string name="outstanding_line">Outstanding: %1$s</string>
 </resources>

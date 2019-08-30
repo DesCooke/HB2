@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class RecordBudgetGroup
 {
+    public Integer BudgetClassId;
     public Integer BudgetGroupId;
     public String budgetGroupName;
     public ArrayList<RecordBudgetItem> budgetItems;
@@ -25,6 +26,7 @@ public class RecordBudgetGroup
 
     public RecordBudgetGroup()
     {
+        BudgetClassId=0;
         BudgetGroupId=0;
         Expanded = false;
         budgetItems = new ArrayList<>();
