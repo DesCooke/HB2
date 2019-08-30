@@ -2,6 +2,7 @@ package com.example.cooked.hb2.Budget;
 
 public class RecordBudgetItem
 {
+    public Integer BudgetItemId;
     public String budgetItemName;
     public Integer SubCategoryId;
     public Integer RecCount;
@@ -12,6 +13,7 @@ public class RecordBudgetItem
 
     public RecordBudgetItem()
     {
+        BudgetItemId=0;
         budgetItemName = "";
         SubCategoryId = 0;
         RecCount = 0;

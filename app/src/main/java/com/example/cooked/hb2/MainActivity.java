@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -185,9 +187,9 @@ public class MainActivity extends AppCompatActivity
             _host.setVisibility(View.GONE);
             mTransactionListButton.setVisibility(View.GONE);
 
-            view_pager.getLayoutParams().height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
-            view_pager.requestLayout();
             view_pager.setVisibility(View.VISIBLE);
+//            view_pager.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+ //           view_pager.requestLayout();
             tab_layout.setVisibility(View.VISIBLE);
         }
         else
@@ -195,8 +197,8 @@ public class MainActivity extends AppCompatActivity
             view_pager.setVisibility(View.GONE);
             tab_layout.setVisibility(View.GONE);
 
-            _host.setVisibility(View.VISIBLE);
             mTransactionListButton.setVisibility(View.VISIBLE);
+            _host.setVisibility(View.VISIBLE);
         }
     }
     private void IncreaseBudgetPeriod(View view)

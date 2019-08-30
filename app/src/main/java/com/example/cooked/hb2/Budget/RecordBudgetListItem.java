@@ -5,6 +5,7 @@ public class RecordBudgetListItem
     public int ItemType;
     public String ItemName;
     public Object Data;
-    public Boolean Expanded;
-    public Boolean Visible;
+    public int BudgetClassId;
+    public int BudgetGroupId;
+    public int BudgetItemId;
 }

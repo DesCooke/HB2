@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class RecordBudgetGroup
 {
+    public Integer BudgetGroupId;
     public String budgetGroupName;
     public ArrayList<RecordBudgetItem> budgetItems;
     public boolean divider;
@@ -24,6 +25,7 @@ public class RecordBudgetGroup
 
     public RecordBudgetGroup()
     {
+        BudgetGroupId=0;
         Expanded = false;
         budgetItems = new ArrayList<>();
         budgetGroupName = "";

@@ -676,6 +676,7 @@ public class MyDatabase extends SQLiteOpenHelper
             for (int i = 0; i < cl.size(); i++)
             {
                 rbg = new RecordBudgetGroup();
+                rbg.BudgetGroupId = rbc.budgetGroups.size()+1;
                 rbg.BudgetMonth = pMonth;
                 rbg.BudgetYear = pYear;
                 rbg.budgetGroupName = cl.get(i).CategoryName;
@@ -708,6 +709,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     {
                         // Yes there is - have we spent anything of it?
                         rbi = new RecordBudgetItem();
+                        rbi.BudgetItemId = rbg.budgetItems.size()+1;
                         rbi.groupedBudget = rbg.groupedBudget;
                         rbi.spent = 0.00f;
 
@@ -1118,24 +1120,28 @@ public class MyDatabase extends SQLiteOpenHelper
             rbm.budgetClasses = new ArrayList<>();
 
             RecordBudgetClass rbc = new RecordBudgetClass();
+            rbc.BudgetClassId = rbm.budgetClasses.size()+1;
             rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_monthly_expenses);
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();
             ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyExpense);
 
             rbc = new RecordBudgetClass();
+            rbc.BudgetClassId = rbm.budgetClasses.size()+1;
             rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_monthly_income);
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();
             ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyIncome);
 
             rbc = new RecordBudgetClass();
+            rbc.BudgetClassId = rbm.budgetClasses.size()+1;
             rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_extra_expenses);
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();
             ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTExtraExpense);
 
             rbc = new RecordBudgetClass();
+            rbc.BudgetClassId = rbm.budgetClasses.size()+1;
             rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_extra_income);
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();

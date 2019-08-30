@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class RecordBudgetClass
 {
+    public Integer BudgetClassId;
     public String budgetClassName;
     public ArrayList<RecordBudgetGroup> budgetGroups;
     public boolean divider;
@@ -19,9 +20,12 @@ public class RecordBudgetClass
     public Integer BudgetYear;
     public Integer DefaultBudgetType;
     public MainActivity lMainActivity;
+    public boolean Expanded;
 
     public RecordBudgetClass()
     {
+        BudgetClassId=0;
+        Expanded = false;
         budgetGroups = new ArrayList<>();
         budgetClassName = "";
         divider=false;

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -47,35 +48,12 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
 
             RecordBudgetListItem rbli=new RecordBudgetListItem();
             rbli.ItemType = context.getResources().getInteger(R.integer.budget_class);
-            rbli.Expanded = false;
-            rbli.Visible = true;
             rbli.ItemName = rbc.budgetClassName;
             rbli.Data = rbc;
+            rbli.BudgetClassId = rbc.BudgetClassId;
+            rbli.BudgetGroupId = 0;
+            rbli.BudgetItemId = 0;
             _items.add(rbli);
-
-            for(int j=0;j<rbc.budgetGroups.size();j++)
-            {
-                RecordBudgetGroup rbg=rbc.budgetGroups.get(j);
-                rbli=new RecordBudgetListItem();
-                rbli.ItemType = context.getResources().getInteger(R.integer.budget_group);
-                rbli.Expanded = false;
-                rbli.Visible = false;
-                rbli.ItemName = rbg.budgetGroupName;
-                rbli.Data = rbg;
-                _items.add(rbli);
-
-                for (int k = 0; k < rbg.budgetItems.size(); k++)
-                {
-                    RecordBudgetItem rbi = rbg.budgetItems.get(k);
-                    rbli = new RecordBudgetListItem();
-                    rbli.ItemType = context.getResources().getInteger(R.integer.budget_item);
-                    rbli.ItemName = rbi.budgetItemName;
-                    rbli.Data = rbi;
-                    rbli.Expanded = false;
-                    rbli.Visible = false;
-                    _items.add(rbli);
-                }
-            }
         }
     }
 
@@ -110,6 +88,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         public TextView txtTotal;
         public TextView txtSpent;
         public TextView txtOutstanding;
+        public int index;
 
         public BudgetClassViewHolder(View v) {
             super(v);
@@ -153,9 +132,6 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             final BudgetItemViewHolder view = (BudgetItemViewHolder) holder;
 
             view.titleParent.setVisibility(View.VISIBLE);
-            if(rbli.Visible==false)
-                view.titleParent.setVisibility(View.GONE);
-
             view.title.setText(rbli.ItemName);
             view.titleParent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -171,11 +147,9 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             if (holder instanceof BudgetGroupViewHolder)
             {
                 BudgetGroupViewHolder view = (BudgetGroupViewHolder) holder;
-                RecordBudgetGroup rbg= (RecordBudgetGroup)rbli.Data;
+                final RecordBudgetGroup rbg= (RecordBudgetGroup)rbli.Data;
 
                 view.titleParent.setVisibility(View.VISIBLE);
-                if(rbli.Visible==false)
-                    view.titleParent.setVisibility(View.GONE);
 
                 view.title.setText(rbli.ItemName);
                 if(view.bt_expand!=null)
@@ -185,8 +159,8 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                         @Override
                         public void onClick(View v)
                         {
-                            boolean show = toggleLayoutExpand(!rbli.Expanded, v);
-                            _items.get(position).Expanded = show;
+                            boolean show = toggleLayoutExpand(!rbg.Expanded, v);
+                            rbg.Expanded = show;
                         }
                     });
                 }
@@ -195,24 +169,57 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             {
                 BudgetClassViewHolder view = (BudgetClassViewHolder) holder;
                 view.title.setText(rbli.ItemName);
-                RecordBudgetClass rbc = (RecordBudgetClass)rbli.Data;
+                final RecordBudgetClass rbc = (RecordBudgetClass)rbli.Data;
                 view.txtTotal.setText("Total: " + Tools.moneyFormat(rbc.total));
                 view.txtSpent.setText("Spent: " + Tools.moneyFormat(rbc.spent));
                 view.txtOutstanding.setText("Outstanding: " + Tools.moneyFormat(rbc.outstanding));
-
                 view.titleParent.setVisibility(View.VISIBLE);
-                if(rbli.Visible==false)
-                    view.titleParent.setVisibility(View.GONE);
-
                 if(view.bt_expand!=null)
                 {
+                    view.bt_expand.setTag(rbli);
                     view.bt_expand.setOnClickListener(new View.OnClickListener()
                     {
                         @Override
                         public void onClick(View v)
                         {
-                            boolean show = toggleLayoutExpand(!rbli.Expanded, v);
-                            _items.get(position).Expanded = show;
+                            RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
+                            int pos = _items.indexOf(rbli1);
+
+                            boolean show = toggleLayoutExpand(!rbc.Expanded, v);
+                            if (rbc.Expanded == false)
+                            {
+                                for (int i = rbc.budgetGroups.size() - 1; i >= 0; i--)
+                                {
+                                    RecordBudgetGroup rbg = rbc.budgetGroups.get(i);
+                                    RecordBudgetListItem rbli2 = new RecordBudgetListItem();
+                                    rbli2.ItemType = context.getResources().getInteger(R.integer.budget_group);
+                                    rbli2.ItemName = rbg.budgetGroupName;
+                                    rbli2.BudgetClassId = rbc.BudgetClassId;
+                                    rbli2.BudgetGroupId = rbg.BudgetGroupId;
+                                    rbli2.BudgetItemId = 0;
+                                    rbli2.Data = rbg;
+                                    _items.add(pos + 1, rbli2);
+                                    notifyItemInserted(pos + 1);
+                                }
+                            } else
+                            {
+                                int i=0;
+                                while(i<_items.size())
+                                {
+                                    if(_items.get(i).BudgetClassId == rbli1.BudgetClassId &&
+                                            _items.get(i).BudgetGroupId > 0)
+                                    {
+                                        _items.remove(i);
+                                        notifyItemRemoved(i);
+                                    }
+                                    else
+                                    {
+                                        i++;
+                                    }
+                                }
+                            }
+
+                            rbc.Expanded = show;
                         }
                     });
                 }
@@ -220,6 +227,21 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    private RecyclerView getRecyclerView(View v)
+    {
+        ViewParent p=v.getParent();
+        if(p instanceof RecyclerView)
+            return((RecyclerView)p);
+        while(p!=null && ! (p instanceof RecyclerView))
+        {
+            p=p.getParent();
+            if(p==null)
+                return(null);
+            if(p instanceof RecyclerView)
+                return((RecyclerView)p);
+        }
+        return(null);
+    }
     private boolean toggleLayoutExpand(boolean show, View view) {
         Tools.toggleArrow(show, view);
 //        if (show) {
