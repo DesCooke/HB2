@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text=""
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/grey_60"
                 tools:text="@string/captionOk" />
 
@@ -67,8 +67,8 @@
 
         <ImageButton
             android:id="@+id/bt_expand"
-            android:layout_width="@dimen/cellButtonLarge"
-            android:layout_height="@dimen/cellButtonLarge"
+            android:layout_width="@dimen/cell_height_large"
+            android:layout_height="@dimen/cell_height_large"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/bt_expand"
             android:tint="@color/grey_40"

@@ -71,8 +71,8 @@
 
         <ImageButton
             android:id="@+id/bt_expand"
-            android:layout_width="@dimen/cellButtonLarge"
-            android:layout_height="@dimen/cellButtonLarge"
+            android:layout_width="@dimen/cell_height_medium"
+            android:layout_height="@dimen/cell_height_medium"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/bt_expand"
             android:tint="@color/grey_40"
