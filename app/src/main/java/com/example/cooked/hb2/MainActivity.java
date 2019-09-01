@@ -1,8 +1,10 @@
 package com.example.cooked.hb2;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,9 +26,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -51,9 +59,11 @@ import com.example.cooked.hb2.GlobalUtils.MyDownloads;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyPermission;
 import com.example.cooked.hb2.GlobalUtils.MyResources;
+import com.example.cooked.hb2.GlobalUtils.MyString;
 import com.example.cooked.hb2.TransactionUI.TransactionAdapter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import static java.lang.Boolean.FALSE;
@@ -69,6 +79,8 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tab_layout;
     private TabHost _host;
     private boolean _newMode;
+
+    private MenuItem mSpinnerItem1;
 
     private final String KEY_RECYCLER_STATE_BUTTON = "recycler_state_button";
     private final String KEY_RECYCLER_STATE_CURRENT = "recycler_state_current";
@@ -202,6 +214,7 @@ public class MainActivity extends AppCompatActivity
             _host.setVisibility(View.VISIBLE);
         }
     }
+
     private void IncreaseBudgetPeriod(View view)
     {
         mCurrentBudgetMonth++;
@@ -277,6 +290,19 @@ public class MainActivity extends AppCompatActivity
         setupCashView();
     }
 
+    public void setupTitle()
+    {
+        Date lFrom=DateUtils.dateUtils().BudgetStart(mCurrentBudgetMonth, mCurrentBudgetYear);
+        Date lTo=DateUtils.dateUtils().BudgetEnd(mCurrentBudgetMonth, mCurrentBudgetYear);
+        MyString lFromStr=new MyString();
+        MyString lToStr=new MyString();
+        DateUtils.dateUtils().DateToStr(lFrom, lFromStr);
+        DateUtils.dateUtils().DateToStr(lTo, lToStr);
+        android.support.v7.app.ActionBar ab = getSupportActionBar();
+        ab.setTitle("HomeBudget");
+        ab.setSubtitle(lFromStr.Value + " -> " + lToStr.Value);
+    }
+
     public void setupBudget()
     {
         try
@@ -296,6 +322,8 @@ public class MainActivity extends AppCompatActivity
             lTitle = DateUtils.dateUtils().MonthAsText(mCurrentCABudgetMonth) + " / " +
                     mCurrentCABudgetYear.toString();
             txtCashAccountTitle.setText(lTitle);
+
+            setupTitle();
 
             fragmentsLoadAndRefresh();
 
