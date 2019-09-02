@@ -45,20 +45,81 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
     }
 
+    private void addClass(RecordBudgetClass argRbc)
+    {
+        RecordBudgetListItem rbli=new RecordBudgetListItem();
+        rbli.ItemType = context.getResources().getInteger(R.integer.budget_class);
+        rbli.ItemName = argRbc.budgetClassName;
+        rbli.Data = argRbc;
+        rbli.BudgetClassId = argRbc.BudgetClassId;
+        rbli.BudgetGroupId = 0;
+        rbli.BudgetItemId = 0;
+        _items.add(rbli);
+    }
+
+    private void addGroup(int argIndex, RecordBudgetGroup argRbg)
+    {
+        RecordBudgetListItem rbli=new RecordBudgetListItem();
+        rbli.ItemType = context.getResources().getInteger(R.integer.budget_group);
+        rbli.ItemName = argRbg.budgetGroupName;
+        rbli.Data = argRbg;
+        rbli.BudgetClassId = argRbg.BudgetClassId;
+        rbli.BudgetGroupId = argRbg.BudgetGroupId;
+        rbli.BudgetItemId = 0;
+        if(argIndex==-1)
+        {
+            _items.add(rbli);
+        }
+        else
+        {
+            _items.add(argIndex, rbli);
+        }
+    }
+
+    private void addItem(int argIndex, RecordBudgetItem argRbi)
+    {
+        RecordBudgetListItem rbli=new RecordBudgetListItem();
+        rbli.ItemType = context.getResources().getInteger(R.integer.budget_item);
+        rbli.ItemName = argRbi.budgetItemName;
+        rbli.Data = argRbi;
+        rbli.BudgetClassId = argRbi.BudgetClassId;
+        rbli.BudgetGroupId = argRbi.BudgetGroupId;
+        rbli.BudgetItemId = argRbi.BudgetItemId;
+        if(argIndex==-1)
+        {
+            _items.add(rbli);
+        }
+        else
+        {
+            _items.add(argIndex, rbli);
+        }
+    }
+
     public BudgetListSectioned(Context context, RecordBudgetMonth recordBudgetMonth) {
         _items = new ArrayList<>();
         for(int i = 0; i< recordBudgetMonth.budgetClasses.size(); i++)
         {
-            RecordBudgetClass rbc= recordBudgetMonth.budgetClasses.get(i);
+            RecordBudgetClass rbc = recordBudgetMonth.budgetClasses.get(i);
+            addClass(rbc);
+            if(rbc.Expanded)
+            {
+                for(int j=0;j<rbc.budgetGroups.size();j++)
+                {
+                    RecordBudgetGroup rbg = rbc.budgetGroups.get(j);
 
-            RecordBudgetListItem rbli=new RecordBudgetListItem();
-            rbli.ItemType = context.getResources().getInteger(R.integer.budget_class);
-            rbli.ItemName = rbc.budgetClassName;
-            rbli.Data = rbc;
-            rbli.BudgetClassId = rbc.BudgetClassId;
-            rbli.BudgetGroupId = 0;
-            rbli.BudgetItemId = 0;
-            _items.add(rbli);
+                    addGroup(-1, rbg);
+
+                    if(rbg.Expanded)
+                    {
+                        for(int k=0;k<rbg.budgetItems.size();k++)
+                        {
+                            RecordBudgetItem rbi = rbg.budgetItems.get(k);
+
+                            addItem(-1, rbi);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -241,6 +302,14 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 if(view.bt_expand!=null)
                 {
+                    if(rbg.Expanded)
+                    {
+                        Tools.setAsExpanded(view.bt_expand, false);
+                    }
+                    else
+                    {
+                        Tools.setAsClosed(view.bt_expand, false);
+                    }
                     view.bt_expand.setTag(rbli);
                     view.bt_expand.setOnClickListener(new View.OnClickListener()
                     {
@@ -256,23 +325,17 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                                 for (int i = rbg.budgetItems.size() - 1; i >= 0; i--)
                                 {
                                     RecordBudgetItem rbi = rbg.budgetItems.get(i);
-                                    RecordBudgetListItem rbli2 = new RecordBudgetListItem();
-                                    rbli2.ItemType = context.getResources().getInteger(R.integer.budget_item);
-                                    rbli2.ItemName = rbi.budgetItemName;
-                                    rbli2.BudgetClassId = rbg.BudgetClassId;
-                                    rbli2.BudgetGroupId = rbg.BudgetGroupId;
-                                    rbli2.BudgetItemId = rbi.BudgetItemId;
-                                    rbli2.Data = rbi;
-                                    _items.add(pos + 1, rbli2);
+                                    addItem(pos+1, rbi);
                                     notifyItemInserted(pos + 1);
                                 }
-                            } else
+                            }
+                            else
                             {
                                 int i=0;
                                 while(i<_items.size())
                                 {
                                     if(_items.get(i).BudgetClassId == rbli1.BudgetClassId &&
-                                            _items.get(i).BudgetGroupId == rbli.BudgetGroupId &&
+                                            _items.get(i).BudgetGroupId == rbli1.BudgetGroupId &&
                                             _items.get(i).BudgetItemId > 0)
                                     {
                                         _items.remove(i);
@@ -301,6 +364,15 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                 view.titleParent.setVisibility(View.VISIBLE);
                 if(view.bt_expand!=null)
                 {
+                    if(rbc.Expanded)
+                    {
+                        Tools.setAsExpanded(view.bt_expand, false);
+                    }
+                    else
+                    {
+                        Tools.setAsClosed(view.bt_expand, false);
+                    }
+
                     view.bt_expand.setTag(rbli);
                     view.bt_expand.setOnClickListener(new View.OnClickListener()
                     {
@@ -316,14 +388,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                                 for (int i = rbc.budgetGroups.size() - 1; i >= 0; i--)
                                 {
                                     RecordBudgetGroup rbg = rbc.budgetGroups.get(i);
-                                    RecordBudgetListItem rbli2 = new RecordBudgetListItem();
-                                    rbli2.ItemType = context.getResources().getInteger(R.integer.budget_group);
-                                    rbli2.ItemName = rbg.budgetGroupName;
-                                    rbli2.BudgetClassId = rbc.BudgetClassId;
-                                    rbli2.BudgetGroupId = rbg.BudgetGroupId;
-                                    rbli2.BudgetItemId = 0;
-                                    rbli2.Data = rbg;
-                                    _items.add(pos + 1, rbli2);
+                                    addGroup(pos+1, rbg);
                                     notifyItemInserted(pos + 1);
                                 }
                             } else
@@ -341,6 +406,11 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                                     {
                                         i++;
                                     }
+                                }
+                                for (int j = 0; j< rbc.budgetGroups.size(); j++)
+                                {
+                                    RecordBudgetGroup rbg = rbc.budgetGroups.get(j);
+                                    rbg.Expanded = false;
                                 }
                             }
 

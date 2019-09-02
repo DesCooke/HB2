@@ -33,12 +33,22 @@ public class Tools
         return toggleArrow(show, view, true);
     }
 
+    public static void setAsExpanded(View view, boolean delay)
+    {
+        view.animate().setDuration(delay ? 200 : 0).rotation(180);
+    }
+
+    public static void setAsClosed(View view, boolean delay)
+    {
+        view.animate().setDuration(delay ? 200 : 0).rotation(0);
+    }
+
     public static boolean toggleArrow(boolean show, View view, boolean delay) {
         if (show) {
-            view.animate().setDuration(delay ? 200 : 0).rotation(180);
+            setAsExpanded(view, delay);
             return true;
         } else {
-            view.animate().setDuration(delay ? 200 : 0).rotation(0);
+            setAsClosed(view, delay);
             return false;
         }
     }
