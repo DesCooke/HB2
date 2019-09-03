@@ -21,9 +21,13 @@ import com.example.cooked.hb2.Budget.RecordBudgetListItem;
 import com.example.cooked.hb2.Budget.RecordBudgetMonth;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCategoryBudget;
+import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.ViewHolders.BudgetClassViewHolder;
+import com.example.cooked.hb2.ViewHolders.BudgetGroupViewHolder;
+import com.example.cooked.hb2.ViewHolders.BudgetItemViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +38,7 @@ import static com.example.cooked.hb2.MainActivity.context;
 
 public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
-
+    private Context _context;
     private List<RecordBudgetListItem> _items;
     public MainActivity lMainActivity;
 
@@ -45,7 +49,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
     }
 
-    private void addClass(RecordBudgetClass argRbc)
+    private void addClassToList(RecordBudgetClass argRbc)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.budget_class);
@@ -57,7 +61,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         _items.add(rbli);
     }
 
-    private void addGroup(int argIndex, RecordBudgetGroup argRbg)
+    private void addGroupToList(int argIndex, RecordBudgetGroup argRbg)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.budget_group);
@@ -76,7 +80,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private void addItem(int argIndex, RecordBudgetItem argRbi)
+    private void addItemToList(int argIndex, RecordBudgetItem argRbi)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.budget_item);
@@ -95,19 +99,20 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public BudgetListSectioned(Context context, RecordBudgetMonth recordBudgetMonth) {
-        _items = new ArrayList<>();
-        for(int i = 0; i< recordBudgetMonth.budgetClasses.size(); i++)
+    private List<RecordBudgetListItem> createListFromRecordBudgetMonth(RecordBudgetMonth rbm)
+    {
+        List<RecordBudgetListItem> items = new ArrayList<>();
+        for(int i = 0; i< rbm.budgetClasses.size(); i++)
         {
-            RecordBudgetClass rbc = recordBudgetMonth.budgetClasses.get(i);
-            addClass(rbc);
+            RecordBudgetClass rbc = rbm.budgetClasses.get(i);
+            addClassToList(rbc);
             if(rbc.Expanded)
             {
                 for(int j=0;j<rbc.budgetGroups.size();j++)
                 {
                     RecordBudgetGroup rbg = rbc.budgetGroups.get(j);
 
-                    addGroup(-1, rbg);
+                    addGroupToList(-1, rbg);
 
                     if(rbg.Expanded)
                     {
@@ -115,96 +120,192 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                         {
                             RecordBudgetItem rbi = rbg.budgetItems.get(k);
 
-                            addItem(-1, rbi);
+                            addItemToList(-1, rbi);
                         }
                     }
                 }
             }
         }
+        return(items);
     }
 
-    public class BudgetItemViewHolder extends RecyclerView.ViewHolder {
-        public TextView title;
-        View titleParent;
-        TextView txtTotal;
-        TextView txtSpent;
-        TextView txtOutstanding;
-
-        BudgetItemViewHolder(View v) {
-            super(v);
-            title = v.findViewById(R.id.title);
-            titleParent = v.findViewById(R.id.titleParent);
-            txtTotal = v.findViewById(R.id.txtTotal);
-            txtSpent = v.findViewById(R.id.txtSpent);
-            txtOutstanding = v.findViewById(R.id.txtOutstanding);
-        }
-    }
-
-    public static class BudgetGroupViewHolder extends RecyclerView.ViewHolder {
-        public TextView title;
-        ImageButton bt_expand;
-        ImageButton bt_edit;
-        View titleParent;
-        TextView txtTotal;
-        TextView txtSpent;
-        TextView txtOutstanding;
-
-
-        BudgetGroupViewHolder(View v) {
-            super(v);
-            title = v.findViewById(R.id.title);
-            bt_expand = v.findViewById(R.id.bt_expand);
-            bt_edit = v.findViewById(R.id.bt_edit);
-            titleParent = v.findViewById(R.id.titleParent);
-            txtTotal = v.findViewById(R.id.txtTotal);
-            txtSpent = v.findViewById(R.id.txtSpent);
-            txtOutstanding = v.findViewById(R.id.txtOutstanding);
-        }
-    }
-
-    public static class BudgetClassViewHolder extends RecyclerView.ViewHolder {
-        public TextView title;
-        ImageButton bt_expand;
-        View titleParent;
-        TextView txtTotal;
-        TextView txtSpent;
-        TextView txtOutstanding;
-
-        BudgetClassViewHolder(View v) {
-            super(v);
-            title = v.findViewById(R.id.title);
-            bt_expand = v.findViewById(R.id.bt_expand);
-            titleParent = v.findViewById(R.id.titleParent);
-            txtTotal = v.findViewById(R.id.txtTotal);
-            txtSpent = v.findViewById(R.id.txtSpent);
-            txtOutstanding = v.findViewById(R.id.txtOutstanding);
-        }
+    public BudgetListSectioned(Context context, RecordBudgetMonth rbm) {
+        _context=context;
+        _items = createListFromRecordBudgetMonth(rbm);
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder vh;
-        if (viewType == context.getResources().getInteger(R.integer.budget_class)) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    {
+        RecyclerView.ViewHolder vh=null;
+
+        if (viewType == MyResources.R().getInteger(R.integer.budget_class)) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_class, parent, false);
             vh = new BudgetClassViewHolder(v);
         }
         else
         {
-            if(viewType==context.getResources().getInteger(R.integer.budget_group))
+            if(viewType==MyResources.R().getInteger(R.integer.budget_group))
             {
                 View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_group, parent, false);
                 vh = new BudgetGroupViewHolder(v);
             }
             else
             {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_item, parent, false);
-                vh = new BudgetItemViewHolder(v);
+                if(viewType==MyResources.R().getInteger(R.integer.budget_item))
+                {
+                    View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_item, parent, false);
+                    vh = new BudgetItemViewHolder(v);
+                }
             }
         }
         return vh;
     }
 
+    private void handleDropDown(View v)
+    {
+        RecordBudgetListItem rbli = (RecordBudgetListItem) v.getTag();
+        int pos = _items.indexOf(rbli);
+
+        if(rbli.Data instanceof RecordBudgetGroup)
+        {
+            RecordBudgetGroup rbg = (RecordBudgetGroup) rbli.Data;
+
+            boolean show = toggleLayoutExpand(!rbg.Expanded, v);
+            if (!rbg.Expanded)
+            {
+                for (int i = rbg.budgetItems.size() - 1; i >= 0; i--)
+                {
+                    RecordBudgetItem rbi = rbg.budgetItems.get(i);
+                    addItemToList(pos + 1, rbi);
+                    notifyItemInserted(pos + 1);
+                }
+            }
+            else
+            {
+                int i = 0;
+                while (i < _items.size())
+                {
+                    if (_items.get(i).BudgetClassId == rbli.BudgetClassId &&
+                            _items.get(i).BudgetGroupId == rbli.BudgetGroupId &&
+                            _items.get(i).BudgetItemId > 0)
+                    {
+                        _items.remove(i);
+                        notifyItemRemoved(i);
+                    } else
+                    {
+                        i++;
+                    }
+                }
+            }
+
+            rbg.Expanded = show;
+        }
+
+        if(rbli.Data instanceof RecordBudgetClass)
+        {
+            RecordBudgetClass rbc = (RecordBudgetClass)rbli.Data;
+
+            boolean show = toggleLayoutExpand(!rbc.Expanded, v);
+            if (!rbc.Expanded)
+            {
+                for (int i = rbc.budgetGroups.size() - 1; i >= 0; i--)
+                {
+                    RecordBudgetGroup rbg = rbc.budgetGroups.get(i);
+                    addGroupToList(pos+1, rbg);
+                    notifyItemInserted(pos + 1);
+                }
+            } else
+            {
+                int i=0;
+                while(i<_items.size())
+                {
+                    if(_items.get(i).BudgetClassId == rbli.BudgetClassId &&
+                            _items.get(i).BudgetGroupId > 0)
+                    {
+                        _items.remove(i);
+                        notifyItemRemoved(i);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+                for (int j = 0; j< rbc.budgetGroups.size(); j++)
+                {
+                    RecordBudgetGroup rbg = rbc.budgetGroups.get(j);
+                    rbg.Expanded = false;
+                }
+            }
+
+            rbc.Expanded = show;
+        }
+    }
+    private void handleEditGroupedBudget(View v)
+    {
+        RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
+        final int pos = _items.indexOf(rbli1);
+        if(pos<0)
+            return;
+
+        final RecordBudgetGroup rbg;
+        rbg = (RecordBudgetGroup)_items.get(pos).Data;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Select a Budget for the Group");
+
+        final Float origAmount = rbg.total;
+        final EditText input = new EditText(context);
+        input.setText(String.format(Locale.ENGLISH, "%.2f", rbg.total));
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER |
+                InputType.TYPE_NUMBER_FLAG_DECIMAL |
+                InputType.TYPE_NUMBER_FLAG_SIGNED);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String m_Text = input.getText().toString();
+                RecordCategoryBudget rcb = MyDatabase.MyDB().getCategoryBudget(
+                        rbg.CategoryId, rbg.BudgetMonth,
+                        rbg.BudgetYear);
+                if(rcb.BudgetMonth==0)
+                {
+                    Toast.makeText(context, "Budget for Category/Period Added", LENGTH_LONG).show();
+
+                    rcb.CategoryId = rbg.CategoryId;
+                    rcb.BudgetMonth = rbg.BudgetMonth;
+                    rcb.BudgetYear = rbg.BudgetYear;
+                    rcb.BudgetAmount = Float.valueOf(m_Text);
+
+                    MyDatabase.MyDB().addCategoryBudget(rcb);
+                }
+                else
+                {
+                    Toast.makeText(context, "Budget for Category/Period Updated", LENGTH_LONG).show();
+                    rcb.BudgetAmount = Float.valueOf(m_Text);
+
+                    MyDatabase.MyDB().updateCategoryBudget(rcb);
+                }
+                rbg.total = Float.valueOf(m_Text);
+                rbg.outstanding = rbg.total - rbg.spent;
+
+                notifyItemChanged(pos);
+                if(lMainActivity!=null)
+                    lMainActivity.fragmentsRefresh();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
@@ -236,62 +337,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                         @Override
                         public void onClick(View v)
                         {
-                            RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
-                            final int pos = _items.indexOf(rbli1);
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            builder.setTitle("Select a Budget for the Group");
-
-                            final Float origAmount = rbg.total;
-                            final EditText input = new EditText(context);
-                            input.setText(String.format(Locale.ENGLISH, "%.2f", rbg.total));
-
-                            input.setInputType(InputType.TYPE_CLASS_NUMBER |
-                                    InputType.TYPE_NUMBER_FLAG_DECIMAL |
-                                    InputType.TYPE_NUMBER_FLAG_SIGNED);
-                            builder.setView(input);
-
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    String m_Text = input.getText().toString();
-                                    RecordCategoryBudget rcb = MyDatabase.MyDB().getCategoryBudget(
-                                            rbg.CategoryId, rbg.BudgetMonth,
-                                            rbg.BudgetYear);
-                                    if(rcb.BudgetMonth==0)
-                                    {
-                                        Toast.makeText(context, "Budget for Category/Period Added", LENGTH_LONG).show();
-
-                                        rcb.CategoryId = rbg.CategoryId;
-                                        rcb.BudgetMonth = rbg.BudgetMonth;
-                                        rcb.BudgetYear = rbg.BudgetYear;
-                                        rcb.BudgetAmount = Float.valueOf(m_Text);
-
-                                        MyDatabase.MyDB().addCategoryBudget(rcb);
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(context, "Budget for Category/Period Updated", LENGTH_LONG).show();
-                                        rcb.BudgetAmount = Float.valueOf(m_Text);
-
-                                        MyDatabase.MyDB().updateCategoryBudget(rcb);
-                                    }
-                                    rbg.total = Float.valueOf(m_Text);
-                                    rbg.outstanding = rbg.total - rbg.spent;
-
-                                    notifyItemChanged(pos);
-                                    if(lMainActivity!=null)
-                                        lMainActivity.fragmentsRefresh();
-                                }
-                            });
-                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                            builder.show();
+                            handleEditGroupedBudget(v);
                         }
                     });
                 }
@@ -316,39 +362,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                         @Override
                         public void onClick(View v)
                         {
-                            RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
-                            int pos = _items.indexOf(rbli1);
-
-                            boolean show = toggleLayoutExpand(!rbg.Expanded, v);
-                            if (!rbg.Expanded)
-                            {
-                                for (int i = rbg.budgetItems.size() - 1; i >= 0; i--)
-                                {
-                                    RecordBudgetItem rbi = rbg.budgetItems.get(i);
-                                    addItem(pos+1, rbi);
-                                    notifyItemInserted(pos + 1);
-                                }
-                            }
-                            else
-                            {
-                                int i=0;
-                                while(i<_items.size())
-                                {
-                                    if(_items.get(i).BudgetClassId == rbli1.BudgetClassId &&
-                                            _items.get(i).BudgetGroupId == rbli1.BudgetGroupId &&
-                                            _items.get(i).BudgetItemId > 0)
-                                    {
-                                        _items.remove(i);
-                                        notifyItemRemoved(i);
-                                    }
-                                    else
-                                    {
-                                        i++;
-                                    }
-                                }
-                            }
-
-                            rbg.Expanded = show;
+                            handleDropDown(v);
                         }
                     });
                 }
@@ -379,42 +393,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                         @Override
                         public void onClick(View v)
                         {
-                            RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
-                            int pos = _items.indexOf(rbli1);
-
-                            boolean show = toggleLayoutExpand(!rbc.Expanded, v);
-                            if (!rbc.Expanded)
-                            {
-                                for (int i = rbc.budgetGroups.size() - 1; i >= 0; i--)
-                                {
-                                    RecordBudgetGroup rbg = rbc.budgetGroups.get(i);
-                                    addGroup(pos+1, rbg);
-                                    notifyItemInserted(pos + 1);
-                                }
-                            } else
-                            {
-                                int i=0;
-                                while(i<_items.size())
-                                {
-                                    if(_items.get(i).BudgetClassId == rbli1.BudgetClassId &&
-                                            _items.get(i).BudgetGroupId > 0)
-                                    {
-                                        _items.remove(i);
-                                        notifyItemRemoved(i);
-                                    }
-                                    else
-                                    {
-                                        i++;
-                                    }
-                                }
-                                for (int j = 0; j< rbc.budgetGroups.size(); j++)
-                                {
-                                    RecordBudgetGroup rbg = rbc.budgetGroups.get(j);
-                                    rbg.Expanded = false;
-                                }
-                            }
-
-                            rbc.Expanded = show;
+                            handleDropDown(v);
                         }
                     });
                 }
@@ -422,13 +401,15 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private boolean toggleLayoutExpand(boolean show, View view) {
+    private boolean toggleLayoutExpand(boolean show, View view)
+    {
         Tools.toggleArrow(show, view);
         return show;
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return _items.size();
     }
 
