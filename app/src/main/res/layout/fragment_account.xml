@@ -1,31 +1,21 @@
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nested_scroll_view"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:scrollbars="none"
-    android:scrollingCache="true">
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@string/account"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#131111"
-            android:textSize="36sp"
-            android:typeface="normal"
-            android:visibility="visible"
-            tools:visibility="visible" />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:scrollingCache="true" />
 
     </LinearLayout>
 
-</android.support.v4.widget.NestedScrollView>
+</LinearLayout>

@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cooked.hb2.Budget.RecordBudgetClass;
@@ -36,9 +34,8 @@ import java.util.Locale;
 import static android.widget.Toast.LENGTH_LONG;
 import static com.example.cooked.hb2.MainActivity.context;
 
-public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
-    private Context _context;
     private List<RecordBudgetListItem> _items;
     public MainActivity lMainActivity;
 
@@ -49,7 +46,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
     }
 
-    private void addClassToList(RecordBudgetClass argRbc)
+    private void addClassToList(RecordBudgetClass argRbc, List<RecordBudgetListItem> items)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.budget_class);
@@ -58,10 +55,10 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         rbli.BudgetClassId = argRbc.BudgetClassId;
         rbli.BudgetGroupId = 0;
         rbli.BudgetItemId = 0;
-        _items.add(rbli);
+        items.add(rbli);
     }
 
-    private void addGroupToList(int argIndex, RecordBudgetGroup argRbg)
+    private void addGroupToList(int argIndex, RecordBudgetGroup argRbg, List<RecordBudgetListItem> items)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.budget_group);
@@ -72,15 +69,15 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         rbli.BudgetItemId = 0;
         if(argIndex==-1)
         {
-            _items.add(rbli);
+            items.add(rbli);
         }
         else
         {
-            _items.add(argIndex, rbli);
+            items.add(argIndex, rbli);
         }
     }
 
-    private void addItemToList(int argIndex, RecordBudgetItem argRbi)
+    private void addItemToList(int argIndex, RecordBudgetItem argRbi, List<RecordBudgetListItem> items)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.budget_item);
@@ -91,11 +88,11 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         rbli.BudgetItemId = argRbi.BudgetItemId;
         if(argIndex==-1)
         {
-            _items.add(rbli);
+            items.add(rbli);
         }
         else
         {
-            _items.add(argIndex, rbli);
+            items.add(argIndex, rbli);
         }
     }
 
@@ -105,14 +102,14 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         for(int i = 0; i< rbm.budgetClasses.size(); i++)
         {
             RecordBudgetClass rbc = rbm.budgetClasses.get(i);
-            addClassToList(rbc);
+            addClassToList(rbc, items);
             if(rbc.Expanded)
             {
                 for(int j=0;j<rbc.budgetGroups.size();j++)
                 {
                     RecordBudgetGroup rbg = rbc.budgetGroups.get(j);
 
-                    addGroupToList(-1, rbg);
+                    addGroupToList(-1, rbg, items);
 
                     if(rbg.Expanded)
                     {
@@ -120,7 +117,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                         {
                             RecordBudgetItem rbi = rbg.budgetItems.get(k);
 
-                            addItemToList(-1, rbi);
+                            addItemToList(-1, rbi, items);
                         }
                     }
                 }
@@ -129,8 +126,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
         return(items);
     }
 
-    public BudgetListSectioned(Context context, RecordBudgetMonth rbm) {
-        _context=context;
+    public BudgetListAdapter(Context context, RecordBudgetMonth rbm) {
         _items = createListFromRecordBudgetMonth(rbm);
     }
 
@@ -138,7 +134,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        RecyclerView.ViewHolder vh=null;
+        RecyclerView.ViewHolder vh;
 
         if (viewType == MyResources.R().getInteger(R.integer.budget_class)) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_class, parent, false);
@@ -153,11 +149,8 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             else
             {
-                if(viewType==MyResources.R().getInteger(R.integer.budget_item))
-                {
-                    View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_item, parent, false);
-                    vh = new BudgetItemViewHolder(v);
-                }
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_item, parent, false);
+                vh = new BudgetItemViewHolder(v);
             }
         }
         return vh;
@@ -178,7 +171,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                 for (int i = rbg.budgetItems.size() - 1; i >= 0; i--)
                 {
                     RecordBudgetItem rbi = rbg.budgetItems.get(i);
-                    addItemToList(pos + 1, rbi);
+                    addItemToList(pos + 1, rbi, _items);
                     notifyItemInserted(pos + 1);
                 }
             }
@@ -213,7 +206,7 @@ public class BudgetListSectioned extends RecyclerView.Adapter<RecyclerView.ViewH
                 for (int i = rbc.budgetGroups.size() - 1; i >= 0; i--)
                 {
                     RecordBudgetGroup rbg = rbc.budgetGroups.get(i);
-                    addGroupToList(pos+1, rbg);
+                    addGroupToList(pos+1, rbg, _items);
                     notifyItemInserted(pos + 1);
                 }
             } else
