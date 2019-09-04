@@ -1,4 +1,4 @@
-package com.example.cooked.hb2.Budget;
+package com.example.cooked.hb2.Records;
 
 public class RecordBudgetItem
 {

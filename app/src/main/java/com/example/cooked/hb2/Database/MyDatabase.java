@@ -5,10 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.TextView;
 
-import com.example.cooked.hb2.Budget.RecordBudgetClass;
-import com.example.cooked.hb2.Budget.RecordBudgetGroup;
-import com.example.cooked.hb2.Budget.RecordBudgetItem;
-import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.Records.RecordBudgetClass;
+import com.example.cooked.hb2.Records.RecordBudgetGroup;
+import com.example.cooked.hb2.Records.RecordBudgetItem;
+import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;

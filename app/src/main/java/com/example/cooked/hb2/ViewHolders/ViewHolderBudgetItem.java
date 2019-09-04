@@ -6,14 +6,14 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.R;
 
-public class BudgetItemViewHolder extends RecyclerView.ViewHolder {
+public class ViewHolderBudgetItem extends RecyclerView.ViewHolder {
     public TextView title;
     public View titleParent;
     public TextView txtTotal;
     public TextView txtSpent;
     public TextView txtOutstanding;
 
-    public BudgetItemViewHolder(View v) {
+    public ViewHolderBudgetItem(View v) {
         super(v);
         title = v.findViewById(R.id.title);
         titleParent = v.findViewById(R.id.titleParent);

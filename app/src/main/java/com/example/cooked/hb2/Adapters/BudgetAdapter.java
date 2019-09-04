@@ -1,4 +1,4 @@
-package com.example.cooked.hb2.Budget;
+package com.example.cooked.hb2.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,6 +22,8 @@ import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.Database.RecordCategoryBudget;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.Records.RecordBudgetGroup;
+import com.example.cooked.hb2.Records.RecordBudgetItem;
 
 import java.util.ArrayList;
 import java.util.Locale;

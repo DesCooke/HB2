@@ -8,18 +8,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.cooked.hb2.Adapters.BudgetListAdapter;
-import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.Adapters.TransactionListAdapter;
+import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
+
+import java.util.ArrayList;
 
 public class FragmentAccount extends Fragment {
     private RecyclerView recyclerView;
     private TransactionListAdapter mAdapter;
-    private RecordBudgetMonth _rbm;
+    private ArrayList<RecordTransaction> _rta;
     public MainActivity lMainActivity;
+    public String AcSortCode;
+    public String AcAccountNumber;
 
     public FragmentAccount() {
+    }
+
+    public void SetAccount(String acSortCode, String acAccountNumber)
+    {
+        AcSortCode=acSortCode;
+        AcAccountNumber=acAccountNumber;
     }
 
     public void SetMainActivity(MainActivity ma)
@@ -27,17 +38,17 @@ public class FragmentAccount extends Fragment {
         lMainActivity = ma;
     }
 
-    public void RefreshForm(RecordBudgetMonth recordBudgetMonth)
+    public void RefreshForm(ArrayList<RecordTransaction> rta)
     {
-        _rbm=recordBudgetMonth;
+        _rta=rta;
         //set data and list adapter
         if (recyclerView == null)
             return;
         populate();
     }
-    public void PopulateForm(RecordBudgetMonth recordBudgetMonth)
+    public void PopulateForm(ArrayList<RecordTransaction> rta)
     {
-        _rbm=recordBudgetMonth;
+        _rta=rta;
         //set data and list adapter
         if (recyclerView == null)
             return;
@@ -45,14 +56,14 @@ public class FragmentAccount extends Fragment {
     }
     private void populate()
     {
-        mAdapter = new TransactionListAdapter(getActivity(), _rbm);
+        mAdapter = new TransactionListAdapter(getActivity(), _rta);
         recyclerView.setAdapter(mAdapter);
     }
 
 
 
-    public static FragmentBudget newInstance() {
-        FragmentBudget fragment = new FragmentBudget();
+    public static FragmentAccount newInstance() {
+        FragmentAccount fragment = new FragmentAccount();
         return fragment;
     }
 
@@ -71,4 +82,5 @@ public class FragmentAccount extends Fragment {
         populate();
 
         return root;
-    }}
+    }
+}

@@ -1,22 +1,18 @@
 package com.example.cooked.hb2;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,24 +22,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Adapters.ViewPagerMainAdapter;
-import com.example.cooked.hb2.Budget.BudgetAdapter;
-import com.example.cooked.hb2.Budget.RecordBudgetClass;
-import com.example.cooked.hb2.Budget.RecordBudgetGroup;
-import com.example.cooked.hb2.Budget.RecordBudgetItem;
-import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.Adapters.BudgetAdapter;
+import com.example.cooked.hb2.Records.RecordBudgetClass;
+import com.example.cooked.hb2.Records.RecordBudgetGroup;
+import com.example.cooked.hb2.Records.RecordBudgetItem;
+import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordAccount;
 import com.example.cooked.hb2.Database.RecordButton;
@@ -91,6 +81,7 @@ public class MainActivity extends AppCompatActivity
 
     private FragmentDashboard _fragmentDashboard;
     private FragmentBudget _fragmentBudget;
+    private ArrayList<FragmentAccount> _fragmentAccounts;
     private RecyclerView mTransactionListButton;
     private RecyclerView mTransactionListCommonButton;
     private RecyclerView mTransactionListCurrent;
@@ -487,6 +478,12 @@ public class MainActivity extends AppCompatActivity
             _fragmentDashboard.RefreshForm(mDatasetBudgetMonth);
         if(_fragmentBudget!=null)
             _fragmentBudget.RefreshForm(mDatasetBudgetMonth);
+        for(int i=0;i<_fragmentAccounts.size();i++)
+        {
+            FragmentAccount fa=_fragmentAccounts.get(i);
+            if(fa!=null)
+                fa.RefreshForm(mDatasetBudgetMonth.getTransactions(fa.AcSortCode,fa.AcAccountNumber));
+        }
     }
 
     public void fragmentsLoadAndRefresh()
@@ -497,6 +494,12 @@ public class MainActivity extends AppCompatActivity
             _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
         if(_fragmentBudget!=null)
             _fragmentBudget.PopulateForm(mDatasetBudgetMonth);
+        for(int i=0;i<_fragmentAccounts.size();i++)
+        {
+            FragmentAccount fa=_fragmentAccounts.get(i);
+            if(fa!=null)
+                fa.PopulateForm(mDatasetBudgetMonth.getTransactions(fa.AcSortCode,fa.AcAccountNumber));
+        }
     }
     //method to expand all groups
     private void expandAll()
@@ -703,9 +706,13 @@ public class MainActivity extends AppCompatActivity
         _fragmentBudget.lMainActivity=this;
         adapter.addFragment(_fragmentBudget, "Budget");
 
+        _fragmentAccounts = new ArrayList<FragmentAccount>();
         for(int i=0;i<list.size();i++)
         {
-            adapter.addFragment(FragmentAccount.newInstance(), list.get(i).AcDescription);
+            FragmentAccount fa= FragmentAccount.newInstance();
+            fa.SetAccount(list.get(i).AcSortCode, list.get(i).AcAccountNumber);
+            _fragmentAccounts.add(fa);
+            adapter.addFragment(fa, list.get(i).AcDescription);
         }
         view_pager.setAdapter(adapter);
 

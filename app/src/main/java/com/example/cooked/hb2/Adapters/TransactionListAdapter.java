@@ -1,161 +1,73 @@
 package com.example.cooked.hb2.Adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.cooked.hb2.Budget.RecordBudgetClass;
-import com.example.cooked.hb2.Budget.RecordBudgetGroup;
-import com.example.cooked.hb2.Budget.RecordBudgetItem;
-import com.example.cooked.hb2.Budget.RecordBudgetListItem;
-import com.example.cooked.hb2.Budget.RecordBudgetMonth;
-import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordCategoryBudget;
+
+import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.MyResources;
-import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
-import com.example.cooked.hb2.ViewHolders.BudgetClassViewHolder;
-import com.example.cooked.hb2.ViewHolders.BudgetGroupViewHolder;
-import com.example.cooked.hb2.ViewHolders.BudgetItemViewHolder;
+import com.example.cooked.hb2.Records.RecordTransactionListItem;
+import com.example.cooked.hb2.ViewHolders.ViewHolderTransactionItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import static android.widget.Toast.LENGTH_LONG;
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 import static com.example.cooked.hb2.MainActivity.context;
 
 public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
-    private List<RecordBudgetListItem> _items;
+    private List<RecordTransactionListItem> _items;
     public MainActivity lMainActivity;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, RecordBudgetListItem obj, int position);
+        void onItemClick(View view, RecordTransactionListItem obj, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
     }
 
-    private void addClassToList(RecordBudgetClass argRbc, List<RecordBudgetListItem> items)
+    private void addTransactionToList(RecordTransaction argrt, List<RecordTransactionListItem> items)
     {
-        RecordBudgetListItem rbli=new RecordBudgetListItem();
-        rbli.ItemType = context.getResources().getInteger(R.integer.budget_class);
-        rbli.ItemName = argRbc.budgetClassName;
-        rbli.Data = argRbc;
-        rbli.BudgetClassId = argRbc.BudgetClassId;
-        rbli.BudgetGroupId = 0;
-        rbli.BudgetItemId = 0;
-        items.add(rbli);
+        RecordTransactionListItem rtli=new RecordTransactionListItem();
+        rtli.ItemType = MyResources.R().getInteger(R.integer.item_type_transaction_item);
+        rtli.Data = argrt;
+        items.add(rtli);
     }
 
-    private void addGroupToList(int argIndex, RecordBudgetGroup argRbg, List<RecordBudgetListItem> items)
+    private List<RecordTransactionListItem> createListFromTransactionList(List<RecordTransaction> rtl)
     {
-        RecordBudgetListItem rbli=new RecordBudgetListItem();
-        rbli.ItemType = context.getResources().getInteger(R.integer.budget_group);
-        rbli.ItemName = argRbg.budgetGroupName;
-        rbli.Data = argRbg;
-        rbli.BudgetClassId = argRbg.BudgetClassId;
-        rbli.BudgetGroupId = argRbg.BudgetGroupId;
-        rbli.BudgetItemId = 0;
-        if(argIndex==-1)
+        List<RecordTransactionListItem> items = new ArrayList<>();
+        for(int i = 0; i< rtl.size(); i++)
         {
-            items.add(rbli);
-        }
-        else
-        {
-            items.add(argIndex, rbli);
-        }
-    }
-
-    private void addItemToList(int argIndex, RecordBudgetItem argRbi, List<RecordBudgetListItem> items)
-    {
-        RecordBudgetListItem rbli=new RecordBudgetListItem();
-        rbli.ItemType = context.getResources().getInteger(R.integer.budget_item);
-        rbli.ItemName = argRbi.budgetItemName;
-        rbli.Data = argRbi;
-        rbli.BudgetClassId = argRbi.BudgetClassId;
-        rbli.BudgetGroupId = argRbi.BudgetGroupId;
-        rbli.BudgetItemId = argRbi.BudgetItemId;
-        if(argIndex==-1)
-        {
-            items.add(rbli);
-        }
-        else
-        {
-            items.add(argIndex, rbli);
-        }
-    }
-
-    private List<RecordBudgetListItem> createListFromRecordBudgetMonth(RecordBudgetMonth rbm)
-    {
-        List<RecordBudgetListItem> items = new ArrayList<>();
-        for(int i = 0; i< rbm.budgetClasses.size(); i++)
-        {
-            RecordBudgetClass rbc = rbm.budgetClasses.get(i);
-            addClassToList(rbc, items);
-            if(rbc.Expanded)
-            {
-                for(int j=0;j<rbc.budgetGroups.size();j++)
-                {
-                    RecordBudgetGroup rbg = rbc.budgetGroups.get(j);
-
-                    addGroupToList(-1, rbg, items);
-
-                    if(rbg.Expanded)
-                    {
-                        for(int k=0;k<rbg.budgetItems.size();k++)
-                        {
-                            RecordBudgetItem rbi = rbg.budgetItems.get(k);
-
-                            addItemToList(-1, rbi, items);
-                        }
-                    }
-                }
-            }
+            RecordTransaction rt = rtl.get(i);
+            addTransactionToList(rt, items);
         }
         return(items);
     }
 
-    public TransactionListAdapter(Context context, RecordBudgetMonth rbm) {
-        _items = createListFromRecordBudgetMonth(rbm);
+    public TransactionListAdapter(Context context, List<RecordTransaction> rtl) {
+        _items = createListFromTransactionList(rtl);
     }
 
-    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        RecyclerView.ViewHolder vh;
+        RecyclerView.ViewHolder vh=null;
 
-        if (viewType == MyResources.R().getInteger(R.integer.budget_class)) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_class, parent, false);
-            vh = new BudgetClassViewHolder(v);
-        }
-        else
-        {
-            if(viewType==MyResources.R().getInteger(R.integer.budget_group))
-            {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_group, parent, false);
-                vh = new BudgetGroupViewHolder(v);
-            }
-            else
-            {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_item, parent, false);
-                vh = new BudgetItemViewHolder(v);
-            }
+        if (viewType == MyResources.R().getInteger(R.integer.item_type_transaction_item)) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_transaction_item, parent, false);
+            vh = new ViewHolderTransactionItem(v);
         }
         return vh;
     }
-
+/*
     private void handleDropDown(View v)
     {
         RecordBudgetListItem rbli = (RecordBudgetListItem) v.getTag();
@@ -235,6 +147,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             rbc.Expanded = show;
         }
     }
+
+ */
+
+/*
     private void handleEditGroupedBudget(View v)
     {
         RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
@@ -299,107 +215,109 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         builder.show();
     }
+
+ */
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        final RecordBudgetListItem rbli = _items.get(position);
-        if (holder instanceof BudgetItemViewHolder) {
-            final BudgetItemViewHolder view = (BudgetItemViewHolder) holder;
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position)
+    {
+        final RecordTransactionListItem rtli = _items.get(position);
+        final RecordTransaction rti = (RecordTransaction)rtli.Data;
+        if (holder instanceof ViewHolderTransactionItem) {
+            final ViewHolderTransactionItem view = (ViewHolderTransactionItem) holder;
 
-            view.titleParent.setVisibility(View.VISIBLE);
-            view.title.setText(rbli.ItemName);
+            view.mTxSeqNo.setText(rti.TxSeqNo.toString());
+            view.mTxAdded.setText(rti.TxAdded.toString());
+            view.mTxFilename.setText(rti.TxFilename);
+            view.mTxLineNo.setText(rti.TxLineNo.toString());
+            view.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rti.TxDate));
+            view.mTxType.setText(rti.TxType);
+            view.mBankAccount.setText(rti.TxSortCode + " " + rti.TxAccountNumber);
+            if (rti.TxDescription.length() > 0) {
+                view.mTxDescription.setVisibility(View.VISIBLE);
+                view.mTxDescription.setText("Description: " + rti.TxDescription);
+            } else {
+                view.mTxDescription.setVisibility(View.GONE);
+            }
+            view.mSubCategoryName.setText("Category: " + rti.SubCategoryName);
 
-            final RecordBudgetItem rbi = (RecordBudgetItem)rbli.Data;
-            view.txtTotal.setText(context.getString(R.string.total_line,Tools.moneyFormat(rbi.total)));
-            view.txtSpent.setText(context.getString(R.string.spent_line,Tools.moneyFormat(rbi.spent)));
-            view.txtOutstanding.setText(context.getString(R.string.outstanding_line,Tools.moneyFormat(rbi.outstanding)));
-        }
-        else
-        {
-            if (holder instanceof BudgetGroupViewHolder)
-            {
-                BudgetGroupViewHolder view = (BudgetGroupViewHolder) holder;
-                view.title.setText(rbli.ItemName);
-                final RecordBudgetGroup rbg = (RecordBudgetGroup)rbli.Data;
-                view.bt_edit.setVisibility(View.GONE);
-                if(rbg.groupedBudget)
-                {
-                    view.bt_edit.setTag(rbli);
-                    view.bt_edit.setVisibility(View.VISIBLE);
-                    view.bt_edit.setOnClickListener(new View.OnClickListener(){
-                        @Override
-                        public void onClick(View v)
-                        {
-                            handleEditGroupedBudget(v);
-                        }
-                    });
-                }
-                view.txtTotal.setText(context.getString(R.string.total_line,Tools.moneyFormat(rbg.total)));
-                view.txtSpent.setText(context.getString(R.string.spent_line,Tools.moneyFormat(rbg.spent)));
-                view.txtOutstanding.setText(context.getString(R.string.outstanding_line,Tools.moneyFormat(rbg.outstanding)));
-                view.titleParent.setVisibility(View.VISIBLE);
-
-                if(view.bt_expand!=null)
-                {
-                    if(rbg.Expanded)
-                    {
-                        Tools.setAsExpanded(view.bt_expand, false);
-                    }
-                    else
-                    {
-                        Tools.setAsClosed(view.bt_expand, false);
-                    }
-                    view.bt_expand.setTag(rbli);
-                    view.bt_expand.setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            handleDropDown(v);
-                        }
-                    });
+            if (rti.Comments.length() > 0) {
+                view.mComments.setVisibility(View.VISIBLE);
+                view.mComments.setText("Comments: " + rti.Comments);
+            } else {
+                view.mComments.setVisibility(View.GONE);
+            }
+            view.mBudget.setText(dateUtils().BudgetAsString(rti.BudgetYear, rti.BudgetMonth));
+            if (rti.TxAmount < 0.00) {
+                view.mTxAmount.setText("Amount -£" + String.format("%.2f", rti.TxAmount * -1));
+            } else {
+                view.mTxAmount.setText("Amount £" + String.format("%.2f", rti.TxAmount));
+            }
+            if (rti.HideBalance) {
+                view.mTxBalance.setVisibility(View.INVISIBLE);
+            } else {
+                view.mTxBalance.setVisibility(View.VISIBLE);
+                if (rti.TxBalance < 0.00) {
+                    view.mTxBalance.setText("Balance -£" + String.format("%.2f", rti.TxBalance * -1));
+                } else {
+                    view.mTxBalance.setText("Balance £" + String.format("%.2f", rti.TxBalance));
                 }
             }
-            else
-            {
-                BudgetClassViewHolder view = (BudgetClassViewHolder) holder;
-                view.title.setText(rbli.ItemName);
-                final RecordBudgetClass rbc = (RecordBudgetClass)rbli.Data;
-                view.txtTotal.setText(context.getString(R.string.total_line,Tools.moneyFormat(rbc.total)));
-                view.txtSpent.setText(context.getString(R.string.spent_line,Tools.moneyFormat(rbc.spent)));
-                view.txtOutstanding.setText(context.getString(R.string.outstanding_line,Tools.moneyFormat(rbc.outstanding)));
-                view.titleParent.setVisibility(View.VISIBLE);
-                if(view.bt_expand!=null)
-                {
-                    if(rbc.Expanded)
-                    {
-                        Tools.setAsExpanded(view.bt_expand, false);
-                    }
-                    else
-                    {
-                        Tools.setAsClosed(view.bt_expand, false);
+            view.mFull.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    /*
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(view, rti);
                     }
 
-                    view.bt_expand.setTag(rbli);
-                    view.bt_expand.setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            handleDropDown(v);
-                        }
-                    });
+                     */
+                }
+            });
+            int lColor = MainActivity.context.getResources().getColor(R.color.textNormal);
+            if (rti.TxType.compareTo("Planned") == 0)
+                lColor = MainActivity.context.getResources().getColor(R.color.textLowLight);
+
+            view.mTxSeqNo.setTextColor(lColor);
+            view.mTxAdded.setTextColor(lColor);
+            view.mTxFilename.setTextColor(lColor);
+            view.mTxLineNo.setTextColor(lColor);
+            view.mTxDate.setTextColor(lColor);
+            view.mTxType.setTextColor(lColor);
+            view.mBankAccount.setTextColor(lColor);
+            view.mTxDescription.setTextColor(lColor);
+            view.mTxAmount.setTextColor(lColor);
+            view.mTxBalance.setTextColor(lColor);
+            view.mSubCategoryName.setTextColor(lColor);
+            view.mComments.setTextColor(lColor);
+            view.mBudget.setTextColor(lColor);
+
+            if (rti.BalanceCorrect == false) {
+                //holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+                //holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+                if (view.mTxBalance.getVisibility() == View.VISIBLE) {
+                    if (rti.TxBalance < 0.00) {
+//                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1) + " -> " +
+//                        ", -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
+                        view.mTxBalance.setText("Balance -£" + String.format("%.2f", rti.TxBalance * -1));
+                    } else {
+//                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance) + " -> " +
+//                        "£" + String.format("%.2f", rec.TxBalanceShouldBe));
+                        view.mTxBalance.setText("Balance £" + String.format("%.2f", rti.TxBalance));
+                    }
                 }
             }
         }
     }
-
+/*
     private boolean toggleLayoutExpand(boolean show, View view)
     {
         Tools.toggleArrow(show, view);
         return show;
     }
 
+
+ */
     @Override
     public int getItemCount()
     {

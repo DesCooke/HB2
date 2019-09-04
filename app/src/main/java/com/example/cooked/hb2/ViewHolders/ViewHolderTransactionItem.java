@@ -10,25 +10,25 @@ import com.example.cooked.hb2.R;
 // Provide a reference to the views for each data item
 // Complex data items may need more than one view per item, and
 // you provide access to all the views for a data item in a view holder
-public class TransactionViewHolder extends RecyclerView.ViewHolder
+public class ViewHolderTransactionItem extends RecyclerView.ViewHolder
 {
     // each data item is just a string in this case
-    TextView mTxSeqNo;
-    TextView mTxAdded;
-    TextView mTxFilename;
-    TextView mTxLineNo;
-    TextView mTxDate;
-    TextView mTxType;
-    TextView mBankAccount;
-    TextView mTxDescription;
-    TextView mTxAmount;
-    TextView mTxBalance;
-    TextView mSubCategoryName;
-    TextView mComments;
-    TextView mBudget;
-    ConstraintLayout mFull;
+    public TextView mTxSeqNo;
+    public TextView mTxAdded;
+    public TextView mTxFilename;
+    public TextView mTxLineNo;
+    public TextView mTxDate;
+    public TextView mTxType;
+    public TextView mBankAccount;
+    public TextView mTxDescription;
+    public TextView mTxAmount;
+    public TextView mTxBalance;
+    public TextView mSubCategoryName;
+    public TextView mComments;
+    public TextView mBudget;
+    public ConstraintLayout mFull;
 
-    TransactionViewHolder(View v)
+    public ViewHolderTransactionItem(View v)
     {
         super(v);
 

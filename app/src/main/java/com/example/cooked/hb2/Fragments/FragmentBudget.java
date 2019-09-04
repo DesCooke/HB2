@@ -2,16 +2,14 @@ package com.example.cooked.hb2.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.example.cooked.hb2.Adapters.BudgetListAdapter;
-import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 

@@ -12,20 +12,20 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.cooked.hb2.Budget.RecordBudgetClass;
-import com.example.cooked.hb2.Budget.RecordBudgetGroup;
-import com.example.cooked.hb2.Budget.RecordBudgetItem;
-import com.example.cooked.hb2.Budget.RecordBudgetListItem;
-import com.example.cooked.hb2.Budget.RecordBudgetMonth;
+import com.example.cooked.hb2.Records.RecordBudgetClass;
+import com.example.cooked.hb2.Records.RecordBudgetGroup;
+import com.example.cooked.hb2.Records.RecordBudgetItem;
+import com.example.cooked.hb2.Records.RecordBudgetListItem;
+import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCategoryBudget;
 import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
-import com.example.cooked.hb2.ViewHolders.BudgetClassViewHolder;
-import com.example.cooked.hb2.ViewHolders.BudgetGroupViewHolder;
-import com.example.cooked.hb2.ViewHolders.BudgetItemViewHolder;
+import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetClass;
+import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetGroup;
+import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void addClassToList(RecordBudgetClass argRbc, List<RecordBudgetListItem> items)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
-        rbli.ItemType = context.getResources().getInteger(R.integer.budget_class);
+        rbli.ItemType = context.getResources().getInteger(R.integer.item_type_budget_class);
         rbli.ItemName = argRbc.budgetClassName;
         rbli.Data = argRbc;
         rbli.BudgetClassId = argRbc.BudgetClassId;
@@ -61,7 +61,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void addGroupToList(int argIndex, RecordBudgetGroup argRbg, List<RecordBudgetListItem> items)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
-        rbli.ItemType = context.getResources().getInteger(R.integer.budget_group);
+        rbli.ItemType = context.getResources().getInteger(R.integer.item_type_budget_group);
         rbli.ItemName = argRbg.budgetGroupName;
         rbli.Data = argRbg;
         rbli.BudgetClassId = argRbg.BudgetClassId;
@@ -80,7 +80,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void addItemToList(int argIndex, RecordBudgetItem argRbi, List<RecordBudgetListItem> items)
     {
         RecordBudgetListItem rbli=new RecordBudgetListItem();
-        rbli.ItemType = context.getResources().getInteger(R.integer.budget_item);
+        rbli.ItemType = context.getResources().getInteger(R.integer.item_type_budget_item);
         rbli.ItemName = argRbi.budgetItemName;
         rbli.Data = argRbi;
         rbli.BudgetClassId = argRbi.BudgetClassId;
@@ -136,21 +136,21 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     {
         RecyclerView.ViewHolder vh;
 
-        if (viewType == MyResources.R().getInteger(R.integer.budget_class)) {
+        if (viewType == MyResources.R().getInteger(R.integer.item_type_budget_class)) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_class, parent, false);
-            vh = new BudgetClassViewHolder(v);
+            vh = new ViewHolderBudgetClass(v);
         }
         else
         {
-            if(viewType==MyResources.R().getInteger(R.integer.budget_group))
+            if(viewType==MyResources.R().getInteger(R.integer.item_type_budget_group))
             {
                 View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_group, parent, false);
-                vh = new BudgetGroupViewHolder(v);
+                vh = new ViewHolderBudgetGroup(v);
             }
             else
             {
                 View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_item, parent, false);
-                vh = new BudgetItemViewHolder(v);
+                vh = new ViewHolderBudgetItem(v);
             }
         }
         return vh;
@@ -303,8 +303,8 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final RecordBudgetListItem rbli = _items.get(position);
-        if (holder instanceof BudgetItemViewHolder) {
-            final BudgetItemViewHolder view = (BudgetItemViewHolder) holder;
+        if (holder instanceof ViewHolderBudgetItem) {
+            final ViewHolderBudgetItem view = (ViewHolderBudgetItem) holder;
 
             view.titleParent.setVisibility(View.VISIBLE);
             view.title.setText(rbli.ItemName);
@@ -316,9 +316,9 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
         else
         {
-            if (holder instanceof BudgetGroupViewHolder)
+            if (holder instanceof ViewHolderBudgetGroup)
             {
-                BudgetGroupViewHolder view = (BudgetGroupViewHolder) holder;
+                ViewHolderBudgetGroup view = (ViewHolderBudgetGroup) holder;
                 view.title.setText(rbli.ItemName);
                 final RecordBudgetGroup rbg = (RecordBudgetGroup)rbli.Data;
                 view.bt_edit.setVisibility(View.GONE);
@@ -362,7 +362,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             else
             {
-                BudgetClassViewHolder view = (BudgetClassViewHolder) holder;
+                ViewHolderBudgetClass view = (ViewHolderBudgetClass) holder;
                 view.title.setText(rbli.ItemName);
                 final RecordBudgetClass rbc = (RecordBudgetClass)rbli.Data;
                 view.txtTotal.setText(context.getString(R.string.total_line,Tools.moneyFormat(rbc.total)));

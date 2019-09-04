@@ -1,4 +1,4 @@
-package com.example.cooked.hb2.Budget;
+package com.example.cooked.hb2.Records;
 
 import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.MainActivity;
