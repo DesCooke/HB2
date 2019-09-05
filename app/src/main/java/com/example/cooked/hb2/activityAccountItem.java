@@ -8,11 +8,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordAccount;
-import com.example.cooked.hb2.Database.RecordCategory;
+import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
-
-import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
 
 public class activityAccountItem extends AppCompatActivity {
 

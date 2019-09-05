@@ -2,7 +2,6 @@ package com.example.cooked.hb2.Records;
 
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
-import com.example.cooked.hb2.Records.RecordBudgetClass;
 
 import java.util.ArrayList;
 
@@ -18,6 +17,73 @@ public class RecordBudgetMonth
     public Float finalBudgetBalanceThisMonth;
     public ArrayList<RecordBudgetClass> budgetClasses;
     public String notes;
+    public ArrayList<RecordAccount> accounts;
+
+    public RecordBudgetMonth()
+    {
+        startingBalance=0.00f;
+        monthlyIncome=0.00f;
+        monthlyExpense=0.00f;
+        amountLeft=0.00f;
+        extraIncome=0.00f;
+        extraExpense=0.00f;
+        extraLeft=0.00f;
+        finalBudgetBalanceThisMonth=0.00f;
+        budgetClasses = new ArrayList<RecordBudgetClass>();
+        notes="";
+        accounts = new ArrayList<RecordAccount>();
+    }
+
+    public RecordAccount FindAccount(String acSortCode, String acAccountNumber)
+    {
+        for(int i=0;i<accounts.size();i++)
+        {
+            RecordAccount ra = accounts.get(i);
+            if(ra.AcSortCode.compareTo(acSortCode)==0 &&
+               ra.AcAccountNumber.compareTo(acAccountNumber)==0)
+            {
+                return(ra);
+            }
+        }
+        return(null);
+    }
+    private void RefreshOutstanding()
+    {
+        float ctotal=0.00f;
+        float cspent=0.00f;
+        for(int i=0;i<budgetClasses.size();i++)
+        {
+            float gtotal=0.00f;
+            float gspent=0.00f;
+
+            RecordBudgetClass rbc=budgetClasses.get(i);
+            for(int j=0;j<rbc.budgetGroups.size();j++)
+            {
+                float itotal=0.00f;
+                float ispent=0.00f;
+
+                RecordBudgetGroup rbg=rbc.budgetGroups.get(j);
+                for(int k=0;k<rbg.budgetItems.size();k++)
+                {
+                    RecordBudgetItem rbi=rbg.budgetItems.get(k);
+                    rbi.outstanding=rbi.total-rbi.spent;
+                    itotal+=rbi.total;
+                    ispent+=rbi.spent;
+                }
+                if(!rbg.groupedBudget)
+                    rbg.total=itotal;
+                rbg.spent=ispent;
+                rbg.outstanding=rbg.total-rbg.spent;
+                gtotal+=rbg.total;
+                gspent+=rbg.spent;
+            }
+            rbc.total=gtotal;
+            rbc.spent=gspent;
+            rbc.outstanding=rbc.total-rbc.spent;
+            ctotal+=rbc.total;
+            cspent+=rbc.spent;
+        }
+    }
 
     public void RefreshTotals()
     {
@@ -29,6 +95,9 @@ public class RecordBudgetMonth
         Float l_BCExpense = 0.00f;
         Float l_BCEIncome = 0.00f;
         Float l_BCEExpense = 0.00f;
+
+        RefreshOutstanding();
+
         for (int i = 0; i < budgetClasses.size(); i++)
         {
             RecordBudgetClass rbc = budgetClasses.get(i);

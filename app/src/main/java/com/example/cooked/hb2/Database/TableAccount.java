@@ -4,23 +4,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
-import com.example.cooked.hb2.GlobalUtils.MyResources;
-import com.example.cooked.hb2.GlobalUtils.MyString;
-import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.Records.RecordAccount;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static java.lang.Float.parseFloat;
 
 class TableAccount extends TableBase

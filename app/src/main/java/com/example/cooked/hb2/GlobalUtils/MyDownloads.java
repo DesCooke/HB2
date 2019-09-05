@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 

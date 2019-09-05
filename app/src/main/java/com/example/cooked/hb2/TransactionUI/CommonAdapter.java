@@ -9,14 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordCommon;
-import com.example.cooked.hb2.Database.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
-
-import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 
 public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.ViewHolder>
 {

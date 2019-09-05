@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
 import com.example.cooked.hb2.Records.RecordBudgetItem;
@@ -14,6 +15,7 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.Records.RecordTransaction;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1108,8 +1110,13 @@ public class MyDatabase extends SQLiteOpenHelper
 
         try
         {
-
-            RecordBudgetGroup mrbg;
+            rbm.accounts = tableTransaction.getAccountList();
+            for(int i=0;i<rbm.accounts.size();i++)
+            {
+                RecordAccount ra=rbm.accounts.get(i);
+                ra.RecordTransactions = tableTransaction.getTransactionList(ra.AcSortCode,
+                        ra.AcAccountNumber, pMonth, pYear, pIncludeThisBudgetOnly);
+            }
 
             ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
             ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
@@ -1126,9 +1133,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 }
             }
 
-
-
-            rbm.budgetClasses = new ArrayList<>();
+            rbm.budgetClasses.clear();
 
             RecordBudgetClass rbc = new RecordBudgetClass();
             rbc.BudgetClassId = rbm.budgetClasses.size()+1;

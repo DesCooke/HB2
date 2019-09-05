@@ -1,5 +1,8 @@
-package com.example.cooked.hb2.Database;
+package com.example.cooked.hb2.Records;
 
+import com.example.cooked.hb2.Records.RecordTransaction;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class RecordAccount
@@ -9,8 +12,9 @@ public class RecordAccount
     public String AcAccountNumber;
     public String AcDescription;
     public Float AcStartingBalance;
+    public ArrayList<RecordTransaction> RecordTransactions;
 
-    RecordAccount
+    public RecordAccount
             (
                     Integer pSeqNo,
                     String pSortCode,
@@ -24,6 +28,7 @@ public class RecordAccount
         AcAccountNumber = pAccountNumber;
         AcDescription = pDescription;
         AcStartingBalance = pStartingBalance;
+        RecordTransactions = new ArrayList<RecordTransaction>();
     }
 
 }

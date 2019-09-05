@@ -1,4 +1,4 @@
-package com.example.cooked.hb2.Database;
+package com.example.cooked.hb2.Records;
 
 import java.util.Date;
 
@@ -32,7 +32,7 @@ public class RecordTransaction
     public Boolean BalanceCorrect;
     public Float TxBalanceShouldBe;
 
-    RecordTransaction
+    public RecordTransaction
             (
                      int pTxSeqNo,
                      Date pTxAdded,

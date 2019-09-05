@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
-import static com.example.cooked.hb2.MainActivity.context;
 
 public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {

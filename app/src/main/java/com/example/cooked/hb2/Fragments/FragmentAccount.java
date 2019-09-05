@@ -9,8 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.cooked.hb2.Adapters.TransactionListAdapter;
-import com.example.cooked.hb2.Database.RecordTransaction;
-import com.example.cooked.hb2.Records.RecordBudgetMonth;
+import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 

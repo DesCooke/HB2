@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.Database.RecordPlanned;
-import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
 import com.example.cooked.hb2.GlobalUtils.DialogUpdatePlannedQ;

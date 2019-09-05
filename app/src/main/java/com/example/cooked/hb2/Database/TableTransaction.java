@@ -10,6 +10,8 @@ import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.Records.RecordAccount;
+import com.example.cooked.hb2.Records.RecordTransaction;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -280,6 +282,7 @@ class TableTransaction extends TableBase
             ErrorDialog.Show("Error in TableTransaction.dumpTransactionTable", e.getMessage());
         }
     }
+
     ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
         ArrayList<RecordTransaction> list;
@@ -547,7 +550,6 @@ class TableTransaction extends TableBase
         }
         return (new Date(0));
     }
-
 
     ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum,
                                                     Integer budgetMonth, Integer budgetYear,

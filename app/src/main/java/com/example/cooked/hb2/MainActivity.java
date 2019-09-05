@@ -1,7 +1,6 @@
 package com.example.cooked.hb2;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,15 +29,13 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Adapters.ViewPagerMainAdapter;
 import com.example.cooked.hb2.Adapters.BudgetAdapter;
-import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
-import com.example.cooked.hb2.Records.RecordBudgetItem;
 import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordAccount;
+import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.Database.RecordButton;
 import com.example.cooked.hb2.Database.RecordCommon;
-import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.Fragments.FragmentAccount;
 import com.example.cooked.hb2.Fragments.FragmentBudget;
 import com.example.cooked.hb2.Fragments.FragmentDashboard;
@@ -439,41 +436,8 @@ public class MainActivity extends AppCompatActivity
 
     public void fragmentsRefresh()
     {
-        float ctotal=0.00f;
-        float cspent=0.00f;
-        for(int i=0;i<mDatasetBudgetMonth.budgetClasses.size();i++)
-        {
-            float gtotal=0.00f;
-            float gspent=0.00f;
-
-            RecordBudgetClass rbc=mDatasetBudgetMonth.budgetClasses.get(i);
-            for(int j=0;j<rbc.budgetGroups.size();j++)
-            {
-                float itotal=0.00f;
-                float ispent=0.00f;
-
-                RecordBudgetGroup rbg=rbc.budgetGroups.get(j);
-                for(int k=0;k<rbg.budgetItems.size();k++)
-                {
-                    RecordBudgetItem rbi=rbg.budgetItems.get(k);
-                    rbi.outstanding=rbi.total-rbi.spent;
-                    itotal+=rbi.total;
-                    ispent+=rbi.spent;
-                }
-                if(!rbg.groupedBudget)
-                    rbg.total=itotal;
-                rbg.spent=ispent;
-                rbg.outstanding=rbg.total-rbg.spent;
-                gtotal+=rbg.total;
-                gspent+=rbg.spent;
-            }
-            rbc.total=gtotal;
-            rbc.spent=gspent;
-            rbc.outstanding=rbc.total-rbc.spent;
-            ctotal+=rbc.total;
-            cspent+=rbc.spent;
-        }
         mDatasetBudgetMonth.RefreshTotals();
+
         if(_fragmentDashboard!=null)
             _fragmentDashboard.RefreshForm(mDatasetBudgetMonth);
         if(_fragmentBudget!=null)
@@ -482,7 +446,10 @@ public class MainActivity extends AppCompatActivity
         {
             FragmentAccount fa=_fragmentAccounts.get(i);
             if(fa!=null)
-                fa.RefreshForm(mDatasetBudgetMonth.getTransactions(fa.AcSortCode,fa.AcAccountNumber));
+            {
+                RecordAccount ra=mDatasetBudgetMonth.FindAccount(fa.AcSortCode, fa.AcAccountNumber);
+                fa.RefreshForm(ra.RecordTransactions);
+            }
         }
     }
 
@@ -498,7 +465,10 @@ public class MainActivity extends AppCompatActivity
         {
             FragmentAccount fa=_fragmentAccounts.get(i);
             if(fa!=null)
-                fa.PopulateForm(mDatasetBudgetMonth.getTransactions(fa.AcSortCode,fa.AcAccountNumber));
+            {
+                RecordAccount ra=mDatasetBudgetMonth.FindAccount(fa.AcSortCode, fa.AcAccountNumber);
+                fa.RefreshForm(ra.RecordTransactions);
+            }
         }
     }
     //method to expand all groups
