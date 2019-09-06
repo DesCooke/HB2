@@ -288,8 +288,8 @@ public class BudgetAdapter extends BaseExpandableListAdapter {
                                 }
                                 headerInfo.total = Float.valueOf(m_Text);
                                 headerInfo.outstanding = headerInfo.total - headerInfo.spent;
-                                if(headerInfo.lMainActivity!=null)
-                                    headerInfo.lMainActivity.setupBudget();
+//                                if(headerInfo.lMainActivity!=null)
+//                                    headerInfo.lMainActivity.setupBudget();
                             }
                         });
                         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

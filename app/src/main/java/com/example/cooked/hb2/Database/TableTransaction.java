@@ -659,55 +659,6 @@ class TableTransaction extends TableBase
         return list;
     }
 
-    ArrayList<RecordAccount> getAccountList()
-    {
-        ArrayList<RecordAccount> list;
-        try
-        {
-            try (SQLiteDatabase db = helper.getReadableDatabase())
-            {
-                String lString =
-                        "SELECT DISTINCT TxSortCode, TxAccountNumber " +
-                                "FROM tblTransaction  ";
-                Cursor cursor = db.rawQuery(lString, null);
-                list = new ArrayList<>();
-                if (cursor != null)
-                {
-                    try
-                    {
-                        if (cursor.getCount() > 0)
-                        {
-                            cursor.moveToFirst();
-                            do
-                            {
-                                    RecordAccount lrec =
-                                            new RecordAccount
-                                                    (0,
-                                                            cursor.getString(0),
-                                                            cursor.getString(1),
-                                                            "",
-                                                            0.00f);
-                                    list.add(lrec);
-
-                            } while (cursor.moveToNext());
-                        }
-                    }
-                    finally
-                    {
-                        cursor.close();
-                    }
-                }
-            }
-
-        }
-        catch (Exception e)
-        {
-            list = new ArrayList<>();
-            ErrorDialog.Show("Error in TableTransaction.getAccountList", e.getMessage());
-        }
-        return list;
-    }
-
     ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCategoryId)
     {
         ArrayList<RecordTransaction> list;

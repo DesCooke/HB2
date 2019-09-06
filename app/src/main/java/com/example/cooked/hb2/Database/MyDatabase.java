@@ -48,6 +48,8 @@ public class MyDatabase extends SQLiteOpenHelper
     private TableAccount tableAccount;
     public String Notes;
     public TextView txtNotes;
+    public boolean Dirty=true;
+    public RecordBudgetMonth rbm;
     //endregion
 
     //region statics
@@ -430,7 +432,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public ArrayList<RecordAccount> getAccountList()
     {
-        ArrayList<RecordAccount> raa = tableTransaction.getAccountList();
+        ArrayList<RecordAccount> raa = tableAccount.getAccountList();
         for(int i=0;i<raa.size();i++)
         {
             RecordAccount ra=raa.get(i);
@@ -1105,12 +1107,15 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public RecordBudgetMonth getDatasetBudgetMonth(Integer pMonth, Integer pYear, boolean pIncludeThisBudgetOnly)
     {
+        if(!Dirty)
+            return(rbm);
+
         Notes = "";
-        RecordBudgetMonth rbm = new RecordBudgetMonth();
+        rbm = new RecordBudgetMonth();
 
         try
         {
-            rbm.accounts = tableTransaction.getAccountList();
+            rbm.accounts = tableAccount.getAccountList();
             for(int i=0;i<rbm.accounts.size();i++)
             {
                 RecordAccount ra=rbm.accounts.get(i);
@@ -1162,6 +1167,8 @@ public class MyDatabase extends SQLiteOpenHelper
             rbm.budgetClasses.add(rbc);
             rbc.budgetGroups = new ArrayList<>();
             ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTExtraIncome);
+
+            Dirty=false;
 
         }
         catch (Exception e)
