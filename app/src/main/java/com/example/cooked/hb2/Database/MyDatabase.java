@@ -1178,22 +1178,23 @@ public class MyDatabase extends SQLiteOpenHelper
 
         rbm.RefreshTotals();
 
-        ArrayList<RecordTransaction> lData =
-                getTransactionList("11-03-95", "00038840", false,
-                        pMonth, pYear, pIncludeThisBudgetOnly);
+        RecordAccount ra = rbm.FindAccount("11-03-95", "00038840");
+        if(ra!=null)
+        {
+            if (ra.RecordTransactions.size() > 0)
+            {
+                RecordTransaction startTransaction=ra.RecordTransactions.get(ra.RecordTransactions.size()-1);
 
-        Float lStartBalance=0.00f;
-        if(lData.size()>0)
-            lStartBalance=Float.parseFloat(lData.get(lData.size()-1).TxDescription);
-        rbm.startingBalance = lStartBalance;
+                rbm.startingBalance = startTransaction.MarkerStartingBalance;
 
-        rbm.finalBudgetBalanceThisMonth =
-                rbm.startingBalance +
-                        (rbm.monthlyIncome-rbm.monthlyExpense) +
-                        (rbm.extraIncome - rbm.extraExpense);
+                rbm.finalBudgetBalanceThisMonth =
+                        rbm.startingBalance +
+                                (rbm.monthlyIncome - rbm.monthlyExpense) +
+                                (rbm.extraIncome - rbm.extraExpense);
 
-        rbm.notes = Notes;
-
+                rbm.notes = Notes;
+            }
+        }
         return(rbm);
 
     }

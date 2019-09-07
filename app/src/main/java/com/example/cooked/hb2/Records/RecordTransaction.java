@@ -31,6 +31,8 @@ public class RecordTransaction
     public Boolean HideBalance;
     public Boolean BalanceCorrect;
     public Float TxBalanceShouldBe;
+    public Float MarkerStartingBalance;
+    public Float MarkerEndingBalance;
 
     public RecordTransaction
             (

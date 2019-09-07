@@ -56,69 +56,22 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tab_layout;
 
     private boolean uiDirty;
-    private final String KEY_RECYCLER_STATE_BUTTON = "recycler_state_button";
-    private final String KEY_RECYCLER_STATE_CURRENT = "recycler_state_current";
-    private final String KEY_RECYCLER_STATE_GENERAL = "recycler_state_general";
-    private final String KEY_RECYCLER_STATE_LONGTERM = "recycler_state_longterm";
-    private final String KEY_RECYCLER_STATE_FAMILY = "recycler_state_family";
-    private final String KEY_RECYCLER_STATE_CASH = "recycler_state_cash";
 
     private FragmentDashboard _fragmentDashboard;
     private FragmentBudget _fragmentBudget;
     private ArrayList<FragmentAccount> _fragmentAccounts;
-    private RecyclerView mTransactionListButton;
-    private RecyclerView mTransactionListCommonButton;
-    private RecyclerView mTransactionListCurrent;
-    private RecyclerView mTransactionListGeneral;
-    private RecyclerView mTransactionListLongTerm;
-    private RecyclerView mTransactionListFamily;
-    private RecyclerView mTransactionListCash;
-    private ExpandableListView budgetListView;
 
-    private Switch swIncludeThisBudgetOnly;
-    private ArrayList<RecordButton> mDatasetButton;
-    private ArrayList<RecordButton> mDatasetCommonButton;
     private RecordBudgetMonth mDatasetBudgetMonth;
-    private ArrayList<RecordBudgetGroup> mDatasetBudget;
 
     public TextView txtNotes;
-    private Bundle mButtonViewState;
-    private Bundle mCurrentViewState;
-    private Bundle mGeneralViewState;
-    private Bundle mLongTermViewState;
-    private Bundle mFamilyViewState;
-    private Bundle mCashViewState;
-    
-    private BudgetAdapter budgetAdapter;
-    private ImageAdapter mTransactionAdapterButton;
-    private ImageAdapter mTransactionAdapterCommonButton;
+
     private Toolbar toolbar;
     private FloatingActionButton fab;
-    private TextView txtBudgetTitle;
-    private TextView txtBankAccountTitle;
-    private TextView txtCashAccountTitle;
 
 
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
-    private Integer mCurrentBABudgetYear;
-    private Integer mCurrentBABudgetMonth;
-    private Integer mCurrentCABudgetYear;
-    private Integer mCurrentCABudgetMonth;
 
-    private TextView lblMonthlyExpense;
-    private TextView lblMonthlyIncome;
-    private TextView lblMonthlyTotal;
-    private TextView lblExtraExpense;
-    private TextView lblExtraIncome;
-    private TextView lblExtraTotal;
-    private TextView lblBudgetTotal;
-    private TextView tvStartingBalance;
-    private TextView tvMonthlyLeftOverLabel;
-    private TextView tvExtraLeftOverLabel;
-
-    public int mSelectedButton;
-    
     private void setupStatics(Context lcontext)
     {
         context = lcontext;
@@ -129,10 +82,6 @@ public class MainActivity extends AppCompatActivity
     {
         mCurrentBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
         mCurrentBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
-        mCurrentBABudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
-        mCurrentBABudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
-        mCurrentCABudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
-        mCurrentCABudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
         MyDatabase.MyDB().Dirty = true;
         uiDirty = true;
     }
@@ -150,10 +99,12 @@ public class MainActivity extends AppCompatActivity
             refreshUI();
         }
     }
+
     private void refreshUI()
     {
 
     }
+
     private void loadFromDB()
     {
         mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
@@ -167,7 +118,6 @@ public class MainActivity extends AppCompatActivity
         createAndLoadFragments();
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -197,7 +147,6 @@ public class MainActivity extends AppCompatActivity
             ErrorDialog.Show("Error in MainActivity::onCreate", e.getMessage());
         }
     }
-
 
     private void IncreaseBudgetPeriod(View view)
     {
@@ -230,8 +179,11 @@ public class MainActivity extends AppCompatActivity
         DateUtils.dateUtils().DateToStr(lFrom, lFromStr);
         DateUtils.dateUtils().DateToStr(lTo, lToStr);
         android.support.v7.app.ActionBar ab = getSupportActionBar();
-        ab.setTitle("HomeBudget");
-        ab.setSubtitle(lFromStr.Value + " -> " + lToStr.Value);
+        if(ab!=null)
+        {
+            ab.setTitle("HomeBudget");
+            ab.setSubtitle(lFromStr.Value + " -> " + lToStr.Value);
+        }
     }
 
     public void fragmentsRefresh()
@@ -264,7 +216,7 @@ public class MainActivity extends AppCompatActivity
         _fragmentBudget.lMainActivity=this;
         adapter.addFragment(_fragmentBudget, "Budget");
 
-        _fragmentAccounts = new ArrayList<FragmentAccount>();
+        _fragmentAccounts = new ArrayList<>();
         for(int i=0;i<mDatasetBudgetMonth.accounts.size();i++)
         {
             RecordAccount ra = mDatasetBudgetMonth.accounts.get(i);
@@ -292,6 +244,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
     public void createAndLoadFragments()
     {
         createAdapterAndFragments();
@@ -305,21 +258,8 @@ public class MainActivity extends AppCompatActivity
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        txtBudgetTitle = findViewById(R.id.txtBudgetTitle);
-        txtBankAccountTitle = findViewById(R.id.txtBankAccountTitle);
-        txtCashAccountTitle = findViewById(R.id.txtCashAccountTitle);
         txtNotes = findViewById(R.id.txtNotes);
 
-        lblMonthlyExpense = findViewById(R.id.tvMonthlyExpense);
-        lblMonthlyIncome = findViewById(R.id.tvMonthlyIncome);
-        lblMonthlyTotal = findViewById(R.id.tvMonthlyLeftOver);
-        lblExtraExpense = findViewById(R.id.tvExtraExpense);
-        lblExtraIncome = findViewById(R.id.tvExtraIncome);
-        lblExtraTotal = findViewById(R.id.tvExtraLeftOver);
-        lblBudgetTotal = findViewById(R.id.tvFinalBudgetBalance);
-        tvStartingBalance = findViewById(R.id.tvStartingBalance);
-        tvMonthlyLeftOverLabel = findViewById(R.id.tvMonthlyLeftOverLabel);
-        tvExtraLeftOverLabel = findViewById(R.id.tvExtraLeftOverLabel);
         view_pager = findViewById(R.id.viewpager_main);
         tab_layout = findViewById(R.id.tab_main);
 
@@ -396,7 +336,6 @@ public class MainActivity extends AppCompatActivity
             // as you specify a parent activity in AndroidManifest.xml.
             int id = item.getItemId();
             
-            //noinspection SimplifiableIfStatement
         }
         catch (Exception e)
         {
@@ -405,7 +344,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
     
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
@@ -453,15 +391,6 @@ public class MainActivity extends AppCompatActivity
     protected void onPause()
     {
         super.onPause();
-        
-        try
-        {
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in MainActivity::onPause", e.getMessage());
-        }
-        
     }
     
     @Override

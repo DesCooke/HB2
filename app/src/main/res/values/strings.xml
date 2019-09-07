@@ -140,6 +140,8 @@
     <string name="account">Account</string>
     <string name="dashboard">Dashboard</string>
     <string name="starting_balance">Starting Balance</string>
+    <string name="starting_balance_full">Starting Balance %1$s</string>
+    <string name="final_balance_full">Final Balance %1$s</string>
     <string name="bt_expand">bt_expand</string>
     <string name="total_line">Total: %1$s</string>
     <string name="spent_line">Spent: %1$s</string>

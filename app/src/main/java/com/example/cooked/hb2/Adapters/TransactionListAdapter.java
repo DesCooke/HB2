@@ -8,17 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.Records.RecordTransactionListItem;
+import com.example.cooked.hb2.ViewHolders.ViewHolderTransactionBalance;
 import com.example.cooked.hb2.ViewHolders.ViewHolderTransactionItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
+import static com.example.cooked.hb2.MainActivity.context;
 
 public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
@@ -40,13 +43,28 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         items.add(rtli);
     }
 
+    private void addTransactionBalanceToList(RecordTransaction argrt, List<RecordTransactionListItem> items)
+    {
+        RecordTransactionListItem rtli=new RecordTransactionListItem();
+        rtli.ItemType = MyResources.R().getInteger(R.integer.item_type_transaction_balance);
+        rtli.Data = argrt;
+        items.add(rtli);
+    }
+
     private List<RecordTransactionListItem> createListFromTransactionList(List<RecordTransaction> rtl)
     {
         List<RecordTransactionListItem> items = new ArrayList<>();
         for(int i = 0; i< rtl.size(); i++)
         {
             RecordTransaction rt = rtl.get(i);
-            addTransactionToList(rt, items);
+            if(rt.MarkerStartingBalance != null || rt.MarkerEndingBalance!=null)
+            {
+                addTransactionBalanceToList(rt, items);
+            }
+            else
+            {
+                addTransactionToList(rt, items);
+            }
         }
         return(items);
     }
@@ -64,158 +82,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_transaction_item, parent, false);
             vh = new ViewHolderTransactionItem(v);
         }
+        if (viewType == MyResources.R().getInteger(R.integer.item_type_transaction_balance)) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_balance, parent, false);
+            vh = new ViewHolderTransactionBalance(v);
+        }
         return vh;
     }
-/*
-    private void handleDropDown(View v)
-    {
-        RecordBudgetListItem rbli = (RecordBudgetListItem) v.getTag();
-        int pos = _items.indexOf(rbli);
-
-        if(rbli.Data instanceof RecordBudgetGroup)
-        {
-            RecordBudgetGroup rbg = (RecordBudgetGroup) rbli.Data;
-
-            boolean show = toggleLayoutExpand(!rbg.Expanded, v);
-            if (!rbg.Expanded)
-            {
-                for (int i = rbg.budgetItems.size() - 1; i >= 0; i--)
-                {
-                    RecordBudgetItem rbi = rbg.budgetItems.get(i);
-                    addItemToList(pos + 1, rbi, _items);
-                    notifyItemInserted(pos + 1);
-                }
-            }
-            else
-            {
-                int i = 0;
-                while (i < _items.size())
-                {
-                    if (_items.get(i).BudgetClassId == rbli.BudgetClassId &&
-                            _items.get(i).BudgetGroupId == rbli.BudgetGroupId &&
-                            _items.get(i).BudgetItemId > 0)
-                    {
-                        _items.remove(i);
-                        notifyItemRemoved(i);
-                    } else
-                    {
-                        i++;
-                    }
-                }
-            }
-
-            rbg.Expanded = show;
-        }
-
-        if(rbli.Data instanceof RecordBudgetClass)
-        {
-            RecordBudgetClass rbc = (RecordBudgetClass)rbli.Data;
-
-            boolean show = toggleLayoutExpand(!rbc.Expanded, v);
-            if (!rbc.Expanded)
-            {
-                for (int i = rbc.budgetGroups.size() - 1; i >= 0; i--)
-                {
-                    RecordBudgetGroup rbg = rbc.budgetGroups.get(i);
-                    addGroupToList(pos+1, rbg, _items);
-                    notifyItemInserted(pos + 1);
-                }
-            } else
-            {
-                int i=0;
-                while(i<_items.size())
-                {
-                    if(_items.get(i).BudgetClassId == rbli.BudgetClassId &&
-                            _items.get(i).BudgetGroupId > 0)
-                    {
-                        _items.remove(i);
-                        notifyItemRemoved(i);
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-                for (int j = 0; j< rbc.budgetGroups.size(); j++)
-                {
-                    RecordBudgetGroup rbg = rbc.budgetGroups.get(j);
-                    rbg.Expanded = false;
-                }
-            }
-
-            rbc.Expanded = show;
-        }
-    }
-
- */
-
-/*
-    private void handleEditGroupedBudget(View v)
-    {
-        RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
-        final int pos = _items.indexOf(rbli1);
-        if(pos<0)
-            return;
-
-        final RecordBudgetGroup rbg;
-        rbg = (RecordBudgetGroup)_items.get(pos).Data;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Select a Budget for the Group");
-
-        final Float origAmount = rbg.total;
-        final EditText input = new EditText(context);
-        input.setText(String.format(Locale.ENGLISH, "%.2f", rbg.total));
-
-        input.setInputType(InputType.TYPE_CLASS_NUMBER |
-                InputType.TYPE_NUMBER_FLAG_DECIMAL |
-                InputType.TYPE_NUMBER_FLAG_SIGNED);
-        builder.setView(input);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String m_Text = input.getText().toString();
-                RecordCategoryBudget rcb = MyDatabase.MyDB().getCategoryBudget(
-                        rbg.CategoryId, rbg.BudgetMonth,
-                        rbg.BudgetYear);
-                if(rcb.BudgetMonth==0)
-                {
-                    Toast.makeText(context, "Budget for Category/Period Added", LENGTH_LONG).show();
-
-                    rcb.CategoryId = rbg.CategoryId;
-                    rcb.BudgetMonth = rbg.BudgetMonth;
-                    rcb.BudgetYear = rbg.BudgetYear;
-                    rcb.BudgetAmount = Float.valueOf(m_Text);
-
-                    MyDatabase.MyDB().addCategoryBudget(rcb);
-                }
-                else
-                {
-                    Toast.makeText(context, "Budget for Category/Period Updated", LENGTH_LONG).show();
-                    rcb.BudgetAmount = Float.valueOf(m_Text);
-
-                    MyDatabase.MyDB().updateCategoryBudget(rcb);
-                }
-                rbg.total = Float.valueOf(m_Text);
-                rbg.outstanding = rbg.total - rbg.spent;
-
-                notifyItemChanged(pos);
-                if(lMainActivity!=null)
-                    lMainActivity.fragmentsRefresh();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
-
- */
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position)
@@ -291,7 +163,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             view.mComments.setTextColor(lColor);
             view.mBudget.setTextColor(lColor);
 
-            if (rti.BalanceCorrect == false) {
+            if (!rti.BalanceCorrect) {
                 //holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
                 //holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
                 if (view.mTxBalance.getVisibility() == View.VISIBLE) {
@@ -307,16 +179,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 }
             }
         }
-    }
-/*
-    private boolean toggleLayoutExpand(boolean show, View view)
-    {
-        Tools.toggleArrow(show, view);
-        return show;
+
+        if (holder instanceof ViewHolderTransactionBalance) {
+            final ViewHolderTransactionBalance view = (ViewHolderTransactionBalance) holder;
+
+            if(rti.MarkerStartingBalance!=null)
+                view.mCellInfo.setText(context.getString(R.string.starting_balance_full,
+                        Tools.moneyFormat(rti.MarkerStartingBalance)));
+
+            if(rti.MarkerEndingBalance!=null)
+                view.mCellInfo.setText(context.getString(R.string.final_balance_full,
+                        Tools.moneyFormat(rti.MarkerEndingBalance)));
+        }
+
     }
 
-
- */
     @Override
     public int getItemCount()
     {

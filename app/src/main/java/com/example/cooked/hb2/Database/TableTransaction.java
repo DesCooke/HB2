@@ -634,11 +634,11 @@ class TableTransaction extends TableBase
                                     rt.TxBalance = lCurrBalance;
                                 }
                                 RecordTransaction r1 = new RecordTransaction();
-                                r1.TxDescription = list.get(0).TxBalance.toString();
+                                r1.MarkerEndingBalance = list.get(0).TxBalance;
                                 list.add(0, r1);
 
                                 RecordTransaction r2 = new RecordTransaction();
-                                r2.TxDescription = String.format("%.2f", lStartBalance);
+                                r2.MarkerStartingBalance = lStartBalance;
                                 list.add(r2);
                             }
                         }
