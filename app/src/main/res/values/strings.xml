@@ -147,4 +147,5 @@
     <string name="spent_line">Spent: %1$s</string>
     <string name="outstanding_line">Outstanding: %1$s</string>
     <string name="select_a_budget">Select a Budget</string>
+    <string name="not_set">Not Set</string>
 </resources>

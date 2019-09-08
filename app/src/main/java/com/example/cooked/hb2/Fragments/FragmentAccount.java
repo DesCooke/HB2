@@ -1,5 +1,6 @@
 package com.example.cooked.hb2.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.cooked.hb2.Adapters.TransactionListAdapter;
+import com.example.cooked.hb2.ImageAdapter;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.activityTransactionItem;
 
 import java.util.ArrayList;
 
@@ -56,10 +59,20 @@ public class FragmentAccount extends Fragment {
     private void populate()
     {
         mAdapter = new TransactionListAdapter(getActivity(), _rta);
+        mAdapter.setOnItemClickListener(new TransactionListAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                Intent intent = new Intent(getActivity(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
+
         recyclerView.setAdapter(mAdapter);
     }
-
-
 
     public static FragmentAccount newInstance() {
         FragmentAccount fragment = new FragmentAccount();

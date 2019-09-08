@@ -27,12 +27,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 {
     private List<RecordTransactionListItem> _items;
     public MainActivity lMainActivity;
+    public OnItemClickListener mItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, RecordTransactionListItem obj, int position);
+        void onItemClick(View view, RecordTransaction obj);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener=mItemClickListener;
     }
 
     private void addTransactionToList(RecordTransaction argrt, List<RecordTransactionListItem> items)
@@ -137,12 +139,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             view.mFull.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /*
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(view, rti);
+                    if (mItemClickListener != null) {
+                        mItemClickListener.onItemClick(view, rti);
                     }
-
-                     */
                 }
             });
             int lColor = MainActivity.context.getResources().getColor(R.color.textNormal);
