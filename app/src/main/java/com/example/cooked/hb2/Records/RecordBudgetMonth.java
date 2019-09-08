@@ -47,6 +47,7 @@ public class RecordBudgetMonth
         }
         return(null);
     }
+
     private void RefreshOutstanding()
     {
         float ctotal=0.00f;

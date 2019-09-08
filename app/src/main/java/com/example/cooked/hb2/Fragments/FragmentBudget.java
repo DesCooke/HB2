@@ -36,6 +36,13 @@ public class FragmentBudget extends Fragment {
             return;
         populate();
     }
+
+    public void refreshUI()
+    {
+        if(mAdapter!=null)
+            mAdapter.refreshUI();
+    }
+
     public void PopulateForm(RecordBudgetMonth recordBudgetMonth)
     {
         _rbm=recordBudgetMonth;

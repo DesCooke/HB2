@@ -53,6 +53,11 @@ public class FragmentDashboard extends Fragment {
 
     }
 
+    public void refreshUI()
+    {
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);

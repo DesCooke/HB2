@@ -867,13 +867,17 @@ class TableTransaction extends TableBase
         {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
-                Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
-                        "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
-                        "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
-                    "TxSeqNo=?",
-                    new String[]{Integer.toString(pTxSeqNo)},
-                    null, null, null, null);
+                String lSql =
+                        "SELECT " +
+                                "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
+                                "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
+                                "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
+                                "  b.SubCategoryName " +
+                                "FROM tblTransaction a " +
+                                "  LEFT OUTER JOIN tblSubCategory b " +
+                                "    ON a.CategoryId = b.SubCategoryId " +
+                                "WHERE TxSeqNo = " + Integer.toString(pTxSeqNo) + " ";
+                Cursor cursor = db.rawQuery(lSql, null);
                 if (cursor != null)
                 {
                     try
@@ -881,8 +885,7 @@ class TableTransaction extends TableBase
                         if (cursor.getCount() > 0)
                         {
                             cursor.moveToFirst();
-                            return (
-                                new RecordTransaction
+                            RecordTransaction rt = new RecordTransaction
                                     (
                                         Integer.parseInt(cursor.getString(0)),
                                         new Date(Long.parseLong(cursor.getString(1))),
@@ -900,8 +903,16 @@ class TableTransaction extends TableBase
                                         Integer.parseInt(cursor.getString(13)),
                                         Integer.parseInt(cursor.getString(14)),
                                         false
-                                    )
-                            );
+                                    );
+                            if(cursor.getString(15)==null)
+                            {
+                                rt.SubCategoryName = MyResources.R().getString(R.string.not_set);
+                            }
+                            else
+                            {
+                                rt.SubCategoryName = cursor.getString(15);
+                            }
+                            return(rt);
                         }
                     }
                     finally

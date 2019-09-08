@@ -56,6 +56,13 @@ public class FragmentAccount extends Fragment {
             return;
         populate();
     }
+
+    public void refreshUI()
+    {
+        if(mAdapter!=null)
+            mAdapter.refreshUI();
+    }
+
     private void populate()
     {
         mAdapter = new TransactionListAdapter(getActivity(), _rta);
@@ -64,6 +71,7 @@ public class FragmentAccount extends Fragment {
             @Override
             public void onItemClick(View view, RecordTransaction obj)
             {
+                obj.CheckForChange = true;
                 Intent intent = new Intent(getActivity(), activityTransactionItem.class);
                 intent.putExtra("ACTIONTYPE", "EDIT");
                 intent.putExtra("TxSeqNo", obj.TxSeqNo);

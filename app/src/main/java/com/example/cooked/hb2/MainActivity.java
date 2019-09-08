@@ -102,6 +102,11 @@ public class MainActivity extends AppCompatActivity
 
     private void refreshUI()
     {
+        for(int i=0;i<_fragmentAccounts.size();i++)
+            _fragmentAccounts.get(i).refreshUI();
+        mDatasetBudgetMonth.RefreshTotals();
+        _fragmentBudget.refreshUI();
+        _fragmentDashboard.refreshUI();
 
     }
 
@@ -397,7 +402,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume()
     {  // After a pause OR at startup
         super.onResume();
-        loadUI();
+        loadOrRefresh();
     }
     
 }

@@ -33,6 +33,7 @@ public class RecordTransaction
     public Float TxBalanceShouldBe;
     public Float MarkerStartingBalance;
     public Float MarkerEndingBalance;
+    public boolean CheckForChange;
 
     public RecordTransaction
             (
@@ -74,6 +75,7 @@ public class RecordTransaction
         HideBalance = pHideBalance;
         BalanceCorrect = true;
         TxBalanceShouldBe = 0.00f;
+        CheckForChange = false;
     }
     public RecordTransaction()
     {
