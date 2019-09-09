@@ -2,6 +2,7 @@ package com.example.cooked.hb2.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
 import com.example.cooked.hb2.Records.RecordBudgetItem;
@@ -23,7 +25,6 @@ import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
-import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetClass;
 import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetGroup;
 import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetItem;
@@ -31,12 +32,14 @@ import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import static android.widget.Toast.LENGTH_LONG;
 import static com.example.cooked.hb2.MainActivity.context;
 
 public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
+    private Context _context;
     private List<RecordBudgetListItem> _items;
     public MainActivity lMainActivity;
 
@@ -49,6 +52,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void addClassToList(RecordBudgetClass argRbc, List<RecordBudgetListItem> items)
     {
+        MyLog.WriteLogMessage("BudgetListAdapter:addClassToList:Starting");
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.item_type_budget_class);
         rbli.ItemName = argRbc.budgetClassName;
@@ -57,10 +61,12 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         rbli.BudgetGroupId = 0;
         rbli.BudgetItemId = 0;
         items.add(rbli);
+        MyLog.WriteLogMessage("BudgetListAdapter:addClassToList:Ending");
     }
 
     private void addGroupToList(int argIndex, RecordBudgetGroup argRbg, List<RecordBudgetListItem> items)
     {
+        MyLog.WriteLogMessage("BudgetListAdapter:addGroupToList:Starting");
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.item_type_budget_group);
         rbli.ItemName = argRbg.budgetGroupName;
@@ -76,10 +82,12 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         {
             items.add(argIndex, rbli);
         }
+        MyLog.WriteLogMessage("BudgetListAdapter:addGroupToList:Ending");
     }
 
     private void addItemToList(int argIndex, RecordBudgetItem argRbi, List<RecordBudgetListItem> items)
     {
+        MyLog.WriteLogMessage("BudgetListAdapter:addItemToList:Starting");
         RecordBudgetListItem rbli=new RecordBudgetListItem();
         rbli.ItemType = context.getResources().getInteger(R.integer.item_type_budget_item);
         rbli.ItemName = argRbi.budgetItemName;
@@ -95,10 +103,12 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         {
             items.add(argIndex, rbli);
         }
+        MyLog.WriteLogMessage("BudgetListAdapter:addItemToList:Ending");
     }
 
     private List<RecordBudgetListItem> createListFromRecordBudgetMonth(RecordBudgetMonth rbm)
     {
+        MyLog.WriteLogMessage("BudgetListAdapter:createListFromRecordBudgetMonth:Starting");
         List<RecordBudgetListItem> items = new ArrayList<>();
         for(int i = 0; i< rbm.budgetClasses.size(); i++)
         {
@@ -124,10 +134,12 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
         }
+        MyLog.WriteLogMessage("BudgetListAdapter:createListFromRecordBudgetMonth:Ending");
         return(items);
     }
 
     public BudgetListAdapter(Context context, RecordBudgetMonth rbm) {
+        _context = context;
         _items = createListFromRecordBudgetMonth(rbm);
     }
 
@@ -136,14 +148,18 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
         RecyclerView.ViewHolder vh;
+        Resources r = Objects.requireNonNull(MyResources.R());
 
-        if (viewType == MyResources.R().getInteger(R.integer.item_type_budget_class)) {
+        MyLog.WriteLogMessage("BudgetListAdapter:onCreateViewHolder:Starting");
+
+        if (viewType == r.getInteger(R.integer.item_type_budget_class))
+        {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_class, parent, false);
             vh = new ViewHolderBudgetClass(v);
         }
         else
         {
-            if(viewType==MyResources.R().getInteger(R.integer.item_type_budget_group))
+            if(viewType==r.getInteger(R.integer.item_type_budget_group))
             {
                 View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_budget_group, parent, false);
                 vh = new ViewHolderBudgetGroup(v);
@@ -154,11 +170,14 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 vh = new ViewHolderBudgetItem(v);
             }
         }
+        MyLog.WriteLogMessage("BudgetListAdapter:onCreateViewHolder:Ending");
         return vh;
     }
 
     private void handleDropDown(View v)
     {
+        MyLog.WriteLogMessage("BudgetListAdapter:handleDropDown:Starting");
+
         RecordBudgetListItem rbli = (RecordBudgetListItem) v.getTag();
         int pos = _items.indexOf(rbli);
 
@@ -235,10 +254,13 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             rbc.Expanded = show;
         }
+        MyLog.WriteLogMessage("BudgetListAdapter:handleDropDown:Ending");
     }
 
     private void handleEditGroupedBudget(View v)
     {
+        MyLog.WriteLogMessage("BudgetListAdapter:handleEditGroupedBudget:Starting");
+
         RecordBudgetListItem rbli1 = (RecordBudgetListItem) v.getTag();
         final int pos = _items.indexOf(rbli1);
         if(pos<0)
@@ -250,7 +272,6 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Select a Budget for the Group");
 
-        final Float origAmount = rbg.total;
         final EditText input = new EditText(context);
         input.setText(String.format(Locale.ENGLISH, "%.2f", rbg.total));
 
@@ -300,15 +321,20 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
 
         builder.show();
+
+        MyLog.WriteLogMessage("BudgetListAdapter:handleEditGroupedBudget:Ending");
     }
 
     public void refreshUI()
     {
+        MyLog.WriteLogMessage("BudgetListAdapter:refreshUI:Starting");
+        MyLog.WriteLogMessage("BudgetListAdapter:refreshUI:Ending");
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        MyLog.WriteLogMessage("BudgetListAdapter:onBindViewHolder:Starting");
         final RecordBudgetListItem rbli = _items.get(position);
         if (holder instanceof ViewHolderBudgetItem) {
             final ViewHolderBudgetItem view = (ViewHolderBudgetItem) holder;
@@ -399,6 +425,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
         }
+        MyLog.WriteLogMessage("BudgetListAdapter:onBindViewHolder:Ending");
     }
 
     private boolean toggleLayoutExpand(boolean show, View view)

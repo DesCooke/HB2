@@ -12,21 +12,84 @@ import static java.lang.Boolean.TRUE;
 
 public class MyLog
 {
+    private static File getLogFilename()
+    {
+        if(MyResources.R()==null)
+            return(null);
+
+        String homeDirectory = MyResources.R().getString(R.string.home_directory);
+        String logfilename = MyResources.R().getString(R.string.log_filename);
+
+        // create a File object from it
+        return(new File(homeDirectory + '/' + logfilename));
+    }
+
+    private static File getHomeDirectory()
+    {
+        if(MyResources.R()==null)
+            return(null);
+
+        String homeDirectory = MyResources.R().getString(R.string.home_directory);
+
+        // create a File object from it
+        return(new File(homeDirectory));
+    }
+
+    public static void ClearLog()
+    {
+        try
+        {
+            File file=getLogFilename();
+            if(file==null)
+                return;
+
+            File dir=getHomeDirectory();
+            if(dir==null)
+                return;
+
+            // create a File object from it
+            if(!file.exists())
+            {
+                if (!dir.exists())
+                    dir.mkdir();
+            }
+            else
+            {
+                file.delete();
+            }
+
+            if (!file.createNewFile())
+                throw new Exception("file.CreateNewFile() returned false");
+
+            String timeStamp=DateFormat.getDateTimeInstance().format(new Date());
+
+            FileWriter fw = new FileWriter(file, /*append*/ TRUE);
+
+            BufferedWriter bw=new BufferedWriter(fw);
+            bw.write(timeStamp + ":New Log Created\n");
+            bw.flush();
+            bw.close();
+        }
+        catch(Exception e)
+        {
+            //
+        }
+    }
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void WriteLogMessage(String argString)
     {
         try
         {
-            if(MyResources.R()==null)
-              return;
+            File file=getLogFilename();
+            if(file==null)
+                return;
 
-            String homeDirectory = MyResources.R().getString(R.string.home_directory);
-            String logfilename = MyResources.R().getString(R.string.log_filename);
+            File dir=getHomeDirectory();
+            if(dir==null)
+                return;
 
             // create a File object from it
-            File file=new File(homeDirectory + '/' + logfilename);
             if(!file.exists()) {
-                File dir = new File(homeDirectory);
                 if (!dir.exists())
                     dir.mkdir();
 
