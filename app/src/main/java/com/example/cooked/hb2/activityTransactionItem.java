@@ -35,6 +35,9 @@ import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 public class activityTransactionItem extends AppCompatActivity
 {
     public String actionType;
+    public String acSortCode;
+    public String acAccountNumber;
+    public String acDescription;
     public TextView edtTxDate;
     public EditText edtTxDescription;
     public EditText edtTxAmount;
@@ -85,8 +88,11 @@ public class activityTransactionItem extends AppCompatActivity
             actionType = getIntent().getStringExtra("ACTIONTYPE");
             if (actionType.compareTo("ADD") == 0)
             {
+                acSortCode = getIntent().getStringExtra("SORTCODE");
+                acAccountNumber = getIntent().getStringExtra("ACCOUNTNUMBER");
+                acDescription = getIntent().getStringExtra("DESCRIPTION");
                 originalRecord = new RecordTransaction();
-                setTitle("Add a new Cash Transaction");
+                setTitle("New Transaction for " + acDescription);
                 btnDelete.setVisibility(GONE);
                 btnCreatePlanned.setVisibility(GONE);
                 setDefaults();
@@ -180,8 +186,8 @@ public class activityTransactionItem extends AppCompatActivity
                             originalRecord.TxAdded = Calendar.getInstance().getTime();
                             originalRecord.TxStatus = RecordTransaction.Status.NEW;
                             originalRecord.TxBalance = Float.parseFloat("0.00");
-                            originalRecord.TxSortCode = "Cash";
-                            originalRecord.TxAccountNumber = "Cash";
+                            originalRecord.TxSortCode = acSortCode;
+                            originalRecord.TxAccountNumber = acAccountNumber;
                             originalRecord.TxLineNo = MyDB().getNextTxLineNo(originalRecord.TxDate);
                             originalRecord.TxFilename = "Cash";
                             originalRecord.TxSeqNo = 0; // will be auto generated

@@ -105,8 +105,10 @@ public class MainActivity extends AppCompatActivity
         for(int i=0;i<_fragmentAccounts.size();i++)
             _fragmentAccounts.get(i).refreshUI();
         mDatasetBudgetMonth.RefreshTotals();
-        _fragmentBudget.refreshUI();
-        _fragmentDashboard.refreshUI();
+        if(_fragmentBudget!=null)
+            _fragmentBudget.refreshUI();
+        if(_fragmentDashboard!=null)
+            _fragmentDashboard.refreshUI();
 
     }
 
@@ -226,7 +228,7 @@ public class MainActivity extends AppCompatActivity
         {
             RecordAccount ra = mDatasetBudgetMonth.accounts.get(i);
             FragmentAccount fa= FragmentAccount.newInstance();
-            fa.SetAccount(ra.AcSortCode, ra.AcAccountNumber);
+            fa.SetAccount(ra.AcSortCode, ra.AcAccountNumber, ra.AcDescription);
             _fragmentAccounts.add(fa);
             adapter.addFragment(fa, ra.AcDescription);
         }
@@ -340,6 +342,12 @@ public class MainActivity extends AppCompatActivity
             // automatically handle clicks on the Home/Up button, so long
             // as you specify a parent activity in AndroidManifest.xml.
             int id = item.getItemId();
+            if(id==R.id.RefreshDBAndUI)
+            {
+                uiDirty=true;
+                MyDatabase.MyDB().Dirty=true;
+                loadOrRefresh();
+            }
             
         }
         catch (Exception e)

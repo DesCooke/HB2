@@ -304,29 +304,6 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void refreshUI()
     {
-        for(int i=0;i<_items.size();i++)
-        {
-            RecordTransaction rt= (RecordTransaction)_items.get(i).Data;
-            if(rt.CheckForChange)
-            {
-                rt.CheckForChange=false;
-                int lTxSeqNo=rt.TxSeqNo;
-                RecordTransaction rt2 = MyDatabase.MyDB().getSingleTransaction(lTxSeqNo);
-                if(rt2==null)
-                {
-                    _items.remove(i);
-                    notifyItemRemoved(i);
-                    break;
-                }
-                else
-                {
-                    _items.get(i).Data = rt2;
-                    notifyItemChanged(i);
-                    break;
-                }
-            }
-        }
-
     }
 
     // Replace the contents of a view (invoked by the layout manager)

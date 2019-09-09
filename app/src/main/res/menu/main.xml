@@ -2,15 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/selectbudget"
-        android:icon="@android:drawable/ic_menu_my_calendar"
-        android:title="Select Budget"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/toggle_views"
+        android:id="@+id/RefreshDBAndUI"
         android:orderInCategory="100"
-        android:title="ToggleViews"
-        app:showAsAction="never"/>
+        android:title="Refresh DB and UI"
+        app:showAsAction="never" />
 
 
 </menu>

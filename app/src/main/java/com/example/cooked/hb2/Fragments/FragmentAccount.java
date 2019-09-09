@@ -2,6 +2,7 @@ package com.example.cooked.hb2.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,14 +26,17 @@ public class FragmentAccount extends Fragment {
     public MainActivity lMainActivity;
     public String AcSortCode;
     public String AcAccountNumber;
+    public String AcDescription;
+    private FloatingActionButton fab;
 
     public FragmentAccount() {
     }
 
-    public void SetAccount(String acSortCode, String acAccountNumber)
+    public void SetAccount(String acSortCode, String acAccountNumber, String acDescription)
     {
         AcSortCode=acSortCode;
         AcAccountNumber=acAccountNumber;
+        AcDescription=acDescription;
     }
 
     public void SetMainActivity(MainActivity ma)
@@ -87,10 +91,27 @@ public class FragmentAccount extends Fragment {
         return fragment;
     }
 
-    private void initComponent(View root) {
+    private void initComponent(View root)
+    {
         recyclerView = root.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
+
+        fab = root.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(MainActivity.context, activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "ADD");
+                intent.putExtra("SORTCODE", AcSortCode);
+                intent.putExtra("ACCOUNTNUMBER", AcAccountNumber);
+                intent.putExtra("DESCRIPTION", AcDescription);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
