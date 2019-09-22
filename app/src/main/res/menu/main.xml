@@ -6,6 +6,9 @@
         android:orderInCategory="100"
         android:title="Refresh DB and UI"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/showLog"
+        android:title="Show Log" />
 
 
 </menu>

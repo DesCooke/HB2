@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
 
     private ViewPager view_pager;
     private TabLayout tab_layout;
+    private View back_drop;
 
     private boolean uiDirty;
 
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:setupStatics:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
     }
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:initialiseVariables:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:initialiseVariables:Ending");
     }
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:createOrUpdate:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:createOrUpdate:Ending");
     }
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:updateUI:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:updateUI:Ending");
     }
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:createFromDB:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:createFromDB:Ending");
     }
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:createUI:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:createUI:Ending");
     }
@@ -194,7 +195,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:onCreate:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
     }
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:increaseBudgetPeriod:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:increaseBudgetPeriod:Ending");
     }
@@ -234,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:decreaseBudgetPeriod:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:decreaseBudgetPeriod:Ending");
     }
@@ -259,7 +260,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:createTitle:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:createTitle:Ending");
     }
@@ -287,7 +288,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:fragmentsRefresh:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:fragmentsRefresh:Ending");
     }
@@ -311,6 +312,7 @@ public class MainActivity extends AppCompatActivity
             {
                 RecordAccount ra = mDatasetBudgetMonth.accounts.get(i);
                 FragmentAccount fa = FragmentAccount.newInstance();
+                fa.back_drop = back_drop;
                 fa.SetAccount(ra.AcSortCode, ra.AcAccountNumber, ra.AcDescription);
                 _fragmentAccounts.add(fa);
                 adapter.addFragment(fa, ra.AcDescription);
@@ -321,7 +323,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:createAdapterAndFragments:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:createAdapterAndFragments:Ending");
     }
@@ -345,7 +347,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:loadFragments:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:loadFragments:Ending");
     }
@@ -361,7 +363,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:createAndLoadFragments:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:createAndLoadFragments:Ending");
     }
@@ -375,6 +377,9 @@ public class MainActivity extends AppCompatActivity
             toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
+            back_drop = findViewById(R.id.back_drop);
+            back_drop.setVisibility(View.GONE);
+
             txtNotes = findViewById(R.id.txtNotes);
 
             view_pager = findViewById(R.id.viewpager_main);
@@ -383,7 +388,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:setupActivity:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:setupActivity:Ending");
     }
@@ -405,7 +410,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:onBackPressed:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onBackPressed:Ending");
     }
@@ -427,7 +432,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:setupNavigationSideBar:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:setupNavigationSideBar:Ending");
     }
@@ -443,7 +448,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:onCreateOptionsMenu:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onCreateOptionsMenu:Ending");
         return true;
@@ -465,10 +470,15 @@ public class MainActivity extends AppCompatActivity
                 MyDatabase.MyDB().Dirty=true;
                 createOrUpdate();
             }
+            if(id==R.id.showLog)
+            {
+                Intent intent = new Intent(this, activityLog.class);
+                startActivity(intent);
+            }
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:onOptionsItemSelected:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onOptionsItemSelected:Ending");
         return super.onOptionsItemSelected(item);
@@ -513,7 +523,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:onNavigationItemSelected:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onNavigationItemSelected:Ending");
         return true;
@@ -529,7 +539,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:onPause:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onPause:Ending");
     }
@@ -545,7 +555,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e)
         {
-            MyLog.WriteLogMessage("MainActivity:onResume:" + e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onResume:Ending");
     }

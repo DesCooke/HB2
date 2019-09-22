@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
@@ -42,6 +43,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Context _context;
     private List<RecordBudgetListItem> _items;
     public MainActivity lMainActivity;
+    public RecordBudgetMonth _rbm;
 
     public interface OnItemClickListener {
         void onItemClick(View view, RecordBudgetListItem obj, int position);
@@ -141,6 +143,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public BudgetListAdapter(Context context, RecordBudgetMonth rbm) {
         _context = context;
         _items = createListFromRecordBudgetMonth(rbm);
+        _rbm = rbm;
     }
 
     @NonNull
@@ -346,6 +349,19 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             view.txtTotal.setText(context.getString(R.string.total_line,Tools.moneyFormat(rbi.total)));
             view.txtSpent.setText(context.getString(R.string.spent_line,Tools.moneyFormat(rbi.spent)));
             view.txtOutstanding.setText(context.getString(R.string.outstanding_line,Tools.moneyFormat(rbi.outstanding)));
+            view.titleParent.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    DialogTransactionList dtl = new DialogTransactionList(lMainActivity);
+                    dtl.budgetMonth = _rbm.budgetMonth;
+                    dtl.budgetYear = _rbm.budgetYear;
+                    dtl.subCategoryId = rbi.SubCategoryId;
+                    dtl.GetTrans();
+                    dtl.show();
+                }
+            });
         }
         else
         {

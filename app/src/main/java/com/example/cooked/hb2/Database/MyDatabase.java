@@ -331,9 +331,6 @@ public class MyDatabase extends SQLiteOpenHelper
             {
                 for (int i = 0; i < rta.size(); i++)
                 {
-                    RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
-                    if (sc != null)
-                        rta.get(i).SubCategoryName = sc.SubCategoryName;
                     lTotal += rta.get(i).TxAmount;
                 }
             }
@@ -354,10 +351,17 @@ public class MyDatabase extends SQLiteOpenHelper
                         if (lCount > (lTotal + 0.00005f))
                             rta.add(rpl.get(i));
                     }
-                    if (lTotal < 0.00f)
+                    else
                     {
-                        if (lCount < (lTotal - 0.00005f))
+                        if (lTotal < 0.00f)
+                        {
+                            if (lCount < (lTotal - 0.00005f))
+                                rta.add(rpl.get(i));
+                        }
+                        else
+                        {
                             rta.add(rpl.get(i));
+                        }
                     }
                 }
             }
@@ -1115,6 +1119,9 @@ public class MyDatabase extends SQLiteOpenHelper
 
         try
         {
+            rbm.budgetMonth = pMonth;
+            rbm.budgetYear = pYear;
+
             rbm.accounts = tableAccount.getAccountList();
             for(int i=0;i<rbm.accounts.size();i++)
             {

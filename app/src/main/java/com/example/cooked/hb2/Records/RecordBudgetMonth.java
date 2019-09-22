@@ -18,6 +18,8 @@ public class RecordBudgetMonth
     public ArrayList<RecordBudgetClass> budgetClasses;
     public String notes;
     public ArrayList<RecordAccount> accounts;
+    public Integer budgetMonth;
+    public Integer budgetYear;
 
     public RecordBudgetMonth()
     {

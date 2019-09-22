@@ -682,13 +682,21 @@ class TableTransaction extends TableBase
         {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
-                Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
-                        "TxFilename", "TxLineNo", "TxDate", "TxType", "TxSortCode",
-                        "TxAccountNumber", "TxDescription", "TxAmount", "TxBalance",
-                        "CategoryId", "Comments", "BudgetYear", "BudgetMonth"},
-                    "BudgetYear=? AND BudgetMonth=? AND CategoryId=?",
-                    new String[]{pBudgetYear.toString(), pBudgetMonth.toString(), pSubCategoryId.toString()},
-                    null, null, "TxDate desc, TxLineNo", null);
+                String lSql =
+                        "SELECT " +
+                                "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
+                                "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
+                                "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
+                                "  b.SubCategoryName " +
+                                "FROM tblTransaction a " +
+                                "  LEFT OUTER JOIN tblSubCategory b " +
+                                "    ON a.CategoryId = b.SubCategoryId " +
+                                "WHERE a.BudgetYear = " + pBudgetYear.toString() + " " +
+                                "AND a.BudgetMonth = " + pBudgetMonth.toString() + " " +
+                                "AND a.CategoryId = " + pSubCategoryId.toString() + " " +
+                                "ORDER BY TxDate desc, TxLineNo";
+                Cursor cursor = db.rawQuery(lSql, null);
+
                 list = new ArrayList<>();
                 if (cursor != null)
                 {
@@ -719,6 +727,7 @@ class TableTransaction extends TableBase
                                             Integer.parseInt(cursor.getString(14)),
                                             true
                                         );
+                                lrec.SubCategoryName = cursor.getString(15);
                                 list.add(lrec);
                             } while (cursor.moveToNext());
                         }

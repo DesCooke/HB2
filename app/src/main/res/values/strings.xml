@@ -124,11 +124,6 @@
     <string name="grouped_budget">Grouped Budget</string>
     <string name="notes">Notes</string>
     <string name="database_dump">Database Dump</string>
-    <string-array name="defaultbudgettypes">
-        <item>Same Month Last Year</item>
-        <item>Last Month</item>
-        <item>Average</item>
-    </string-array>
     <string name="title_activity_account_list">account_list</string>
     <string name="accounts">Accounts</string>
     <string name="title_activity_account_item">activityAccountItem</string>
@@ -148,4 +143,9 @@
     <string name="outstanding_line">Outstanding: %1$s</string>
     <string name="select_a_budget">Select a Budget</string>
     <string name="not_set">Not Set</string>
+    <string-array name="defaultbudgettypes">
+        <item>Same Month Last Year</item>
+        <item>Last Month</item>
+        <item>Average</item>
+    </string-array>
 </resources>
