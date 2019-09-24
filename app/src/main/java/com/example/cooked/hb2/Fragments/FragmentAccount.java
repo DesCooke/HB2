@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Adapters.TransactionListAdapter;
+import com.example.cooked.hb2.Database.MyDatabase;
+import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.ImageAdapter;
 import com.example.cooked.hb2.Records.RecordTransaction;
@@ -33,15 +35,10 @@ public class FragmentAccount extends Fragment {
     public String AcAccountNumber;
     public String AcDescription;
     private FloatingActionButton fab;
-    public View back_drop;
     private boolean rotate=false;
     private LinearLayout lyAddMenu;
-    private TextView tv1;
-    private CardView cv1;
-    private TextView tv2;
-    private CardView cv2;
-    private TextView tv3;
-    private CardView cv3;
+    private LinearLayout lyItems;
+    private ArrayList<RecordCommon> _recordCommonList;
 
     public FragmentAccount() {
     }
@@ -64,15 +61,14 @@ public class FragmentAccount extends Fragment {
         //set data and list adapter
         if (recyclerView == null)
             return;
-        populate();
     }
+
     public void PopulateForm(ArrayList<RecordTransaction> rta)
     {
         _rta=rta;
         //set data and list adapter
         if (recyclerView == null)
             return;
-        populate();
     }
 
     public void refreshUI()
@@ -81,8 +77,77 @@ public class FragmentAccount extends Fragment {
             mAdapter.refreshUI();
     }
 
-    private void populate()
+    public static FragmentAccount newInstance() {
+        FragmentAccount fragment = new FragmentAccount();
+        return fragment;
+    }
+
+    private void initComponent(View root, LayoutInflater inflater)
     {
+        _recordCommonList = MyDatabase.MyDB().getCommonTransactionList();
+
+        recyclerView = root.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+
+        lyAddMenu = root.findViewById(R.id.lyAddMenu);
+        lyItems = root.findViewById(R.id.lyItems);
+        while(lyItems.getChildCount()>0)
+        {
+            lyItems.removeView(lyItems.getChildAt(0));
+            lyItems.invalidate();
+        }
+
+        for(int i=0;i<_recordCommonList.size();i++)
+        {
+            View cv = inflater.inflate(R.layout.card_menu_item, lyItems, false);
+            TextView tv = cv.findViewById(R.id.tvCaption);
+            tv.setText(_recordCommonList.get(i).TxDescription);
+            cv.setTag(_recordCommonList.get(i));
+            cv.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    onSelectAddItem(v);
+                }
+            });
+            lyItems.addView(cv, 0);
+        }
+
+        View cv = inflater.inflate(R.layout.card_menu_item, lyItems, false);
+        TextView tv = cv.findViewById(R.id.tvCaption);
+        tv.setText("<Blank>");
+        cv.setTag(null);
+        cv.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                onSelectAddItem(v);
+            }
+        });
+        lyItems.addView(cv, 0);
+
+        lyItems.invalidate();
+        for(int i=0;i<lyItems.getChildCount();i++)
+        {
+            Tools.showOut(lyItems.getChildAt(i));
+        }
+
+
+        fab = root.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                toggleFabMode();
+            }
+        });
+
+
+
         mAdapter = new TransactionListAdapter(getActivity(), _rta);
         mAdapter.setOnItemClickListener(new TransactionListAdapter.OnItemClickListener()
         {
@@ -98,135 +163,53 @@ public class FragmentAccount extends Fragment {
         });
 
         recyclerView.setAdapter(mAdapter);
+
     }
 
-    public static FragmentAccount newInstance() {
-        FragmentAccount fragment = new FragmentAccount();
-        return fragment;
-    }
-
-    private void initComponent(View root)
+    private void onSelectAddItem(View view)
     {
-        recyclerView = root.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setHasFixedSize(true);
-
-
-
-        lyAddMenu = root.findViewById(R.id.lyAddMenu);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        tv1=new TextView(getContext());
-        tv1.setLayoutParams(params);
-        tv1.setText("Add Posh Lunch");
-        tv1.setTextAppearance(R.style.TextAppearance_AppCompat_Display1);
-        tv1.setPadding(8, 8, 8, 8);
-
-        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        cv1 = new CardView(getContext());
-        cv1.setLayoutParams(params);
-        cv1.setCardBackgroundColor(getResources().getColor(android.R.color.white));
-        cv1.setRadius(3.00f);
-        cv1.setCardElevation(2.00f);
-        cv1.addView(tv1);
-        cv1.setPadding(8, 8, 8, 8);
-        //cv.setContentPadding(R.dimen.spacing_medium, R.dimen.spacing_medium, R.dimen.spacing_medium, R.dimen.spacing_medium);
-
-        lyAddMenu.addView(cv1, 0, params);
-
-
-
-        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        tv2=new TextView(getContext());
-        tv2.setLayoutParams(params);
-        tv2.setText("Add Daily Lunch");
-        tv2.setTextAppearance(R.style.TextAppearance_AppCompat_Display1);
-        tv2.setPadding(8, 8, 8, 8);
-
-        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        cv2 = new CardView(getContext());
-        cv2.setLayoutParams(params);
-        cv2.setCardBackgroundColor(getResources().getColor(android.R.color.white));
-        cv2.setRadius(3.00f);
-        cv2.setCardElevation(2.00f);
-        cv2.addView(tv2);
-        cv2.setPadding(8, 8, 8, 8);
-        //cv.setContentPadding(R.dimen.spacing_medium, R.dimen.spacing_medium, R.dimen.spacing_medium, R.dimen.spacing_medium);
-
-        lyAddMenu.addView(cv2, 0, params);
-
-
-        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        tv3=new TextView(getContext());
-        tv3.setLayoutParams(params);
-        tv3.setText("Add");
-        tv3.setTextAppearance(R.style.TextAppearance_AppCompat_Display1);
-        tv3.setPadding(8, 8, 8, 8);
-
-        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        cv3 = new CardView(getContext());
-        cv3.setLayoutParams(params);
-        cv3.setCardBackgroundColor(getResources().getColor(android.R.color.white));
-        cv3.setRadius(3.00f);
-        cv3.setCardElevation(2.00f);
-        cv3.setPadding(8, 8, 8, 8);
-        cv3.addView(tv3);
-        //cv.setContentPadding(R.dimen.spacing_medium, R.dimen.spacing_medium, R.dimen.spacing_medium, R.dimen.spacing_medium);
-
-        lyAddMenu.addView(cv3, 0, params);
-
-
-
-
-
-
-        Tools.initShowOut(cv1);
-        Tools.initShowOut(cv2);
-        Tools.initShowOut(cv3);
-
-        fab = root.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
+        toggleFabMode();
+        RecordCommon rc = (RecordCommon)view.getTag();
+        if(rc==null)
         {
-            @Override
-            public void onClick(View view)
-            {
-                /*
-                Intent intent = new Intent(MainActivity.context, activityTransactionItem.class);
-                intent.putExtra("ACTIONTYPE", "ADD");
-                intent.putExtra("SORTCODE", AcSortCode);
-                intent.putExtra("ACCOUNTNUMBER", AcAccountNumber);
-                intent.putExtra("DESCRIPTION", AcDescription);
-                startActivity(intent);
+            Intent intent = new Intent(MainActivity.context, activityTransactionItem.class);
+            intent.putExtra("ACTIONTYPE", "ADD");
+            intent.putExtra("SORTCODE", AcSortCode);
+            intent.putExtra("ACCOUNTNUMBER", AcAccountNumber);
+            intent.putExtra("DESCRIPTION", AcDescription);
+            startActivity(intent);
+        }
+        else
+        {
+            Intent intent = new Intent(MainActivity.context, activityTransactionItem.class);
+            intent.putExtra("ACTIONTYPE", "ADD");
+            intent.putExtra("SORTCODE", AcSortCode);
+            intent.putExtra("ACCOUNTNUMBER", AcAccountNumber);
+            intent.putExtra("DESCRIPTION", AcDescription);
+            intent.putExtra("TEMPLATEDESC", rc.TxDescription);
 
-                 */
-                toggleFabMode(view);
-            }
-        });
-        back_drop.setVisibility(View.GONE);
-        back_drop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleFabMode(fab);
-            }
-        });
+            startActivity(intent);
+        }
     }
-
-    private void toggleFabMode(View v) {
-        rotate = Tools.rotateFab(v, !rotate);
-        if (rotate) {
-            Tools.showIn(cv1);
-            Tools.showIn(cv2);
-            Tools.showIn(cv3);
-//            ViewAnimation.showIn(lyt_mic);
-  //          ViewAnimation.showIn(lyt_call);
-            back_drop.setVisibility(View.VISIBLE);
-        } else {
-            Tools.showOut(cv1);
-            Tools.showOut(cv2);
-            Tools.showOut(cv3);
-    //        ViewAnimation.showOut(lyt_mic);
-      //      ViewAnimation.showOut(lyt_call);
-            back_drop.setVisibility(View.GONE);
+    private void toggleFabMode()
+    {
+        if(rotate==false)
+        {
+            Tools.rotateFab(fab, true);
+            for(int i=0;i<lyItems.getChildCount();i++)
+            {
+                Tools.showIn(lyItems.getChildAt(i));
+            }
+            rotate=true;
+        }
+        else
+        {
+            Tools.rotateFab(fab, false);
+            for(int i=0;i<lyItems.getChildCount();i++)
+            {
+                Tools.showOut(lyItems.getChildAt(i));
+            }
+            rotate=false;
         }
     }
 
@@ -234,9 +217,7 @@ public class FragmentAccount extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_account, container, false);
 
-        initComponent(root);
-
-        populate();
+        initComponent(root, inflater);
 
         return root;
     }

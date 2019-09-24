@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity
 
     private ViewPager view_pager;
     private TabLayout tab_layout;
-    private View back_drop;
 
     private boolean uiDirty;
 
@@ -311,8 +310,8 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < mDatasetBudgetMonth.accounts.size(); i++)
             {
                 RecordAccount ra = mDatasetBudgetMonth.accounts.get(i);
+
                 FragmentAccount fa = FragmentAccount.newInstance();
-                fa.back_drop = back_drop;
                 fa.SetAccount(ra.AcSortCode, ra.AcAccountNumber, ra.AcDescription);
                 _fragmentAccounts.add(fa);
                 adapter.addFragment(fa, ra.AcDescription);
@@ -376,9 +375,6 @@ public class MainActivity extends AppCompatActivity
             setContentView(R.layout.activity_main);
             toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
-
-            back_drop = findViewById(R.id.back_drop);
-            back_drop.setVisibility(View.GONE);
 
             txtNotes = findViewById(R.id.txtNotes);
 
