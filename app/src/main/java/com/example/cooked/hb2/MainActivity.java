@@ -466,6 +466,12 @@ public class MainActivity extends AppCompatActivity
                 MyDatabase.MyDB().Dirty=true;
                 createOrUpdate();
             }
+            if(id==R.id.ChangeDate)
+            {
+                uiDirty=true;
+                MyDatabase.MyDB().Dirty=true;
+                createOrUpdate();
+            }
             if(id==R.id.showLog)
             {
                 Intent intent = new Intent(this, activityLog.class);
