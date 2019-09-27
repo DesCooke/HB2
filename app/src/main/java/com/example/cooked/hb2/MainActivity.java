@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Adapters.ViewPagerMainAdapter;
+import com.example.cooked.hb2.GlobalUtils.DialogBudgetPicker;
+import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
 import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Records.RecordAccount;
@@ -35,6 +37,7 @@ import com.example.cooked.hb2.GlobalUtils.MyString;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Math.abs;
 
@@ -468,9 +471,8 @@ public class MainActivity extends AppCompatActivity
             }
             if(id==R.id.ChangeDate)
             {
-                uiDirty=true;
-                MyDatabase.MyDB().Dirty=true;
-                createOrUpdate();
+                DialogBudgetPicker dbp=new DialogBudgetPicker(this);
+                dbp.show();
             }
             if(id==R.id.showLog)
             {

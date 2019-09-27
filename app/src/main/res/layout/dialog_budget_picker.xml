@@ -10,8 +10,11 @@
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/budgetHeader"
         android:gravity="center"
-        android:text="@string/budget" />
+        android:text="@string/budget"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="30sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -22,15 +25,14 @@
             android:id="@+id/imageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:rotation="90"
             app:srcCompat="@drawable/ic_expand_arrow" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="center"
             android:orientation="vertical">
 
             <TextView
@@ -38,14 +40,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/samplebudgetyearmonth" />
+                android:text="@string/samplebudgetyearmonth"
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/tvBudgetMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/samplebudgetmonth" />
+                android:text="@string/samplebudgetmonth"
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/tvBudgetDates"
@@ -54,15 +58,15 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:text="@string/samplebudgetdates" />
+                android:text="@string/samplebudgetdates"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/imageButton3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:rotation="270"
             app:srcCompat="@drawable/ic_expand_arrow" />
 
