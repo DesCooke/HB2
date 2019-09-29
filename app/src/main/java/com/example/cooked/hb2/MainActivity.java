@@ -66,6 +66,14 @@ public class MainActivity extends AppCompatActivity
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
 
+    public void SetBudget(int pBudgetYear, int pBudgetMonth)
+    {
+        mCurrentBudgetYear=pBudgetYear;
+        mCurrentBudgetMonth=pBudgetMonth;
+        MyDatabase.MyDB().Dirty = true;
+        uiDirty = true;
+    }
+
     private void setupStatics(Context lcontext)
     {
         MyLog.WriteLogMessage("MainActivity:setupStatics:Starting");
@@ -80,23 +88,6 @@ public class MainActivity extends AppCompatActivity
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
-    }
-
-    private void initialiseVariables()
-    {
-        MyLog.WriteLogMessage("MainActivity:initialiseVariables:Starting");
-        try
-        {
-            mCurrentBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
-            mCurrentBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
-            MyDatabase.MyDB().Dirty = true;
-            uiDirty = true;
-        }
-        catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:initialiseVariables:Ending");
     }
 
     private void createOrUpdate()
@@ -187,19 +178,31 @@ public class MainActivity extends AppCompatActivity
             if (MyDownloads.MyDL().CollectFiles() == FALSE)
                 return;
 
-            initialiseVariables();
+            SetBudget(DateUtils.dateUtils().CurrentBudgetYear(), DateUtils.dateUtils().CurrentBudgetMonth());
 
-            setupActivity();
-
-            createOrUpdate();
-
-            setupNavigationSideBar();
+            BuildUI();
         }
         catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
+    }
+
+    public void BuildUI()
+    {
+        setupActivity();
+
+        createOrUpdate();
+
+        setupNavigationSideBar();
+    }
+
+    public void RecreateUI(int budgetYear, int budgetMonth)
+    {
+        SetBudget(budgetYear, budgetMonth);
+
+        BuildUI();
     }
 
     private void increaseBudgetPeriod(View view)
@@ -465,13 +468,16 @@ public class MainActivity extends AppCompatActivity
             int id = item.getItemId();
             if(id==R.id.RefreshDBAndUI)
             {
-                uiDirty=true;
-                MyDatabase.MyDB().Dirty=true;
-                createOrUpdate();
+                MyDatabase.MyDB().Dirty = true;
+                uiDirty = true;
+                BuildUI();
             }
             if(id==R.id.ChangeDate)
             {
                 DialogBudgetPicker dbp=new DialogBudgetPicker(this);
+                dbp.BudgetYear = mCurrentBudgetYear;
+                dbp.BudgetMonth = mCurrentBudgetMonth;
+                dbp.MyMainActivity = this;
                 dbp.show();
             }
             if(id==R.id.showLog)

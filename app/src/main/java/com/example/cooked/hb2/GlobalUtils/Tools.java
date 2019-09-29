@@ -4,7 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 
+import com.example.cooked.hb2.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+
+import static com.example.cooked.hb2.MainActivity.context;
 
 public class Tools
 {

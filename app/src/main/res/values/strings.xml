@@ -146,6 +146,7 @@
     <string name="samplebudgetyearmonth">09/2019</string>
     <string name="samplebudgetmonth">September</string>
     <string name="samplebudgetdates"><![CDATA[26/09/2019 -> 25/10/2019]]></string>
+    <string name="budgetyearmonthline">%1$s</string>
     <string-array name="defaultbudgettypes">
         <item>Same Month Last Year</item>
         <item>Last Month</item>

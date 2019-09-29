@@ -2,11 +2,16 @@ package com.example.cooked.hb2.GlobalUtils;
 
 import android.annotation.SuppressLint;
 import android.widget.DatePicker;
+
+import com.example.cooked.hb2.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.example.cooked.hb2.MainActivity.context;
 
 public class DateUtils
 {
@@ -110,7 +115,7 @@ public class DateUtils
         }
     }
 
-    public Date BudgetStart(int pMonth, int pYear)
+    public static Date BudgetStart(int pMonth, int pYear)
     {
         try
         {
@@ -124,7 +129,7 @@ public class DateUtils
         return (new Date());
     }
 
-    public Date BudgetEnd(int pMonth, int pYear)
+    public static Date BudgetEnd(int pMonth, int pYear)
     {
         try
         {
@@ -144,6 +149,16 @@ public class DateUtils
             ErrorDialog.Show("CurrentBudgetYear", e.getMessage());
         }
         return (new Date());
+    }
+
+    public static String BudgetStartAsStr(int pMonth, int pYear)
+    {
+        return(DateUtils.DateToString(DateUtils.BudgetStart(pMonth, pYear)));
+    }
+
+    public static String BudgetEndAsStr(int pMonth, int pYear)
+    {
+        return(DateUtils.DateToString(DateUtils.BudgetEnd(pMonth, pYear)));
     }
 
     public Integer CurrentBudgetYear()
@@ -252,7 +267,7 @@ public class DateUtils
     //   Description: accepts string and sets retDate to the date equivalent
     //   Returns: true(worked)/false(failed)
     //
-    public Date StrToDate(String string)
+    public static Date StrToDate(String string)
     {
         try
         {
@@ -343,11 +358,54 @@ public class DateUtils
         }
     }
 
-    public boolean DateToStr(Date date, MyString retString)
+    public static String budgetFormat(int budgetMonth, int budgetYear)
+    {
+        return(String.format(Locale.ENGLISH, "%02d/%04d", budgetMonth, budgetYear));
+    }
+
+    public static String budgetMonthYear(int budgetMonth, int budgetYear)
+    {
+        return(context.getString(R.string.budgetyearmonthline,
+                DateUtils.budgetFormat(budgetMonth,budgetYear)));
+    }
+
+    public static String getMonthLong(int month, int year)
+    {
+        Date d = DateUtils.DateFromComponents(year, month, 1);
+
+        return( new SimpleDateFormat("MMMM").format(d));
+    }
+
+    public static String getMonthShort(int month, int year)
+    {
+        Date d = DateUtils.DateFromComponents(year, month, 1);
+
+        return( new SimpleDateFormat("MMM").format(d));
+    }
+
+    public static Date DateFromComponents(int year, int month, int day)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month-1);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    public static String DateToString(Date date)
+    {
+        return(android.text.format.DateFormat.format("dd/MM/yyyy", date).toString());
+    }
+
+    public static boolean DateToStr(Date date, MyString retString)
     {
         try
         {
-            retString.Value = android.text.format.DateFormat.format("dd/MM/yyyy", date).toString();
+            retString.Value = DateToString(date);
             return(true);
         }
         catch(Exception e)

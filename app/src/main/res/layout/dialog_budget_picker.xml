@@ -22,7 +22,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/btnLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -63,7 +63,7 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/imageButton3"
+            android:id="@+id/btnRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
