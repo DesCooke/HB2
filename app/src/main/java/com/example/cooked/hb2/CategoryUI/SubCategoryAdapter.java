@@ -37,17 +37,9 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
         {
             super(v);
 
-            try
-            {
-                mSubCategoryName = v.findViewById(R.id.cellcat_SubCategoryName);
+            mSubCategoryName = v.findViewById(R.id.cellcat_SubCategoryName);
 
-                btnEdit = v.findViewById(R.id.btnEdit);
-
-            }
-            catch(Exception e)
-            {
-                ErrorDialog.Show("Error in CategoryAdapter.ViewHolder::ViewHolder", e.getMessage());
-            }
+            btnEdit = v.findViewById(R.id.btnEdit);
         }
     }
 
@@ -59,20 +51,12 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
     // Create new views (invoked by the layout manager)
     @Override
     public SubCategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                         int viewType)
+                                                            int viewType)
     {
-        try
-        {
-            // create a new view
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_subcategory, parent, false);
-            // set the view's size, margins, padding and layout parameters
-            return new ViewHolder(v);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in SubCategoryAdapter.ViewHolder::onCreateViewHolder", e.getMessage());
-        }
-        return(null);
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_subcategory, parent, false);
+        // set the view's size, margins, padding and layout parameters
+        return new ViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -81,43 +65,26 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
     {
         final RecordSubCategory rec;
 
-        try
+        rec = mDataset.get(position);
+
+        holder.mSubCategoryName.setText(rec.SubCategoryName);
+        holder.btnEdit.setOnClickListener(new View.OnClickListener()
         {
-
-            rec = mDataset.get(position);
-
-            holder.mSubCategoryName.setText(rec.SubCategoryName);
-            holder.btnEdit.setOnClickListener(new View.OnClickListener()
+            @Override
+            public void onClick(View view)
             {
-                @Override
-                public void onClick(View view)
+                if (mOnItemClickListener != null)
                 {
-                    if (mOnItemClickListener != null)
-                    {
-                        mOnItemClickListener.onItemClick(view, rec);
-                    }
+                    mOnItemClickListener.onItemClick(view, rec);
                 }
-            });
-
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in SubCategoryAdapter.onBindViewHolder", e.getMessage());
-        }
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount()
     {
-        try
-        {
-            return mDataset.size();
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in SubCategoryAdapter.getItemCount", e.getMessage());
-        }
-        return(0);
+        return mDataset.size();
     }
 }

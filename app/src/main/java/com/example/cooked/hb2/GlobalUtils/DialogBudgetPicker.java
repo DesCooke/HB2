@@ -50,8 +50,8 @@ public class DialogBudgetPicker extends Dialog
 
     public void SetUI()
     {
-        tvBudgetYearMonth.setText(DateUtils.budgetMonthYear(BudgetMonth,BudgetYear));
-        tvBudgetMonth.setText(DateUtils.getMonthLong(BudgetMonth,BudgetYear));
+        tvBudgetYearMonth.setText(DateUtils.budgetMonthYear(BudgetMonth, BudgetYear));
+        tvBudgetMonth.setText(DateUtils.getMonthLong(BudgetMonth, BudgetYear));
         tvBudgetDates.setText(DateUtils.BudgetStartAsStr(BudgetMonth, BudgetYear) + " -> " +
                 DateUtils.BudgetEndAsStr(BudgetMonth, BudgetYear));
     }
@@ -61,64 +61,57 @@ public class DialogBudgetPicker extends Dialog
     {
         super.onCreate(savedInstanceState);
 
-        try
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.dialog_budget_picker);
+
+        tvBudgetYearMonth = findViewById(R.id.tvBudgetYearMonth);
+        tvBudgetMonth = findViewById(R.id.tvBudgetMonth);
+        tvBudgetDates = findViewById(R.id.tvBudgetDates);
+        btnOk = findViewById(R.id.btnOk);
+
+        btnLeft = findViewById(R.id.btnLeft);
+        btnRight = findViewById(R.id.btnRight);
+
+        btnLeft.setOnClickListener(new View.OnClickListener()
         {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.dialog_budget_picker);
-
-            tvBudgetYearMonth = findViewById(R.id.tvBudgetYearMonth);
-            tvBudgetMonth = findViewById(R.id.tvBudgetMonth);
-            tvBudgetDates = findViewById(R.id.tvBudgetDates);
-            btnOk = findViewById(R.id.btnOk);
-
-            btnLeft = findViewById(R.id.btnLeft);
-            btnRight = findViewById(R.id.btnRight);
-
-            btnLeft.setOnClickListener(new View.OnClickListener()
+            @Override
+            public void onClick(View v)
             {
-                @Override
-                public void onClick(View v)
+                BudgetMonth--;
+                if (BudgetMonth < 1)
                 {
-                    BudgetMonth--;
-                    if(BudgetMonth<1)
-                    {
-                        BudgetYear--;
-                        BudgetMonth=12;
-                    }
-                    SetUI();
+                    BudgetYear--;
+                    BudgetMonth = 12;
                 }
-            });
+                SetUI();
+            }
+        });
 
-            btnRight.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    BudgetMonth++;
-                    if(BudgetMonth>12)
-                    {
-                        BudgetYear++;
-                        BudgetMonth=1;
-                    }
-                    SetUI();
-                }
-            });
-
-            btnOk.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    MyMainActivity.RecreateUI(BudgetYear, BudgetMonth);
-                    dismiss();
-                }
-            });
-
-            SetUI();
-        }
-        catch(Exception e)
+        btnRight.setOnClickListener(new View.OnClickListener()
         {
-            ShowError("onCreate", e.getMessage());
-        }
+            @Override
+            public void onClick(View v)
+            {
+                BudgetMonth++;
+                if (BudgetMonth > 12)
+                {
+                    BudgetYear++;
+                    BudgetMonth = 1;
+                }
+                SetUI();
+            }
+        });
+
+        btnOk.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                MyMainActivity.RecreateUI(BudgetYear, BudgetMonth);
+                dismiss();
+            }
+        });
+
+        SetUI();
     }
 }

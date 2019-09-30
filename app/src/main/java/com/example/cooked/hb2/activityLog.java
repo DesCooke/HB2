@@ -13,10 +13,17 @@ public class activityLog extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log);
-        setTitle("Activity Log");
-        TextView tv= findViewById(R.id.txtLog);
-        String lLog= MyLog.GetText();
-        tv.setText(lLog);
+        try
+        {
+            setContentView(R.layout.activity_log);
+            setTitle("Activity Log");
+            TextView tv = findViewById(R.id.txtLog);
+            String lLog = MyLog.GetText();
+            tv.setText(lLog);
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 }

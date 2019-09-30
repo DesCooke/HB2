@@ -13,10 +13,12 @@ import com.example.cooked.hb2.CategoryUI.SubCategoryAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordSubCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 
 import java.util.ArrayList;
 
-public class activitySubCategory extends AppCompatActivity{
+public class activitySubCategory extends AppCompatActivity
+{
 
     public String categoryName;
     public Integer categoryId;
@@ -26,7 +28,8 @@ public class activitySubCategory extends AppCompatActivity{
     public SubCategoryAdapter mSubCategoryAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         try
         {
@@ -39,7 +42,7 @@ public class activitySubCategory extends AppCompatActivity{
 
             setTitle("Sub Categories for " + categoryName);
 
-            FloatingActionButton fab =  findViewById(R.id.fab);
+            FloatingActionButton fab = findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -55,37 +58,42 @@ public class activitySubCategory extends AppCompatActivity{
             });
 
             CreateRecyclerView();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("Error in activitySubCategory::onCreate", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
 
     }
 
     private void CreateRecyclerView()
     {
-        mDataset = MyDatabase.MyDB().getSubCategoryList(categoryId);
-        mSubCategoryList = findViewById(R.id.subcategoryList);
-        mSubCategoryList.setHasFixedSize(true);
-        mLayoutManagerCurrent = new LinearLayoutManager(this);
-        mSubCategoryList.setLayoutManager(mLayoutManagerCurrent);
-        mSubCategoryAdapter = new SubCategoryAdapter(mDataset);
-        mSubCategoryList.setAdapter(mSubCategoryAdapter);
-
-        mSubCategoryAdapter.setOnItemClickListener(new SubCategoryAdapter.OnItemClickListener()
+        try
         {
-            @Override
-            public void onItemClick(View view, RecordSubCategory obj)
+            mDataset = MyDatabase.MyDB().getSubCategoryList(categoryId);
+            mSubCategoryList = findViewById(R.id.subcategoryList);
+            mSubCategoryList.setHasFixedSize(true);
+            mLayoutManagerCurrent = new LinearLayoutManager(this);
+            mSubCategoryList.setLayoutManager(mLayoutManagerCurrent);
+            mSubCategoryAdapter = new SubCategoryAdapter(mDataset);
+            mSubCategoryList.setAdapter(mSubCategoryAdapter);
+
+            mSubCategoryAdapter.setOnItemClickListener(new SubCategoryAdapter.OnItemClickListener()
             {
-                Intent intent = new Intent(getApplicationContext(), activitySubCategoryItem.class);
-                intent.putExtra("ACTIONTYPE", "EDIT");
-                intent.putExtra("SUBCATEGORYID", obj.SubCategoryId);
-                intent.putExtra("CATEGORYID", obj.CategoryId);
-                intent.putExtra("SUBCATEGORYNAME", obj.SubCategoryName);
-                startActivity(intent);
-            }
-        });
+                @Override
+                public void onItemClick(View view, RecordSubCategory obj)
+                {
+                    Intent intent = new Intent(getApplicationContext(), activitySubCategoryItem.class);
+                    intent.putExtra("ACTIONTYPE", "EDIT");
+                    intent.putExtra("SUBCATEGORYID", obj.SubCategoryId);
+                    intent.putExtra("CATEGORYID", obj.CategoryId);
+                    intent.putExtra("SUBCATEGORYNAME", obj.SubCategoryName);
+                    startActivity(intent);
+                }
+            });
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
 
     }
 
@@ -94,7 +102,14 @@ public class activitySubCategory extends AppCompatActivity{
     {  // After a pause OR at startup
         super.onResume();
 
-        CreateRecyclerView();
+        try
+        {
+            CreateRecyclerView();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 }
 

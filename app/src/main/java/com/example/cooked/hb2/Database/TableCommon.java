@@ -95,8 +95,6 @@ class TableCommon extends TableBase
     ArrayList<RecordCommon> getTransactionList()
     {
         ArrayList<RecordCommon> list;
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.query("tblCommon", new String[]{"TxSeqNo",
@@ -135,19 +133,11 @@ class TableCommon extends TableBase
                 }
             }
             
-        }
-        catch (Exception e)
-        {
-            list = new ArrayList<>();
-            ErrorDialog.Show("Error in TableCommon.getCommon", e.getMessage());
-        }
         return list;
     }
 
     RecordCommon getSingleCommonTransaction(Integer pTxSeqNo)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.query("tblCommon", new String[]{"TxSeqNo",
@@ -182,19 +172,11 @@ class TableCommon extends TableBase
                     }
                 }
             }
-            
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TableCommon.getSingleCommon", e.getMessage());
-        }
         return (null);
     }
     
     RecordCommon getSingleCommonTransaction(String pTxDescription)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.query("tblCommon", new String[]{"TxSeqNo",
@@ -229,12 +211,6 @@ class TableCommon extends TableBase
                     }
                 }
             }
-            
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TableCommon.getSingleCommon", e.getMessage());
-        }
         return (null);
     }
 

@@ -23,7 +23,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     {
         void onItemClick(View view, RecordCategory obj);
     }
-    
+
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener)
     {
         this.mOnItemClickListener = mItemClickListener;
@@ -44,18 +44,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         {
             super(v);
 
-            try
-            {
-                mCategoryName = v.findViewById(R.id.cellcat_CategoryName);
-            
-                btnEdit = v.findViewById(R.id.btnEdit);
-                btnShow = v.findViewById(R.id.btnShowSubCategory);
+            mCategoryName = v.findViewById(R.id.cellcat_CategoryName);
 
-            }
-            catch(Exception e)
-            {
-                ErrorDialog.Show("Error in CategoryAdapter.ViewHolder::ViewHolder", e.getMessage());
-            }
+            btnEdit = v.findViewById(R.id.btnEdit);
+            btnShow = v.findViewById(R.id.btnShowSubCategory);
         }
     }
 
@@ -69,18 +61,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     public CategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType)
     {
-        try
-        {
-            // create a new view
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_category, parent, false);
-            // set the view's size, margins, padding and layout parameters
-            return new ViewHolder(v);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in CategoryAdapter.ViewHolder::onCreateViewHolder", e.getMessage());
-        }
-        return(null);
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_category, parent, false);
+        // set the view's size, margins, padding and layout parameters
+        return new ViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -89,55 +73,37 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     {
         final RecordCategory rec;
 
-        try
-        {
+        rec = mDataset.get(position);
 
-            rec = mDataset.get(position);
-    
-            holder.mCategoryName.setText(rec.CategoryName);
-            holder.btnEdit.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    if (mOnItemClickListener != null)
-                    {
-                        mOnItemClickListener.onItemClick(view, rec);
-                    }
-                }
-            });
-            holder.btnShow.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    if (mOnShowClickListener != null)
-                    {
-                        mOnShowClickListener.onItemClick(view, rec);
-                    }
-                }
-            });
-
-            
-        }
-        catch (Exception e)
+        holder.mCategoryName.setText(rec.CategoryName);
+        holder.btnEdit.setOnClickListener(new View.OnClickListener()
         {
-            ErrorDialog.Show("Error in CategoryAdapter.onBindViewHolder", e.getMessage());
-        }
+            @Override
+            public void onClick(View view)
+            {
+                if (mOnItemClickListener != null)
+                {
+                    mOnItemClickListener.onItemClick(view, rec);
+                }
+            }
+        });
+        holder.btnShow.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if (mOnShowClickListener != null)
+                {
+                    mOnShowClickListener.onItemClick(view, rec);
+                }
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount()
     {
-        try
-        {
-            return mDataset.size();
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in CategoryAdapter.getItemCount", e.getMessage());
-        }
-        return(0);
+        return mDataset.size();
     }
 }

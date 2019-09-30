@@ -42,7 +42,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Math.abs;
 
 public class MainActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener
+        implements NavigationView.OnNavigationItemSelectedListener
 {
     @SuppressLint("StaticFieldLeak")
     public static Context context;
@@ -68,10 +68,17 @@ public class MainActivity extends AppCompatActivity
 
     public void SetBudget(int pBudgetYear, int pBudgetMonth)
     {
-        mCurrentBudgetYear=pBudgetYear;
-        mCurrentBudgetMonth=pBudgetMonth;
-        MyDatabase.MyDB().Dirty = true;
-        uiDirty = true;
+        try
+        {
+            mCurrentBudgetYear = pBudgetYear;
+            mCurrentBudgetMonth = pBudgetMonth;
+            MyDatabase.MyDB().Dirty = true;
+            uiDirty = true;
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 
     private void setupStatics(Context lcontext)
@@ -82,8 +89,7 @@ public class MainActivity extends AppCompatActivity
             context = lcontext;
             MyResources.setContext(context);
             MyLog.ClearLog();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -104,8 +110,7 @@ public class MainActivity extends AppCompatActivity
             {
                 updateUI();
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -124,8 +129,7 @@ public class MainActivity extends AppCompatActivity
                 _fragmentBudget.refreshUI();
             if (_fragmentDashboard != null)
                 _fragmentDashboard.refreshUI();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -139,8 +143,7 @@ public class MainActivity extends AppCompatActivity
         {
             mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
                     (mCurrentBudgetMonth, mCurrentBudgetYear, true);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -155,8 +158,7 @@ public class MainActivity extends AppCompatActivity
             createTitle();
 
             createAndLoadFragments();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -170,7 +172,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         setupStatics(this);
-        
+
         if (!MyPermission.checkIfAlreadyHavePermission(this))
             MyPermission.requestForSpecificPermission(this);
         try
@@ -180,9 +182,10 @@ public class MainActivity extends AppCompatActivity
 
             SetBudget(DateUtils.dateUtils().CurrentBudgetYear(), DateUtils.dateUtils().CurrentBudgetMonth());
 
+            setupActivity();
+
             BuildUI();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -191,18 +194,29 @@ public class MainActivity extends AppCompatActivity
 
     public void BuildUI()
     {
-        setupActivity();
+        try
+        {
+            createOrUpdate();
 
-        createOrUpdate();
+            setupNavigationSideBar();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
 
-        setupNavigationSideBar();
     }
 
     public void RecreateUI(int budgetYear, int budgetMonth)
     {
-        SetBudget(budgetYear, budgetMonth);
+        try
+        {
+            SetBudget(budgetYear, budgetMonth);
 
-        BuildUI();
+            BuildUI();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
     }
 
     private void increaseBudgetPeriod(View view)
@@ -217,14 +231,13 @@ public class MainActivity extends AppCompatActivity
                 mCurrentBudgetYear++;
             }
             createOrUpdate();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:increaseBudgetPeriod:Ending");
     }
-    
+
     private void decreaseBudgetPeriod(View view)
     {
         MyLog.WriteLogMessage("MainActivity:decreaseBudgetPeriod:Starting");
@@ -237,8 +250,7 @@ public class MainActivity extends AppCompatActivity
                 mCurrentBudgetYear--;
             }
             createOrUpdate();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -262,8 +274,7 @@ public class MainActivity extends AppCompatActivity
                 ab.setTitle("HomeBudget");
                 ab.setSubtitle(lFromStr.Value + " -> " + lToStr.Value);
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -290,8 +301,7 @@ public class MainActivity extends AppCompatActivity
                     fa.RefreshForm(ra.RecordTransactions);
                 }
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -325,8 +335,7 @@ public class MainActivity extends AppCompatActivity
             view_pager.setAdapter(adapter);
 
             tab_layout.setupWithViewPager(view_pager);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -349,8 +358,7 @@ public class MainActivity extends AppCompatActivity
                     fa.PopulateForm(ra.RecordTransactions);
                 }
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -365,8 +373,7 @@ public class MainActivity extends AppCompatActivity
             createAdapterAndFragments();
 
             loadFragments();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
@@ -387,14 +394,13 @@ public class MainActivity extends AppCompatActivity
             view_pager = findViewById(R.id.viewpager_main);
             tab_layout = findViewById(R.id.tab_main);
 
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:setupActivity:Ending");
     }
-    
+
     @Override
     public void onBackPressed()
     {
@@ -409,14 +415,13 @@ public class MainActivity extends AppCompatActivity
             {
                 super.onBackPressed();
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onBackPressed:Ending");
     }
-    
+
     private void setupNavigationSideBar()
     {
         MyLog.WriteLogMessage("MainActivity:setupNavigationSideBar:Starting");
@@ -431,14 +436,13 @@ public class MainActivity extends AppCompatActivity
             NavigationView navigationView = findViewById(R.id.nav_view);
             navigationView.setItemIconTintList(null);
             navigationView.setNavigationItemSelectedListener(this);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:setupNavigationSideBar:Ending");
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -447,15 +451,14 @@ public class MainActivity extends AppCompatActivity
         {
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.main, menu);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onCreateOptionsMenu:Ending");
         return true;
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -466,34 +469,33 @@ public class MainActivity extends AppCompatActivity
             // automatically handle clicks on the Home/Up button, so long
             // as you specify a parent activity in AndroidManifest.xml.
             int id = item.getItemId();
-            if(id==R.id.RefreshDBAndUI)
+            if (id == R.id.RefreshDBAndUI)
             {
                 MyDatabase.MyDB().Dirty = true;
                 uiDirty = true;
                 BuildUI();
             }
-            if(id==R.id.ChangeDate)
+            if (id == R.id.ChangeDate)
             {
-                DialogBudgetPicker dbp=new DialogBudgetPicker(this);
+                DialogBudgetPicker dbp = new DialogBudgetPicker(this);
                 dbp.BudgetYear = mCurrentBudgetYear;
                 dbp.BudgetMonth = mCurrentBudgetMonth;
                 dbp.MyMainActivity = this;
                 dbp.show();
             }
-            if(id==R.id.showLog)
+            if (id == R.id.showLog)
             {
                 Intent intent = new Intent(this, activityLog.class);
                 startActivity(intent);
             }
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onOptionsItemSelected:Ending");
         return super.onOptionsItemSelected(item);
     }
-    
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
@@ -502,7 +504,7 @@ public class MainActivity extends AppCompatActivity
         {
             // Handle navigation view item clicks here.
             int id = item.getItemId();
-            
+
             if (id == R.id.nav_category)
             {
                 Intent intent = new Intent(this, activityCategory.class);
@@ -530,15 +532,14 @@ public class MainActivity extends AppCompatActivity
 
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onNavigationItemSelected:Ending");
         return true;
     }
-    
+
     @Override
     protected void onPause()
     {
@@ -546,14 +547,13 @@ public class MainActivity extends AppCompatActivity
         try
         {
             super.onPause();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onPause:Ending");
     }
-    
+
     @Override
     public void onResume()
     {
@@ -562,12 +562,11 @@ public class MainActivity extends AppCompatActivity
         {
             super.onResume();
             createOrUpdate();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
         MyLog.WriteLogMessage("MainActivity:onResume:Ending");
     }
-    
+
 }

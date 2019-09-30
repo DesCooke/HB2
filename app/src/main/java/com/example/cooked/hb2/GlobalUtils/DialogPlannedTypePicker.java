@@ -34,48 +34,33 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.plannedtype_picker);
 
-        try
-        {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.plannedtype_picker);
+        Button btnOk = findViewById(R.id.btnOk);
 
-            Button btnOk=findViewById(R.id.btnOk);
-
-            btnOk.setOnClickListener(this);
-        }
-        catch(Exception e)
-        {
-            ShowError("onCreate", e.getMessage());
-        }
+        btnOk.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v)
     {
-        try
-        {
-            RadioButton radYearly =findViewById(R.id.radYearly);
-            RadioButton radMonthly =findViewById(R.id.radMonthly);
-            RadioButton radWeekly =findViewById(R.id.radWeekly);
-            mPlannedType.Value = RecordPlanned.mPTOneOff;
-            if(radYearly.isChecked())
-              mPlannedType.Value = RecordPlanned.mPTYearly;
-            if(radMonthly.isChecked())
-              mPlannedType.Value = RecordPlanned.mPTMonthly;
-            if(radWeekly.isChecked())
-              mPlannedType.Value = RecordPlanned.mPTWeekly;
-            if(edtPlannedType != null)
-              edtPlannedType.setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
-            if(tilPlannedType != null)
-                tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
+        RadioButton radYearly = findViewById(R.id.radYearly);
+        RadioButton radMonthly = findViewById(R.id.radMonthly);
+        RadioButton radWeekly = findViewById(R.id.radWeekly);
+        mPlannedType.Value = RecordPlanned.mPTOneOff;
+        if (radYearly.isChecked())
+            mPlannedType.Value = RecordPlanned.mPTYearly;
+        if (radMonthly.isChecked())
+            mPlannedType.Value = RecordPlanned.mPTMonthly;
+        if (radWeekly.isChecked())
+            mPlannedType.Value = RecordPlanned.mPTWeekly;
+        if (edtPlannedType != null)
+            edtPlannedType.setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
+        if (tilPlannedType != null)
+            tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
 
-            dismiss();
-        }
-        catch(Exception e)
-        {
-            ShowError("onClick", e.getMessage());
-        }
+        dismiss();
     }
 
 }

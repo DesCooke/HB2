@@ -16,6 +16,7 @@ import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 
 import java.util.Calendar;
@@ -48,22 +49,22 @@ public class activityCommonItem extends AppCompatActivity
         try
         {
             setContentView(R.layout.activity_common_item);
-            Toolbar toolbar =  findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
-    
+
             MySubCategoryId = new MyInt();
             edtTxDate = findViewById(R.id.edtTxDate);
-            edtTxDescription =  findViewById(R.id.edtDescription);
+            edtTxDescription = findViewById(R.id.edtDescription);
             edtTxAmount = findViewById(R.id.edtTxAmount);
-            tvCategory =  findViewById(R.id.edtCategory);
-            edtComments =  findViewById(R.id.edtComments);
+            tvCategory = findViewById(R.id.edtCategory);
+            edtComments = findViewById(R.id.edtComments);
             btnOk = findViewById(R.id.btnOk);
             btnDelete = findViewById(R.id.btnDelete);
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
             cp.tvSubCategoryName = tvCategory;
-    
+
             setTitle("<Unknown>");
             actionType = getIntent().getStringExtra("ACTIONTYPE");
             if (actionType.compareTo("ADD") == 0)
@@ -86,24 +87,24 @@ public class activityCommonItem extends AppCompatActivity
                 MySubCategoryId.Value = originalRecord.CategoryId;
                 tvCategory.setText(originalRecord.SubCategoryName);
                 edtComments.setText(originalRecord.Comments);
-    
+
                 btnDelete.setVisibility(View.VISIBLE);
             }
-    
-    
+
+
             edtTxDate.addTextChangedListener(new TextWatcher()
             {
                 @Override
                 public void afterTextChanged(Editable s)
                 {
                 }
-        
+
                 @Override
                 public void beforeTextChanged(CharSequence s, int start,
                                               int count, int after)
                 {
                 }
-        
+
                 @Override
                 public void onTextChanged(CharSequence s, int start,
                                           int before, int count)
@@ -114,7 +115,7 @@ public class activityCommonItem extends AppCompatActivity
                     }
                 }
             });
-        
+
             btnOk.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v)
@@ -137,8 +138,7 @@ public class activityCommonItem extends AppCompatActivity
                         {
                             MyDB().updateCommonTransaction(originalRecord);
                         }
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCommonItem::onClick", e.getMessage());
                     }
@@ -152,49 +152,53 @@ public class activityCommonItem extends AppCompatActivity
                     try
                     {
                         MyDB().deleteCommonTransaction(originalRecord);
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCommonItem::onClick", e.getMessage());
                     }
                     finish();
                 }
             });
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("Error in activityCommonItem::onCreate", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
     public void setDefaults()
     {
-        MyString myString=new MyString();
-        if(!dateUtils().DateToStr(new Date(), myString))
-            return;
-        edtTxDate.setText(myString.Value);
-        
-        edtTxDescription.setText("");
-        edtTxAmount.setText(R.string.AmountZero);
-        tvCategory.setText("");
-        edtComments.setText("");
-        Integer lMonth = dateUtils().CurrentBudgetMonth();
-        Integer lYear = dateUtils().CurrentBudgetYear();
+        try
+        {
+            MyString myString = new MyString();
+            if (!dateUtils().DateToStr(new Date(), myString))
+                return;
+            edtTxDate.setText(myString.Value);
+
+            edtTxDescription.setText("");
+            edtTxAmount.setText(R.string.AmountZero);
+            tvCategory.setText("");
+            edtComments.setText("");
+            Integer lMonth = dateUtils().CurrentBudgetMonth();
+            Integer lYear = dateUtils().CurrentBudgetYear();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 
     public void pickDateTime(View view)
     {
         try
         {
-            DialogDatePicker ddp=new DialogDatePicker(this);
-            ddp.txtStartDate= findViewById(R.id.edtTxDate);
-            Date date=dateUtils().StrToDate(ddp.txtStartDate.getText().toString() );
+            DialogDatePicker ddp = new DialogDatePicker(this);
+            ddp.txtStartDate = findViewById(R.id.edtTxDate);
+            Date date = dateUtils().StrToDate(ddp.txtStartDate.getText().toString());
             ddp.setInitialDate(date);
             ddp.show();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickDateTime", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -202,11 +206,10 @@ public class activityCommonItem extends AppCompatActivity
     {
         try
         {
-            ((EditText)view).selectAll();
-        }
-        catch(Exception e)
+            ((EditText) view).selectAll();
+        } catch (Exception e)
         {
-            ErrorDialog.Show("selectAll", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -219,22 +222,30 @@ public class activityCommonItem extends AppCompatActivity
             intent.putExtra("ACTIONTYPE", "EDIT");
 //            intent.putExtra("PlannedId", lPlannedId);
             startActivityForResult(intent, 1969);
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickCategory", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
-    
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == 1969) {
-         if(resultCode == RESULT_OK) {
-             String lSubCategoryName= data.getStringExtra("SubCategoryName");
-             String lSubCategoryId= data.getStringExtra("SubCategoryId");
-             MySubCategoryId.Value = Integer.parseInt(lSubCategoryId);
-             tvCategory.setText(lSubCategoryName);
-         }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        try
+        {
+            if (requestCode == 1969)
+            {
+                if (resultCode == RESULT_OK)
+                {
+                    String lSubCategoryName = data.getStringExtra("SubCategoryName");
+                    String lSubCategoryId = data.getStringExtra("SubCategoryId");
+                    MySubCategoryId.Value = Integer.parseInt(lSubCategoryId);
+                    tvCategory.setText(lSubCategoryName);
+                }
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
     }
-}
 }

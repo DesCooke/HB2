@@ -54,36 +54,36 @@ public class activityTransactionItem extends AppCompatActivity
     public RecordTransaction originalRecord;
     public int templateSeqNo;
     DialogUpdatePlannedQ dialogUpdatePlannedQ;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         try
         {
-            templateSeqNo=-1;
+            templateSeqNo = -1;
             setContentView(R.layout.activity_transaction_item);
-            Toolbar toolbar =  findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
-    
+
             MySubCategoryId = new MyInt();
             edtTxDate = findViewById(R.id.edtTxDate);
-            edtTxDescription =  findViewById(R.id.edtDescription);
+            edtTxDescription = findViewById(R.id.edtDescription);
             edtTxAmount = findViewById(R.id.edtTxAmount);
-            tvCategory =  findViewById(R.id.edtCategory);
-            edtComments =  findViewById(R.id.edtComments);
-            edtBudgetYear =  findViewById(R.id.edtBudgetYear);
-            edtBudgetMonth =  findViewById(R.id.edtBudgetMonth);
+            tvCategory = findViewById(R.id.edtCategory);
+            edtComments = findViewById(R.id.edtComments);
+            edtBudgetYear = findViewById(R.id.edtBudgetYear);
+            edtBudgetMonth = findViewById(R.id.edtBudgetMonth);
             btnOk = findViewById(R.id.btnOk);
             btnDelete = findViewById(R.id.btnDelete);
             btnCreatePlanned = findViewById(R.id.btnPlanned);
-            
+
             dialogUpdatePlannedQ = new DialogUpdatePlannedQ(this);
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
             cp.tvSubCategoryName = tvCategory;
-    
+
             setTitle("<Unknown>");
             actionType = getIntent().getStringExtra("ACTIONTYPE");
             if (actionType.compareTo("ADD") == 0)
@@ -97,13 +97,12 @@ public class activityTransactionItem extends AppCompatActivity
                 btnCreatePlanned.setVisibility(GONE);
                 setDefaults();
                 String lTemplateDesc = getIntent().getStringExtra("TEMPLATEDESC");
-                if(lTemplateDesc!=null)
+                if (lTemplateDesc != null)
                 {
                     MyLog.WriteLogMessage("Received TEMPLATEDESC of " + lTemplateDesc);
 
                     setDefaultsForTemplate(lTemplateDesc);
-                }
-                else
+                } else
                 {
                     MyLog.WriteLogMessage("Did not receive a TEMPLATEDESC");
                 }
@@ -125,28 +124,28 @@ public class activityTransactionItem extends AppCompatActivity
                     originalRecord.BudgetYear = dateUtils().CurrentBudgetYear();
                 if (originalRecord.BudgetMonth == 0)
                     originalRecord.BudgetMonth = dateUtils().CurrentBudgetMonth();
-    
+
                 edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
                 edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
-    
+
                 btnDelete.setVisibility(View.VISIBLE);
                 btnCreatePlanned.setVisibility(View.VISIBLE);
             }
-    
-    
+
+
             edtTxDate.addTextChangedListener(new TextWatcher()
             {
                 @Override
                 public void afterTextChanged(Editable s)
                 {
                 }
-        
+
                 @Override
                 public void beforeTextChanged(CharSequence s, int start,
                                               int count, int after)
                 {
                 }
-        
+
                 @Override
                 public void onTextChanged(CharSequence s, int start,
                                           int before, int count)
@@ -154,21 +153,21 @@ public class activityTransactionItem extends AppCompatActivity
                     if (s.length() != 0)
                     {
                         originalRecord.TxDate = dateUtils().StrToDate(edtTxDate.getText().toString());
-                        
+
                         originalRecord.BudgetYear = dateUtils().GetBudgetYear(originalRecord.TxDate);
                         originalRecord.BudgetMonth = dateUtils().GetBudgetMonth(originalRecord.TxDate);
-    
+
                         edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
                         edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
                     }
                 }
             });
-        
+
             btnOk.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v)
                 {
-                    boolean lOkToFinish=true;
+                    boolean lOkToFinish = true;
                     try
                     {
                         originalRecord.TxDate = new Date();
@@ -192,43 +191,43 @@ public class activityTransactionItem extends AppCompatActivity
                             originalRecord.TxFilename = "Cash";
                             originalRecord.TxSeqNo = 0; // will be auto generated
                             MyDB().addTransaction(originalRecord);
-                            if(templateSeqNo!=-1)
+                            if (templateSeqNo != -1)
                             {
-                               RecordCommon lrc = MyDB().getSingleCommonTransaction(templateSeqNo);
-                               lrc.TxDate = originalRecord.TxDate;
-                               MyDB().updateCommonTransaction(lrc);
+                                RecordCommon lrc = MyDB().getSingleCommonTransaction(templateSeqNo);
+                                lrc.TxDate = originalRecord.TxDate;
+                                MyDB().updateCommonTransaction(lrc);
                             }
-                            
+
                         }
                         if (actionType.compareTo("EDIT") == 0)
                         {
                             MyDB().updateTransaction(originalRecord);
                         }
                         MyLog.WriteLogMessage("VV: MySubCategoryId.Value is " + MySubCategoryId.Value);
-                        if(MySubCategoryId.Value != 0)
+                        if (MySubCategoryId.Value != 0)
                         {
                             Date lNow = Calendar.getInstance().getTime();
                             ArrayList<RecordPlanned> lrpa = MyDatabase.MyDB().getPlannedListForSubCategory(MySubCategoryId.Value);
                             MyLog.WriteLogMessage("VV: There are " + lrpa + " planned items");
-                            for(int i=0;i<lrpa.size();i++)
+                            for (int i = 0; i < lrpa.size(); i++)
                             {
-                                RecordPlanned lrp=lrpa.get(i);
+                                RecordPlanned lrp = lrpa.get(i);
                                 MyLog.WriteLogMessage("VV: Checking " + lrp.mPlanned);
-                                
+
                                 MyLog.WriteLogMessage("VV:    Start " + lrp.mStartDate.toString());
                                 MyLog.WriteLogMessage("VV:    End " + lrp.mEndDate.toString());
-                                if( lrp.mStartDate.before(lNow) && lrp.mEndDate.after(lNow) )
+                                if (lrp.mStartDate.before(lNow) && lrp.mEndDate.after(lNow))
                                 {
                                     MyLog.WriteLogMessage("VV:    Type " + lrp.mPlannedType);
                                     if (lrp.mPlannedType == RecordPlanned.mPTMonthly)
                                     {
                                         MyLog.WriteLogMessage("VV:    Amount " + lrp.mMatchingTxAmount);
-                                        if( (lrp.mMatchingTxAmount > 0 && originalRecord.TxAmount > 0) ||
-                                          (lrp.mMatchingTxAmount < 0 && originalRecord.TxAmount < 0) )
+                                        if ((lrp.mMatchingTxAmount > 0 && originalRecord.TxAmount > 0) ||
+                                                (lrp.mMatchingTxAmount < 0 && originalRecord.TxAmount < 0))
                                         {
-                                            if( lrp.mMatchingTxAmount.compareTo(originalRecord.TxAmount)!=0 )
+                                            if (lrp.mMatchingTxAmount.compareTo(originalRecord.TxAmount) != 0)
                                             {
-                                                lOkToFinish=false;
+                                                lOkToFinish = false;
                                                 dialogUpdatePlannedQ.plannedAmount = lrp.mMatchingTxAmount;
                                                 dialogUpdatePlannedQ.thisTransactionAmount = originalRecord.TxAmount;
                                                 dialogUpdatePlannedQ.plannedId = lrp.mPlannedId;
@@ -240,12 +239,11 @@ public class activityTransactionItem extends AppCompatActivity
                                 }
                             }
                         }
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
                     }
-                    if(lOkToFinish)
+                    if (lOkToFinish)
                         finish();
                 }
             });
@@ -256,8 +254,7 @@ public class activityTransactionItem extends AppCompatActivity
                     try
                     {
                         MyDB().deleteTransaction(originalRecord);
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
                     }
@@ -271,8 +268,7 @@ public class activityTransactionItem extends AppCompatActivity
                     try
                     {
                         createPlanned(v);
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
                     }
@@ -312,28 +308,34 @@ public class activityTransactionItem extends AppCompatActivity
                 }
             });
             */
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("Error in activityTransactionItem::onCreate", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
     public void setDefaults()
     {
-        MyString myString=new MyString();
-        if(!dateUtils().DateToStr(new Date(), myString))
-            return;
-        edtTxDate.setText(myString.Value);
-        
-        edtTxDescription.setText("");
-        edtTxAmount.setText(R.string.AmountZero);
-        tvCategory.setText("");
-        edtComments.setText("");
-        Integer lMonth = dateUtils().CurrentBudgetMonth();
-        Integer lYear = dateUtils().CurrentBudgetYear();
-        edtBudgetYear.setText(String.format(Locale.UK, "%d", lYear));
-        edtBudgetMonth.setText(String.format(Locale.UK, "%d", lMonth));
+        try
+        {
+            MyString myString = new MyString();
+            if (!dateUtils().DateToStr(new Date(), myString))
+                return;
+            edtTxDate.setText(myString.Value);
+
+            edtTxDescription.setText("");
+            edtTxAmount.setText(R.string.AmountZero);
+            tvCategory.setText("");
+            edtComments.setText("");
+            Integer lMonth = dateUtils().CurrentBudgetMonth();
+            Integer lYear = dateUtils().CurrentBudgetYear();
+            edtBudgetYear.setText(String.format(Locale.UK, "%d", lYear));
+            edtBudgetMonth.setText(String.format(Locale.UK, "%d", lMonth));
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 
     @Override
@@ -341,44 +343,50 @@ public class activityTransactionItem extends AppCompatActivity
     {  // After a pause OR at startup
         super.onResume();
     }
-    
+
     public void setDefaultsForTemplate(String argTemplate)
     {
-        RecordCommon lRecordCommon = MyDatabase.MyDB().getSingleCommonTransaction(argTemplate);
-        if (lRecordCommon == null)
-            return;
-       
-        templateSeqNo = lRecordCommon.TxSeqNo;
-        edtTxDescription.setText(lRecordCommon.TxDescription);
-        edtTxAmount.setText(lRecordCommon.TxAmount.toString());
-        tvCategory.setText(lRecordCommon.SubCategoryName);
-        edtComments.setText(lRecordCommon.Comments);
+        try
+        {
+            RecordCommon lRecordCommon = MyDatabase.MyDB().getSingleCommonTransaction(argTemplate);
+            if (lRecordCommon == null)
+                return;
 
-        MyString lDateStr = new MyString();
-        dateUtils().DateToStr(lRecordCommon.TxDate, lDateStr);
-        edtTxDate.setText(lDateStr.Value);
-        originalRecord.BudgetYear = dateUtils().GetBudgetYear(lRecordCommon.TxDate);
-        originalRecord.BudgetMonth = dateUtils().GetBudgetMonth(lRecordCommon.TxDate);
-    
-        edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
-        edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
+            templateSeqNo = lRecordCommon.TxSeqNo;
+            edtTxDescription.setText(lRecordCommon.TxDescription);
+            edtTxAmount.setText(lRecordCommon.TxAmount.toString());
+            tvCategory.setText(lRecordCommon.SubCategoryName);
+            edtComments.setText(lRecordCommon.Comments);
 
-        MySubCategoryId.Value = lRecordCommon.CategoryId;
+            MyString lDateStr = new MyString();
+            dateUtils().DateToStr(lRecordCommon.TxDate, lDateStr);
+            edtTxDate.setText(lDateStr.Value);
+            originalRecord.BudgetYear = dateUtils().GetBudgetYear(lRecordCommon.TxDate);
+            originalRecord.BudgetMonth = dateUtils().GetBudgetMonth(lRecordCommon.TxDate);
+
+            edtBudgetYear.setText(String.format(Locale.UK, "%d", originalRecord.BudgetYear));
+            edtBudgetMonth.setText(String.format(Locale.UK, "%d", originalRecord.BudgetMonth));
+
+            MySubCategoryId.Value = lRecordCommon.CategoryId;
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 
     public void pickDateTime(View view)
     {
         try
         {
-            DialogDatePicker ddp=new DialogDatePicker(this);
-            ddp.txtStartDate= findViewById(R.id.edtTxDate);
-            Date date=dateUtils().StrToDate(ddp.txtStartDate.getText().toString() );
+            DialogDatePicker ddp = new DialogDatePicker(this);
+            ddp.txtStartDate = findViewById(R.id.edtTxDate);
+            Date date = dateUtils().StrToDate(ddp.txtStartDate.getText().toString());
             ddp.setInitialDate(date);
             ddp.show();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickDateTime", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -391,10 +399,9 @@ public class activityTransactionItem extends AppCompatActivity
             intent.putExtra("ACTIONTYPE", "EDIT");
             intent.putExtra("PlannedId", lPlannedId);
             startActivity(intent);
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickDateTime", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -402,11 +409,10 @@ public class activityTransactionItem extends AppCompatActivity
     {
         try
         {
-            ((EditText)view).selectAll();
-        }
-        catch(Exception e)
+            ((EditText) view).selectAll();
+        } catch (Exception e)
         {
-            ErrorDialog.Show("selectAll", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -419,22 +425,31 @@ public class activityTransactionItem extends AppCompatActivity
             intent.putExtra("ACTIONTYPE", "EDIT");
 //            intent.putExtra("PlannedId", lPlannedId);
             startActivityForResult(intent, 1969);
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickCategory", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
-    
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == 1969) {
-         if(resultCode == RESULT_OK) {
-             String lSubCategoryName= data.getStringExtra("SubCategoryName");
-             String lSubCategoryId= data.getStringExtra("SubCategoryId");
-             MySubCategoryId.Value = Integer.parseInt(lSubCategoryId);
-             tvCategory.setText(lSubCategoryName);
-         }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        try
+        {
+            if (requestCode == 1969)
+            {
+                if (resultCode == RESULT_OK)
+                {
+                    String lSubCategoryName = data.getStringExtra("SubCategoryName");
+                    String lSubCategoryId = data.getStringExtra("SubCategoryId");
+                    MySubCategoryId.Value = Integer.parseInt(lSubCategoryId);
+                    tvCategory.setText(lSubCategoryName);
+                }
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
-}
 }

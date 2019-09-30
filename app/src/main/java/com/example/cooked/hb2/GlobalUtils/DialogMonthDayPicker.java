@@ -35,49 +35,35 @@ public class DialogMonthDayPicker extends Dialog implements View.OnClickListener
     {
         super.onCreate(savedInstanceState);
 
-        try
-        {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.monthday_picker);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.monthday_picker);
 
-            Button btnOk=findViewById(R.id.btnOk);
+        Button btnOk = findViewById(R.id.btnOk);
 
-            btnOk.setOnClickListener(this);
-        }
-        catch(Exception e)
-        {
-            ShowError("onCreate", e.getMessage());
-        }
+        btnOk.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v)
     {
-        try
+        TextInputLayout myDay = findViewById(R.id.edtDay);
+        TextInputLayout myMonth = findViewById(R.id.edtMonth);
+        if (myDay != null && myDay.getEditText() != null && myDay.getEditText().getText() != null)
         {
-            TextInputLayout myDay = findViewById(R.id.edtDay);
-            TextInputLayout myMonth = findViewById(R.id.edtMonth);
-            if(myDay!=null && myDay.getEditText()!=null && myDay.getEditText().getText() != null)
+            if (myMonth != null && myMonth.getEditText() != null && myMonth.getEditText().getText() != null)
             {
-                if(myMonth!=null && myMonth.getEditText()!=null && myMonth.getEditText().getText() != null)
-                {
-                    String lCaption = MainActivity.context.getString(R.string.DayAndMonth);
-                    String lText = String.format(lCaption, myDay.getEditText().getText(),
+                String lCaption = MainActivity.context.getString(R.string.DayAndMonth);
+                String lText = String.format(lCaption, myDay.getEditText().getText(),
                         myMonth.getEditText().getText());
-                    if(edtText != null)
-                        edtText.setText(lText);
-                    if(tilText != null)
-                        tilText.getEditText().setText(lText);
-                    mMonth.Value = Integer.valueOf(myMonth.getEditText().getText().toString());
-                    mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
-                }
+                if (edtText != null)
+                    edtText.setText(lText);
+                if (tilText != null)
+                    tilText.getEditText().setText(lText);
+                mMonth.Value = Integer.valueOf(myMonth.getEditText().getText().toString());
+                mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
             }
-            dismiss();
         }
-        catch(Exception e)
-        {
-            ShowError("onClick", e.getMessage());
-        }
+        dismiss();
     }
 
 }

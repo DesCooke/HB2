@@ -43,18 +43,10 @@ public class CategoryPicker extends Dialog implements View.OnClickListener
     {
         super.onCreate(savedInstanceState);
 
-        try
-        {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.category_picker);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.category_picker);
 
-            CreateRecyclerView();
-
-        }
-        catch(Exception e)
-        {
-            ShowError("onCreate", e.getMessage());
-        }
+        CreateRecyclerView();
     }
 
     private void CreateRecyclerView()
@@ -73,11 +65,11 @@ public class CategoryPicker extends Dialog implements View.OnClickListener
             public void onItemClick(View view, RecordSubCategory obj)
             {
                 MySubCategoryId.Value = obj.SubCategoryId;
-                if(tilSubCategoryName!=null)
+                if (tilSubCategoryName != null)
                     tilSubCategoryName.getEditText().setText(obj.SubCategoryName);
-                if(tvSubCategoryName!=null)
+                if (tvSubCategoryName != null)
                     tvSubCategoryName.setText(obj.SubCategoryName);
-                if(etSubCategoryName!=null)
+                if (etSubCategoryName != null)
                     etSubCategoryName.setText(obj.SubCategoryName);
                 dismiss();
             }

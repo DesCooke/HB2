@@ -100,8 +100,6 @@ class TableAccount extends TableBase
     ArrayList<RecordAccount> getAccountList()
     {
         ArrayList<RecordAccount> list;
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, AcStartingBalance " +
@@ -138,19 +136,11 @@ class TableAccount extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            list = new ArrayList<>();
-            ErrorDialog.Show("Error in TableAccount.getAccountList", e.getMessage());
-        }
         return list;
     }
 
     RecordAccount getSingleAccount(Integer pAcSeqNo)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, AcStartingBalance " +
@@ -183,18 +173,11 @@ class TableAccount extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TableAccount.getAcountItem", e.getMessage());
-        }
         return (null);
     }
 
     RecordAccount getAccountItemByAccountNum(String pAcSortCode, String pAcAccountNumber)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, AcStartingBalance " +
@@ -228,18 +211,11 @@ class TableAccount extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TableAccount.getAcountItem", e.getMessage());
-        }
         return (null);
     }
 
     public boolean accountExists(String pSortCode, String pAccountNumber)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSortCode " +
@@ -263,11 +239,6 @@ class TableAccount extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TableAccount.accountExists", e.getMessage());
-        }
         return(false);
     }
 

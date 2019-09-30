@@ -23,6 +23,7 @@ import com.example.cooked.hb2.GlobalUtils.DialogWeekDayPicker;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyBoolean;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 
 import java.util.Date;
@@ -71,171 +72,180 @@ public class activityPlanningItem extends AppCompatActivity
     public MyInt mPlannedType;
     public String mActionType;
     public RecordPlanned mRecordPlanned;
-    
+
     @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_planning_item);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        
-        mRecordPlanned = new RecordPlanned();
-        mPlannedType = new MyInt();
-        MySubCategoryId = new MyInt();
-        MyMonth = new MyInt();
-        MyDay = new MyInt();
-        MyMonday = new MyBoolean();
-        MyTuesday = new MyBoolean();
-        MyWednesday = new MyBoolean();
-        MyThursday = new MyBoolean();
-        MyFriday = new MyBoolean();
-        MySaturday = new MyBoolean();
-        MySunday = new MyBoolean();
-        
-        edtPlannedName = findViewById(R.id.edtPlannedName);
-        tilPlanned = findViewById(R.id.tilPlanned);
-        tilStartDate = findViewById(R.id.tilStartDate);
-        tilEndDate = findViewById(R.id.tilEndDate);
-        tilSubCategoryName = findViewById(R.id.tilSubCategoryName);
-        tilPlannedType = findViewById(R.id.tilPlannedType);
-        radCurrentAccount = findViewById(R.id.radCurrentAccount);
-        radCashAccount = findViewById(R.id.radCashAccount);
-        edtMatchType = findViewById(R.id.edtMatchType);
-        edtMatchDescription = findViewById(R.id.edtMatchDescription);
-        edtMatchAmount = findViewById(R.id.edtMatchAmount);
-        btnOk = findViewById(R.id.btnOk);
-        btnDelete = findViewById(R.id.btnDelete);
-        btnCopyToNew = findViewById(R.id.btnCopyToNew);
-        swAutoMatchTransaction = findViewById(R.id.swAutoMatchTransaction);
 
-
-
-
-
-        cp = new CategoryPicker(this);
-        cp.MySubCategoryId = MySubCategoryId;
-        cp.tilSubCategoryName = tilSubCategoryName;
-        
-        ddpStart=new DialogDatePicker(this);
-        ddpStart.tilStartDate=findViewById(R.id.tilStartDate);
-        
-        ddpEnd=new DialogDatePicker(this);
-        ddpEnd.tilStartDate=findViewById(R.id.tilEndDate);
-
-        ddpPlanned=new DialogDatePicker(this);
-        ddpPlanned.tilStartDate=findViewById(R.id.tilPlanned);
-
-        dmdp = new DialogMonthDayPicker(this);
-        dmdp.tilText=findViewById(R.id.tilPlanned);
-        dmdp.mMonth = MyMonth;
-        dmdp.mDay = MyDay;
-        
-        ddayp = new DialogDayPicker(this);
-        ddayp.tilText=findViewById(R.id.tilPlanned);
-        ddayp.mDay = MyDay;
-
-        dwdayp= new DialogWeekDayPicker(this);
-        dwdayp.tilText = findViewById(R.id.tilPlanned);
-        dwdayp.mMonday = MyMonday;
-        dwdayp.mTuesday = MyTuesday;
-        dwdayp.mWednesday = MyWednesday;
-        dwdayp.mThursday = MyThursday;
-        dwdayp.mFriday = MyFriday;
-        dwdayp.mSaturday = MySaturday;
-        dwdayp.mSunday = MySunday;
-
-        mActionType = getIntent().getStringExtra("ACTIONTYPE");
-        if (mActionType.compareTo("ADD") == 0)
+        try
         {
-            setTitle("Add a new planned item");
+            setContentView(R.layout.activity_planning_item);
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-            MyString myString=new MyString();
-            if(!dateUtils().DateToStr(new Date(), myString))
-                return;
-            tilStartDate.getEditText().setText(myString.Value);
-            tilEndDate.getEditText().setText(R.string.dateEndOfTime);
-            btnDelete.setVisibility(View.GONE);
-            btnCopyToNew.setVisibility(View.GONE);
-            swAutoMatchTransaction.setChecked(false);
-        }
-        if (mActionType.compareTo("EDIT") == 0)
-        {
-            setTitle("Modify a planned item");
-            Integer lPlannedId=getIntent().getIntExtra("PlannedId", 0);
-            if(lPlannedId==0)
+            mRecordPlanned = new RecordPlanned();
+            mPlannedType = new MyInt();
+            MySubCategoryId = new MyInt();
+            MyMonth = new MyInt();
+            MyDay = new MyInt();
+            MyMonday = new MyBoolean();
+            MyTuesday = new MyBoolean();
+            MyWednesday = new MyBoolean();
+            MyThursday = new MyBoolean();
+            MyFriday = new MyBoolean();
+            MySaturday = new MyBoolean();
+            MySunday = new MyBoolean();
+
+            edtPlannedName = findViewById(R.id.edtPlannedName);
+            tilPlanned = findViewById(R.id.tilPlanned);
+            tilStartDate = findViewById(R.id.tilStartDate);
+            tilEndDate = findViewById(R.id.tilEndDate);
+            tilSubCategoryName = findViewById(R.id.tilSubCategoryName);
+            tilPlannedType = findViewById(R.id.tilPlannedType);
+            radCurrentAccount = findViewById(R.id.radCurrentAccount);
+            radCashAccount = findViewById(R.id.radCashAccount);
+            edtMatchType = findViewById(R.id.edtMatchType);
+            edtMatchDescription = findViewById(R.id.edtMatchDescription);
+            edtMatchAmount = findViewById(R.id.edtMatchAmount);
+            btnOk = findViewById(R.id.btnOk);
+            btnDelete = findViewById(R.id.btnDelete);
+            btnCopyToNew = findViewById(R.id.btnCopyToNew);
+            swAutoMatchTransaction = findViewById(R.id.swAutoMatchTransaction);
+
+
+            cp = new CategoryPicker(this);
+            cp.MySubCategoryId = MySubCategoryId;
+            cp.tilSubCategoryName = tilSubCategoryName;
+
+            ddpStart = new DialogDatePicker(this);
+            ddpStart.tilStartDate = findViewById(R.id.tilStartDate);
+
+            ddpEnd = new DialogDatePicker(this);
+            ddpEnd.tilStartDate = findViewById(R.id.tilEndDate);
+
+            ddpPlanned = new DialogDatePicker(this);
+            ddpPlanned.tilStartDate = findViewById(R.id.tilPlanned);
+
+            dmdp = new DialogMonthDayPicker(this);
+            dmdp.tilText = findViewById(R.id.tilPlanned);
+            dmdp.mMonth = MyMonth;
+            dmdp.mDay = MyDay;
+
+            ddayp = new DialogDayPicker(this);
+            ddayp.tilText = findViewById(R.id.tilPlanned);
+            ddayp.mDay = MyDay;
+
+            dwdayp = new DialogWeekDayPicker(this);
+            dwdayp.tilText = findViewById(R.id.tilPlanned);
+            dwdayp.mMonday = MyMonday;
+            dwdayp.mTuesday = MyTuesday;
+            dwdayp.mWednesday = MyWednesday;
+            dwdayp.mThursday = MyThursday;
+            dwdayp.mFriday = MyFriday;
+            dwdayp.mSaturday = MySaturday;
+            dwdayp.mSunday = MySunday;
+
+            mActionType = getIntent().getStringExtra("ACTIONTYPE");
+            if (mActionType.compareTo("ADD") == 0)
             {
-                MyString myString=new MyString();
-                if(!dateUtils().DateToStr(new Date(), myString))
+                setTitle("Add a new planned item");
+
+                MyString myString = new MyString();
+                if (!dateUtils().DateToStr(new Date(), myString))
                     return;
                 tilStartDate.getEditText().setText(myString.Value);
                 tilEndDate.getEditText().setText(R.string.dateEndOfTime);
+                btnDelete.setVisibility(View.GONE);
+                btnCopyToNew.setVisibility(View.GONE);
+                swAutoMatchTransaction.setChecked(false);
             }
-            else
+            if (mActionType.compareTo("EDIT") == 0)
             {
-                mRecordPlanned = MyDB().getSinglePlanned(lPlannedId);
-                mPlannedType.Value = mRecordPlanned.mPlannedType;
-                MyDay.Value = mRecordPlanned.mPlannedDay;
-                MySubCategoryId.Value = mRecordPlanned.mSubCategoryId;
-                tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mRecordPlanned.mPlannedType]);
-                edtPlannedName.getEditText().setText(mRecordPlanned.mPlannedName);
-                tilSubCategoryName.getEditText().setText(mRecordPlanned.mSubCategoryName);
+                setTitle("Modify a planned item");
+                Integer lPlannedId = getIntent().getIntExtra("PlannedId", 0);
+                if (lPlannedId == 0)
+                {
+                    MyString myString = new MyString();
+                    if (!dateUtils().DateToStr(new Date(), myString))
+                        return;
+                    tilStartDate.getEditText().setText(myString.Value);
+                    tilEndDate.getEditText().setText(R.string.dateEndOfTime);
+                } else
+                {
+                    mRecordPlanned = MyDB().getSinglePlanned(lPlannedId);
+                    mPlannedType.Value = mRecordPlanned.mPlannedType;
+                    MyDay.Value = mRecordPlanned.mPlannedDay;
+                    MySubCategoryId.Value = mRecordPlanned.mSubCategoryId;
+                    tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mRecordPlanned.mPlannedType]);
+                    edtPlannedName.getEditText().setText(mRecordPlanned.mPlannedName);
+                    tilSubCategoryName.getEditText().setText(mRecordPlanned.mSubCategoryName);
 
-                if(mRecordPlanned.mSortCode.compareTo("Cash")==0)
-                    radCashAccount.setChecked(TRUE);
-                else
-                    radCurrentAccount.setChecked(TRUE);
+                    if (mRecordPlanned.mSortCode.compareTo("Cash") == 0)
+                        radCashAccount.setChecked(TRUE);
+                    else
+                        radCurrentAccount.setChecked(TRUE);
 
-                tilPlanned.getEditText().setText(mRecordPlanned.mPlanned);
+                    tilPlanned.getEditText().setText(mRecordPlanned.mPlanned);
 
-                MyString lString = new MyString();
+                    MyString lString = new MyString();
 
-                DateUtils.dateUtils().DateToStr(mRecordPlanned.mStartDate, lString);
-                tilStartDate.getEditText().setText(lString.Value);
+                    DateUtils.dateUtils().DateToStr(mRecordPlanned.mStartDate, lString);
+                    tilStartDate.getEditText().setText(lString.Value);
 
-                DateUtils.dateUtils().DateToStr(mRecordPlanned.mEndDate, lString);
-                tilEndDate.getEditText().setText(lString.Value);
+                    DateUtils.dateUtils().DateToStr(mRecordPlanned.mEndDate, lString);
+                    tilEndDate.getEditText().setText(lString.Value);
 
-                edtMatchType.getEditText().setText(mRecordPlanned.mMatchingTxType);
-                edtMatchDescription.getEditText().setText(mRecordPlanned.mMatchingTxDescription);
-                String lText = String.format(Locale.UK, "%.2f", mRecordPlanned.mMatchingTxAmount);
-                edtMatchAmount.getEditText().setText(lText);
+                    edtMatchType.getEditText().setText(mRecordPlanned.mMatchingTxType);
+                    edtMatchDescription.getEditText().setText(mRecordPlanned.mMatchingTxDescription);
+                    String lText = String.format(Locale.UK, "%.2f", mRecordPlanned.mMatchingTxAmount);
+                    edtMatchAmount.getEditText().setText(lText);
 
-                MyMonday.Value = mRecordPlanned.mMonday;
-                MyTuesday.Value = mRecordPlanned.mTuesday;
-                MyWednesday.Value = mRecordPlanned.mWednesday;
-                MyThursday.Value = mRecordPlanned.mThursday;
-                MyFriday.Value = mRecordPlanned.mFriday;
-                MySaturday.Value = mRecordPlanned.mSaturday;
-                MySunday.Value = mRecordPlanned.mSunday;
+                    MyMonday.Value = mRecordPlanned.mMonday;
+                    MyTuesday.Value = mRecordPlanned.mTuesday;
+                    MyWednesday.Value = mRecordPlanned.mWednesday;
+                    MyThursday.Value = mRecordPlanned.mThursday;
+                    MyFriday.Value = mRecordPlanned.mFriday;
+                    MySaturday.Value = mRecordPlanned.mSaturday;
+                    MySunday.Value = mRecordPlanned.mSunday;
 
-                MyDay.Value = mRecordPlanned.mPlannedDay;
-                MyMonth.Value = mRecordPlanned.mPlannedMonth;
+                    MyDay.Value = mRecordPlanned.mPlannedDay;
+                    MyMonth.Value = mRecordPlanned.mPlannedMonth;
 
-                swAutoMatchTransaction.setChecked(mRecordPlanned.mAutoMatchTransaction);
+                    swAutoMatchTransaction.setChecked(mRecordPlanned.mAutoMatchTransaction);
 
+                }
             }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
         }
 
     }
 
     public void pickCashAccount(View view)
     {
-        radCurrentAccount.setChecked(FALSE);
+        try
+        {
+            radCurrentAccount.setChecked(FALSE);
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
-    
+
     public void pickStartDateTime(View view)
     {
         try
         {
-            Date date=dateUtils().StrToDate(ddpStart.tilStartDate.getEditText().getText().toString());
+            Date date = dateUtils().StrToDate(ddpStart.tilStartDate.getEditText().getText().toString());
             ddpStart.setInitialDate(date);
             ddpStart.show();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickStartDateTime", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -324,7 +334,7 @@ public class activityPlanningItem extends AppCompatActivity
             mRecordPlanned.mMatchingTxType = edtMatchType.getEditText().getText().toString();
             mRecordPlanned.mMatchingTxDescription = edtMatchDescription.getEditText().getText().toString();
             mRecordPlanned.mMatchingTxAmount = 0.00f;
-            if(edtMatchAmount.getEditText().getText().length() > 0)
+            if (edtMatchAmount.getEditText().getText().length() > 0)
                 mRecordPlanned.mMatchingTxAmount = Float.valueOf(edtMatchAmount.getEditText().getText().toString());
 
             mRecordPlanned.mAutoMatchTransaction = swAutoMatchTransaction.isChecked();
@@ -340,10 +350,9 @@ public class activityPlanningItem extends AppCompatActivity
                 MyDB().updatePlanned(mRecordPlanned);
             }
             finish();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("saveItem", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -353,10 +362,9 @@ public class activityPlanningItem extends AppCompatActivity
         {
             MyDB().deletePlanned(mRecordPlanned);
             finish();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("deleteItem", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -369,10 +377,9 @@ public class activityPlanningItem extends AppCompatActivity
             mRecordPlanned.mPlannedId = 0;
             btnDelete.setVisibility(View.GONE);
             btnCopyToNew.setVisibility(View.GONE);
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("deleteItem", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -380,13 +387,12 @@ public class activityPlanningItem extends AppCompatActivity
     {
         try
         {
-            Date date=dateUtils().StrToDate(ddpEnd.tilStartDate.getEditText().getText().toString());
+            Date date = dateUtils().StrToDate(ddpEnd.tilStartDate.getEditText().getText().toString());
             ddpEnd.setInitialDate(date);
             ddpEnd.show();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickEndDateTime", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 
@@ -394,55 +400,68 @@ public class activityPlanningItem extends AppCompatActivity
     {
         try
         {
-            if(mPlannedType.Value==RecordPlanned.mPTOneOff)
+            if (mPlannedType.Value == RecordPlanned.mPTOneOff)
             {
                 Date date = new Date();
                 ddpPlanned.setInitialDate(date);
                 ddpPlanned.show();
             }
 
-            if(mPlannedType.Value==RecordPlanned.mPTYearly)
+            if (mPlannedType.Value == RecordPlanned.mPTYearly)
             {
                 dmdp.show();
             }
-            
-            if(mPlannedType.Value==RecordPlanned.mPTMonthly)
+
+            if (mPlannedType.Value == RecordPlanned.mPTMonthly)
             {
                 ddayp.show();
             }
 
-            if(mPlannedType.Value==RecordPlanned.mPTWeekly)
+            if (mPlannedType.Value == RecordPlanned.mPTWeekly)
             {
                 dwdayp.show();
             }
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickEndDateTime", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
-    
+
     public void pickCategory(View view)
     {
         try
         {
             cp.show();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("pickCategory", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
+
     public void pickCurrentAccount(View view)
     {
-        radCashAccount.setChecked(FALSE);
+        try
+        {
+            radCashAccount.setChecked(FALSE);
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
-    
+
     public void pickPlannedType(View view)
     {
-        DialogPlannedTypePicker ppp = new DialogPlannedTypePicker(this);
-        ppp.tilPlannedType = tilPlannedType;
-        ppp.mPlannedType = mPlannedType;
-        ppp.show();
+        try
+        {
+            DialogPlannedTypePicker ppp = new DialogPlannedTypePicker(this);
+            ppp.tilPlannedType = tilPlannedType;
+            ppp.mPlannedType = mPlannedType;
+            ppp.show();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 }

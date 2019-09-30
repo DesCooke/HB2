@@ -43,26 +43,20 @@ public class DialogUpdatePlannedQ extends Dialog implements View.OnClickListener
     {
         super.onCreate(savedInstanceState);
 
-        try
-        {
-            setContentView(R.layout.dialog_update_planned);
+        setContentView(R.layout.dialog_update_planned);
 
-            btnOk=findViewById(R.id.btnOk);
-            btnCancel=findViewById(R.id.btnCancel);
-            txtPlannedAmount=findViewById(R.id.txtPlannedAmount);
-            txtThisTransactionAmount=findViewById(R.id.txtThisTransactionAmount);
-            txtPlanned=findViewById(R.id.txtPlanned);
+        btnOk = findViewById(R.id.btnOk);
+        btnCancel = findViewById(R.id.btnCancel);
+        txtPlannedAmount = findViewById(R.id.txtPlannedAmount);
+        txtThisTransactionAmount = findViewById(R.id.txtThisTransactionAmount);
+        txtPlanned = findViewById(R.id.txtPlanned);
 
-            txtPlannedAmount.setText(String.format(Locale.UK, "%.2f", plannedAmount));
-            txtThisTransactionAmount.setText(String.format(Locale.UK, "%.2f", thisTransactionAmount));
-            txtPlanned.setText(planned);
+        txtPlannedAmount.setText(String.format(Locale.UK, "%.2f", plannedAmount));
+        txtThisTransactionAmount.setText(String.format(Locale.UK, "%.2f", thisTransactionAmount));
+        txtPlanned.setText(planned);
 
-            btnOk.setOnClickListener(this);
-            btnCancel.setOnClickListener(this);
-        }
-        catch(Exception e)
-        {
-        }
+        btnOk.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
     }
 
     @Override
@@ -70,13 +64,13 @@ public class DialogUpdatePlannedQ extends Dialog implements View.OnClickListener
     {
         try
         {
-            switch(v.getId())
+            switch (v.getId())
             {
                 case R.id.btnOk:
                     RecordPlanned lRecordPlanned = MyDatabase.MyDB().getSinglePlanned(plannedId);
                     lRecordPlanned.mMatchingTxAmount = thisTransactionAmount;
                     MyDatabase.MyDB().updatePlanned(lRecordPlanned);
-                    Toast.makeText(myActivity.getBaseContext(),"Planned Item Updated",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(myActivity.getBaseContext(), "Planned Item Updated", Toast.LENGTH_SHORT).show();
                     myActivity.finish();
                     dismiss();
                     break;
@@ -85,8 +79,7 @@ public class DialogUpdatePlannedQ extends Dialog implements View.OnClickListener
                     dismiss();
                     break;
             }
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
 //            ShowError("onClick", e.getMessage());
         }

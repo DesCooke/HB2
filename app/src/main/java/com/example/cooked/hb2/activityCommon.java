@@ -12,6 +12,7 @@ import android.view.View;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.Database.RecordPlanned;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.TransactionUI.CommonAdapter;
 import com.example.cooked.hb2.TransactionUI.PlannedAdapter;
 
@@ -19,53 +20,66 @@ import java.util.ArrayList;
 
 public class activityCommon extends AppCompatActivity
 {
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_common);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        
-        setTitle("Common Transactions");
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
+        try
         {
-            @Override
-            public void onClick(View view)
-            {
-                Intent intent = new Intent(getApplicationContext(), activityCommonItem.class);
-                intent.putExtra("ACTIONTYPE", "ADD");
-                startActivity(intent);
-            }
-        });
+            setContentView(R.layout.activity_common);
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        SetupRecyclerView();
+            setTitle("Common Transactions");
+
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    Intent intent = new Intent(getApplicationContext(), activityCommonItem.class);
+                    intent.putExtra("ACTIONTYPE", "ADD");
+                    startActivity(intent);
+                }
+            });
+
+            SetupRecyclerView();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 
     protected void SetupRecyclerView()
     {
-        ArrayList<RecordCommon> mDataset = MyDatabase.MyDB().getCommonTransactionList();
-        RecyclerView mCommonList = findViewById(R.id.commonList);
-        mCommonList.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
-        mCommonList.setLayoutManager(mLayoutManagerCurrent);
-        CommonAdapter mCommonAdapter = new CommonAdapter(mDataset);
-        mCommonList.setAdapter(mCommonAdapter);
-        mCommonAdapter.setOnItemClickListener(new CommonAdapter.OnItemClickListener()
+        try
         {
-            @Override
-            public void onItemClick(View view, RecordCommon obj)
+            ArrayList<RecordCommon> mDataset = MyDatabase.MyDB().getCommonTransactionList();
+            RecyclerView mCommonList = findViewById(R.id.commonList);
+            mCommonList.setHasFixedSize(true);
+            RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
+            mCommonList.setLayoutManager(mLayoutManagerCurrent);
+            CommonAdapter mCommonAdapter = new CommonAdapter(mDataset);
+            mCommonList.setAdapter(mCommonAdapter);
+            mCommonAdapter.setOnItemClickListener(new CommonAdapter.OnItemClickListener()
             {
-                Intent intent = new Intent(getApplicationContext(), activityCommonItem.class);
-                intent.putExtra("ACTIONTYPE", "EDIT");
-                intent.putExtra("TxSeqNo", obj.TxSeqNo);
-                startActivity(intent);
-            }
-        });
-    
+                @Override
+                public void onItemClick(View view, RecordCommon obj)
+                {
+                    Intent intent = new Intent(getApplicationContext(), activityCommonItem.class);
+                    intent.putExtra("ACTIONTYPE", "EDIT");
+                    intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                    startActivity(intent);
+                }
+            });
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 
     @Override
@@ -73,7 +87,14 @@ public class activityCommon extends AppCompatActivity
     {  // After a pause OR at startup
         super.onResume();
 
-        SetupRecyclerView();
+        try
+        {
+            SetupRecyclerView();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 
 

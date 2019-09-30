@@ -34,49 +34,35 @@ public class DialogDayPicker extends Dialog implements View.OnClickListener
     {
         super.onCreate(savedInstanceState);
 
-        try
-        {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.day_picker);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.day_picker);
 
-            Button btnOk=findViewById(R.id.btnOk);
+        Button btnOk = findViewById(R.id.btnOk);
 
-            btnOk.setOnClickListener(this);
-        }
-        catch(Exception e)
-        {
-            ShowError("onCreate", e.getMessage());
-        }
+        btnOk.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v)
     {
-        try
+        TextInputLayout myDay = findViewById(R.id.edtDay);
+        if (myDay != null)
         {
-            TextInputLayout myDay = findViewById(R.id.edtDay);
-            if(myDay != null)
+            if (myDay.getEditText() != null)
             {
-                if (myDay.getEditText() != null)
+                if (myDay.getEditText().getText() != null)
                 {
-                    if (myDay.getEditText().getText() != null)
-                    {
-                        String lFormat = MainActivity.context.getString(R.string.DayCaption);
-                        String lText = String.format(lFormat, myDay.getEditText().getText());
-                        if(edtText != null)
-                            edtText.setText(lText);
-                        if(tilText != null)
-                            tilText.getEditText().setText(lText);
-                        mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
-                    }
+                    String lFormat = MainActivity.context.getString(R.string.DayCaption);
+                    String lText = String.format(lFormat, myDay.getEditText().getText());
+                    if (edtText != null)
+                        edtText.setText(lText);
+                    if (tilText != null)
+                        tilText.getEditText().setText(lText);
+                    mDay.Value = Integer.valueOf(myDay.getEditText().getText().toString());
                 }
             }
-            dismiss();
         }
-        catch(Exception e)
-        {
-            ShowError("onClick", e.getMessage());
-        }
+        dismiss();
     }
 
 }

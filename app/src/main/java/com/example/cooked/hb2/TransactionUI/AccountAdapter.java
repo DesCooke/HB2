@@ -43,7 +43,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         {
             super(v);
 
-            mAcSortCode =  v.findViewById(R.id.cellac_sortcode);
+            mAcSortCode = v.findViewById(R.id.cellac_sortcode);
             mAcAccountNumber = v.findViewById(R.id.cellac_accountnumber);
             mFull = v.findViewById(R.id.celltx_full);
         }
@@ -58,7 +58,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     // Create new views (invoked by the layout manager)
     @Override
     public AccountAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                       int viewType)
+                                                        int viewType)
     {
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_account, parent, false);
@@ -77,28 +77,20 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        try
+        holder.mAcSortCode.setText(rec.AcSortCode.toString());
+        holder.mAcAccountNumber.setText(rec.AcAccountNumber.toString());
+
+        holder.mFull.setOnClickListener(new View.OnClickListener()
         {
-
-
-            holder.mAcSortCode.setText(rec.AcSortCode.toString());
-            holder.mAcAccountNumber.setText(rec.AcAccountNumber.toString());
-
-            holder.mFull.setOnClickListener(new View.OnClickListener()
+            @Override
+            public void onClick(View view)
             {
-                @Override
-                public void onClick(View view)
+                if (mOnItemClickListener != null)
                 {
-                    if (mOnItemClickListener != null)
-                    {
-                        mOnItemClickListener.onItemClick(view, rec);
-                    }
+                    mOnItemClickListener.onItemClick(view, rec);
                 }
-            });
-        }
-        catch (Exception e) {
-            ErrorDialog.Show("Error in CommonAdapter.onBindViewHolder", e.getMessage());
-        }
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -41,71 +41,57 @@ public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
     {
         super.onCreate(savedInstanceState);
 
-        try
-        {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.weekday_picker);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.weekday_picker);
 
-            Button btnOk=findViewById(R.id.btnOk);
+        Button btnOk = findViewById(R.id.btnOk);
 
-            btnOk.setOnClickListener(this);
-        }
-        catch(Exception e)
-        {
-            ShowError("onCreate", e.getMessage());
-        }
+        btnOk.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v)
     {
-        try
-        {
-            CheckBox myMonday = findViewById(R.id.chkMonday);
-            CheckBox myTuesday = findViewById(R.id.chkTuesday);
-            CheckBox myWednesday = findViewById(R.id.chkWednesday);
-            CheckBox myThursday = findViewById(R.id.chkThursday);
-            CheckBox myFriday = findViewById(R.id.chkFriday);
-            CheckBox mySaturday = findViewById(R.id.chkSaturday);
-            CheckBox mySunday = findViewById(R.id.chkSunday);
+        CheckBox myMonday = findViewById(R.id.chkMonday);
+        CheckBox myTuesday = findViewById(R.id.chkTuesday);
+        CheckBox myWednesday = findViewById(R.id.chkWednesday);
+        CheckBox myThursday = findViewById(R.id.chkThursday);
+        CheckBox myFriday = findViewById(R.id.chkFriday);
+        CheckBox mySaturday = findViewById(R.id.chkSaturday);
+        CheckBox mySunday = findViewById(R.id.chkSunday);
 
-            mMonday.Value = myMonday.isChecked();
-            mTuesday.Value = myTuesday.isChecked();
-            mWednesday.Value = myWednesday.isChecked();
-            mThursday.Value = myThursday.isChecked();
-            mFriday.Value = myFriday.isChecked();
-            mSaturday.Value = mySaturday.isChecked();
-            mSunday.Value = mySunday.isChecked();
-            
-            String lString="";
-            if(mMonday.Value)
-                lString = lString + "Mon,";
-            if(mTuesday.Value)
-                lString = lString + "Tue,";
-            if(mWednesday.Value)
-                lString = lString + "Wed,";
-            if(mThursday.Value)
-                lString = lString + "Thu,";
-            if(mFriday.Value)
-                lString = lString + "Fri,";
-            if(mSaturday.Value)
-                lString = lString + "Sat,";
-            if(mSunday.Value)
-                lString = lString + "Sun,";
+        mMonday.Value = myMonday.isChecked();
+        mTuesday.Value = myTuesday.isChecked();
+        mWednesday.Value = myWednesday.isChecked();
+        mThursday.Value = myThursday.isChecked();
+        mFriday.Value = myFriday.isChecked();
+        mSaturday.Value = mySaturday.isChecked();
+        mSunday.Value = mySunday.isChecked();
 
-            String lCaption= MainActivity.context.getString(R.string.DaysCaption);
-            String lText = String.format(lCaption, lString);
-            if(edtText != null)
-                edtText.setText(lText);
-            if(tilText != null)
-                tilText.getEditText().setText(lText);
+        String lString = "";
+        if (mMonday.Value)
+            lString = lString + "Mon,";
+        if (mTuesday.Value)
+            lString = lString + "Tue,";
+        if (mWednesday.Value)
+            lString = lString + "Wed,";
+        if (mThursday.Value)
+            lString = lString + "Thu,";
+        if (mFriday.Value)
+            lString = lString + "Fri,";
+        if (mSaturday.Value)
+            lString = lString + "Sat,";
+        if (mSunday.Value)
+            lString = lString + "Sun,";
 
-            dismiss();
-        }
-        catch(Exception e)
-        {
-            ShowError("onClick", e.getMessage());
-        }
+        String lCaption = MainActivity.context.getString(R.string.DaysCaption);
+        String lText = String.format(lCaption, lString);
+        if (edtText != null)
+            edtText.setText(lText);
+        if (tilText != null)
+            tilText.getEditText().setText(lText);
+
+        dismiss();
     }
 
 }
