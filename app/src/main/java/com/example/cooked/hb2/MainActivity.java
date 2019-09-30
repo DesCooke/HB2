@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity
 
     private Toolbar toolbar;
 
+    public ViewPagerMainAdapter adapter;
 
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
@@ -208,11 +209,22 @@ public class MainActivity extends AppCompatActivity
 
     public void RecreateUI(int budgetYear, int budgetMonth)
     {
+
         try
         {
             SetBudget(budgetYear, budgetMonth);
 
-            BuildUI();
+            createFromDB();
+
+            createTitle();
+
+            _fragmentDashboard.RefreshForm(mDatasetBudgetMonth);
+            _fragmentBudget.RefreshForm(mDatasetBudgetMonth);
+            for (int i = 0; i < _fragmentAccounts.size(); i++)
+            {
+                _fragmentAccounts.get(i).PopulateForm(mDatasetBudgetMonth.accounts.get(i).RecordTransactions);
+            }
+
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
@@ -313,7 +325,7 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:createAdapterAndFragments:Starting");
         try
         {
-            ViewPagerMainAdapter adapter = new ViewPagerMainAdapter(getSupportFragmentManager());
+            adapter = new ViewPagerMainAdapter(getSupportFragmentManager());
 
             _fragmentDashboard = FragmentDashboard.newInstance();
             adapter.addFragment(_fragmentDashboard, "Dashboard");
@@ -471,9 +483,7 @@ public class MainActivity extends AppCompatActivity
             int id = item.getItemId();
             if (id == R.id.RefreshDBAndUI)
             {
-                MyDatabase.MyDB().Dirty = true;
-                uiDirty = true;
-                BuildUI();
+                RecreateUI(mCurrentBudgetYear, mCurrentBudgetMonth);
             }
             if (id == R.id.ChangeDate)
             {
