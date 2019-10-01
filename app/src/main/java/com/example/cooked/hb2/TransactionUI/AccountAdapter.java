@@ -37,6 +37,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
         // each data item is just a string in this case
         TextView mAcSortCode;
         TextView mAcAccountNumber;
+        TextView mAcDescription;
         ConstraintLayout mFull;
 
         ViewHolder(View v)
@@ -45,6 +46,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
             mAcSortCode = v.findViewById(R.id.cellac_sortcode);
             mAcAccountNumber = v.findViewById(R.id.cellac_accountnumber);
+            mAcDescription = v.findViewById(R.id.cellacc_description);
+
             mFull = v.findViewById(R.id.celltx_full);
         }
     }
@@ -75,10 +78,21 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
         rec = mDataset.get(position);
 
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.mAcSortCode.setText(rec.AcSortCode.toString());
-        holder.mAcAccountNumber.setText(rec.AcAccountNumber.toString());
+        if(rec.AcSortCode.compareTo("Cash")==0)
+        {
+            holder.mAcSortCode.setText("");
+            holder.mAcAccountNumber.setText("");
+            holder.mAcSortCode.setVisibility(View.GONE);
+            holder.mAcAccountNumber.setVisibility(View.GONE);
+        }
+        else
+        {
+            holder.mAcSortCode.setVisibility(View.VISIBLE);
+            holder.mAcAccountNumber.setVisibility(View.VISIBLE);
+            holder.mAcSortCode.setText(rec.AcSortCode.toString());
+            holder.mAcAccountNumber.setText(rec.AcAccountNumber.toString());
+        }
+        holder.mAcDescription.setText(rec.AcDescription.toString());
 
         holder.mFull.setOnClickListener(new View.OnClickListener()
         {

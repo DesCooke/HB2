@@ -46,33 +46,6 @@ public class FragmentAccount extends Fragment
     {
     }
 
-    public void SetAccount(String acSortCode, String acAccountNumber, String acDescription)
-    {
-        try
-        {
-            AcSortCode = acSortCode;
-
-            AcAccountNumber = acAccountNumber;
-            AcDescription = acDescription;
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-
-    }
-
-    public void SetMainActivity(MainActivity ma)
-    {
-        try
-        {
-            lMainActivity = ma;
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-
-    }
-
     public void RefreshForm(ArrayList<RecordTransaction> rta)
     {
         try
@@ -81,6 +54,7 @@ public class FragmentAccount extends Fragment
             //set data and list adapter
             if (recyclerView == null)
                 return;
+            UpdateRecyclerView();
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
@@ -88,27 +62,14 @@ public class FragmentAccount extends Fragment
 
     }
 
-    public void PopulateForm(ArrayList<RecordTransaction> rta)
+    public void SetAccount(String acSortCode, String acAccountNumber, String acDescription)
     {
         try
         {
-            _rta = rta;
-            //set data and list adapter
-            if (recyclerView == null)
-                return;
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
+            AcSortCode = acSortCode;
 
-    }
-
-    public void refreshUI()
-    {
-        try
-        {
-            if (mAdapter != null)
-                mAdapter.refreshUI();
+            AcAccountNumber = acAccountNumber;
+            AcDescription = acDescription;
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
@@ -188,27 +149,37 @@ public class FragmentAccount extends Fragment
                 }
             });
 
-
-            mAdapter = new TransactionListAdapter(getActivity(), _rta);
-            mAdapter.setOnItemClickListener(new TransactionListAdapter.OnItemClickListener()
-            {
-                @Override
-                public void onItemClick(View view, RecordTransaction obj)
-                {
-                    obj.CheckForChange = true;
-                    Intent intent = new Intent(getActivity(), activityTransactionItem.class);
-                    intent.putExtra("ACTIONTYPE", "EDIT");
-                    intent.putExtra("TxSeqNo", obj.TxSeqNo);
-                    startActivity(intent);
-                }
-            });
-
-            recyclerView.setAdapter(mAdapter);
+            CreateRecyclerView();
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
 
+    }
+
+    private void CreateRecyclerView()
+    {
+
+        mAdapter = new TransactionListAdapter(getActivity(), _rta);
+        mAdapter.setOnItemClickListener(new TransactionListAdapter.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(View view, RecordTransaction obj)
+            {
+                obj.CheckForChange = true;
+                Intent intent = new Intent(getActivity(), activityTransactionItem.class);
+                intent.putExtra("ACTIONTYPE", "EDIT");
+                intent.putExtra("TxSeqNo", obj.TxSeqNo);
+                startActivity(intent);
+            }
+        });
+
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    private void UpdateRecyclerView()
+    {
+        mAdapter.UpdateList(_rta);
     }
 
     private void onSelectAddItem(View view)

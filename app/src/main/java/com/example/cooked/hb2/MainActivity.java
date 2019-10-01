@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity
     private ViewPager view_pager;
     private TabLayout tab_layout;
 
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
+    private ActionBarDrawerToggle toggle;
     private boolean uiDirty;
 
     private FragmentDashboard _fragmentDashboard;
@@ -67,7 +70,69 @@ public class MainActivity extends AppCompatActivity
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
 
-    public void SetBudget(int pBudgetYear, int pBudgetMonth)
+
+
+    public void RefreshFragments(int budgetYear, int budgetMonth)
+    {
+
+        try
+        {
+            SetBudget(budgetYear, budgetMonth);
+
+            loadFromDB();
+
+            setTheTitle();
+
+            _fragmentDashboard.RefreshForm(mDatasetBudgetMonth);
+            _fragmentBudget.RefreshForm(mDatasetBudgetMonth);
+            for (int i = 0; i < _fragmentAccounts.size(); i++)
+            {
+                _fragmentAccounts.get(i).RefreshForm(mDatasetBudgetMonth.accounts.get(i).RecordTransactions);
+            }
+
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+    }
+
+
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        MyLog.WriteLogMessage("MainActivity:onCreate:Starting");
+        super.onCreate(savedInstanceState);
+
+        setupStatics(this);
+
+        if (!MyPermission.checkIfAlreadyHavePermission(this))
+            MyPermission.requestForSpecificPermission(this);
+        try
+        {
+            if (MyDownloads.MyDL().CollectFiles() == FALSE)
+                return;
+
+            SetBudget(DateUtils.dateUtils().CurrentBudgetYear(), DateUtils.dateUtils().CurrentBudgetMonth());
+
+            setContentAndGetViews();
+
+            loadFromDB();
+
+            setTheTitle();
+
+            createAdapterAndFragments();
+
+            populateFragments();
+
+            setupNavigationSideBar();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
+    }
+
+
+    private void SetBudget(int pBudgetYear, int pBudgetMonth)
     {
         try
         {
@@ -97,49 +162,9 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
     }
 
-    private void createOrUpdate()
+    private void loadFromDB()
     {
-        MyLog.WriteLogMessage("MainActivity:createOrUpdate:Starting");
-        try
-        {
-            if (uiDirty)
-            {
-                createFromDB();
-                createUI();
-                uiDirty = false;
-            } else
-            {
-                updateUI();
-            }
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:createOrUpdate:Ending");
-    }
-
-    private void updateUI()
-    {
-        MyLog.WriteLogMessage("MainActivity:updateUI:Starting");
-        try
-        {
-            for (int i = 0; i < _fragmentAccounts.size(); i++)
-                _fragmentAccounts.get(i).refreshUI();
-            mDatasetBudgetMonth.RefreshTotals();
-            if (_fragmentBudget != null)
-                _fragmentBudget.refreshUI();
-            if (_fragmentDashboard != null)
-                _fragmentDashboard.refreshUI();
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:updateUI:Ending");
-    }
-
-    private void createFromDB()
-    {
-        MyLog.WriteLogMessage("MainActivity:createFromDB:Starting");
+        MyLog.WriteLogMessage("MainActivity:loadFromDB:Starting");
         try
         {
             mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
@@ -148,130 +173,12 @@ public class MainActivity extends AppCompatActivity
         {
             MyLog.WriteExceptionMessage(e);
         }
-        MyLog.WriteLogMessage("MainActivity:createFromDB:Ending");
+        MyLog.WriteLogMessage("MainActivity:loadFromDB:Ending");
     }
 
-    private void createUI()
+    private void setTheTitle()
     {
-        MyLog.WriteLogMessage("MainActivity:createUI:Starting");
-        try
-        {
-            createTitle();
-
-            createAndLoadFragments();
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:createUI:Ending");
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        MyLog.WriteLogMessage("MainActivity:onCreate:Starting");
-        super.onCreate(savedInstanceState);
-
-        setupStatics(this);
-
-        if (!MyPermission.checkIfAlreadyHavePermission(this))
-            MyPermission.requestForSpecificPermission(this);
-        try
-        {
-            if (MyDownloads.MyDL().CollectFiles() == FALSE)
-                return;
-
-            SetBudget(DateUtils.dateUtils().CurrentBudgetYear(), DateUtils.dateUtils().CurrentBudgetMonth());
-
-            setupActivity();
-
-            BuildUI();
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
-    }
-
-    public void BuildUI()
-    {
-        try
-        {
-            createOrUpdate();
-
-            setupNavigationSideBar();
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-
-    }
-
-    public void RecreateUI(int budgetYear, int budgetMonth)
-    {
-
-        try
-        {
-            SetBudget(budgetYear, budgetMonth);
-
-            createFromDB();
-
-            createTitle();
-
-            _fragmentDashboard.RefreshForm(mDatasetBudgetMonth);
-            _fragmentBudget.RefreshForm(mDatasetBudgetMonth);
-            for (int i = 0; i < _fragmentAccounts.size(); i++)
-            {
-                _fragmentAccounts.get(i).PopulateForm(mDatasetBudgetMonth.accounts.get(i).RecordTransactions);
-            }
-
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-    }
-
-    private void increaseBudgetPeriod(View view)
-    {
-        MyLog.WriteLogMessage("MainActivity:increaseBudgetPeriod:Starting");
-        try
-        {
-            mCurrentBudgetMonth++;
-            if (mCurrentBudgetMonth > 12)
-            {
-                mCurrentBudgetMonth = 1;
-                mCurrentBudgetYear++;
-            }
-            createOrUpdate();
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:increaseBudgetPeriod:Ending");
-    }
-
-    private void decreaseBudgetPeriod(View view)
-    {
-        MyLog.WriteLogMessage("MainActivity:decreaseBudgetPeriod:Starting");
-        try
-        {
-            mCurrentBudgetMonth--;
-            if (mCurrentBudgetMonth < 1)
-            {
-                mCurrentBudgetMonth = 12;
-                mCurrentBudgetYear--;
-            }
-            createOrUpdate();
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:decreaseBudgetPeriod:Ending");
-    }
-
-    public void createTitle()
-    {
-        MyLog.WriteLogMessage("MainActivity:createTitle:Starting");
+        MyLog.WriteLogMessage("MainActivity:setTheTitle:Starting");
         try
         {
             Date lFrom = DateUtils.dateUtils().BudgetStart(mCurrentBudgetMonth, mCurrentBudgetYear);
@@ -290,37 +197,10 @@ public class MainActivity extends AppCompatActivity
         {
             MyLog.WriteExceptionMessage(e);
         }
-        MyLog.WriteLogMessage("MainActivity:createTitle:Ending");
+        MyLog.WriteLogMessage("MainActivity:setTheTitle:Ending");
     }
 
-    public void fragmentsRefresh()
-    {
-        MyLog.WriteLogMessage("MainActivity:fragmentsRefresh:Starting");
-        try
-        {
-            mDatasetBudgetMonth.RefreshTotals();
-
-            if (_fragmentDashboard != null)
-                _fragmentDashboard.RefreshForm(mDatasetBudgetMonth);
-            if (_fragmentBudget != null)
-                _fragmentBudget.RefreshForm(mDatasetBudgetMonth);
-            for (int i = 0; i < _fragmentAccounts.size(); i++)
-            {
-                FragmentAccount fa = _fragmentAccounts.get(i);
-                if (fa != null)
-                {
-                    RecordAccount ra = mDatasetBudgetMonth.FindAccount(fa.AcSortCode, fa.AcAccountNumber);
-                    fa.RefreshForm(ra.RecordTransactions);
-                }
-            }
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:fragmentsRefresh:Ending");
-    }
-
-    public void createAdapterAndFragments()
+    private void createAdapterAndFragments()
     {
         MyLog.WriteLogMessage("MainActivity:createAdapterAndFragments:Starting");
         try
@@ -354,9 +234,9 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:createAdapterAndFragments:Ending");
     }
 
-    public void loadFragments()
+    private void populateFragments()
     {
-        MyLog.WriteLogMessage("MainActivity:loadFragments:Starting");
+        MyLog.WriteLogMessage("MainActivity:populateFragments:Starting");
         try
         {
             _fragmentDashboard.PopulateForm(mDatasetBudgetMonth);
@@ -367,34 +247,19 @@ public class MainActivity extends AppCompatActivity
                 if (fa != null)
                 {
                     RecordAccount ra = mDatasetBudgetMonth.FindAccount(fa.AcSortCode, fa.AcAccountNumber);
-                    fa.PopulateForm(ra.RecordTransactions);
+                    fa.RefreshForm(ra.RecordTransactions);
                 }
             }
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
-        MyLog.WriteLogMessage("MainActivity:loadFragments:Ending");
+        MyLog.WriteLogMessage("MainActivity:populateFragments:Ending");
     }
 
-    public void createAndLoadFragments()
+    private void setContentAndGetViews()
     {
-        MyLog.WriteLogMessage("MainActivity:createAndLoadFragments:Starting");
-        try
-        {
-            createAdapterAndFragments();
-
-            loadFragments();
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:createAndLoadFragments:Ending");
-    }
-
-    private void setupActivity()
-    {
-        MyLog.WriteLogMessage("MainActivity:setupActivity:Starting");
+        MyLog.WriteLogMessage("MainActivity:setContentAndGetViews:Starting");
         try
         {
             setContentView(R.layout.activity_main);
@@ -406,11 +271,13 @@ public class MainActivity extends AppCompatActivity
             view_pager = findViewById(R.id.viewpager_main);
             tab_layout = findViewById(R.id.tab_main);
 
+            drawer = findViewById(R.id.drawer_layout);
+            navigationView = findViewById(R.id.nav_view);
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
         }
-        MyLog.WriteLogMessage("MainActivity:setupActivity:Ending");
+        MyLog.WriteLogMessage("MainActivity:setContentAndGetViews:Ending");
     }
 
     @Override
@@ -439,13 +306,11 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:setupNavigationSideBar:Starting");
         try
         {
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+            toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.addDrawerListener(toggle);
             toggle.syncState();
 
-            NavigationView navigationView = findViewById(R.id.nav_view);
             navigationView.setItemIconTintList(null);
             navigationView.setNavigationItemSelectedListener(this);
         } catch (Exception e)
@@ -483,7 +348,7 @@ public class MainActivity extends AppCompatActivity
             int id = item.getItemId();
             if (id == R.id.RefreshDBAndUI)
             {
-                RecreateUI(mCurrentBudgetYear, mCurrentBudgetMonth);
+                RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
             }
             if (id == R.id.ChangeDate)
             {
@@ -571,7 +436,6 @@ public class MainActivity extends AppCompatActivity
         try
         {
             super.onResume();
-            createOrUpdate();
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);

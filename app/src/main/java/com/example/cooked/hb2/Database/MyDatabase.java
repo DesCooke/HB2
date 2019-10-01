@@ -1088,6 +1088,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 rbm.notes = Notes;
             }
         }
+
         return (rbm);
 
     }

@@ -313,7 +313,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 notifyItemChanged(pos);
                 if(lMainActivity!=null)
-                    lMainActivity.fragmentsRefresh();
+                    lMainActivity.RefreshFragments(rbg.BudgetYear, rbg.BudgetMonth);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -48,18 +48,6 @@ public class FragmentBudget extends Fragment
 
     }
 
-    public void refreshUI()
-    {
-        try
-        {
-            if (mAdapter != null)
-                populate();
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-    }
-
     public void PopulateForm(RecordBudgetMonth recordBudgetMonth)
     {
         try

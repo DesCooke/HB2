@@ -57,36 +57,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         MyLog.WriteLogMessage("TransactionListAdapter:addTransactionToList:Ending");
     }
 
-    public void refreshUI()
-    {
-        MyLog.WriteLogMessage("TransactionListAdapter:refreshUI:Starting");
-
-        for(int i=0;i<_items.size();i++)
-        {
-            RecordTransaction rt= (RecordTransaction)_items.get(i).Data;
-            if(rt.CheckForChange)
-            {
-                rt.CheckForChange=false;
-                int lTxSeqNo=rt.TxSeqNo;
-                RecordTransaction rt2 = MyDatabase.MyDB().getSingleTransaction(lTxSeqNo);
-                if(rt2==null)
-                {
-                    _items.remove(i);
-                    notifyItemRemoved(i);
-                    break;
-                }
-                else
-                {
-                    _items.get(i).Data = rt2;
-                    notifyItemChanged(i);
-                    break;
-                }
-            }
-        }
-
-        MyLog.WriteLogMessage("TransactionListAdapter:refreshUI:Ending");
-    }
-
     private void addTransactionBalanceToList(RecordTransaction argrt, List<RecordTransactionListItem> items)
     {
         MyLog.WriteLogMessage("TransactionListAdapter:addTransactionBalanceToList:Starting");
@@ -119,6 +89,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         MyLog.WriteLogMessage("TransactionListAdapter:createListFromTransactionList:Starting");
         return(items);
+    }
+
+    public void UpdateList(List<RecordTransaction> rtl)
+    {
+        _items = createListFromTransactionList(rtl);
     }
 
     public TransactionListAdapter(Context context, List<RecordTransaction> rtl) {

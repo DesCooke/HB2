@@ -107,7 +107,7 @@ public class DialogBudgetPicker extends Dialog
             @Override
             public void onClick(View v)
             {
-                MyMainActivity.RecreateUI(BudgetYear, BudgetMonth);
+                MyMainActivity.RefreshFragments(BudgetYear, BudgetMonth);
                 dismiss();
             }
         });
