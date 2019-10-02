@@ -94,6 +94,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void UpdateList(List<RecordTransaction> rtl)
     {
         _items = createListFromTransactionList(rtl);
+        notifyDataSetChanged();
     }
 
     public TransactionListAdapter(Context context, List<RecordTransaction> rtl) {

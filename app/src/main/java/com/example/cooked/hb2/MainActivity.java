@@ -436,6 +436,7 @@ public class MainActivity extends AppCompatActivity
         try
         {
             super.onResume();
+            RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);

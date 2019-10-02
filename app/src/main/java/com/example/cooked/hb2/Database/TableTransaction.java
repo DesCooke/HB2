@@ -580,32 +580,35 @@ class TableTransaction extends TableBase
                             }
                         } while (cursor.moveToNext());
 
-                        if (list.size() > 0)
-                        {
-                            if (includeThisBudgetOnly)
-                            {
-                                lStartBalance = getBalanceAtStartOf(sortCode, accountNum, budgetMonth, budgetYear);
-                            } else
-                            {
-                                Date lFirstDate = list.get(list.size() - 1).TxDate;
-                                lStartBalance = getBalanceAt(sortCode, accountNum, lFirstDate);
-                            }
-                            lCurrBalance = lStartBalance;
-                            for (int i = list.size() - 1; i >= 0; i--)
-                            {
-                                RecordTransaction rt = list.get(i);
-                                lCurrBalance = lCurrBalance + rt.TxAmount;
-                                rt.TxBalance = lCurrBalance;
-                            }
-                            RecordTransaction r1 = new RecordTransaction();
-                            r1.MarkerEndingBalance = list.get(0).TxBalance;
-                            list.add(0, r1);
-
-                            RecordTransaction r2 = new RecordTransaction();
-                            r2.MarkerStartingBalance = lStartBalance;
-                            list.add(r2);
-                        }
                     }
+                    else
+                    {
+                        lStartBalance=0.00f;
+                    }
+                    if (includeThisBudgetOnly)
+                    {
+                        lStartBalance = getBalanceAtStartOf(sortCode, accountNum, budgetMonth, budgetYear);
+                    } else
+                    {
+                        Date lFirstDate = list.get(list.size() - 1).TxDate;
+                        lStartBalance = getBalanceAt(sortCode, accountNum, lFirstDate);
+                    }
+                    lCurrBalance = lStartBalance;
+                    for (int i = list.size() - 1; i >= 0; i--)
+                    {
+                        RecordTransaction rt = list.get(i);
+                        lCurrBalance = lCurrBalance + rt.TxAmount;
+                        rt.TxBalance = lCurrBalance;
+                    }
+                    RecordTransaction r1 = new RecordTransaction();
+                    r1.MarkerEndingBalance = lStartBalance;
+                    if(list.size()>0)
+                        r1.MarkerEndingBalance = list.get(0).TxBalance;
+                    list.add(0, r1);
+
+                    RecordTransaction r2 = new RecordTransaction();
+                    r2.MarkerStartingBalance = lStartBalance;
+                    list.add(r2);
                 } finally
                 {
                     cursor.close();
