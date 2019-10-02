@@ -20,6 +20,7 @@ import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.ImageAdapter;
+import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
@@ -32,6 +33,7 @@ public class FragmentAccount extends Fragment
     private RecyclerView recyclerView;
     private TransactionListAdapter mAdapter;
     private ArrayList<RecordTransaction> _rta;
+    private RecordBudgetMonth _rbm;
     public MainActivity lMainActivity;
     public String AcSortCode;
     public String AcAccountNumber;
@@ -46,11 +48,13 @@ public class FragmentAccount extends Fragment
     {
     }
 
-    public void RefreshForm(ArrayList<RecordTransaction> rta)
+    public void RefreshForm(ArrayList<RecordTransaction> rta, RecordBudgetMonth rbm)
     {
         try
         {
             _rta = rta;
+            _rbm = rbm;
+
             //set data and list adapter
             if (recyclerView == null)
                 return;
@@ -87,7 +91,7 @@ public class FragmentAccount extends Fragment
     {
         try
         {
-            _recordCommonList = MyDatabase.MyDB().getCommonTransactionList();
+            _recordCommonList = _rbm.mCommonDataset;
 
             recyclerView = root.findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -160,7 +164,7 @@ public class FragmentAccount extends Fragment
     private void CreateRecyclerView()
     {
 
-        mAdapter = new TransactionListAdapter(getActivity(), _rta);
+        mAdapter = new TransactionListAdapter(getActivity(), _rta, _rbm);
         mAdapter.setOnItemClickListener(new TransactionListAdapter.OnItemClickListener()
         {
             @Override

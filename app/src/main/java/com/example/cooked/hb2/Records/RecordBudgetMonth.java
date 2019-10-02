@@ -1,5 +1,6 @@
 package com.example.cooked.hb2.Records;
 
+import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
@@ -20,6 +21,7 @@ public class RecordBudgetMonth
     public ArrayList<RecordAccount> accounts;
     public Integer budgetMonth;
     public Integer budgetYear;
+    public ArrayList<RecordCommon> mCommonDataset;
 
     public RecordBudgetMonth()
     {

@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
             _fragmentBudget.RefreshForm(mDatasetBudgetMonth);
             for (int i = 0; i < _fragmentAccounts.size(); i++)
             {
-                _fragmentAccounts.get(i).RefreshForm(mDatasetBudgetMonth.accounts.get(i).RecordTransactions);
+                _fragmentAccounts.get(i).RefreshForm(mDatasetBudgetMonth.accounts.get(i).RecordTransactions, mDatasetBudgetMonth);
             }
 
         } catch (Exception e)
@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity
                 if (fa != null)
                 {
                     RecordAccount ra = mDatasetBudgetMonth.FindAccount(fa.AcSortCode, fa.AcAccountNumber);
-                    fa.RefreshForm(ra.RecordTransactions);
+                    fa.RefreshForm(ra.RecordTransactions, mDatasetBudgetMonth);
                 }
             }
         } catch (Exception e)

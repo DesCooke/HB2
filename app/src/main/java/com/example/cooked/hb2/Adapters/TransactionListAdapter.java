@@ -13,6 +13,7 @@ import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.GlobalUtils.IntUtils;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.Tools;
+import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.MainActivity;
@@ -34,6 +35,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Context _context;
     private List<RecordTransactionListItem> _items;
     public OnItemClickListener mItemClickListener;
+    RecordBudgetMonth _rbm;
 
     public interface OnItemClickListener {
         void onItemClick(View view, RecordTransaction obj);
@@ -97,9 +99,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         notifyDataSetChanged();
     }
 
-    public TransactionListAdapter(Context context, List<RecordTransaction> rtl) {
+    public TransactionListAdapter(Context context, List<RecordTransaction> rtl, RecordBudgetMonth rbm) {
         _context = context;
         _items = createListFromTransactionList(rtl);
+        _rbm = rbm;
     }
 
     @NonNull

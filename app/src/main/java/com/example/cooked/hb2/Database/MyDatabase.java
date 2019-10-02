@@ -1014,6 +1014,8 @@ public class MyDatabase extends SQLiteOpenHelper
         rbm.budgetMonth = pMonth;
         rbm.budgetYear = pYear;
 
+        rbm.mCommonDataset = MyDatabase.MyDB().getCommonTransactionList();
+
         rbm.accounts = tableAccount.getAccountList();
         for (int i = 0; i < rbm.accounts.size(); i++)
         {
@@ -1114,12 +1116,6 @@ public class MyDatabase extends SQLiteOpenHelper
     public ArrayList<RecordCommon> getCommonTransactionList()
     {
         ArrayList<RecordCommon> rta = tableCommon.getTransactionList();
-        for (int i = 0; i < rta.size(); i++)
-        {
-            RecordSubCategory sc = tableSubCategory.getSubCategory(rta.get(i).CategoryId);
-            if (sc != null)
-                rta.get(i).SubCategoryName = sc.SubCategoryName;
-        }
         return (rta);
     }
 

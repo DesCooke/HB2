@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.GlobalUtils.MyResources;
+import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,11 +99,16 @@ class TableCommon extends TableBase
         ArrayList<RecordCommon> list;
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
-                Cursor cursor = db.query("tblCommon", new String[]{"TxSeqNo",
-                        "TxDate", "TxDescription", "TxAmount",
-                        "CategoryId", "Comments"},
-                    null,
-                    null, null, null, "TxDescription", null);
+                String lSql =
+                        "SELECT " +
+                                "  a.TxSeqNo, a.TxDate, a.TxDescription, a.TxAmount, " +
+                                "  a.CategoryId, a.Comments, " +
+                                "  b.SubCategoryName " +
+                                "FROM tblCommon a " +
+                                "  LEFT OUTER JOIN tblSubCategory b " +
+                                "    ON a.CategoryId = b.SubCategoryId " +
+                                "ORDER BY TxDescription";
+                Cursor cursor = db.rawQuery(lSql, null);
                 list = new ArrayList<>();
                 if (cursor != null)
                 {
@@ -122,6 +129,13 @@ class TableCommon extends TableBase
                                             Integer.parseInt(cursor.getString(4)),
                                             cursor.getString(5)
                                         );
+                                if (cursor.getString(6) == null)
+                                {
+                                    lrec.SubCategoryName = MyResources.R().getString(R.string.not_set);
+                                } else
+                                {
+                                    lrec.SubCategoryName = cursor.getString(6);
+                                }
                                 list.add(lrec);
                             } while (cursor.moveToNext());
                         }
