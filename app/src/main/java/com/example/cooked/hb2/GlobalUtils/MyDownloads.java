@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
@@ -33,33 +33,26 @@ public class MyDownloads
     private String txArchiveDirectory;
     private Pattern pattern;
     private ArrayList<String> mylist = new ArrayList<>();
+
     public static MyDownloads MyDL()
     {
-        if(myDL==null)
-          myDL = new MyDownloads(MainActivity.context);
-        return(myDL);
+        if (myDL == null)
+            myDL = new MyDownloads(MainActivity.context);
+        return (myDL);
     }
-    
+
     private MyDownloads(Context context)
     {
-        try
-        {
-            downloadDirectory = context.getResources().getString(R.string.download_directory);
-            txArchiveDirectory = context.getResources().getString(R.string.tx_archive_directory);
-            File f = new File(txArchiveDirectory);
-            if(!f.isDirectory())
-                f.mkdir();
-            String expression = "\\d{8}_\\d{8}_\\d{4}.csv";
-            pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-            mylist = new ArrayList<>();
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in MyDownloads::MyDownloads", e.getMessage());
-        }
-        
+        downloadDirectory = context.getResources().getString(R.string.download_directory);
+        txArchiveDirectory = context.getResources().getString(R.string.tx_archive_directory);
+        File f = new File(txArchiveDirectory);
+        if (!f.isDirectory())
+            f.mkdir();
+        String expression = "\\d{8}_\\d{8}_\\d{4}.csv";
+        pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        mylist = new ArrayList<>();
     }
-    
+
     private boolean isBankFile(String filename)
     {
         Matcher matcher = pattern.matcher(filename);
@@ -70,30 +63,30 @@ public class MyDownloads
     {
         String inputFile;
         String archiveFile;
-        int l_LineNo=0;
+        int l_LineNo = 0;
+        MyLog.WriteLogMessage("Reading file " + downloadDirectory + "/" + filename);
+
+        inputFile = downloadDirectory + "/" + filename;
+        archiveFile = txArchiveDirectory + "/" + filename;
+
         try
         {
-            MyLog.WriteLogMessage("Reading file " + downloadDirectory + "/" + filename);
-            
-            inputFile = downloadDirectory + "/" + filename;
-            archiveFile = txArchiveDirectory + "/" + filename;
-            
             List<RecordTransaction> resultList = new ArrayList<>();
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             String csvLine;
             while ((csvLine = reader.readLine()) != null)
             {
                 l_LineNo++;
-                if(l_LineNo==1)
+                if (l_LineNo == 1)
                 {
                     continue;
                 }
 
                 String[] row = csvLine.split(",");
-                
+
                 RecordTransaction rt = new RecordTransaction();
-                
-                @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat( "dd/MM/yyyy");
+
+                @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                 rt.TxDate = df.parse(row[0]);
 
                 rt.BudgetYear = dateUtils().GetBudgetYear(rt.TxDate);
@@ -103,10 +96,10 @@ public class MyDownloads
                 rt.TxSortCode = row[2].substring(1);
                 rt.TxAccountNumber = row[3];
                 rt.TxDescription = row[4].replace("'", "");
-                if (row[5].length() > 0) {
-                    rt.TxAmount = Float.parseFloat(row[5])*-1;
-                }
-                else
+                if (row[5].length() > 0)
+                {
+                    rt.TxAmount = Float.parseFloat(row[5]) * -1;
+                } else
                 {
                     rt.TxAmount = Float.parseFloat(row[6]);
                 }
@@ -119,30 +112,30 @@ public class MyDownloads
                 resultList.add(0, rt);
             }
             reader.close();
-            if(resultList.size()==0)
-                return(TRUE);
+            if (resultList.size() == 0)
+                return (TRUE);
             Date lFirstDate = resultList.get(0).TxDate;
-            Date lLastDate = resultList.get(resultList.size()-1).TxDate;
-            String lSortCode = resultList.get(resultList.size()-1).TxSortCode;
-            String lAccountNumber = resultList.get(resultList.size()-1).TxAccountNumber;
+            Date lLastDate = resultList.get(resultList.size() - 1).TxDate;
+            String lSortCode = resultList.get(resultList.size() - 1).TxSortCode;
+            String lAccountNumber = resultList.get(resultList.size() - 1).TxAccountNumber;
             ArrayList<RecordTransaction> lInDBList = MyDatabase.MyDB().getTxDateRange(lFirstDate, lLastDate,
                     lSortCode, lAccountNumber);
-    
-            int FileIndex=0;
+
+            int FileIndex = 0;
             RecordTransaction DBrec;
             RecordTransaction Filerec;
             while (FileIndex < resultList.size())
             {
                 Filerec = resultList.get(FileIndex);
-                Boolean lFound=FALSE;
-                for(int i=0;i<lInDBList.size();i++)
+                Boolean lFound = FALSE;
+                for (int i = 0; i < lInDBList.size(); i++)
                 {
                     DBrec = lInDBList.get(i);
-                    if(DBrec.Equals(Filerec))
+                    if (DBrec.Equals(Filerec))
                     {
-                        lFound=TRUE;
-                        if( (Filerec.TxFilename.compareTo(DBrec.TxFilename)!=0) ||
-                            (Filerec.TxLineNo.intValue() != DBrec.TxLineNo.intValue()) )
+                        lFound = TRUE;
+                        if ((Filerec.TxFilename.compareTo(DBrec.TxFilename) != 0) ||
+                                (Filerec.TxLineNo.intValue() != DBrec.TxLineNo.intValue()))
                         {
                             MyDB().updateFilenameLineNo(DBrec, Filerec);
                             DBrec.TxFilename = Filerec.TxFilename;
@@ -151,28 +144,26 @@ public class MyDownloads
                         break;
                     }
                 }
-                if(lFound==FALSE)
+                if (lFound == FALSE)
                 {
                     MyDB().addTransaction(Filerec);
                 }
                 FileIndex++;
             }
-            
+
             File f1 = new File(inputFile);
             File f2 = new File(archiveFile);
-            if(f2.exists())
+            if (f2.exists())
                 f2.delete();
-            
+
             f1.renameTo(f2);
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("Error in MyDownloads::loadFile", e.getMessage());
-            return(FALSE);
+            MyLog.WriteExceptionMessage(e);
         }
-        return(TRUE);
+        return (TRUE);
     }
-    
+
     public Boolean CollectFiles()
     {
         try
@@ -191,15 +182,14 @@ public class MyDownloads
             for (int i = 0; i < mylist.size(); i++)
             {
                 MyLog.WriteLogMessage("Loading File: " + mylist.get(i));
-                if (loadFile(mylist.get(i))==FALSE)
-                    return(FALSE);
+                if (loadFile(mylist.get(i)) == FALSE)
+                    return (FALSE);
             }
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
             ErrorDialog.Show("Error in MyDownloads::CollectFiles", e.getMessage());
         }
-        return(TRUE);
+        return (TRUE);
     }
-    
+
 }

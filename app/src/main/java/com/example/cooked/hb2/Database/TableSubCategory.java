@@ -75,7 +75,6 @@ class TableSubCategory extends TableBase {
 
     ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId) {
         ArrayList<RecordSubCategory> list;
-        try {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor;
@@ -125,16 +124,10 @@ class TableSubCategory extends TableBase {
                     cursor.close();
                 }
             }
-
-        } catch (Exception e) {
-            list = new ArrayList<>();
-            ErrorDialog.Show("Error in TableSubCategory.getSubCategoryList", e.getMessage());
-        }
         return list;
     }
 
     RecordSubCategory getSubCategory(Integer pSubCategoryId) {
-        try {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor;
@@ -171,10 +164,6 @@ class TableSubCategory extends TableBase {
                     }
                 }
             }
-
-        } catch (Exception e) {
-            ErrorDialog.Show("Error in TableSubCategory.getSubCategoryList", e.getMessage());
-        }
         return
                 (
                         new RecordSubCategory

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HB(2.07/11)</string>
+    <string name="app_name">HB(3.00)</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -90,7 +90,6 @@
     <string name="extra">Extra</string>
     <string name="income">Income</string>
     <string name="expense">Expense</string>
-    <string name="dashboard">Dashboard</string>
     <string name="general_savings">General Savings</string>
     <string name="long_term_savings">Long Term Savings</string>
     <string name="family_savings">Family Savings</string>
@@ -125,15 +124,32 @@
     <string name="grouped_budget">Grouped Budget</string>
     <string name="notes">Notes</string>
     <string name="database_dump">Database Dump</string>
-    <string-array name="defaultbudgettypes">
-        <item>Same Month Last Year</item>
-        <item>Last Month</item>
-        <item>Average</item>
-    </string-array>
     <string name="title_activity_account_list">account_list</string>
     <string name="accounts">Accounts</string>
     <string name="title_activity_account_item">activityAccountItem</string>
     <string name="accountDescription">Description</string>
     <string name="accountStartingBalance">Starting Balance</string>
     <string name="title_activity_planned_tx">activityPlannedTx</string>
+    <string name="mauris_sagittis_non_elit">Mauris sagittis non elit</string>
+    <string name="budget">Budget</string>
+    <string name="account">Account</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="starting_balance">Starting Balance</string>
+    <string name="starting_balance_full">Starting Balance %1$s</string>
+    <string name="final_balance_full">Final Balance %1$s</string>
+    <string name="bt_expand">bt_expand</string>
+    <string name="total_line">Total: %1$s</string>
+    <string name="spent_line">Spent: %1$s</string>
+    <string name="outstanding_line">Outstanding: %1$s</string>
+    <string name="select_a_budget">Select a Budget</string>
+    <string name="not_set">Not Set</string>
+    <string name="samplebudgetyearmonth">09/2019</string>
+    <string name="samplebudgetmonth">September</string>
+    <string name="samplebudgetdates"><![CDATA[26/09/2019 -> 25/10/2019]]></string>
+    <string name="budgetyearmonthline">%1$s</string>
+    <string-array name="defaultbudgettypes">
+        <item>Same Month Last Year</item>
+        <item>Last Month</item>
+        <item>Average</item>
+    </string-array>
 </resources>

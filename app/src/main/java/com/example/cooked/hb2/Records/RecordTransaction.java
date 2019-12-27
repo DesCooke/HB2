@@ -1,4 +1,4 @@
-package com.example.cooked.hb2.Database;
+package com.example.cooked.hb2.Records;
 
 import java.util.Date;
 
@@ -31,8 +31,11 @@ public class RecordTransaction
     public Boolean HideBalance;
     public Boolean BalanceCorrect;
     public Float TxBalanceShouldBe;
+    public Float MarkerStartingBalance;
+    public Float MarkerEndingBalance;
+    public boolean CheckForChange;
 
-    RecordTransaction
+    public RecordTransaction
             (
                      int pTxSeqNo,
                      Date pTxAdded,
@@ -72,6 +75,7 @@ public class RecordTransaction
         HideBalance = pHideBalance;
         BalanceCorrect = true;
         TxBalanceShouldBe = 0.00f;
+        CheckForChange = false;
     }
     public RecordTransaction()
     {

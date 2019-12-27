@@ -11,6 +11,7 @@ import android.widget.RadioButton;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordSubCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 
 import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
@@ -172,10 +173,9 @@ public class activitySubCategoryItem extends AppCompatActivity
                     finish();
                 }
             });
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("Error in activitSubCategoryItem::onCreate", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 

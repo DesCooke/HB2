@@ -8,13 +8,12 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordAccount;
-import com.example.cooked.hb2.Database.RecordCategory;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 
-import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
-
-public class activityAccountItem extends AppCompatActivity {
+public class activityAccountItem extends AppCompatActivity
+{
 
     int mAcSeqNo;
     RecordAccount mRec;
@@ -24,49 +23,55 @@ public class activityAccountItem extends AppCompatActivity {
     Button mBtnCancel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account_item);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        mAcDescription = findViewById(R.id.tilAcDescription);
-        mAcStartingBalance = findViewById(R.id.tilAcStartingBalance);
-        mBtnOk = findViewById(R.id.btnOk);
-        mBtnCancel = findViewById(R.id.btnCancel);
-
-        mAcSeqNo = getIntent().getIntExtra("AcSeqNo", -1);
-        mRec = MyDatabase.MyDB().getAccountItem(mAcSeqNo);
-
-        setTitle("Account " + mRec.AcSortCode + " " + mRec.AcAccountNumber);
-
-        mAcDescription.getEditText().setText(mRec.AcDescription);
-        mAcStartingBalance.getEditText().setText(mRec.AcStartingBalance.toString());
-
-        mBtnOk.setOnClickListener(new View.OnClickListener()
+        try
         {
-            public void onClick(View v)
+            setContentView(R.layout.activity_account_item);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
+            mAcDescription = findViewById(R.id.tilAcDescription);
+            mAcStartingBalance = findViewById(R.id.tilAcStartingBalance);
+            mBtnOk = findViewById(R.id.btnOk);
+            mBtnCancel = findViewById(R.id.btnCancel);
+
+            mAcSeqNo = getIntent().getIntExtra("AcSeqNo", -1);
+            mRec = MyDatabase.MyDB().getAccountItem(mAcSeqNo);
+
+            setTitle("Account " + mRec.AcSortCode + " " + mRec.AcAccountNumber);
+
+            mAcDescription.getEditText().setText(mRec.AcDescription);
+            mAcStartingBalance.getEditText().setText(mRec.AcStartingBalance.toString());
+
+            mBtnOk.setOnClickListener(new View.OnClickListener()
             {
-                try
+                public void onClick(View v)
                 {
-                    mRec.AcDescription = mAcDescription.getEditText().getText().toString();
-                    mRec.AcStartingBalance = Float.parseFloat(mAcStartingBalance.getEditText().getText().toString());
-                    MyDatabase.MyDB().updateAccount(mRec);
+                    try
+                    {
+                        mRec.AcDescription = mAcDescription.getEditText().getText().toString();
+                        mRec.AcStartingBalance = Float.parseFloat(mAcStartingBalance.getEditText().getText().toString());
+                        MyDatabase.MyDB().updateAccount(mRec);
+                    } catch (Exception e)
+                    {
+                        ErrorDialog.Show("Error in activityAccountItem::onClick", e.getMessage());
+                    }
+                    finish();
                 }
-                catch(Exception e)
+            });
+            mBtnCancel.setOnClickListener(new View.OnClickListener()
+            {
+                public void onClick(View v)
                 {
-                    ErrorDialog.Show("Error in activityAccountItem::onClick", e.getMessage());
+                    finish();
                 }
-                finish();
-            }
-        });
-        mBtnCancel.setOnClickListener(new View.OnClickListener()
+            });
+        } catch (Exception e)
         {
-            public void onClick(View v)
-            {
-                finish();
-            }
-        });
+            MyLog.WriteExceptionMessage(e);
+        }
 
     }
 

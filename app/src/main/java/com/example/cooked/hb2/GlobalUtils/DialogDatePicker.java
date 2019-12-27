@@ -28,7 +28,7 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
     public DialogDatePicker(Activity a)
     {
         super(a);
-        setInitialDate=false;
+        setInitialDate = false;
     }
 
     private void ShowError(String argFunction, String argMessage)
@@ -41,60 +41,46 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
     {
         super.onCreate(savedInstanceState);
 
-        try
-        {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.dialog_date_picker);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.dialog_date_picker);
 
-            Button ok= findViewById(R.id.btnOk);
-            datePicker= findViewById(R.id.datePicker);
+        Button ok = findViewById(R.id.btnOk);
+        datePicker = findViewById(R.id.datePicker);
 
-            ok.setOnClickListener(this);
-            dateUtils=new DateUtils();
-            if(setInitialDate)
-            {
-                Calendar calendar=Calendar.getInstance();
-                calendar.setTime(initialDate);
-                datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-            }
-        }
-        catch(Exception e)
+        ok.setOnClickListener(this);
+        dateUtils = new DateUtils();
+        if (setInitialDate)
         {
-            ShowError("onCreate", e.getMessage());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(initialDate);
+            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         }
     }
 
     public void setInitialDate(Date date)
     {
-        initialDate=date;
-        setInitialDate=true;
+        initialDate = date;
+        setInitialDate = true;
     }
 
     @Override
     public void onClick(View v)
     {
-        try
+        switch (v.getId())
         {
-            switch(v.getId())
-            {
-                case R.id.btnOk:
-                    MyString ms=new MyString();
-                    if(!dateUtils.DatePickerToStr(datePicker, ms))
-                        return;
-                    if(txtStartDate!=null)
-                        txtStartDate.setText(ms.Value);
-                    if(tilStartDate!=null)
-                        tilStartDate.getEditText().setText(ms.Value);
-                    break;
-                default:
-                    break;
-            }
-            dismiss();
+            case R.id.btnOk:
+                MyString ms = new MyString();
+                if (!dateUtils.DatePickerToStr(datePicker, ms))
+                    return;
+                if (txtStartDate != null)
+                    txtStartDate.setText(ms.Value);
+                if (tilStartDate != null)
+                    tilStartDate.getEditText().setText(ms.Value);
+                break;
+            default:
+                break;
         }
-        catch(Exception e)
-        {
-            ShowError("onClick", e.getMessage());
-        }
+        dismiss();
     }
 
 }

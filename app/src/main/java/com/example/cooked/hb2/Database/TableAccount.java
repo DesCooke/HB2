@@ -4,23 +4,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
-import com.example.cooked.hb2.GlobalUtils.MyResources;
-import com.example.cooked.hb2.GlobalUtils.MyString;
-import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.Records.RecordAccount;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static java.lang.Float.parseFloat;
 
 class TableAccount extends TableBase
@@ -111,8 +100,6 @@ class TableAccount extends TableBase
     ArrayList<RecordAccount> getAccountList()
     {
         ArrayList<RecordAccount> list;
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, AcStartingBalance " +
@@ -149,19 +136,11 @@ class TableAccount extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            list = new ArrayList<>();
-            ErrorDialog.Show("Error in TableAccount.getAccountList", e.getMessage());
-        }
         return list;
     }
 
     RecordAccount getSingleAccount(Integer pAcSeqNo)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, AcStartingBalance " +
@@ -194,18 +173,11 @@ class TableAccount extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TableAccount.getAcountItem", e.getMessage());
-        }
         return (null);
     }
 
     RecordAccount getAccountItemByAccountNum(String pAcSortCode, String pAcAccountNumber)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, AcStartingBalance " +
@@ -239,18 +211,11 @@ class TableAccount extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TableAccount.getAcountItem", e.getMessage());
-        }
         return (null);
     }
 
     public boolean accountExists(String pSortCode, String pAccountNumber)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSortCode " +
@@ -274,11 +239,6 @@ class TableAccount extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TableAccount.accountExists", e.getMessage());
-        }
         return(false);
     }
 

@@ -38,19 +38,11 @@ public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAd
         {
             super(v);
 
-            try
-            {
-                mSubCategoryName = v.findViewById(R.id.cellcat_SubCategoryName);
-                mCategoryName = v.findViewById(R.id.cellcat_CategoryName);
+            mSubCategoryName = v.findViewById(R.id.cellcat_SubCategoryName);
+            mCategoryName = v.findViewById(R.id.cellcat_CategoryName);
 
-                btnEdit = v.findViewById(R.id.btnEdit);
-                btnEdit.setVisibility(View.GONE);
-
-            }
-            catch(Exception e)
-            {
-                ErrorDialog.Show("Error in CategoryPickerAdapter.ViewHolder::ViewHolder", e.getMessage());
-            }
+            btnEdit = v.findViewById(R.id.btnEdit);
+            btnEdit.setVisibility(View.GONE);
         }
     }
 
@@ -62,20 +54,12 @@ public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAd
     // Create new views (invoked by the layout manager)
     @Override
     public CategoryPickerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                            int viewType)
+                                                               int viewType)
     {
-        try
-        {
-            // create a new view
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_category_picker, parent, false);
-            // set the view's size, margins, padding and layout parameters
-            return new ViewHolder(v);
-        }
-        catch(Exception e)
-        {
-            ErrorDialog.Show("Error in CategoryPickerAdapter.ViewHolder::onCreateViewHolder", e.getMessage());
-        }
-        return(null);
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_category_picker, parent, false);
+        // set the view's size, margins, padding and layout parameters
+        return new ViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -84,45 +68,28 @@ public class CategoryPickerAdapter extends RecyclerView.Adapter<CategoryPickerAd
     {
         final RecordSubCategory rec;
 
-        try
+        rec = mDataset.get(position);
+
+        holder.mCategoryName.setText(rec.CategoryName);
+        holder.mSubCategoryName.setText(rec.SubCategoryName);
+
+        holder.mSubCategoryName.setOnClickListener(new View.OnClickListener()
         {
-
-            rec = mDataset.get(position);
-
-            holder.mCategoryName.setText(rec.CategoryName);
-            holder.mSubCategoryName.setText(rec.SubCategoryName);
-
-            holder.mSubCategoryName.setOnClickListener(new View.OnClickListener()
+            @Override
+            public void onClick(View view)
             {
-                @Override
-                public void onClick(View view)
+                if (mOnItemClickListener != null)
                 {
-                    if (mOnItemClickListener != null)
-                    {
-                        mOnItemClickListener.onItemClick(view, rec);
-                    }
+                    mOnItemClickListener.onItemClick(view, rec);
                 }
-            });
-
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in CategoryPickerAdapter.onBindViewHolder", e.getMessage());
-        }
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount()
     {
-        try
-        {
-            return mDataset.size();
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in CategoryPickerAdapter.getItemCount", e.getMessage());
-        }
-        return(0);
+        return mDataset.size();
     }
 }

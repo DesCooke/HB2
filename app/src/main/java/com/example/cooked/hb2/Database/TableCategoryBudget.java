@@ -108,48 +108,39 @@ class TableCategoryBudget extends TableBase
     RecordCategoryBudget getCategoryBudget(Integer pCategoryId, Integer pBudgetMonth, Integer pBudgetYear)
     {
         RecordCategoryBudget item;
-        try
+        try (SQLiteDatabase db = helper.getReadableDatabase())
         {
-            try (SQLiteDatabase db = helper.getReadableDatabase())
+            try
             {
-                try
+                String lString =
+                        "SELECT BudgetAmount " +
+                                "FROM tblCategoryBudget " +
+                                "WHERE CategoryId = " + pCategoryId.toString() + " " +
+                                "AND BudgetMonth = " + pBudgetMonth.toString() + " " +
+                                "and BudgetYear = " + pBudgetYear.toString() + " ";
+                Cursor cursor = db.rawQuery(lString, null);
+                item = new RecordCategoryBudget();
+                if (cursor != null && cursor.getCount()>0)
                 {
-                    String lString =
-                            "SELECT BudgetAmount " +
-                                    "FROM tblCategoryBudget " +
-                                    "WHERE CategoryId = " + pCategoryId.toString() + " " +
-                                    "AND BudgetMonth = " + pBudgetMonth.toString() + " " +
-                                    "and BudgetYear = " + pBudgetYear.toString() + " ";
-                    Cursor cursor = db.rawQuery(lString, null);
-                    item = new RecordCategoryBudget();
-                    if (cursor != null)
+                    try
                     {
-                        try
-                        {
-                            cursor.moveToFirst();
-                            item= new RecordCategoryBudget
-                                    (
-                                            pCategoryId,
-                                            pBudgetMonth,
-                                            pBudgetYear,
-                                            Float.parseFloat(cursor.getString(0))
-                                    );
-                        }
-                        finally
-                        {
-                            cursor.close();
-                        }
+                        cursor.moveToFirst();
+                        item = new RecordCategoryBudget
+                                (
+                                        pCategoryId,
+                                        pBudgetMonth,
+                                        pBudgetYear,
+                                        Float.parseFloat(cursor.getString(0))
+                                );
+                    } finally
+                    {
+                        cursor.close();
                     }
                 }
-                finally
-                {
-                    db.close();
-                }
+            } finally
+            {
+                db.close();
             }
-        }
-        catch (Exception e)
-        {
-            item = new RecordCategoryBudget();
         }
         return item;
     }
@@ -173,7 +164,7 @@ class TableCategoryBudget extends TableBase
     {
         MyLog.WriteLogMessage("DB Version " + Integer.toString(db.getVersion()) + ". " +
                 "Downgrading from " + Integer.toString(oldVersion) +
-                " down to " + Integer.toString(newVersion) );
+                " down to " + Integer.toString(newVersion));
     }
 
 }

@@ -2,8 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/ChangeDate"
+        android:icon="@android:drawable/ic_menu_my_calendar"
+        android:orderInCategory="90"
+        android:title="ChangeDate"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/RefreshDBAndUI"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never"/>
+        android:title="Refresh DB and UI"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/showLog"
+        android:title="Show Log" />
+
+
 </menu>

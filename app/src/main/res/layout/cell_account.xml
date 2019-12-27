@@ -36,4 +36,17 @@
         app:layout_constraintStart_toEndOf="@+id/cellac_sortcode"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/cellacc_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="TextView"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cellac_accountnumber"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

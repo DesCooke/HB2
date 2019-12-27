@@ -22,8 +22,6 @@ class TableBase
     void executeSQL(String pSql, String pLocation, SQLiteDatabase pdb)
     {
         SQLiteDatabase ldb;
-        try
-        {
             ldb = pdb;
             if (pdb == null)
                 ldb = helper.getWritableDatabase();
@@ -37,17 +35,10 @@ class TableBase
                 if (pdb == null)
                     ldb.close();
             }
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in " + pLocation, e.getMessage());
-        }
     }
     
     Integer getMaxPlus1(String pSql, String pLocation)
     {
-        try
-        {
             MyLog.WriteLogMessage("getMaxPlus1: " + pLocation + ":" + pSql);
             
             try (SQLiteDatabase db = helper.getReadableDatabase())
@@ -78,18 +69,11 @@ class TableBase
                     db.close();
                 }
             }
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in " + pLocation, e.getMessage());
-        }
         return (1);
     }
     
     Integer getMinMinus1(String pSql, String pLocation)
     {
-        try
-        {
             MyLog.WriteLogMessage("getMinMinus1: " + pLocation + ":" + pSql);
             
             try (SQLiteDatabase db = helper.getReadableDatabase())
@@ -120,18 +104,11 @@ class TableBase
                     db.close();
                 }
             }
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in " + pLocation, e.getMessage());
-        }
         return (-1);
     }
     
     Boolean recordExists(String pSql, String pLocation)
     {
-        try
-        {
             MyLog.WriteLogMessage("recordExists: " + pLocation + ":" + pSql);
     
             try (SQLiteDatabase db = helper.getReadableDatabase())
@@ -152,11 +129,6 @@ class TableBase
                 }
             }
             
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in " + pLocation, e.getMessage());
-        }
         return (FALSE);
     }
     

@@ -14,6 +14,7 @@ import android.widget.Switch;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.TransactionUI.PlannedAdapter;
 
 import java.util.ArrayList;
@@ -29,58 +30,72 @@ public class activityPlanning extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_planning);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        
-        setTitle("Planning");
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
+        try
         {
-            @Override
-            public void onClick(View view)
-            {
-                Intent intent = new Intent(getApplicationContext(), activityPlanningItem.class);
-                intent.putExtra("ACTIONTYPE", "ADD");
-                startActivity(intent);
-            }
-        });
+            setContentView(R.layout.activity_planning);
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        swActiveOnly = findViewById(R.id.swActiveOnly);
-        swActiveOnly.setChecked(true);
-        swActiveOnly.setOnClickListener(new View.OnClickListener()
+            setTitle("Planning");
+
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    Intent intent = new Intent(getApplicationContext(), activityPlanningItem.class);
+                    intent.putExtra("ACTIONTYPE", "ADD");
+                    startActivity(intent);
+                }
+            });
+
+            swActiveOnly = findViewById(R.id.swActiveOnly);
+            swActiveOnly.setChecked(true);
+            swActiveOnly.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    SetupRecyclerView();
+                }
+            });
+
+            SetupRecyclerView();
+        } catch (Exception e)
         {
-            @Override
-            public void onClick(View view)
-            {
-                SetupRecyclerView();
-            }
-        });
+            MyLog.WriteExceptionMessage(e);
+        }
 
-        SetupRecyclerView();
     }
 
     protected void SetupRecyclerView()
     {
-        ArrayList<RecordPlanned> mDataset = MyDatabase.MyDB().getPlannedList(swActiveOnly.isChecked());
-        mPlannedList = findViewById(R.id.plannedList);
-        mPlannedList.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
-        mPlannedList.setLayoutManager(mLayoutManagerCurrent);
-        PlannedAdapter mPlannedAdapter = new PlannedAdapter(mDataset);
-        mPlannedList.setAdapter(mPlannedAdapter);
-        mPlannedAdapter.setOnItemClickListener(new PlannedAdapter.OnItemClickListener()
+        try
         {
-            @Override
-            public void onItemClick(View view, RecordPlanned obj)
+            ArrayList<RecordPlanned> mDataset = MyDatabase.MyDB().getPlannedList(swActiveOnly.isChecked());
+            mPlannedList = findViewById(R.id.plannedList);
+            mPlannedList.setHasFixedSize(true);
+            RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
+            mPlannedList.setLayoutManager(mLayoutManagerCurrent);
+            PlannedAdapter mPlannedAdapter = new PlannedAdapter(mDataset);
+            mPlannedList.setAdapter(mPlannedAdapter);
+            mPlannedAdapter.setOnItemClickListener(new PlannedAdapter.OnItemClickListener()
             {
-                Intent intent = new Intent(getApplicationContext(), activityPlanningItem.class);
-                intent.putExtra("ACTIONTYPE", "EDIT");
-                intent.putExtra("PlannedId", obj.mPlannedId);
-                startActivity(intent);
-            }
-        });
+                @Override
+                public void onItemClick(View view, RecordPlanned obj)
+                {
+                    Intent intent = new Intent(getApplicationContext(), activityPlanningItem.class);
+                    intent.putExtra("ACTIONTYPE", "EDIT");
+                    intent.putExtra("PlannedId", obj.mPlannedId);
+                    startActivity(intent);
+                }
+            });
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
     }
 
     @Override
@@ -88,27 +103,35 @@ public class activityPlanning extends AppCompatActivity
     {  // After a pause OR at startup
         super.onResume();
 
-        SetupRecyclerView();
-
-        if (mPlannedViewState != null)
+        try
         {
-            Parcelable listStateButton = mPlannedViewState.getParcelable(KEY_RECYCLER_STATE_PLANNED);
-            mPlannedList.getLayoutManager().onRestoreInstanceState(listStateButton);
+            SetupRecyclerView();
+
+            if (mPlannedViewState != null)
+            {
+                Parcelable listStateButton = mPlannedViewState.getParcelable(KEY_RECYCLER_STATE_PLANNED);
+                mPlannedList.getLayoutManager().onRestoreInstanceState(listStateButton);
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
         }
+
     }
 
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
 
-        try {
+        try
+        {
             mPlannedViewState = new Bundle();
 
             Parcelable listStateButton = mPlannedList.getLayoutManager().onSaveInstanceState();
             mPlannedViewState.putParcelable(KEY_RECYCLER_STATE_PLANNED, listStateButton);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("Error in activityPlanned::onPause", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
 }

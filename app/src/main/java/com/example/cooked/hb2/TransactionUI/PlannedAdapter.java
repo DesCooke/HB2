@@ -76,7 +76,7 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
     // Create new views (invoked by the layout manager)
     @Override
     public PlannedAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                            int viewType)
+                                                        int viewType)
     {
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_planned, parent, false);
@@ -95,54 +95,45 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        try {
+        holder.mPlannedType.setText(RecordPlanned.mPlannedTypes[rec.mPlannedType]);
+        holder.mPlannedName.setText("Name: " + rec.mPlannedName);
+        holder.mSubcategoryName.setText("Category: " + rec.mSubCategoryName);
 
+        if (rec.mSortCode.compareTo("Cash") == 0)
+            holder.mBankAccount.setText("Account: Cash");
+        else
+            holder.mBankAccount.setText("Account: Current");
 
-            holder.mPlannedType.setText(RecordPlanned.mPlannedTypes[rec.mPlannedType]);
-            holder.mPlannedName.setText("Name: " + rec.mPlannedName);
-            holder.mSubcategoryName.setText("Category: " + rec.mSubCategoryName);
+        holder.mPlanned.setText(rec.mPlanned);
 
-            if(rec.mSortCode.compareTo("Cash")==0)
-                holder.mBankAccount.setText("Account: Cash");
-            else
-                holder.mBankAccount.setText("Account: Current");
+        MyString lMyString = new MyString();
 
-            holder.mPlanned.setText(rec.mPlanned);
+        DateUtils.dateUtils().DateToStr(rec.mStartDate, lMyString);
+        holder.mStartDate.setText("Start: " + lMyString.Value);
 
-            MyString lMyString = new MyString();
+        DateUtils.dateUtils().DateToStr(rec.mEndDate, lMyString);
+        holder.mEndDate.setText("End: " + lMyString.Value);
 
-            DateUtils.dateUtils().DateToStr(rec.mStartDate, lMyString);
-            holder.mStartDate.setText("Start: " + lMyString.Value);
-
-            DateUtils.dateUtils().DateToStr(rec.mEndDate, lMyString);
-            holder.mEndDate.setText("End: " + lMyString.Value);
-
-            holder.mMatchingType.setText("Matching Type: " + rec.mMatchingTxType);
-            holder.mMatchingDescription.setText("Matching Description: " + rec.mMatchingTxDescription);
-            if(rec.mMatchingTxAmount < 0.00)
+        holder.mMatchingType.setText("Matching Type: " + rec.mMatchingTxType);
+        holder.mMatchingDescription.setText("Matching Description: " + rec.mMatchingTxDescription);
+        if (rec.mMatchingTxAmount < 0.00)
+        {
+            holder.mMatchingAmount.setText("Amount: -£" + String.format("%.2f", rec.mMatchingTxAmount * -1));
+        } else
+        {
+            holder.mMatchingAmount.setText("Amount: £" + String.format("%.2f", rec.mMatchingTxAmount));
+        }
+        holder.mFull.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
             {
-                holder.mMatchingAmount.setText("Amount: -£" + String.format("%.2f", rec.mMatchingTxAmount*-1));
-            }
-            else
-            {
-                holder.mMatchingAmount.setText("Amount: £" + String.format("%.2f", rec.mMatchingTxAmount));
-            }
-            holder.mFull.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
+                if (mOnItemClickListener != null)
                 {
-                    if (mOnItemClickListener != null)
-                    {
-                        mOnItemClickListener.onItemClick(view, rec);
-                    }
+                    mOnItemClickListener.onItemClick(view, rec);
                 }
-            });
-
-        }
-        catch (Exception e) {
-            ErrorDialog.Show("Error in PlannedAdapter.onBindViewHolder", e.getMessage());
-        }
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

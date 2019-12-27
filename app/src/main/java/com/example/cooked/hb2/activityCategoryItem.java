@@ -11,6 +11,7 @@ import android.widget.Switch;
 
 import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 
 import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
@@ -22,7 +23,7 @@ public class activityCategoryItem extends AppCompatActivity
     public TextInputLayout edtCategoryName;
     public Switch swGroupedBudget;
     public Spinner spDefaultBudgetType;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -32,7 +33,7 @@ public class activityCategoryItem extends AppCompatActivity
             setContentView(R.layout.activity_category_item);
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
-    
+
             edtCategoryName = findViewById(R.id.edtCategoryName);
             Button btnDelete = findViewById(R.id.btnDelete);
             swGroupedBudget = findViewById(R.id.swGroupedBudget);
@@ -53,7 +54,7 @@ public class activityCategoryItem extends AppCompatActivity
                 setTitle("Amend Category");
                 String lCategoryName = getIntent().getStringExtra("CATEGORYNAME");
                 categoryId = getIntent().getIntExtra("CATEGORYID", -1);
-                if (lCategoryName.length()>0)
+                if (lCategoryName.length() > 0)
                 {
                     edtCategoryName.getEditText().setText(lCategoryName);
                 }
@@ -61,13 +62,13 @@ public class activityCategoryItem extends AppCompatActivity
 
                 RecordCategory rc = MyDB().getCategory(categoryId);
                 swGroupedBudget.setChecked(rc.GroupedBudget);
-                if(rc.GroupedBudget)
+                if (rc.GroupedBudget)
                 {
                     spDefaultBudgetType.setVisibility(View.VISIBLE);
                     spDefaultBudgetType.setSelection(rc.DefaultBudgetType);
                 }
             }
-            
+
             btnDelete.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v)
@@ -82,14 +83,13 @@ public class activityCategoryItem extends AppCompatActivity
                             rc.CategoryId = categoryId;
                             MyDB().deleteCategory(rc);
                         }
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
                     }
                     finish();
                 }
-         });
+            });
 
             swGroupedBudget.setOnClickListener(new View.OnClickListener()
             {
@@ -97,16 +97,14 @@ public class activityCategoryItem extends AppCompatActivity
                 {
                     try
                     {
-                        if(swGroupedBudget.isChecked())
+                        if (swGroupedBudget.isChecked())
                         {
                             spDefaultBudgetType.setVisibility(View.VISIBLE);
-                    }
-                        else
+                        } else
                         {
                             spDefaultBudgetType.setVisibility(View.GONE);
                         }
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
                     }
@@ -127,33 +125,31 @@ public class activityCategoryItem extends AppCompatActivity
                         {
                             MyDB().addCategory(rc);
                         }
-                        
+
                         if (actionType.compareTo("EDIT") == 0)
                         {
                             rc.CategoryId = categoryId;
                             rc.GroupedBudget = swGroupedBudget.isChecked();
-                            rc.DefaultBudgetType=0;
-                            if(rc.GroupedBudget)
-                                rc.DefaultBudgetType=spDefaultBudgetType.getSelectedItemPosition();
+                            rc.DefaultBudgetType = 0;
+                            if (rc.GroupedBudget)
+                                rc.DefaultBudgetType = spDefaultBudgetType.getSelectedItemPosition();
 
                             MyDB().updateCategory(rc);
                         }
-                        
+
 
                         //setResult(RESULT_OK, intent);
-                    }
-                    catch(Exception e)
+                    } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
                     }
                     finish();
                 }
-         });
-        }
-        catch(Exception e)
+            });
+        } catch (Exception e)
         {
-            ErrorDialog.Show("Error in activityCategoryItem::onCreate", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
     }
-    
+
 }

@@ -1,4 +1,4 @@
-package com.example.cooked.hb2.Budget;
+package com.example.cooked.hb2.Records;
 
 import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.MainActivity;
@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class RecordBudgetGroup
 {
+    public Integer BudgetClassId;
+    public Integer BudgetGroupId;
     public String budgetGroupName;
     public ArrayList<RecordBudgetItem> budgetItems;
     public boolean divider;
@@ -20,9 +22,13 @@ public class RecordBudgetGroup
     public Integer BudgetYear;
     public Integer DefaultBudgetType;
     public MainActivity lMainActivity;
+    public boolean Expanded;
 
     public RecordBudgetGroup()
     {
+        BudgetClassId=0;
+        BudgetGroupId=0;
+        Expanded = false;
         budgetItems = new ArrayList<>();
         budgetGroupName = "";
         divider=false;

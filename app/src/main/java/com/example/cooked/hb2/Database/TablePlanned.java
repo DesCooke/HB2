@@ -9,9 +9,9 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
+import com.example.cooked.hb2.Records.RecordTransaction;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -155,8 +155,6 @@ class TablePlanned extends TableBase
     ArrayList<RecordPlanned> getPlannedList(boolean activeOnly)
     {
         ArrayList<RecordPlanned> list;
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String l_SQL = "SELECT PlannedId, PlannedType, PlannedName, SubCategoryId, " +
@@ -241,12 +239,6 @@ class TablePlanned extends TableBase
                 list = new ArrayList<>();
                 ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
             }
-        }
-        catch (Exception e)
-        {
-            list = new ArrayList<>();
-            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
-        }
 
         return list;
     }
@@ -254,8 +246,6 @@ class TablePlanned extends TableBase
     public ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId)
     {
         ArrayList<RecordPlanned> list;
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 try (Cursor cursor = db.query("tblPlanned", new String[]{"PlannedId", "PlannedType",
@@ -314,13 +304,6 @@ class TablePlanned extends TableBase
                     }
                 }
             }
-            
-        }
-        catch (Exception e)
-        {
-            list = new ArrayList<>();
-            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
-        }
 
         return list;
     }
@@ -331,8 +314,6 @@ class TablePlanned extends TableBase
         budgetSpent = new ArrayList<>();
         ArrayList<RecordBudget> budgetFull;
         ArrayList<RecordTransaction> list = new ArrayList<>();
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String l_SQL = "SELECT CategoryId, SUM(TxAmount) FROM tblTransaction " +
@@ -444,11 +425,6 @@ class TablePlanned extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
-        }
         Collections.sort(list, new Comparator<RecordTransaction>() {
             public int compare(RecordTransaction o1, RecordTransaction o2) {
                 return o1.TxDate.compareTo(o2.TxDate);
@@ -463,8 +439,6 @@ class TablePlanned extends TableBase
         budgetSpent = new ArrayList<>();
         ArrayList<RecordBudget> budgetFull;
         ArrayList<RecordTransaction> list = new ArrayList<>();
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String l_SQL = "SELECT TxAmount FROM tblTransaction " +
@@ -576,11 +550,6 @@ class TablePlanned extends TableBase
                 }
             }
 
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
-        }
         Collections.sort(list, new Comparator<RecordTransaction>() {
             public int compare(RecordTransaction o1, RecordTransaction o2) {
                 return o1.TxDate.compareTo(o2.TxDate);
@@ -592,8 +561,6 @@ class TablePlanned extends TableBase
     ArrayList<RecordBudget> getBudgetSpent(int pMonth, int pYear)
     {
         ArrayList<RecordBudget> budgetSpent = new ArrayList<>();
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String l_SQL =
@@ -632,13 +599,6 @@ class TablePlanned extends TableBase
             }
 
             return(budgetSpent);
-
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TablePlanned.getBudgetSpent", e.getMessage());
-        }
-        return (null);
     }
 
     private Boolean isDue(RecordPlanned prp, Date pDate)
@@ -803,8 +763,6 @@ class TablePlanned extends TableBase
 
     RecordPlanned getSinglePlanned(Integer pPlannedId)
     {
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor = db.query("tblPlanned", new String[]{"PlannedId", "PlannedType",
@@ -855,12 +813,6 @@ class TablePlanned extends TableBase
                     }
                 }
             }
-            
-        }
-        catch (Exception e)
-        {
-            ErrorDialog.Show("Error in TablePlanned.getSinglePlanned", e.getMessage());
-        }
         return (new RecordPlanned());
     }
     

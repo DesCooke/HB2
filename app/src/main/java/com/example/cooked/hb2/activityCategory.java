@@ -13,10 +13,12 @@ import com.example.cooked.hb2.CategoryUI.CategoryAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCategory;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
+import com.example.cooked.hb2.GlobalUtils.MyLog;
 
 import java.util.ArrayList;
 
-public class activityCategory extends AppCompatActivity{
+public class activityCategory extends AppCompatActivity
+{
 
     public ArrayList<RecordCategory> mDataset;
     public RecyclerView mCategoryList;
@@ -24,16 +26,17 @@ public class activityCategory extends AppCompatActivity{
     public CategoryAdapter mCategoryAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         try
         {
             setContentView(R.layout.activity_category_list);
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
-    
+
             setTitle("Categories");
-    
+
             FloatingActionButton fab = findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener()
             {
@@ -43,53 +46,57 @@ public class activityCategory extends AppCompatActivity{
                     Intent intent = new Intent(activityCategory.this, activityCategoryItem.class);
                     intent.putExtra("ACTIONTYPE", "ADD");
                     startActivity(intent);
-            
+
                 }
             });
 
             CreateRecyclerView();
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            ErrorDialog.Show("Error in activityCategory::onCreate", e.getMessage());
+            MyLog.WriteExceptionMessage(e);
         }
 
     }
 
     private void CreateRecyclerView()
     {
-        mDataset = MyDatabase.MyDB().getCategoryList();
-        mCategoryList = findViewById(R.id.categoryList);
-        mCategoryList.setHasFixedSize(true);
-        mLayoutManagerCurrent = new LinearLayoutManager(this);
-        mCategoryList.setLayoutManager(mLayoutManagerCurrent);
-        mCategoryAdapter = new CategoryAdapter(mDataset);
-        mCategoryList.setAdapter(mCategoryAdapter);
-        
-        mCategoryAdapter.setOnItemClickListener(new CategoryAdapter.OnItemClickListener()
+        try
         {
-            @Override
-            public void onItemClick(View view, RecordCategory obj)
-            {
-                Intent intent = new Intent(getApplicationContext(), activityCategoryItem.class);
-                intent.putExtra("ACTIONTYPE", "EDIT");
-                intent.putExtra("CATEGORYID", obj.CategoryId);
-                intent.putExtra("CATEGORYNAME", obj.CategoryName);
-                startActivity(intent);
-            }
-        });
-        mCategoryAdapter.setOnShowClickListener(new CategoryAdapter.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(View view, RecordCategory obj)
-            {
-                Intent intent = new Intent(getApplicationContext(), activitySubCategory.class);
-                intent.putExtra("CATEGORYID", obj.CategoryId);
-                intent.putExtra("CATEGORYNAME", obj.CategoryName);
-                startActivity(intent);
-            }
-        });
+            mDataset = MyDatabase.MyDB().getCategoryList();
+            mCategoryList = findViewById(R.id.categoryList);
+            mCategoryList.setHasFixedSize(true);
+            mLayoutManagerCurrent = new LinearLayoutManager(this);
+            mCategoryList.setLayoutManager(mLayoutManagerCurrent);
+            mCategoryAdapter = new CategoryAdapter(mDataset);
+            mCategoryList.setAdapter(mCategoryAdapter);
 
+            mCategoryAdapter.setOnItemClickListener(new CategoryAdapter.OnItemClickListener()
+            {
+                @Override
+                public void onItemClick(View view, RecordCategory obj)
+                {
+                    Intent intent = new Intent(getApplicationContext(), activityCategoryItem.class);
+                    intent.putExtra("ACTIONTYPE", "EDIT");
+                    intent.putExtra("CATEGORYID", obj.CategoryId);
+                    intent.putExtra("CATEGORYNAME", obj.CategoryName);
+                    startActivity(intent);
+                }
+            });
+            mCategoryAdapter.setOnShowClickListener(new CategoryAdapter.OnItemClickListener()
+            {
+                @Override
+                public void onItemClick(View view, RecordCategory obj)
+                {
+                    Intent intent = new Intent(getApplicationContext(), activitySubCategory.class);
+                    intent.putExtra("CATEGORYID", obj.CategoryId);
+                    intent.putExtra("CATEGORYNAME", obj.CategoryName);
+                    startActivity(intent);
+                }
+            });
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
     }
 
     @Override
@@ -97,7 +104,13 @@ public class activityCategory extends AppCompatActivity{
     {  // After a pause OR at startup
         super.onResume();
 
-        CreateRecyclerView();
+        try
+        {
+            CreateRecyclerView();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
     }
 }
 

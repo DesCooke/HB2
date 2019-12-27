@@ -91,8 +91,6 @@ class TableCategory extends TableBase
     ArrayList<RecordCategory> getCategoryList()
     {
         ArrayList<RecordCategory> list;
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 try
@@ -137,20 +135,12 @@ class TableCategory extends TableBase
                     db.close();
                 }
             }
-        }
-        catch (Exception e)
-        {
-            list = new ArrayList<>();
-            ErrorDialog.Show("Error in TableCategory.getCategoryList", e.getMessage());
-        }
         return list;
     }
 
     RecordCategory getCategory(Integer pCategoryId)
     {
         RecordCategory item;
-        try
-        {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 try
@@ -189,12 +179,6 @@ class TableCategory extends TableBase
                     db.close();
                 }
             }
-        }
-        catch (Exception e)
-        {
-            item = new RecordCategory();
-            ErrorDialog.Show("Error in TableCategory.getCategory", e.getMessage());
-        }
         return item;
     }
 

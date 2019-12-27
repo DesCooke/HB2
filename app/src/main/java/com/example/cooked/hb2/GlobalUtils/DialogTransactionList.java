@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.Window;
 
 import com.example.cooked.hb2.Database.MyDatabase;
-import com.example.cooked.hb2.Database.RecordTransaction;
+import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.TransactionUI.TransactionAdapter;
@@ -25,10 +25,12 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
     public Integer budgetYear;
     public Integer budgetMonth;
     public Integer subCategoryId;
+
     public DialogTransactionList(Activity a)
     {
         super(a);
     }
+
     private RecyclerView mBudgetList;
     private ArrayList<RecordTransaction> pList;
 
@@ -36,6 +38,7 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
     {
         pList = MyDatabase.MyDB().getBudgetTrans(budgetYear, budgetMonth, subCategoryId);
     }
+
     private void ShowError(String argFunction, String argMessage)
     {
         ErrorDialog.Show("Error in DialogTransactionList::" + argFunction, argMessage);
@@ -50,14 +53,13 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
             @Override
             public void onItemClick(View view, RecordTransaction obj)
             {
-                if(obj.TxType.compareTo("Planned")==0)
+                if (obj.TxType.compareTo("Planned") == 0)
                 {
                     Intent intent = new Intent(MainActivity.context, activityPlanningItem.class);
                     intent.putExtra("ACTIONTYPE", "EDIT");
                     intent.putExtra("PlannedId", obj.TxSeqNo);
                     MainActivity.context.startActivity(intent);
-                }
-                else
+                } else
                 {
                     Intent intent = new Intent(MainActivity.context, activityTransactionItem.class);
                     intent.putExtra("ACTIONTYPE", "EDIT");
@@ -74,23 +76,16 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
     {
         super.onCreate(savedInstanceState);
 
-        try
-        {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.transactionlist_picker);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.transactionlist_picker);
 
-            mBudgetList = findViewById(R.id.budgetList);
-            mBudgetList.setHasFixedSize(true);
+        mBudgetList = findViewById(R.id.budgetList);
+        mBudgetList.setHasFixedSize(true);
 
-            RecyclerView.LayoutManager mLayoutManagerButton = new LinearLayoutManager(MainActivity.context);
-            mBudgetList.setLayoutManager(mLayoutManagerButton);
+        RecyclerView.LayoutManager mLayoutManagerButton = new LinearLayoutManager(MainActivity.context);
+        mBudgetList.setLayoutManager(mLayoutManagerButton);
 
-            setupRecyclerView();
-        }
-        catch(Exception e)
-        {
-            ShowError("onCreate", e.getMessage());
-        }
+        setupRecyclerView();
     }
 
     @Override
