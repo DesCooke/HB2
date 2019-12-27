@@ -120,7 +120,7 @@ class TableCategoryBudget extends TableBase
                                 "and BudgetYear = " + pBudgetYear.toString() + " ";
                 Cursor cursor = db.rawQuery(lString, null);
                 item = new RecordCategoryBudget();
-                if (cursor != null)
+                if (cursor != null && cursor.getCount()>0)
                 {
                     try
                     {
