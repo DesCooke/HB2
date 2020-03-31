@@ -1,12 +1,18 @@
 package com.example.cooked.hb2;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +22,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Adapters.ViewPagerMainAdapter;
@@ -62,6 +72,9 @@ public class MainActivity extends AppCompatActivity
     private RecordBudgetMonth mDatasetBudgetMonth;
 
     public TextView txtNotes;
+    public TextView txtBudgetPeriod;
+    public ImageButton btnNextPeriod;
+    public ImageButton btnPrevPeriod;
 
     private Toolbar toolbar;
 
@@ -70,11 +83,8 @@ public class MainActivity extends AppCompatActivity
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
 
-
-
     public void RefreshFragments(int budgetYear, int budgetMonth)
     {
-
         try
         {
             SetBudget(budgetYear, budgetMonth);
@@ -95,7 +105,6 @@ public class MainActivity extends AppCompatActivity
             MyLog.WriteExceptionMessage(e);
         }
     }
-
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -130,7 +139,6 @@ public class MainActivity extends AppCompatActivity
         }
         MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
     }
-
 
     private void SetBudget(int pBudgetYear, int pBudgetMonth)
     {
@@ -190,8 +198,9 @@ public class MainActivity extends AppCompatActivity
             android.support.v7.app.ActionBar ab = getSupportActionBar();
             if (ab != null)
             {
-                ab.setTitle("HomeBudget");
-                ab.setSubtitle(lFromStr.Value + " -> " + lToStr.Value);
+                ab.setTitle("Home Budget");
+                ab.setSubtitle("dc enterprises");
+                txtBudgetPeriod.setText(lFromStr.Value + " -> " + lToStr.Value);
             }
         } catch (Exception e)
         {
@@ -267,12 +276,48 @@ public class MainActivity extends AppCompatActivity
             setSupportActionBar(toolbar);
 
             txtNotes = findViewById(R.id.txtNotes);
+            txtBudgetPeriod = findViewById(R.id.txtBudgetPeriod);
 
             view_pager = findViewById(R.id.viewpager_main);
             tab_layout = findViewById(R.id.tab_main);
 
             drawer = findViewById(R.id.drawer_layout);
             navigationView = findViewById(R.id.nav_view);
+
+            btnPrevPeriod = findViewById(R.id.btnPrevPeriod);
+            btnPrevPeriod.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View view) {
+                    try {
+                        mCurrentBudgetMonth--;
+                        if (mCurrentBudgetMonth == 0) {
+                            mCurrentBudgetYear--;
+                            mCurrentBudgetMonth = 12;
+                        }
+                        RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
+                    }
+                    finally {
+                    }
+                }
+            });
+
+            btnNextPeriod= findViewById(R.id.btnNextPeriod);
+            btnNextPeriod.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View view) {
+                    try {
+
+                        mCurrentBudgetMonth++;
+                        if (mCurrentBudgetMonth == 13) {
+                            mCurrentBudgetYear++;
+                            mCurrentBudgetMonth = 1;
+                        }
+
+                                RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
+                    }
+                    finally {
+                    }
+                }
+            });
+
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
@@ -349,14 +394,6 @@ public class MainActivity extends AppCompatActivity
             if (id == R.id.RefreshDBAndUI)
             {
                 RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
-            }
-            if (id == R.id.ChangeDate)
-            {
-                DialogBudgetPicker dbp = new DialogBudgetPicker(this);
-                dbp.BudgetYear = mCurrentBudgetYear;
-                dbp.BudgetMonth = mCurrentBudgetMonth;
-                dbp.MyMainActivity = this;
-                dbp.show();
             }
             if (id == R.id.showLog)
             {
