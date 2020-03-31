@@ -15,6 +15,7 @@ import com.example.cooked.hb2.R;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 
 public class DialogDatePicker extends Dialog implements View.OnClickListener
@@ -26,21 +27,15 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
     private DatePicker datePicker;
     private boolean setInitialDate;
     private Date initialDate;
-    public Switch switch1;
-    public Long dateUnknownMillisecs;
-    public String dateUnknownString;
-    public Calendar calendar;
+    private Switch switch1;
+    private Long dateUnknownMillisecs;
+    private Calendar calendar;
 
     public DialogDatePicker(Activity a)
     {
         super(a);
         activity=a;
         setInitialDate = false;
-    }
-
-    private void ShowError(String argFunction, String argMessage)
-    {
-        ErrorDialog.Show("Error in DialogDatePicker::" + argFunction, argMessage);
     }
 
     @Override
@@ -58,9 +53,6 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
         calendar = Calendar.getInstance();
         dateUnknownMillisecs=Long.parseLong(activity.getResources().getString(R.string.date_unknown_millisecs));
         calendar.setTimeInMillis(dateUnknownMillisecs);
-        MyString myString=new MyString();
-        DateUtils.DateToStr(calendar.getTime(), myString);
-        dateUnknownString=myString.Value;
 
         ok.setOnClickListener(this);
         dateUtils = new DateUtils();
@@ -86,30 +78,25 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
         }
 
         switch1.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View view) {
-                try {
-                    if(switch1.isChecked())
+            public void onClick(View view)
+            {
+                if (switch1.isChecked())
+                {
+                    datePicker.setVisibility(View.VISIBLE);
+                    if (calendar.getTimeInMillis() >= dateUnknownMillisecs)
                     {
-                        datePicker.setVisibility(View.VISIBLE);
-                        if(calendar.getTimeInMillis()>=dateUnknownMillisecs)
-                        {
-                            calendar.setTime(new Date());
-                            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-                        }
-                        else
-                        {
-                            calendar.setTime(initialDate);
-                            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-                        }
-                    }
-                    else
+                        calendar.setTime(new Date());
+                        datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                    } else
                     {
-                        datePicker.setVisibility(View.INVISIBLE);
-                        calendar.setTimeInMillis(dateUnknownMillisecs);
+                        calendar.setTime(initialDate);
                         datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                     }
-                }
-                finally {
+                } else
+                {
+                    datePicker.setVisibility(View.INVISIBLE);
+                    calendar.setTimeInMillis(dateUnknownMillisecs);
+                    datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 }
             }
         });
@@ -125,19 +112,15 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
     @Override
     public void onClick(View v)
     {
-        switch (v.getId())
+        if (v.getId() == R.id.btnOk)
         {
-            case R.id.btnOk:
-                MyString ms = new MyString();
-                if (!dateUtils.DatePickerToStr(datePicker, ms))
-                    return;
-                if (txtStartDate != null)
-                    txtStartDate.setText(ms.Value);
-                if (tilStartDate != null)
-                    tilStartDate.getEditText().setText(ms.Value);
-                break;
-            default:
-                break;
+            MyString ms = new MyString();
+            if (!dateUtils.DatePickerToStr(datePicker, ms))
+                return;
+            if (txtStartDate != null)
+                txtStartDate.setText(ms.Value);
+            if (tilStartDate != null)
+                Objects.requireNonNull(tilStartDate.getEditText()).setText(ms.Value);
         }
         dismiss();
     }

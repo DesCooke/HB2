@@ -10,14 +10,14 @@
         style="@style/TextAppearance.HB2_DialogHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select a Date"
+        android:text="@string/select_a_date"
         android:textAlignment="center" />
 
     <Switch
         android:id="@+id/switch1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Date Known?" />
+        android:text="@string/date_known" />
 
     <DatePicker
         android:id="@+id/datePicker"

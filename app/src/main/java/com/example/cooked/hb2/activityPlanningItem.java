@@ -414,6 +414,8 @@ public class activityPlanningItem extends AppCompatActivity
 
             if (mPlannedType.Value == RecordPlanned.mPTMonthly)
             {
+                if(mRecordPlanned.mPlannedDay>0)
+                    MyDay.Value = mRecordPlanned.mPlannedDay;
                 ddayp.show();
             }
 
