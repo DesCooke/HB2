@@ -150,6 +150,9 @@
     <string name="previous_month">Previous Month</string>
     <string name="mm_yyyy">mm/yyyy</string>
     <string name="next_month">Next Month</string>
+    <string name="select_a_date">Select a Date</string>
+    <string name="date_known">Date Known?</string>
+    <string name="select_a_day">Select a Day</string>
     <string-array name="defaultbudgettypes">
         <item>Same Month Last Year</item>
         <item>Last Month</item>

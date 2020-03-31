@@ -13,6 +13,7 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="dialog_width">350dp</dimen>
     <dimen name="viewpager_margin_overlap">-60dp</dimen>
     <dimen name="viewpager_margin_overlap_payment">-30dp</dimen>
 
