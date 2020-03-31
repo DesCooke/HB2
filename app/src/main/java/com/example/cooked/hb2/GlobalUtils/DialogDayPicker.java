@@ -2,11 +2,13 @@ package com.example.cooked.hb2.GlobalUtils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -16,6 +18,7 @@ import com.example.cooked.hb2.R;
 
 public class DialogDayPicker extends Dialog implements View.OnClickListener
 {
+    private Activity _activity;
     private TextView edtText;         // EditText on previous form
     public TextInputLayout tilText;   // TextInputLayer edit on previous form
     public MyInt mDay;                // used to pass Day to this form and back from it
@@ -26,6 +29,7 @@ public class DialogDayPicker extends Dialog implements View.OnClickListener
     public DialogDayPicker(Activity a)
     {
         super(a);
+        _activity=a;
     }
 
     @Override
@@ -46,8 +50,8 @@ public class DialogDayPicker extends Dialog implements View.OnClickListener
         {
             String lString=String.valueOf(mDay.Value);
             edtDay.getEditText().setText(lString);
+            edtDay.getEditText().selectAll();
         }
-
     }
 
     @Override
