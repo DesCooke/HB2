@@ -35,7 +35,7 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
     {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.plannedtype_picker);
+        setContentView(R.layout.dialog_plannedtype_picker);
 
         Button btnOk = findViewById(R.id.btnOk);
 

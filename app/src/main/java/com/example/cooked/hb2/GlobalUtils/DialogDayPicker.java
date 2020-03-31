@@ -35,7 +35,7 @@ public class DialogDayPicker extends Dialog implements View.OnClickListener
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.day_picker);
+        setContentView(R.layout.dialog_day_picker);
 
         Button btnOk = findViewById(R.id.btnOk);
 

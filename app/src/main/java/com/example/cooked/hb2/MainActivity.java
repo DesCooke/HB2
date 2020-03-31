@@ -22,15 +22,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Adapters.ViewPagerMainAdapter;
-import com.example.cooked.hb2.GlobalUtils.DialogBudgetPicker;
-import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
 import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Records.RecordAccount;

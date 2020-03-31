@@ -42,7 +42,7 @@ public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.weekday_picker);
+        setContentView(R.layout.dialog_weekday_picker);
 
         Button btnOk = findViewById(R.id.btnOk);
 
