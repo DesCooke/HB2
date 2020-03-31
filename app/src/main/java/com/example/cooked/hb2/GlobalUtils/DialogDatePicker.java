@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.R;
@@ -18,16 +19,22 @@ import java.util.Date;
 
 public class DialogDatePicker extends Dialog implements View.OnClickListener
 {
+    public Activity activity;
     public TextView txtStartDate;
     public TextInputLayout tilStartDate;
     private DateUtils dateUtils;
     private DatePicker datePicker;
     private boolean setInitialDate;
     private Date initialDate;
+    public Switch switch1;
+    public Long dateUnknownMillisecs;
+    public String dateUnknownString;
+    public Calendar calendar;
 
     public DialogDatePicker(Activity a)
     {
         super(a);
+        activity=a;
         setInitialDate = false;
     }
 
@@ -46,15 +53,67 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
 
         Button ok = findViewById(R.id.btnOk);
         datePicker = findViewById(R.id.datePicker);
+        switch1 = findViewById(R.id.switch1);
+
+        calendar = Calendar.getInstance();
+        dateUnknownMillisecs=Long.parseLong(activity.getResources().getString(R.string.date_unknown_millisecs));
+        calendar.setTimeInMillis(dateUnknownMillisecs);
+        MyString myString=new MyString();
+        DateUtils.DateToStr(calendar.getTime(), myString);
+        dateUnknownString=myString.Value;
 
         ok.setOnClickListener(this);
         dateUtils = new DateUtils();
         if (setInitialDate)
         {
-            Calendar calendar = Calendar.getInstance();
             calendar.setTime(initialDate);
-            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+            if(calendar.getTimeInMillis()>=dateUnknownMillisecs)
+            {
+                datePicker.setVisibility(View.INVISIBLE);
+                switch1.setChecked(false);
+                calendar.setTimeInMillis(dateUnknownMillisecs);
+                datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            }
+            else
+            {
+                switch1.setChecked(true);
+                datePicker.setVisibility(View.VISIBLE);
+                calendar.setTime(initialDate);
+                datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            }
+
         }
+
+        switch1.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+                try {
+                    if(switch1.isChecked())
+                    {
+                        datePicker.setVisibility(View.VISIBLE);
+                        if(calendar.getTimeInMillis()>=dateUnknownMillisecs)
+                        {
+                            calendar.setTime(new Date());
+                            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                        }
+                        else
+                        {
+                            calendar.setTime(initialDate);
+                            datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                        }
+                    }
+                    else
+                    {
+                        datePicker.setVisibility(View.INVISIBLE);
+                        calendar.setTimeInMillis(dateUnknownMillisecs);
+                        datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                    }
+                }
+                finally {
+                }
+            }
+        });
+
     }
 
     public void setInitialDate(Date date)

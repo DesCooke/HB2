@@ -11,7 +11,6 @@ import com.example.cooked.hb2.Records.RecordBudgetGroup;
 import com.example.cooked.hb2.Records.RecordBudgetItem;
 import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
-import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
@@ -532,7 +531,7 @@ public class MyDatabase extends SQLiteOpenHelper
         rp.mSunday = false;
 
         rp.mStartDate = rt.TxDate;
-        rp.mEndDate = dateUtils().StrToDate(MainActivity.context.getString(R.string.end_of_time));
+        rp.mEndDate = dateUtils().StrToDate(MainActivity.context.getString(R.string.date_unknown_string));
 
         rp.mMatchingTxType = rt.TxType;
         rp.mMatchingTxDescription = rt.TxDescription;

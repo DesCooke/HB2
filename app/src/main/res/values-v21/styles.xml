@@ -1,8 +1,12 @@
 <resources>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+    <style name="TextAppearance.HB2_DialogHeader" parent="TextAppearance.AppCompat" >
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 </resources>

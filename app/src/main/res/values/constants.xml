@@ -6,7 +6,8 @@
     <string name="table_dump_tblTransaction">tblTransaction.csv</string>
     <string name="download_directory">/storage/emulated/0/Download</string>
     <string name="tx_archive_directory">/storage/emulated/0/HB/txarchive</string>
-    <string name="end_of_time">31/12/2099</string>
+    <string name="date_unknown_string">23/05/2069</string>
+    <string name="date_unknown_millisecs">3136492800000</string>
     <integer name="item_type_budget_class">0</integer>
     <integer name="item_type_budget_group">1</integer>
     <integer name="item_type_budget_item">2</integer>

@@ -77,7 +77,7 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.transactionlist_picker);
+        setContentView(R.layout.transactionlist);
 
         mBudgetList = findViewById(R.id.budgetList);
         mBudgetList.setHasFixedSize(true);

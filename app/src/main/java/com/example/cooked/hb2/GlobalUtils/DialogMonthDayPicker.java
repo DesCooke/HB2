@@ -36,7 +36,7 @@ public class DialogMonthDayPicker extends Dialog implements View.OnClickListener
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.monthday_picker);
+        setContentView(R.layout.dialog_monthday_picker);
 
         Button btnOk = findViewById(R.id.btnOk);
 
