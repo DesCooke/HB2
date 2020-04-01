@@ -366,6 +366,10 @@ public class MyDatabase extends SQLiteOpenHelper
         tableAccount.deleteAccount(ra);
     }
 
+    public void accountResequence(ArrayList<RecordAccount> raa)
+    {
+        tableAccount.accountResequence(raa);
+    }
     public void unhideAllAccounts()
     {
         tableAccount.unhideAllAccounts();

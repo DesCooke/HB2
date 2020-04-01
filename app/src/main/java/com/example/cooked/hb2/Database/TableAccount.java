@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordAccount;
 
@@ -68,7 +67,7 @@ class TableAccount extends TableBase
                         "(AcSeqNo, AcSortCode, " +
                         "AcAccountNumber, AcDescription, AcStartingBalance, OrderSeqNo, Hidden) " +
                         "VALUES (" +
-                        Integer.toString(ra.AcSeqNo) + "," +
+                        ra.AcSeqNo + "," +
                         "'" + ra.AcSortCode + "'," +
                         "'" + ra.AcAccountNumber + "'," +
                         "'" + ra.AcDescription + "'," +
@@ -88,7 +87,7 @@ class TableAccount extends TableBase
                             " AcStartingBalance = " + ra.AcStartingBalance.toString() + ", " +
                             " OrderSeqNo = " + ra.AcOrderSeqNo.toString() + ", " +
                             " Hidden = " + ra.AcHidden.toString() + " " +
-                            "WHERE AcSeqNo = " + Integer.toString(ra.AcSeqNo);
+                            "WHERE AcSeqNo = " + ra.AcSeqNo;
 
         executeSQL(lSql, "TableAccount::updateAccount", null);
 
@@ -293,6 +292,18 @@ class TableAccount extends TableBase
         MyLog.WriteLogMessage("DB Version " + Integer.toString(db.getVersion()) + ". " +
                 "Downgrading from " + Integer.toString(oldVersion) +
                 " down to " + Integer.toString(newVersion) );
+    }
+
+    public void accountResequence(ArrayList<RecordAccount> raa)
+    {
+        int lSeqNo=1;
+        for (int i = 0; i < raa.size(); i++)
+        {
+            RecordAccount ra = raa.get(i);
+            ra.AcOrderSeqNo=lSeqNo;
+            updateAccount(ra);
+            lSeqNo++;
+        }
     }
 
 }

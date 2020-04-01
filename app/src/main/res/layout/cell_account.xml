@@ -1,62 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/celltx_full"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="18dp"
-    android:background="@android:drawable/dialog_holo_light_frame">
+    android:background="@android:drawable/dialog_holo_light_frame"
+    android:contentDescription="@string/celltx_full">
 
-    <TextView
-        android:id="@+id/cellac_sortcode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        android:text="Sort Code"
-        android:textSize="18sp"
+
+    <LinearLayout
+        android:id="@+id/celltx_full"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/cellac_accountnumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        android:text="Account Number"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cellac_sortcode"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/cellac_sortcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cellacc_sortcode"
+            android:layout_marginStart="8dp"
+            android:text="@string/sort_code"
+            android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/cellacc_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="TextView"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cellac_accountnumber"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/cellac_accountnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/cellac_accountnumber"
+            android:text="@string/account_number"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/cellacc_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/cellacc_description"
+            android:text="@string/textview"
+            android:textSize="18sp" />
+    </LinearLayout>
+
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/cellacc_move"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/cellacc_move"
         android:tint="@color/grey_40"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/celltx_full"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_reoder" />
 
