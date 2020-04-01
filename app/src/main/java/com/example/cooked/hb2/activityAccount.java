@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +15,17 @@ import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.TransactionUI.AccountAdapter;
+import com.example.cooked.hb2.helper.DragItemTouchHelper;
 
 import java.util.ArrayList;
 
 public class activityAccount extends AppCompatActivity
 {
+    private ItemTouchHelper mItemTouchHelper;
+    private RecyclerView mAccountList;
+    private RecyclerView.LayoutManager mLayoutManagerCurrent;
+    private AccountAdapter mAccountAdapter;
+    private ArrayList<RecordAccount> mDataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,13 +50,17 @@ public class activityAccount extends AppCompatActivity
     {
         try
         {
-            ArrayList<RecordAccount> mDataset = MyDatabase.MyDB().getAccountList();
-            RecyclerView mAccountList = findViewById(R.id.accountList);
+            mDataset = MyDatabase.MyDB().getAccountList();
+
+            mAccountList = findViewById(R.id.accountList);
             mAccountList.setHasFixedSize(true);
-            RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
+
+            mLayoutManagerCurrent = new LinearLayoutManager(this);
             mAccountList.setLayoutManager(mLayoutManagerCurrent);
-            AccountAdapter mAccountAdapter = new AccountAdapter(mDataset);
+
+            mAccountAdapter = new AccountAdapter(this, mDataset);
             mAccountList.setAdapter(mAccountAdapter);
+
             mAccountAdapter.setOnItemClickListener(new AccountAdapter.OnItemClickListener()
             {
                 @Override
@@ -60,6 +71,18 @@ public class activityAccount extends AppCompatActivity
                     startActivity(intent);
                 }
             });
+
+            mAccountAdapter.setDragListener(new AccountAdapter.OnStartDragListener() {
+                @Override
+                public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+                    mItemTouchHelper.startDrag(viewHolder);
+                }
+            });
+
+            ItemTouchHelper.Callback callback = new DragItemTouchHelper(mAccountAdapter);
+            mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(mAccountList);
+
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
