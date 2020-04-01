@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">HB(3.00)</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
     <string name="title_activity_category">activityCategory</string>
     <string name="title_activity_category_item">activity_category_item</string>
@@ -164,6 +162,11 @@
     <string name="cellacc_description">cellacc_description</string>
     <string name="textview">TextView</string>
     <string name="select_a_day_and_month">Select a Day and Month</string>
+    <string name="pick_a_frequency">Pick a Frequency</string>
+    <string name="pick_one_or_more_days">Pick One or More Days</string>
+    <string name="sub_category_name">Sub Category Name</string>
+    <string name="copy_to_new">Copy to New</string>
+    <string name="auto_match_transaction">Auto Match Transaction</string>
     <string-array name="defaultbudgettypes">
         <item>Same Month Last Year</item>
         <item>Last Month</item>
