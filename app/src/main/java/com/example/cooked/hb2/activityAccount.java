@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.cooked.hb2.Database.MyDatabase;
@@ -64,6 +66,45 @@ public class activityAccount extends AppCompatActivity
         }
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MyLog.WriteLogMessage("ActivityAccount:onCreateOptionsMenu:Starting");
+        try
+        {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.activity_account_menu, menu);
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("ActivityAccount:onCreateOptionsMenu:Ending");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        MyLog.WriteLogMessage("ActivityAccount:onOptionsItemSelected:Starting");
+        try
+        {
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
+            if (id == R.id.unhideAllAccounts)
+            {
+                MyDatabase.MyDB().unhideAllAccounts();
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("ActivityAccount:onOptionsItemSelected:Ending");
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void onResume()

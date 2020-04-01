@@ -12,6 +12,9 @@ public class RecordAccount
     public String AcAccountNumber;
     public String AcDescription;
     public Float AcStartingBalance;
+    public Integer AcOrderSeqNo;
+    public Integer AcHidden;
+
     public ArrayList<RecordTransaction> RecordTransactions;
 
     public RecordAccount
@@ -20,7 +23,9 @@ public class RecordAccount
                     String pSortCode,
                     String pAccountNumber,
                     String pDescription,
-                    Float pStartingBalance
+                    Float pStartingBalance,
+                    Integer pOrderSeqNo,
+                    Integer pHidden
             )
     {
         AcSeqNo = pSeqNo;
@@ -28,6 +33,8 @@ public class RecordAccount
         AcAccountNumber = pAccountNumber;
         AcDescription = pDescription;
         AcStartingBalance = pStartingBalance;
+        AcOrderSeqNo = pOrderSeqNo;
+        AcHidden = pHidden;
         RecordTransactions = new ArrayList<RecordTransaction>();
     }
 

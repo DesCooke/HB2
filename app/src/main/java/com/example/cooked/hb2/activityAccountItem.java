@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Toast;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
@@ -21,6 +23,7 @@ public class activityAccountItem extends AppCompatActivity
     TextInputLayout mAcStartingBalance;
     Button mBtnOk;
     Button mBtnCancel;
+    CheckBox mChkHidden;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -36,6 +39,7 @@ public class activityAccountItem extends AppCompatActivity
             mAcStartingBalance = findViewById(R.id.tilAcStartingBalance);
             mBtnOk = findViewById(R.id.btnOk);
             mBtnCancel = findViewById(R.id.btnCancel);
+            mChkHidden = findViewById(R.id.chkHidden);
 
             mAcSeqNo = getIntent().getIntExtra("AcSeqNo", -1);
             mRec = MyDatabase.MyDB().getAccountItem(mAcSeqNo);
@@ -44,6 +48,9 @@ public class activityAccountItem extends AppCompatActivity
 
             mAcDescription.getEditText().setText(mRec.AcDescription);
             mAcStartingBalance.getEditText().setText(mRec.AcStartingBalance.toString());
+            mChkHidden.setChecked(false);
+            if(mRec.AcHidden!=0)
+                mChkHidden.setChecked(true);
 
             mBtnOk.setOnClickListener(new View.OnClickListener()
             {
@@ -53,6 +60,17 @@ public class activityAccountItem extends AppCompatActivity
                     {
                         mRec.AcDescription = mAcDescription.getEditText().getText().toString();
                         mRec.AcStartingBalance = Float.parseFloat(mAcStartingBalance.getEditText().getText().toString());
+
+                        if(  (mRec.AcHidden==0 && mChkHidden.isChecked()) ||
+                                (mRec.AcHidden!=0 && !mChkHidden.isChecked())
+                            )
+                        {
+                            Toast.makeText(getApplicationContext(),"Please restart to reload UI",Toast.LENGTH_SHORT).show();
+                        }
+
+                        mRec.AcHidden=0;
+                        if(mChkHidden.isChecked())
+                            mRec.AcHidden=1;
                         MyDatabase.MyDB().updateAccount(mRec);
                     } catch (Exception e)
                     {

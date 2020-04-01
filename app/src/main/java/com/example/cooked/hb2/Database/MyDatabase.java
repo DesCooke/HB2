@@ -36,7 +36,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 17;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -366,6 +366,11 @@ public class MyDatabase extends SQLiteOpenHelper
         tableAccount.deleteAccount(ra);
     }
 
+    public void unhideAllAccounts()
+    {
+        tableAccount.unhideAllAccounts();
+
+    }
     public void updateAccount(RecordAccount ra)
     {
         tableAccount.updateAccount(ra);
