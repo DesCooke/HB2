@@ -7,10 +7,14 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
@@ -113,7 +117,6 @@ public class activityPlanningItem extends AppCompatActivity
             btnDelete = findViewById(R.id.btnDelete);
             btnCopyToNew = findViewById(R.id.btnCopyToNew);
             swAutoMatchTransaction = findViewById(R.id.swAutoMatchTransaction);
-
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
@@ -466,4 +469,6 @@ public class activityPlanningItem extends AppCompatActivity
         }
 
     }
+
 }
+
