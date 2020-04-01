@@ -8,26 +8,24 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.R;
 
+import java.util.Objects;
+
 public class DialogPlannedTypePicker extends Dialog implements View.OnClickListener
 {
-    public TextView edtPlannedType;
     public TextInputLayout tilPlannedType;
     public MyInt mPlannedType;
+    private RadioButton radYearly;
+    private RadioButton radMonthly;
+    private RadioButton radWeekly;
 
 
     public DialogPlannedTypePicker(Activity a)
     {
         super(a);
-    }
-
-    private void ShowError(String argFunction, String argMessage)
-    {
-        ErrorDialog.Show("Error in DialogPlannedTypePicker::" + argFunction, argMessage);
     }
 
     @Override
@@ -38,16 +36,26 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
         setContentView(R.layout.dialog_plannedtype_picker);
 
         Button btnOk = findViewById(R.id.btnOk);
-
         btnOk.setOnClickListener(this);
+
+        RadioButton radOneoff = findViewById(R.id.radOneOff);
+        radYearly = findViewById(R.id.radYearly);
+        radMonthly = findViewById(R.id.radMonthly);
+        radWeekly = findViewById(R.id.radWeekly);
+
+        if(mPlannedType.Value==RecordPlanned.mPTOneOff)
+            radOneoff.setChecked(true);
+        if(mPlannedType.Value==RecordPlanned.mPTYearly)
+            radYearly.setChecked(true);
+        if(mPlannedType.Value==RecordPlanned.mPTMonthly)
+            radMonthly.setChecked(true);
+        if(mPlannedType.Value==RecordPlanned.mPTWeekly)
+            radWeekly.setChecked(true);
     }
 
     @Override
     public void onClick(View v)
     {
-        RadioButton radYearly = findViewById(R.id.radYearly);
-        RadioButton radMonthly = findViewById(R.id.radMonthly);
-        RadioButton radWeekly = findViewById(R.id.radWeekly);
         mPlannedType.Value = RecordPlanned.mPTOneOff;
         if (radYearly.isChecked())
             mPlannedType.Value = RecordPlanned.mPTYearly;
@@ -55,10 +63,8 @@ public class DialogPlannedTypePicker extends Dialog implements View.OnClickListe
             mPlannedType.Value = RecordPlanned.mPTMonthly;
         if (radWeekly.isChecked())
             mPlannedType.Value = RecordPlanned.mPTWeekly;
-        if (edtPlannedType != null)
-            edtPlannedType.setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
         if (tilPlannedType != null)
-            tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
+            Objects.requireNonNull(tilPlannedType.getEditText()).setText(RecordPlanned.mPlannedTypes[mPlannedType.Value]);
 
         dismiss();
     }

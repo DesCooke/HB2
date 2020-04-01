@@ -8,15 +8,15 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.TextView;
 
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
+import java.util.Objects;
+
 
 public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
 {
-    public TextView edtText;
     public TextInputLayout tilText;
     public MyBoolean mMonday;
     public MyBoolean mTuesday;
@@ -26,14 +26,17 @@ public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
     public MyBoolean mSaturday;
     public MyBoolean mSunday;
 
+    private CheckBox myMonday;
+    private CheckBox myTuesday;
+    private CheckBox myWednesday;
+    private CheckBox myThursday;
+    private CheckBox myFriday;
+    private CheckBox mySaturday;
+    private CheckBox mySunday;
+
     public DialogWeekDayPicker(Activity a)
     {
         super(a);
-    }
-
-    private void ShowError(String argFunction, String argMessage)
-    {
-        ErrorDialog.Show("Error in DialogWeekDayPicker::" + argFunction, argMessage);
     }
 
     @Override
@@ -45,21 +48,28 @@ public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
         setContentView(R.layout.dialog_weekday_picker);
 
         Button btnOk = findViewById(R.id.btnOk);
-
         btnOk.setOnClickListener(this);
+
+        myMonday = findViewById(R.id.chkMonday);
+        myTuesday = findViewById(R.id.chkTuesday);
+        myWednesday = findViewById(R.id.chkWednesday);
+        myThursday = findViewById(R.id.chkThursday);
+        myFriday = findViewById(R.id.chkFriday);
+        mySaturday = findViewById(R.id.chkSaturday);
+        mySunday = findViewById(R.id.chkSunday);
+
+        myMonday.setChecked(mMonday.Value);
+        myTuesday.setChecked(mTuesday.Value);
+        myWednesday.setChecked(mWednesday.Value);
+        myThursday.setChecked(mThursday.Value);
+        myFriday.setChecked(mFriday.Value);
+        mySaturday.setChecked(mSaturday.Value);
+        mySunday.setChecked(mSunday.Value);
     }
 
     @Override
     public void onClick(View v)
     {
-        CheckBox myMonday = findViewById(R.id.chkMonday);
-        CheckBox myTuesday = findViewById(R.id.chkTuesday);
-        CheckBox myWednesday = findViewById(R.id.chkWednesday);
-        CheckBox myThursday = findViewById(R.id.chkThursday);
-        CheckBox myFriday = findViewById(R.id.chkFriday);
-        CheckBox mySaturday = findViewById(R.id.chkSaturday);
-        CheckBox mySunday = findViewById(R.id.chkSunday);
-
         mMonday.Value = myMonday.isChecked();
         mTuesday.Value = myTuesday.isChecked();
         mWednesday.Value = myWednesday.isChecked();
@@ -86,10 +96,8 @@ public class DialogWeekDayPicker extends Dialog implements View.OnClickListener
 
         String lCaption = MainActivity.context.getString(R.string.DaysCaption);
         String lText = String.format(lCaption, lString);
-        if (edtText != null)
-            edtText.setText(lText);
         if (tilText != null)
-            tilText.getEditText().setText(lText);
+            Objects.requireNonNull(tilText.getEditText()).setText(lText);
 
         dismiss();
     }
