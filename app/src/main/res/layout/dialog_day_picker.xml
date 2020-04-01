@@ -15,9 +15,9 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/edtDay"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="start"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:paddingLeft="8dp"
@@ -27,7 +27,7 @@
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/tietDay"
-            android:layout_width="120dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/day"
             android:inputType="number" />
@@ -37,7 +37,7 @@
         android:id="@+id/btnOk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_gravity="start"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="@string/ok" />

@@ -17,6 +17,10 @@ public class DateUtils
 {
     private static DateUtils myDateUtils = null;
 
+    public static String[] MonthNames={"January","February","March","April","May", "June", "July", "August",
+            "September", "October", "November", "December"};
+
+
     public static DateUtils dateUtils()
     {
         if (myDateUtils == null)
@@ -25,6 +29,18 @@ public class DateUtils
         return (myDateUtils);
     }
 
+
+    public static String formatDayAndMonth(int day, int month)
+    {
+        String lSuffix="th";
+        if(day==1||day==21|day==31)
+            lSuffix="st";
+        if(day==2||day==22)
+            lSuffix="nd";
+        if(day==3||day==23)
+            lSuffix="rd";
+        return(String.valueOf(day) + lSuffix + ", " + MonthNames[month-1]);
+    }
 
     //
     // getDateFromDatePicker

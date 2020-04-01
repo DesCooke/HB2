@@ -108,7 +108,7 @@ public class RecordPlanned
         }
 
         if (mPlannedType == RecordPlanned.mPTYearly) {
-            mPlanned = "Day: " + mPlannedDay.toString() + ", Month " + mPlannedMonth.toString();
+            mPlanned = DateUtils.formatDayAndMonth(mPlannedDay, mPlannedMonth);
         }
 
         if (mPlannedType == RecordPlanned.mPTMonthly) {
