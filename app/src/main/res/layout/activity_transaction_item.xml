@@ -159,7 +159,7 @@
         android:layout_height="42dp"
         android:layout_marginStart="8dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="numberSigned|number|numberDecimal"
         android:onClick="selectAll"
         android:text=""
         android:textAlignment="textEnd"
