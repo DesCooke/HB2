@@ -188,7 +188,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/match_amount"
-            android:inputType="numberSigned" />
+            android:inputType="numberSigned|number|numberDecimal" />
     </android.support.design.widget.TextInputLayout>
 
     <Button

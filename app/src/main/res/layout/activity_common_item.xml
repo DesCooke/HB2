@@ -145,13 +145,13 @@
         android:layout_height="42dp"
         android:layout_marginStart="8dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="numberSigned|number|numberDecimal"
         android:onClick="selectAll"
         android:text=""
         android:textAlignment="textEnd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblAmount"
-        tools:ignore="LabelFor"/>
+        tools:ignore="LabelFor" />
 
     <Button
         android:id="@+id/btnOk"
