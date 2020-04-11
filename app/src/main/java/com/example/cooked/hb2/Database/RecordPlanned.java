@@ -44,6 +44,8 @@ public class RecordPlanned
     public Boolean mAutoMatchTransaction;
 
     Date mNextDueDate;
+
+    public Boolean mPaidInParts;
     
 
     RecordPlanned
@@ -72,7 +74,9 @@ public class RecordPlanned
             String pMatchingTxType,
             String pMatchingTxDescription,
             Float pMatchingTxAmount,
-            Boolean pAutoMatchTransaction
+            Boolean pAutoMatchTransaction,
+
+            Boolean pPaidInParts
 
         ) {
         mPlannedId = pPlannedId;
@@ -137,6 +141,7 @@ public class RecordPlanned
         mSubCategoryName = "";
         mNextDueDate = null;
         mAutoMatchTransaction = pAutoMatchTransaction;
+        mPaidInParts = pPaidInParts;
 
     }
     
@@ -171,6 +176,7 @@ public class RecordPlanned
         mSubCategoryName = "";
         mNextDueDate = null;
         mAutoMatchTransaction = false;
+        mPaidInParts = false;
     }
     
 }

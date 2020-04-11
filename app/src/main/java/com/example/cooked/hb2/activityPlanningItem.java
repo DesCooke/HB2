@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -76,6 +77,7 @@ public class activityPlanningItem extends AppCompatActivity
     public MyInt mPlannedType;
     public String mActionType;
     public RecordPlanned mRecordPlanned;
+    public CheckBox mPaidInParts;
 
     @SuppressLint("CutPasteId")
     @Override
@@ -117,6 +119,7 @@ public class activityPlanningItem extends AppCompatActivity
             btnDelete = findViewById(R.id.btnDelete);
             btnCopyToNew = findViewById(R.id.btnCopyToNew);
             swAutoMatchTransaction = findViewById(R.id.swAutoMatchTransaction);
+            mPaidInParts = findViewById(R.id.chkPaidInParts);
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
@@ -163,6 +166,7 @@ public class activityPlanningItem extends AppCompatActivity
                 btnDelete.setVisibility(View.GONE);
                 btnCopyToNew.setVisibility(View.GONE);
                 swAutoMatchTransaction.setChecked(false);
+                mPaidInParts.setChecked(false);
             }
             if (mActionType.compareTo("EDIT") == 0)
             {
@@ -191,6 +195,8 @@ public class activityPlanningItem extends AppCompatActivity
                         radCurrentAccount.setChecked(TRUE);
 
                     tilPlanned.getEditText().setText(mRecordPlanned.mPlanned);
+
+                    mPaidInParts.setChecked(mRecordPlanned.mPaidInParts);
 
                     MyString lString = new MyString();
 
@@ -259,6 +265,7 @@ public class activityPlanningItem extends AppCompatActivity
             mRecordPlanned.mPlannedType = mPlannedType.Value;
             mRecordPlanned.mPlannedName = edtPlannedName.getEditText().getText().toString();
             mRecordPlanned.mSubCategoryId = MySubCategoryId.Value;
+            mRecordPlanned.mPaidInParts = mPaidInParts.isChecked();
             if (radCashAccount.isChecked())
             {
                 mRecordPlanned.mSortCode = "Cash";
