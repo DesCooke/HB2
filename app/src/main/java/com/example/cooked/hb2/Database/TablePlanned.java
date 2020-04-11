@@ -64,7 +64,8 @@ class TablePlanned extends TableBase
                 "   MatchingTxType TEXT, " +
                 "   MatchingTxDescription TEXT, " +
                 "   MatchingTxAmount FLOAT, " +
-                "   AutoMatchTransaction INTEGER " +
+                "   AutoMatchTransaction INTEGER, " +
+                "   PaidInParts INTEGER " +
                 ") ";
         
         executeSQL(lSql, "TablePlanned::onCreate", db);
@@ -85,7 +86,8 @@ class TablePlanned extends TableBase
             "INSERT INTO tblPlanned " +
                 "(PlannedId, PlannedType, PlannedName, SubCategoryId, SortCode, AccountNo, PlannedDate, PlannedMonth, PlannedDay, Monday, " +
                 "Tuesday, Wednesday, Thursday, Friday, Saturday, " +
-                "Sunday, StartDate, EndDate, MatchingTxType, MatchingTxDescription, MatchingTxAmount, AutoMatchTransaction) " +
+                "Sunday, StartDate, EndDate, MatchingTxType, MatchingTxDescription, " +
+                "MatchingTxAmount, AutoMatchTransaction, PaidInParts) " +
                 "VALUES (" +
                 Integer.toString(rp.mPlannedId) + "," +
                 Integer.toString(rp.mPlannedType) + "," +
@@ -108,7 +110,8 @@ class TablePlanned extends TableBase
                 "'" + rp.mMatchingTxType + "'," +
                 "'" + rp.mMatchingTxDescription + "'," +
                 Float.toString(rp.mMatchingTxAmount) + ", " +
-                Integer.toString(rp.mAutoMatchTransaction?1:0) + " " +
+                Integer.toString(rp.mAutoMatchTransaction?1:0) + ", " +
+                Integer.toString(rp.mPaidInParts?1:0) + " " +
         ") ";
         
         executeSQL(lSql, "TablePlanned::addPlanned", null);
@@ -137,7 +140,8 @@ class TablePlanned extends TableBase
                         " MatchingTxType = '" + rp.mMatchingTxType + "'," +
                         " MatchingTxDescription = '" + rp.mMatchingTxDescription + "'," +
                         " MatchingTxAmount = " + Float.toString(rp.mMatchingTxAmount) + ", " +
-                        " AutoMatchTransaction = " + Integer.toString(rp.mAutoMatchTransaction ? 1 : 0) + " " +
+                        " AutoMatchTransaction = " + Integer.toString(rp.mAutoMatchTransaction ? 1 : 0) + ", " +
+                        " PaidInParts = " + Integer.toString(rp.mPaidInParts ? 1 : 0) + " " +
                         "WHERE PlannedId = " + Integer.toString(rp.mPlannedId);
 
         executeSQL(lSql, "TablePlanned::updatePlanned", null);
@@ -161,7 +165,7 @@ class TablePlanned extends TableBase
                         "SortCode, AccountNo, PlannedDate, PlannedMonth,PlannedDay,Monday, " +
                         "Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, StartDate, " +
                         "EndDate, MatchingTxType, MatchingTxDescription, MatchingTxAmount, " +
-                        "AutoMatchTransaction " +
+                        "AutoMatchTransaction, PaidInParts " +
                         " FROM tblPlanned ";
                 if (activeOnly)
                 {
@@ -216,7 +220,8 @@ class TablePlanned extends TableBase
                                                 cursor.getString(18),
                                                 cursor.getString(19),
                                                 Float.parseFloat(cursor.getString(20)),
-                                                Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE
+                                                Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
+                                                Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
                                             );
                                     list.add(lrec);
                                 } while (cursor.moveToNext());
@@ -252,7 +257,8 @@ class TablePlanned extends TableBase
                         "PlannedName", "SubCategoryId", "SortCode", "AccountNo", "PlannedDate",
                         "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
                         "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "StartDate",
-                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount", "AutoMatchTransaction"},
+                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount",
+                        "AutoMatchTransaction", "PaidInParts"},
                     "SubCategoryId=?",
                     new String[]{Integer.toString(pSubCategoryId)},
                     null, null, "PlannedName", null))
@@ -291,7 +297,8 @@ class TablePlanned extends TableBase
                                                 cursor.getString(18),
                                                 cursor.getString(19),
                                                 Float.parseFloat(cursor.getString(20)),
-                                                Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE
+                                                Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
+                                                Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
                                             );
                                     list.add(lrec);
                                 } while (cursor.moveToNext());
@@ -769,7 +776,8 @@ class TablePlanned extends TableBase
                         "PlannedName", "SubCategoryId", "SortCode", "AccountNo", "PlannedDate",
                         "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
                         "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "StartDate",
-                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount", "AutoMatchTransaction"},
+                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount",
+                        "AutoMatchTransaction", "PaidInParts"},
                     "PlannedId=?",
                     new String[]{pPlannedId.toString()}, null, null, null, null);
                 if (cursor != null)
@@ -803,7 +811,8 @@ class TablePlanned extends TableBase
                                     cursor.getString(18),
                                     cursor.getString(19),
                                     Float.parseFloat(cursor.getString(20)),
-                                    Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE
+                                    Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
+                                    Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
                                 ));
                         }
                     }
@@ -827,6 +836,11 @@ class TablePlanned extends TableBase
         {
             MyLog.WriteLogMessage("Altering tblPlanned - adding column AutoMatchTransaction");
             db.execSQL("ALTER TABLE tblPlanned ADD COLUMN AutoMatchTransaction INTEGER DEFAULT 0");
+        }
+        if (oldVersion == 17 && newVersion == 18)
+        {
+            MyLog.WriteLogMessage("Altering tblPlanned - adding column PaidInParts");
+            db.execSQL("ALTER TABLE tblPlanned ADD COLUMN PaidInParts INTEGER DEFAULT 0");
         }
     }
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)

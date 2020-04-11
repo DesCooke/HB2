@@ -236,4 +236,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtMatchAmount" />
 
+    <CheckBox
+        android:id="@+id/chkPaidInParts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Paid In Parts"
+        app:layout_constraintBottom_toTopOf="@+id/tilPlannedType"
+        app:layout_constraintStart_toEndOf="@+id/tilEndDate"
+        app:layout_constraintTop_toBottomOf="@+id/tilSubCategoryName" />
+
 </android.support.constraint.ConstraintLayout>
