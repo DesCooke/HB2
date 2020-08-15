@@ -837,11 +837,11 @@ class TablePlanned extends TableBase
             MyLog.WriteLogMessage("Altering tblPlanned - adding column AutoMatchTransaction");
             db.execSQL("ALTER TABLE tblPlanned ADD COLUMN AutoMatchTransaction INTEGER DEFAULT 0");
         }
-        if (oldVersion == 17 && newVersion == 18)
+/*        if (oldVersion == 17 && newVersion == 18)
         {
             MyLog.WriteLogMessage("Altering tblPlanned - adding column PaidInParts");
             db.execSQL("ALTER TABLE tblPlanned ADD COLUMN PaidInParts INTEGER DEFAULT 0");
-        }
+        }*/
     }
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
