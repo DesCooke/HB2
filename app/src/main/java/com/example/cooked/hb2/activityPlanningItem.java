@@ -1,6 +1,7 @@
 package com.example.cooked.hb2;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -387,6 +388,20 @@ public class activityPlanningItem extends AppCompatActivity
             mRecordPlanned.mPlannedId = 0;
             btnDelete.setVisibility(View.GONE);
             btnCopyToNew.setVisibility(View.GONE);
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+    }
+
+    public void showVariations(View view)
+    {
+        try
+        {
+            Intent intent = new Intent(getApplicationContext(), activityPlanningVariation.class);
+            intent.putExtra("ACTIONTYPE", "VIEW");
+            intent.putExtra("PLANNEDID", mRecordPlanned.mPlannedId);
+            startActivity(intent);
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);

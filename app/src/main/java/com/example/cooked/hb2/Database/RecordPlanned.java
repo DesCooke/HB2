@@ -3,6 +3,7 @@ package com.example.cooked.hb2.Database;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class RecordPlanned
@@ -46,7 +47,8 @@ public class RecordPlanned
     Date mNextDueDate;
 
     public Boolean mPaidInParts;
-    
+
+    public ArrayList<RecordPlannedVariation> variations;
 
     RecordPlanned
         (
@@ -144,7 +146,22 @@ public class RecordPlanned
         mPaidInParts = pPaidInParts;
 
     }
-    
+
+    public Float GetAmountAt(Date atDate)
+    {
+        if(variations==null)
+            return(mMatchingTxAmount);
+        if(variations.size()==0)
+            return(mMatchingTxAmount);
+        for(int i=0;i<variations.size();i++)
+        {
+            RecordPlannedVariation rpv=variations.get(i);
+            if(rpv!=null)
+                if(atDate.compareTo(rpv.mEffDate)>0)
+                    return(rpv.mAmount);
+        }
+        return(mMatchingTxAmount);
+    }
     public RecordPlanned()
     {
         mPlannedId = 0;

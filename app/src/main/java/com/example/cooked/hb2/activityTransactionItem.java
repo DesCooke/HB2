@@ -216,14 +216,22 @@ public class activityTransactionItem extends AppCompatActivity
 
                                 MyLog.WriteLogMessage("VV:    Start " + lrp.mStartDate.toString());
                                 MyLog.WriteLogMessage("VV:    End " + lrp.mEndDate.toString());
-                                if(lrp.mPaidInParts==false) {
-                                    if (lrp.mStartDate.before(lNow) && lrp.mEndDate.after(lNow)) {
+                                /*
+                                if(lrp.mPaidInParts==false)
+                                {
+                                    if (lrp.mStartDate.before(lNow) && lrp.mEndDate.after(lNow))
+                                    {
                                         MyLog.WriteLogMessage("VV:    Type " + lrp.mPlannedType);
-                                        if (lrp.mPlannedType == RecordPlanned.mPTMonthly) {
+                                        if (lrp.mPlannedType == RecordPlanned.mPTMonthly)
+                                        {
                                             MyLog.WriteLogMessage("VV:    Amount " + lrp.mMatchingTxAmount);
-                                            if ((lrp.mMatchingTxAmount > 0 && originalRecord.TxAmount > 0) ||
-                                                    (lrp.mMatchingTxAmount < 0 && originalRecord.TxAmount < 0)) {
-                                                if (lrp.mMatchingTxAmount.compareTo(originalRecord.TxAmount) != 0) {
+                                            if (
+                                                    (lrp.mMatchingTxAmount > 0 && originalRecord.TxAmount > 0) ||
+                                                    (lrp.mMatchingTxAmount < 0 && originalRecord.TxAmount < 0)
+                                               )
+                                            {
+                                                if (lrp.mMatchingTxAmount.compareTo(originalRecord.TxAmount) != 0)
+                                                {
                                                     lOkToFinish = false;
                                                     dialogUpdatePlannedQ.plannedAmount = lrp.mMatchingTxAmount;
                                                     dialogUpdatePlannedQ.thisTransactionAmount = originalRecord.TxAmount;
@@ -235,6 +243,8 @@ public class activityTransactionItem extends AppCompatActivity
                                         }
                                     }
                                 }
+
+                                 */
                             }
                         }
                     } catch (Exception e)

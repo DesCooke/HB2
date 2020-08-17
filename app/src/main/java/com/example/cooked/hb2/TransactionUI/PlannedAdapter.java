@@ -15,6 +15,7 @@ import com.example.cooked.hb2.GlobalUtils.MyString;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHolder>
 {
@@ -116,12 +117,13 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
 
         holder.mMatchingType.setText("Matching Type: " + rec.mMatchingTxType);
         holder.mMatchingDescription.setText("Matching Description: " + rec.mMatchingTxDescription);
-        if (rec.mMatchingTxAmount < 0.00)
+        Float lAmount = rec.GetAmountAt(Calendar.getInstance().getTime());
+        if (lAmount < 0.00)
         {
-            holder.mMatchingAmount.setText("Amount: -£" + String.format("%.2f", rec.mMatchingTxAmount * -1));
+            holder.mMatchingAmount.setText("Amount: -£" + String.format("%.2f", lAmount * -1));
         } else
         {
-            holder.mMatchingAmount.setText("Amount: £" + String.format("%.2f", rec.mMatchingTxAmount));
+            holder.mMatchingAmount.setText("Amount: £" + String.format("%.2f", lAmount));
         }
         holder.mFull.setOnClickListener(new View.OnClickListener()
         {

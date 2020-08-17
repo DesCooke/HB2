@@ -36,7 +36,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -45,6 +45,7 @@ public class MyDatabase extends SQLiteOpenHelper
     private TablePlanned tablePlanned;
     private TableCommon tableCommon;
     private TableAccount tableAccount;
+    private TablePlannedVariation tablePlannedVariation;
     public String Notes;
     public TextView txtNotes;
     public boolean Dirty = true;
@@ -72,6 +73,7 @@ public class MyDatabase extends SQLiteOpenHelper
         tablePlanned = new TablePlanned(this);
         tableCommon = new TableCommon(this);
         tableAccount = new TableAccount(this);
+        tablePlannedVariation =  new TablePlannedVariation(this);
     }
 
     // called when the current database version is 0
@@ -85,6 +87,7 @@ public class MyDatabase extends SQLiteOpenHelper
         tablePlanned.onCreate(db);
         tableCommon.onCreate(db);
         tableAccount.onCreate(db);
+        tablePlannedVariation.onCreate(db);
     }
 
     private void addToNotes(String comment)
@@ -123,6 +126,7 @@ public class MyDatabase extends SQLiteOpenHelper
         tablePlanned.onUpgrade(db, oldVersion, newVersion);
         tableCommon.onUpgrade(db, oldVersion, newVersion);
         tableAccount.onUpgrade(db, oldVersion, newVersion);
+        tablePlannedVariation.onUpgrade(db, oldVersion, newVersion);
     }
 
     // called when the version number decreases
@@ -136,6 +140,7 @@ public class MyDatabase extends SQLiteOpenHelper
         tablePlanned.onDowngrade(db, oldVersion, newVersion);
         tableCommon.onDowngrade(db, oldVersion, newVersion);
         tableAccount.onDowngrade(db, oldVersion, newVersion);
+        tablePlannedVariation.onDowngrade(db, oldVersion, newVersion);
     }
     //endregion
 
@@ -509,6 +514,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public void deletePlanned(RecordPlanned rp)
     {
+        tablePlannedVariation.deleteVariationForPlannedId(rp.mPlannedId);
         tablePlanned.deletePlanned(rp);
     }
 
@@ -1149,6 +1155,39 @@ public class MyDatabase extends SQLiteOpenHelper
                 rt.SubCategoryName = sc.SubCategoryName;
         }
         return (rt);
+    }
+    //endregion
+
+
+    //region PlannedVariation Functions
+    public void addVariation(RecordPlannedVariation rpv)
+    {
+        tablePlannedVariation.addVariation(rpv);
+    }
+
+    public void deleteVariation(RecordPlannedVariation rpv)
+    {
+        tablePlannedVariation.deleteVariation(rpv);
+    }
+
+    public void deleteVariationForPlannedId(int pPlannedId)
+    {
+        tablePlannedVariation.deleteVariationForPlannedId(pPlannedId);
+    }
+
+    public void updateVariation(RecordPlannedVariation rpv)
+    {
+        tablePlannedVariation.updateVariation(rpv);
+    }
+
+    public ArrayList<RecordPlannedVariation> getVariationList(int pPlannedId)
+    {
+        return(tablePlannedVariation.getVariationList(pPlannedId));
+    }
+
+    public RecordPlannedVariation getSingleVariation(Integer pVariationId)
+    {
+        return(tablePlannedVariation.getSingleVariation(pVariationId));
     }
     //endregion
 
