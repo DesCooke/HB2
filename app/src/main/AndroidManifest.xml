@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cooked.hb2">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/budgeticon"
@@ -9,7 +12,12 @@
         android:roundIcon="@drawable/budgeticon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activityLog"></activity>
+        <activity
+            android:name=".activityPlanningVariationItem"
+            android:label="@string/title_activity_planning_variation_item"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".activityPlanningVariation" />
+        <activity android:name=".activityLog" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"
@@ -75,8 +83,5 @@
             android:label="@string/title_activity_planned_tx"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>

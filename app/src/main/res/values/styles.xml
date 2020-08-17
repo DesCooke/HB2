@@ -23,6 +23,7 @@
     <style name="TextAppearance.Subhead.Bold" parent="@style/TextAppearance.AppCompat.Subhead">
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="ActionBarSubtitleSmall" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
         <item name="android:textSize">12dp</item>
     </style>

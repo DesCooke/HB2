@@ -95,7 +95,7 @@ class TablePlanned extends TableBase
                 Integer.toString(rp.mSubCategoryId) + "," +
                     "'" + rp.mSortCode + "'," +
                     "'" + rp.mAccountNo + "'," +
-                Long.toString(DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate.getTime())) + "," +
+                Long.toString(DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate)) + "," +
                 Integer.toString(rp.mPlannedMonth) + "," +
                 Integer.toString(rp.mPlannedDay) + "," +
                 Integer.toString(rp.mMonday?1:0) + "," +
@@ -125,7 +125,7 @@ class TablePlanned extends TableBase
                         " SubCategoryId = " + Integer.toString(rp.mSubCategoryId) + "," +
                         " SortCode = '" + rp.mSortCode + "'," +
                         " AccountNo = '" + rp.mAccountNo + "'," +
-                        " PlannedDate = " + Long.toString(DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate.getTime())) + "," +
+                        " PlannedDate = " + Long.toString(DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate)) + "," +
                         " PlannedMonth = " + Integer.toString(rp.mPlannedMonth) + "," +
                         " PlannedDay = " + Integer.toString(rp.mPlannedDay) + "," +
                         " Monday = " + Integer.toString(rp.mMonday ? 1 : 0) + "," +
@@ -156,161 +156,149 @@ class TablePlanned extends TableBase
         executeSQL(lSql, "TablePlanned::deletePlanned", null);
     }
     
-    ArrayList<RecordPlanned> getPlannedList(boolean activeOnly)
-    {
+    ArrayList<RecordPlanned> getPlannedList(boolean activeOnly) {
         ArrayList<RecordPlanned> list;
-            try (SQLiteDatabase db = helper.getReadableDatabase())
-            {
-                String l_SQL = "SELECT PlannedId, PlannedType, PlannedName, SubCategoryId, " +
-                        "SortCode, AccountNo, PlannedDate, PlannedMonth,PlannedDay,Monday, " +
-                        "Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, StartDate, " +
-                        "EndDate, MatchingTxType, MatchingTxDescription, MatchingTxAmount, " +
-                        "AutoMatchTransaction, PaidInParts " +
-                        " FROM tblPlanned ";
-                if (activeOnly)
-                {
-                    Integer lCurrBudgetMonth=DateUtils.dateUtils().CurrentBudgetMonth();
-                    Integer lCurrBudgetYear=DateUtils.dateUtils().CurrentBudgetYear();
-                    Date lBudgetStart=DateUtils.dateUtils().BudgetStart(lCurrBudgetMonth, lCurrBudgetYear);
-                    Date lBudgetEnd=DateUtils.dateUtils().BudgetEnd(lCurrBudgetMonth, lCurrBudgetYear);
+        try (SQLiteDatabase db = helper.getReadableDatabase()) {
+            String l_SQL = "SELECT PlannedId, PlannedType, PlannedName, SubCategoryId, " +
+                    "SortCode, AccountNo, PlannedDate, PlannedMonth,PlannedDay,Monday, " +
+                    "Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, StartDate, " +
+                    "EndDate, MatchingTxType, MatchingTxDescription, MatchingTxAmount, " +
+                    "AutoMatchTransaction, PaidInParts " +
+                    " FROM tblPlanned ";
+            if (activeOnly) {
+                Integer lCurrBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+                Integer lCurrBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+                Date lBudgetStart = DateUtils.dateUtils().BudgetStart(lCurrBudgetMonth, lCurrBudgetYear);
+                Date lBudgetEnd = DateUtils.dateUtils().BudgetEnd(lCurrBudgetMonth, lCurrBudgetYear);
 
-                    l_SQL = l_SQL +  "WHERE StartDate < " + Long.toString(lBudgetEnd.getTime()) +
-                            " AND EndDate > " + Long.toString(lBudgetStart.getTime()) + " " ;
-                }
-                l_SQL = l_SQL + "ORDER BY PlannedName";
+                l_SQL = l_SQL + "WHERE StartDate < " + Long.toString(lBudgetEnd.getTime()) +
+                        " AND EndDate > " + Long.toString(lBudgetStart.getTime()) + " ";
+            }
+            l_SQL = l_SQL + "ORDER BY PlannedName";
 
-                Cursor cursor = db.rawQuery(l_SQL, null);
-                try
-                {
-                    list = new ArrayList<>();
-                    if (cursor != null)
-                    {
-                        try
-                        {
-                            if (cursor.getCount() > 0)
-                            {
-                                cursor.moveToFirst();
-                                do
-                                {
-                                    Long lOrigDate=Long.parseLong(cursor.getString(6));
-                                    Date lDate=new Date(lOrigDate);
-                                    Long lNewDate=DateUtils.dateUtils().StripTimeElement(lOrigDate);
-                                    lDate=new Date(lNewDate);
-                                    RecordPlanned lrec =
+            Cursor cursor = db.rawQuery(l_SQL, null);
+            try {
+                list = new ArrayList<>();
+                if (cursor != null) {
+                    try {
+                        if (cursor.getCount() > 0) {
+                            cursor.moveToFirst();
+                            do {
+                                Long lOrigDate = Long.parseLong(cursor.getString(6));
+                                Date lDate = new Date(lOrigDate);
+                                Long lNewDate = DateUtils.dateUtils().StripTimeElement(lDate);
+                                lDate = new Date(lNewDate);
+                                RecordPlanned lrec =
                                         new RecordPlanned
-                                            (
-                                                Integer.parseInt(cursor.getString(0)),
-                                                Integer.parseInt(cursor.getString(1)),
-                                                cursor.getString(2),
-                                                Integer.parseInt(cursor.getString(3)),
-                                                cursor.getString(4),
-                                                cursor.getString(5),
-                                                lDate,
-                                                Integer.parseInt(cursor.getString(7)),
-                                                Integer.parseInt(cursor.getString(8)),
-                                                Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
-                                                new Date(Long.parseLong(cursor.getString(16))),
-                                                new Date(Long.parseLong(cursor.getString(17))),
-                                                cursor.getString(18),
-                                                cursor.getString(19),
-                                                Float.parseFloat(cursor.getString(20)),
-                                                Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
-                                            );
-                                    list.add(lrec);
-                                } while (cursor.moveToNext());
-                            }
+                                                (
+                                                        Integer.parseInt(cursor.getString(0)),
+                                                        Integer.parseInt(cursor.getString(1)),
+                                                        cursor.getString(2),
+                                                        Integer.parseInt(cursor.getString(3)),
+                                                        cursor.getString(4),
+                                                        cursor.getString(5),
+                                                        lDate,
+                                                        Integer.parseInt(cursor.getString(7)),
+                                                        Integer.parseInt(cursor.getString(8)),
+                                                        Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
+                                                        new Date(Long.parseLong(cursor.getString(16))),
+                                                        new Date(Long.parseLong(cursor.getString(17))),
+                                                        cursor.getString(18),
+                                                        cursor.getString(19),
+                                                        Float.parseFloat(cursor.getString(20)),
+                                                        Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
+                                                );
+                                list.add(lrec);
+                            } while (cursor.moveToNext());
                         }
-                        finally
-                        {
-                            cursor.close();
-                        }
+                    } finally {
+                        cursor.close();
                     }
                 }
-                catch (Exception e)
-                {
-                    list = new ArrayList<>();
-                    ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
-                }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 list = new ArrayList<>();
                 ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
             }
+        } catch (Exception e) {
+            list = new ArrayList<>();
+            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
+        }
 
+        for(int i=0;i<list.size();i++)
+        {
+            list.get(i).variations = MyDatabase.MyDB().getVariationList(list.get(i).mPlannedId);
+        }
         return list;
     }
 
-    public ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId)
-    {
+    public ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId) {
         ArrayList<RecordPlanned> list;
-            try (SQLiteDatabase db = helper.getReadableDatabase())
-            {
-                try (Cursor cursor = db.query("tblPlanned", new String[]{"PlannedId", "PlannedType",
-                        "PlannedName", "SubCategoryId", "SortCode", "AccountNo", "PlannedDate",
-                        "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
-                        "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "StartDate",
-                        "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount",
-                        "AutoMatchTransaction", "PaidInParts"},
+        try (SQLiteDatabase db = helper.getReadableDatabase()) {
+            try (Cursor cursor = db.query("tblPlanned", new String[]{"PlannedId", "PlannedType",
+                            "PlannedName", "SubCategoryId", "SortCode", "AccountNo", "PlannedDate",
+                            "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
+                            "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "StartDate",
+                            "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount",
+                            "AutoMatchTransaction", "PaidInParts"},
                     "SubCategoryId=?",
                     new String[]{Integer.toString(pSubCategoryId)},
-                    null, null, "PlannedName", null))
-                {
-                    list = new ArrayList<>();
-                    if (cursor != null)
-                    {
-                        try
-                        {
-                            if (cursor.getCount() > 0)
-                            {
-                                cursor.moveToFirst();
-                                do
-                                {
-                                    RecordPlanned lrec =
+                    null, null, "PlannedName", null)) {
+                list = new ArrayList<>();
+                if (cursor != null) {
+                    try {
+                        if (cursor.getCount() > 0) {
+                            cursor.moveToFirst();
+                            do {
+                                RecordPlanned lrec =
                                         new RecordPlanned
-                                            (
-                                                Integer.parseInt(cursor.getString(0)),
-                                                Integer.parseInt(cursor.getString(1)),
-                                                cursor.getString(2),
-                                                Integer.parseInt(cursor.getString(3)),
-                                                cursor.getString(4),
-                                                cursor.getString(5),
-                                                new Date(DateUtils.dateUtils().StripTimeElement(Long.parseLong(cursor.getString(6)))),
-                                                Integer.parseInt(cursor.getString(7)),
-                                                Integer.parseInt(cursor.getString(8)),
-                                                Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
-                                                new Date(Long.parseLong(cursor.getString(16))),
-                                                new Date(Long.parseLong(cursor.getString(17))),
-                                                cursor.getString(18),
-                                                cursor.getString(19),
-                                                Float.parseFloat(cursor.getString(20)),
-                                                Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
-                                                Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
-                                            );
-                                    list.add(lrec);
-                                } while (cursor.moveToNext());
-                            }
+                                                (
+                                                        Integer.parseInt(cursor.getString(0)),
+                                                        Integer.parseInt(cursor.getString(1)),
+                                                        cursor.getString(2),
+                                                        Integer.parseInt(cursor.getString(3)),
+                                                        cursor.getString(4),
+                                                        cursor.getString(5),
+                                                        new Date(Long.parseLong(cursor.getString(6))),
+                                                        Integer.parseInt(cursor.getString(7)),
+                                                        Integer.parseInt(cursor.getString(8)),
+                                                        Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
+                                                        new Date(Long.parseLong(cursor.getString(16))),
+                                                        new Date(Long.parseLong(cursor.getString(17))),
+                                                        cursor.getString(18),
+                                                        cursor.getString(19),
+                                                        Float.parseFloat(cursor.getString(20)),
+                                                        Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
+                                                );
+                                Long lDate = DateUtils.dateUtils().StripTimeElement(lrec.mPlannedDate);
+                                lrec.mPlannedDate = new Date(lDate);
+                                list.add(lrec);
+                            } while (cursor.moveToNext());
                         }
-                        finally
-                        {
-                            cursor.close();
-                        }
+                    } finally {
+                        cursor.close();
                     }
                 }
             }
+        }
+
+        for(int i=0;i<list.size();i++)
+        {
+            list.get(i).variations = MyDatabase.MyDB().getVariationList(list.get(i).mPlannedId);
+        }
 
         return list;
     }
@@ -675,7 +663,7 @@ class TablePlanned extends TableBase
                             if(rp.mNextDueDate==null)
                                 rp.mNextDueDate = lCurrentDate;
                             lAtleastOne = true;
-                            lAmount += rp.mMatchingTxAmount;
+                            lAmount += rp.GetAmountAt(lCurrentDate);
                         }
                     }
 
@@ -746,7 +734,7 @@ class TablePlanned extends TableBase
                             rt.TxSortCode = rp.mSortCode;
                             rt.TxAccountNumber = rp.mAccountNo;
                             rt.TxDescription = rp.mPlannedName;
-                            rt.TxAmount = rp.mMatchingTxAmount;
+                            rt.TxAmount = rp.GetAmountAt(lCurrentDate);
                             rt.TxBalance = 0.00f;
                             rt.CategoryId = pSubCategoryId;
                             rt.SubCategoryName = MyDatabase.MyDB().getSubCategory(pSubCategoryId).SubCategoryName;
@@ -788,7 +776,7 @@ class TablePlanned extends TableBase
                         {
                             cursor.moveToFirst();
     
-                            return (new RecordPlanned
+                            RecordPlanned rp = new RecordPlanned
                                 (
                                     Integer.parseInt(cursor.getString(0)),
                                     Integer.parseInt(cursor.getString(1)),
@@ -796,7 +784,7 @@ class TablePlanned extends TableBase
                                     Integer.parseInt(cursor.getString(3)),
                                     cursor.getString(4),
                                     cursor.getString(5),
-                                    new Date(DateUtils.dateUtils().StripTimeElement(Long.parseLong(cursor.getString(6)))),
+                                    new Date(Long.parseLong(cursor.getString(6))),
                                     Integer.parseInt(cursor.getString(7)),
                                     Integer.parseInt(cursor.getString(8)),
                                     Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
@@ -813,7 +801,11 @@ class TablePlanned extends TableBase
                                     Float.parseFloat(cursor.getString(20)),
                                     Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
                                     Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
-                                ));
+                                );
+                            rp.variations = MyDatabase.MyDB().getVariationList(rp.mPlannedId);
+                            Long lDate = DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate);
+                            rp.mPlannedDate = new Date(lDate);
+                            return(rp);
                         }
                     }
                     finally
@@ -843,10 +835,12 @@ class TablePlanned extends TableBase
             db.execSQL("ALTER TABLE tblPlanned ADD COLUMN PaidInParts INTEGER DEFAULT 0");
         }*/
     }
+
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         MyLog.WriteLogMessage("DB Version " + Integer.toString(db.getVersion()) + ". " +
                 "Downgrading from " + Integer.toString(oldVersion) +
                 " down to " + Integer.toString(newVersion) );
     }
+
 }
