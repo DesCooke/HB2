@@ -23,6 +23,7 @@ public class RecordBudgetGroup
     public Integer DefaultBudgetType;
     public MainActivity lMainActivity;
     public boolean Expanded;
+    public boolean Monitor;
 
     public RecordBudgetGroup()
     {

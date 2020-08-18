@@ -10,20 +10,22 @@ public class RecordCategory
     public String CategoryName;
     public Boolean GroupedBudget;
     public Integer DefaultBudgetType;
+    public Boolean Monitor;
 
     RecordCategory
             (
                      Integer pCategoryId,
                      String pCategoryName,
                      Boolean pGroupedBudget,
-                     Integer pDefaultBudgetType
-
+                     Integer pDefaultBudgetType,
+                     Boolean pMonitor
             )
     {
         CategoryId = pCategoryId;
         CategoryName = pCategoryName;
         GroupedBudget = pGroupedBudget;
         DefaultBudgetType = pDefaultBudgetType;
+        Monitor = pMonitor;
     }
     
     public RecordCategory()
@@ -32,6 +34,7 @@ public class RecordCategory
         CategoryName = "";
         GroupedBudget = false;
         DefaultBudgetType = mDBTSameMonthLastYear;
+        Monitor=false;
     }
     
 }

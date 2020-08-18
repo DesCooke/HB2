@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 
 import com.example.cooked.hb2.Database.MyDatabase;
@@ -23,6 +24,7 @@ public class activitySubCategoryItem extends AppCompatActivity
     public Integer subCategoryId;
     public String categoryName;
     public TextInputLayout edtSubCategoryName;
+    public CheckBox chkMonitor;
     
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -36,6 +38,8 @@ public class activitySubCategoryItem extends AppCompatActivity
 
             edtSubCategoryName = findViewById(R.id.edtSubCategoryName);
             Button btnDelete = findViewById(R.id.btnDelete);
+            chkMonitor = findViewById(R.id.chkMonitor);
+
             final RadioButton radMonthly = findViewById(R.id.radMonthly);
             final RadioButton radExtra = findViewById(R.id.radExtra);
             final RadioButton radIncome = findViewById(R.id.radIncome);
@@ -56,12 +60,14 @@ public class activitySubCategoryItem extends AppCompatActivity
                 setTitle("Amend SubCategory");
                 String lSubCategoryName = getIntent().getStringExtra("SUBCATEGORYNAME");
                 subCategoryId = getIntent().getIntExtra("SUBCATEGORYID", -1);
+
                 if (lSubCategoryName.length()>0)
                 {
                     edtSubCategoryName.getEditText().setText(lSubCategoryName);
                 }
                 btnDelete.setVisibility(View.VISIBLE);
                 RecordSubCategory rsc= MyDatabase.MyDB().getSubCategory(subCategoryId);
+                chkMonitor.setChecked(rsc.Monitor);
                 if(rsc.SubCategoryType==RecordSubCategory.mSCTMonthlyExpense)
                 {
                     radMonthly.setChecked(true);
@@ -151,6 +157,7 @@ public class activitySubCategoryItem extends AppCompatActivity
                             else
                                 rc.SubCategoryType = RecordSubCategory.mSCTExtraExpense;
                         }
+                        rc.Monitor = chkMonitor.isChecked();
                         if (actionType.compareTo("ADD") == 0)
                         {
                             MyDB().addSubCategory(rc);

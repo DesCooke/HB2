@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -23,6 +24,7 @@ public class activityCategoryItem extends AppCompatActivity
     public TextInputLayout edtCategoryName;
     public Switch swGroupedBudget;
     public Spinner spDefaultBudgetType;
+    public CheckBox chkMonitor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,6 +40,7 @@ public class activityCategoryItem extends AppCompatActivity
             Button btnDelete = findViewById(R.id.btnDelete);
             swGroupedBudget = findViewById(R.id.swGroupedBudget);
             spDefaultBudgetType = findViewById(R.id.spDefaultBudgetType);
+            chkMonitor = findViewById(R.id.chkMonitor);
 
             swGroupedBudget.setChecked(false);
             spDefaultBudgetType.setVisibility(View.GONE);
@@ -67,6 +70,8 @@ public class activityCategoryItem extends AppCompatActivity
                     spDefaultBudgetType.setVisibility(View.VISIBLE);
                     spDefaultBudgetType.setSelection(rc.DefaultBudgetType);
                 }
+                if(rc.Monitor)
+                    chkMonitor.setChecked(true);
             }
 
             btnDelete.setOnClickListener(new View.OnClickListener()
@@ -121,6 +126,7 @@ public class activityCategoryItem extends AppCompatActivity
                         RecordCategory rc;
                         rc = new RecordCategory();
                         rc.CategoryName = edtCategoryName.getEditText().getText().toString();
+                        rc.Monitor = chkMonitor.isChecked();
                         if (actionType.compareTo("ADD") == 0)
                         {
                             MyDB().addCategory(rc);
@@ -131,6 +137,7 @@ public class activityCategoryItem extends AppCompatActivity
                             rc.CategoryId = categoryId;
                             rc.GroupedBudget = swGroupedBudget.isChecked();
                             rc.DefaultBudgetType = 0;
+                            rc.Monitor = chkMonitor.isChecked();
                             if (rc.GroupedBudget)
                                 rc.DefaultBudgetType = spDefaultBudgetType.getSelectedItemPosition();
 
