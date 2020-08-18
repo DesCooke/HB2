@@ -42,7 +42,7 @@
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/monthly"
+        android:text="Recurring"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
@@ -52,7 +52,7 @@
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/extra"
+        android:text="Oneoff"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radMonthly" />
 
@@ -94,7 +94,8 @@
         android:layout_marginTop="8dp"
         android:text="Recurring/One Off"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName" />
+        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName"
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/textView16"
@@ -104,6 +105,16 @@
         android:layout_marginEnd="8dp"
         android:text="Income/Expense"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName" />
+        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName"
+        tools:visibility="gone" />
+
+    <CheckBox
+        android:id="@+id/chkMonitor"
+        android:layout_width="150dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="13dp"
+        android:text="Monitor"
+        app:layout_constraintTop_toBottomOf="@+id/radExtra"
+        tools:layout_editor_absoluteX="7dp" />
 
 </android.support.constraint.ConstraintLayout>

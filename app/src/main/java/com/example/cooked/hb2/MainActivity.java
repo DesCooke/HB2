@@ -193,8 +193,8 @@ public class MainActivity extends AppCompatActivity
             android.support.v7.app.ActionBar ab = getSupportActionBar();
             if (ab != null)
             {
-                ab.setTitle("Home Budget");
-                ab.setSubtitle("dc enterprises");
+                ab.setTitle(getString(R.string.app_name));
+                ab.setSubtitle(" (" + getString(R.string.app_version) + ")");
                 txtBudgetPeriod.setText(lFromStr.Value + " -> " + lToStr.Value);
             }
         } catch (Exception e)

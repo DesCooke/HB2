@@ -36,7 +36,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 21;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -625,6 +625,7 @@ public class MyDatabase extends SQLiteOpenHelper
             rbg.BudgetYear = pYear;
             rbg.budgetGroupName = cl.get(i).CategoryName;
             rbg.CategoryId = cl.get(i).CategoryId;
+            rbg.Monitor = cl.get(i).Monitor;
             rbg.RecCount = 0;
             rbg.groupedBudget = cl.get(i).GroupedBudget;
             rbg.DefaultBudgetType = cl.get(i).DefaultBudgetType;
@@ -673,6 +674,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
                     rbi.budgetItemName = scl.get(j).SubCategoryName;
                     rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                    rbi.Monitor = scl.get(j).Monitor;
                     rbi.total = rb2.Amount;
                     if (rb2.AutoMatchTransaction)
                         if (rbi.spent < -0.0001 || rbi.spent > 0.0001)
@@ -718,6 +720,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.groupedBudget = rbg.groupedBudget;
                         rbi.budgetItemName = scl.get(j).SubCategoryName;
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                        rbi.Monitor = scl.get(j).Monitor;
                         rbi.total = rb2.Amount;
                         rbi.spent = rb2.Amount;
                         rbi.outstanding = rbi.total - rb2.Amount;
@@ -857,6 +860,7 @@ public class MyDatabase extends SQLiteOpenHelper
             rbg.BudgetYear = pYear;
             rbg.budgetGroupName = cl.get(i).CategoryName;
             rbg.CategoryId = cl.get(i).CategoryId;
+            rbg.Monitor = cl.get(i).Monitor;
             rbg.RecCount = 0;
             rbg.groupedBudget = cl.get(i).GroupedBudget;
             rbg.DefaultBudgetType = cl.get(i).DefaultBudgetType;
@@ -905,6 +909,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
                     rbi.budgetItemName = scl.get(j).SubCategoryName;
                     rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                    rbi.Monitor = scl.get(j).Monitor;
                     rbi.total = rb2.Amount;
                     if (rb2.AutoMatchTransaction)
                         if (rbi.spent < -0.0001 || rbi.spent > 0.0001)
@@ -949,6 +954,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.groupedBudget = rbg.groupedBudget;
                         rbi.budgetItemName = scl.get(j).SubCategoryName;
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
+                        rbi.Monitor = scl.get(j).Monitor;
                         rbi.total = rb2.Amount;
                         rbi.spent = rb2.Amount;
                         rbi.outstanding = rbi.total - rb2.Amount;

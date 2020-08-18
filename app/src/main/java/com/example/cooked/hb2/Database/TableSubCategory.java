@@ -28,7 +28,8 @@ class TableSubCategory extends TableBase {
                         "   SubCategoryId INTEGER PRIMARY KEY, " +
                         "   CategoryId INTEGER, " +
                         "   SubCategoryName TEXT, " +
-                        "   SubCategoryType INTEGER " +
+                        "   SubCategoryType INTEGER, " +
+                        "   Monitor TEXT " +
                         ") ";
 
         executeSQL(lSql, "TableSubCategory::onCreate", db);
@@ -43,23 +44,34 @@ class TableSubCategory extends TableBase {
     void addSubCategory(RecordSubCategory rc) {
         rc.SubCategoryId = getNextSubCategoryId();
 
+        String lMonitor="N";
+        if(rc.Monitor)
+                lMonitor="Y";
+
         String lSql =
                 "INSERT INTO tblSubCategory " +
-                        "(SubCategoryId, CategoryId, SubCategoryName, SubCategoryType) " +
+                        "(SubCategoryId, CategoryId, SubCategoryName, SubCategoryType, Monitor) " +
                         "VALUES (" +
                         Integer.toString(rc.SubCategoryId) + "," +
                         Integer.toString(rc.CategoryId) + "," +
                         "'" + rc.SubCategoryName + "', " +
-                        Integer.toString(rc.SubCategoryType)  + ") ";
+                        Integer.toString(rc.SubCategoryType)  + ", " +
+                        "'" + lMonitor + "' ) ";
 
         executeSQL(lSql, "TableSubCategory::addSubCategory", null);
     }
 
-    void updateSubCategory(RecordSubCategory rc) {
+    void updateSubCategory(RecordSubCategory rc)
+    {
+        String lMonitor="N";
+        if(rc.Monitor)
+            lMonitor="Y";
+
         String lSql =
                 "UPDATE tblSubCategory " +
                         "  SET SubCategoryName = '" + rc.SubCategoryName + "', " +
-                        "  SubCategoryType = " + Integer.toString(rc.SubCategoryType) + " " +
+                        "  SubCategoryType = " + Integer.toString(rc.SubCategoryType) + "," +
+                        "  Monitor = '" + lMonitor + "' " +
                         "WHERE SubCategoryId = " + rc.SubCategoryId.toString();
 
         executeSQL(lSql, "TableSubCategory::updateSubCategory", null);
@@ -81,14 +93,14 @@ class TableSubCategory extends TableBase {
                 String l_SQL;
                 if (pCategoryId != 0)
                 {
-                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, a.SubCategoryType " +
+                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, a.SubCategoryType, a.Monitor " +
                         "FROM tblSubCategory a, tblCategory b " +
                         "WHERE a.CategoryId = " + pCategoryId.toString() + " " +
                         "AND a.CategoryId = b.CategoryId " +
                         "ORDER BY b.CategoryName, a.SubCategoryName ";
                 } else
                 {
-                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, a.SubCategoryName, b.CategoryName, a.SubCategoryType " +
+                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, a.SubCategoryName, b.CategoryName, a.SubCategoryType, a.Monitor " +
                         "FROM tblSubCategory a, tblCategory b " +
                         "WHERE a.CategoryId = b.CategoryId " +
                         "ORDER BY b.CategoryName, a.SubCategoryName ";
@@ -112,7 +124,8 @@ class TableSubCategory extends TableBase {
                                             cursor.getString(3),
                                             Integer.parseInt(cursor.getString(0)),
                                             cursor.getString(2),
-                                            Integer.parseInt(cursor.getString(4))
+                                            Integer.parseInt(cursor.getString(4)),
+                                            cursor.getString(5).compareTo("Y")==0
                                         )
                                 );
                         } while (cursor.moveToNext());
@@ -132,7 +145,7 @@ class TableSubCategory extends TableBase {
             {
                 Cursor cursor;
                 String l_SQL;
-                l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, a.SubCategoryType " +
+                l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, a.SubCategoryType, a.Monitor " +
                     "FROM tblSubCategory a, tblCategory b " +
                     "WHERE a.SubCategoryId = " + pSubCategoryId.toString() + " " +
                     "AND a.CategoryId = b.CategoryId " +
@@ -153,7 +166,8 @@ class TableSubCategory extends TableBase {
                                             cursor.getString(3),
                                             Integer.parseInt(cursor.getString(0)),
                                             cursor.getString(2),
-                                            Integer.parseInt(cursor.getString(4))
+                                            Integer.parseInt(cursor.getString(4)),
+                                                cursor.getString(5).compareTo("Y")==0
                                         )
                                 );
                         }
@@ -172,7 +186,8 @@ class TableSubCategory extends TableBase {
                                         "Unknown Category",
                                         pSubCategoryId,
                                         "Unknown SubCategory",
-                                        0
+                                        0,
+                                        false
                                 )
                 );
     }
@@ -188,6 +203,11 @@ class TableSubCategory extends TableBase {
             MyLog.WriteLogMessage("Adding SubCategoryType to tblSubCategory");
 
             db.execSQL("ALTER TABLE tblSubCategory ADD COLUMN SubCategoryType INTEGER DEFAULT 0");
+        }
+        if (oldVersion == 19 && newVersion == 20) {
+            MyLog.WriteLogMessage("Adding Monitor to tblSubCategory");
+
+            db.execSQL("ALTER TABLE tblSubCategory ADD COLUMN Monitor TEXT DEFAULT 'N'");
         }
     }
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)

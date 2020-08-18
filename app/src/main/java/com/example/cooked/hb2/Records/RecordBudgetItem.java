@@ -12,6 +12,7 @@ public class RecordBudgetItem
     public Float spent;
     public Float outstanding;
     public Boolean groupedBudget;
+    public Boolean Monitor;
 
     public RecordBudgetItem()
     {
@@ -25,5 +26,6 @@ public class RecordBudgetItem
         spent = 0.00f;
         outstanding = 0.00f;
         groupedBudget = false;
+        Monitor=false;
     }
 }

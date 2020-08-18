@@ -70,4 +70,14 @@
         app:layout_constraintStart_toEndOf="@+id/swGroupedBudget"
         app:layout_constraintTop_toBottomOf="@+id/edtCategoryName" />
 
+    <CheckBox
+        android:id="@+id/chkMonitor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Monitor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/swGroupedBudget" />
+
 </android.support.constraint.ConstraintLayout>

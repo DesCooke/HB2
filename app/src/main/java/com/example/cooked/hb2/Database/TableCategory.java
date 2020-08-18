@@ -33,7 +33,8 @@ class TableCategory extends TableBase
                 "   CategoryId INTEGER PRIMARY KEY, " +
                 "   CategoryName TEXT, " +
                 "   GroupedBudget INTEGER, " +
-                "   DefaultBudgetType INTEGER " +
+                "   DefaultBudgetType INTEGER," +
+                "   Monitor TEXT " +
                 ") ";
         
         executeSQL(lSql, "TableCategory::onCreate", db);
@@ -49,15 +50,20 @@ class TableCategory extends TableBase
     void addCategory(RecordCategory rc)
     {
         rc.CategoryId = getNextCategoryId();
-        
+
+        String lMonitor="N";
+        if(rc.Monitor)
+            lMonitor="Y";
+
         String lSql =
             "INSERT INTO tblCategory " +
-                "(CategoryId, CategoryName, GroupedBudget, DefaultBudgetType) " +
+                "(CategoryId, CategoryName, GroupedBudget, DefaultBudgetType, Monitor) " +
                 "VALUES (" +
                 Integer.toString(rc.CategoryId) + "," +
                 "'" + rc.CategoryName + "', " +
                 rc.GroupedBudget.toString() + "," +
-                rc.DefaultBudgetType.toString() + " " +
+                rc.DefaultBudgetType.toString() + ", " +
+                "'" + lMonitor + "' " +
                 ") ";
         
         executeSQL(lSql, "TableCategory::addCategory", null);
@@ -69,11 +75,16 @@ class TableCategory extends TableBase
         if(rc.GroupedBudget)
             lGroupedBudget=1;
 
+        String lMonitor="N";
+        if(rc.Monitor)
+            lMonitor="Y";
+
         String lSql =
             "UPDATE tblCategory " +
                 "  SET CategoryName = '" + rc.CategoryName + "', " +
                 "      GroupedBudget = " + lGroupedBudget.toString() + ", " +
-                "      DefaultBudgetType = " + rc.DefaultBudgetType.toString() + " " +
+                "      DefaultBudgetType = " + rc.DefaultBudgetType.toString() + "," +
+                    "  Monitor = '" + lMonitor + "' " +
                 "WHERE CategoryId = " + rc.CategoryId.toString();
         
         executeSQL(lSql, "TableCategory::updateCategory", null);
@@ -96,7 +107,7 @@ class TableCategory extends TableBase
                 try
                 {
                     String lString =
-                        "SELECT CategoryId, CategoryName, GroupedBudget, DefaultBudgetType " +
+                        "SELECT CategoryId, CategoryName, GroupedBudget, DefaultBudgetType, Monitor " +
                             "FROM tblCategory " +
                             "ORDER BY CategoryName";
                     Cursor cursor = db.rawQuery(lString, null);
@@ -119,7 +130,8 @@ class TableCategory extends TableBase
                                                 Integer.parseInt(cursor.getString(0)),
                                                 cursor.getString(1),
                                                     lGroupedBudget,
-                                                Integer.parseInt(cursor.getString(3))
+                                                Integer.parseInt(cursor.getString(3)),
+                                                    cursor.getString(4).compareTo("Y")==0
                                             )
                                     );
                             } while (cursor.moveToNext());
@@ -146,7 +158,7 @@ class TableCategory extends TableBase
                 try
                 {
                     String lString =
-                            "SELECT CategoryId, CategoryName, GroupedBudget, DefaultBudgetType " +
+                            "SELECT CategoryId, CategoryName, GroupedBudget, DefaultBudgetType, Monitor " +
                                     "FROM tblCategory " +
                                     "WHERE CategoryId = " + pCategoryId.toString();
                     Cursor cursor = db.rawQuery(lString, null);
@@ -165,7 +177,8 @@ class TableCategory extends TableBase
                                                                 Integer.parseInt(cursor.getString(0)),
                                                                 cursor.getString(1),
                                                                 lGroupedBudget,
-                                                                Integer.parseInt(cursor.getString(3))
+                                                                Integer.parseInt(cursor.getString(3)),
+                                                                cursor.getString(4).compareTo("Y")==0
                                                         );
                         }
                         finally
@@ -195,6 +208,11 @@ class TableCategory extends TableBase
             MyLog.WriteLogMessage("Adding Grouped Budget");
             db.execSQL("ALTER TABLE tblCategory ADD COLUMN GroupedBudget INTEGER DEFAULT 0");
             db.execSQL("ALTER TABLE tblCategory ADD COLUMN DefaultBudgetType INTEGER DEFAULT 0");
+        }
+        if (oldVersion == 20 && newVersion == 21)
+        {
+            MyLog.WriteLogMessage("Adding Monitor");
+            db.execSQL("ALTER TABLE tblCategory ADD COLUMN Monitor TEXT DEFAULT 'N' ");
         }
     }
 
