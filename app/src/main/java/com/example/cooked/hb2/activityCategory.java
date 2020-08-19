@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.cooked.hb2.CategoryUI.CategoryAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
@@ -24,6 +25,8 @@ public class activityCategory extends AppCompatActivity
     public RecyclerView mCategoryList;
     public RecyclerView.LayoutManager mLayoutManagerCurrent;
     public CategoryAdapter mCategoryAdapter;
+    public String mActionType;
+    public Boolean pickOnly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -37,18 +40,31 @@ public class activityCategory extends AppCompatActivity
 
             setTitle("Categories");
 
-            FloatingActionButton fab = findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    Intent intent = new Intent(activityCategory.this, activityCategoryItem.class);
-                    intent.putExtra("ACTIONTYPE", "ADD");
-                    startActivity(intent);
+            pickOnly=false;
+            mActionType = getIntent().getStringExtra("ACTIONTYPE");
+            if(mActionType!=null)
+                if(mActionType.compareTo("PICK")==0)
+                    pickOnly=true;
 
-                }
-            });
+
+            FloatingActionButton fab = findViewById(R.id.fab);
+            if(pickOnly)
+            {
+                fab.hide();
+            }
+            else
+            {
+                fab.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        Intent intent = new Intent(activityCategory.this, activityCategoryItem.class);
+                        intent.putExtra("ACTIONTYPE", "ADD");
+                        startActivity(intent);
+                    }
+                });
+            }
 
             CreateRecyclerView();
         } catch (Exception e)
@@ -68,31 +84,48 @@ public class activityCategory extends AppCompatActivity
             mLayoutManagerCurrent = new LinearLayoutManager(this);
             mCategoryList.setLayoutManager(mLayoutManagerCurrent);
             mCategoryAdapter = new CategoryAdapter(mDataset);
+            mCategoryAdapter.mPickOnly = pickOnly;
             mCategoryList.setAdapter(mCategoryAdapter);
 
-            mCategoryAdapter.setOnItemClickListener(new CategoryAdapter.OnItemClickListener()
+            if(pickOnly==false)
             {
-                @Override
-                public void onItemClick(View view, RecordCategory obj)
-                {
-                    Intent intent = new Intent(getApplicationContext(), activityCategoryItem.class);
-                    intent.putExtra("ACTIONTYPE", "EDIT");
-                    intent.putExtra("CATEGORYID", obj.CategoryId);
-                    intent.putExtra("CATEGORYNAME", obj.CategoryName);
-                    startActivity(intent);
-                }
-            });
-            mCategoryAdapter.setOnShowClickListener(new CategoryAdapter.OnItemClickListener()
+                mCategoryAdapter.setOnItemClickListener(new CategoryAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, RecordCategory obj) {
+                        Intent intent = new Intent(getApplicationContext(), activityCategoryItem.class);
+                        intent.putExtra("ACTIONTYPE", "EDIT");
+                        intent.putExtra("CATEGORYID", obj.CategoryId);
+                        intent.putExtra("CATEGORYNAME", obj.CategoryName);
+                        startActivity(intent);
+                    }
+                });
+                mCategoryAdapter.setOnShowClickListener(new CategoryAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, RecordCategory obj) {
+                        Intent intent = new Intent(getApplicationContext(), activitySubCategory.class);
+                        intent.putExtra("CATEGORYID", obj.CategoryId);
+                        intent.putExtra("CATEGORYNAME", obj.CategoryName);
+                        startActivity(intent);
+                    }
+                });
+            }
+            else
             {
-                @Override
-                public void onItemClick(View view, RecordCategory obj)
+                mCategoryAdapter.setOnItemClickListener(new CategoryAdapter.OnItemClickListener()
                 {
-                    Intent intent = new Intent(getApplicationContext(), activitySubCategory.class);
-                    intent.putExtra("CATEGORYID", obj.CategoryId);
-                    intent.putExtra("CATEGORYNAME", obj.CategoryName);
-                    startActivity(intent);
-                }
-            });
+                    @Override
+                    public void onItemClick(View view, RecordCategory obj)
+                    {
+                        Intent intent = new Intent();
+
+                        intent.putExtra("NEWCATEGORYID", obj.CategoryId);
+                        intent.putExtra("NEWCATEGORYNAME", obj.CategoryName);
+
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                });
+            }
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);

@@ -13,6 +13,7 @@ public class RecordSubCategory
     public String SubCategoryName;
     public Integer SubCategoryType;
     public boolean Monitor;
+    public boolean Old;
 
     RecordSubCategory
             (
@@ -21,7 +22,8 @@ public class RecordSubCategory
                      Integer pSubCategoryId,
                      String pSubCategoryName,
                      Integer pSubCategoryType,
-                     boolean pMonitor
+                     boolean pMonitor,
+                     boolean pOld
             )
     {
         CategoryId = pCategoryId;
@@ -30,6 +32,7 @@ public class RecordSubCategory
         SubCategoryName = pSubCategoryName;
         SubCategoryType=pSubCategoryType;
         Monitor = pMonitor;
+        Old = pOld;
     }
     
     public RecordSubCategory()
@@ -40,5 +43,6 @@ public class RecordSubCategory
         SubCategoryName = "";
         SubCategoryType=mSCTMonthlyExpense;
         Monitor = false;
+        Old = false;
     }
 }

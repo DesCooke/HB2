@@ -1,5 +1,6 @@
 package com.example.cooked.hb2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,8 @@ public class activitySubCategoryItem extends AppCompatActivity
     public String categoryName;
     public TextInputLayout edtSubCategoryName;
     public CheckBox chkMonitor;
+    public CheckBox chkOld;
+    public Button btnMove;
     
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -39,11 +42,13 @@ public class activitySubCategoryItem extends AppCompatActivity
             edtSubCategoryName = findViewById(R.id.edtSubCategoryName);
             Button btnDelete = findViewById(R.id.btnDelete);
             chkMonitor = findViewById(R.id.chkMonitor);
+            chkOld = findViewById(R.id.chkOld);
 
             final RadioButton radMonthly = findViewById(R.id.radMonthly);
             final RadioButton radExtra = findViewById(R.id.radExtra);
             final RadioButton radIncome = findViewById(R.id.radIncome);
             final RadioButton radExpense = findViewById(R.id.radExpense);
+            btnMove = findViewById(R.id.btnMove);
 
             setTitle("<Unknown>");
             categoryId = getIntent().getIntExtra("CATEGORYID", 0);
@@ -68,6 +73,7 @@ public class activitySubCategoryItem extends AppCompatActivity
                 btnDelete.setVisibility(View.VISIBLE);
                 RecordSubCategory rsc= MyDatabase.MyDB().getSubCategory(subCategoryId);
                 chkMonitor.setChecked(rsc.Monitor);
+                chkOld.setChecked(rsc.Old);
                 if(rsc.SubCategoryType==RecordSubCategory.mSCTMonthlyExpense)
                 {
                     radMonthly.setChecked(true);
@@ -96,21 +102,31 @@ public class activitySubCategoryItem extends AppCompatActivity
                 {
                     try
                     {
-                        RecordSubCategory rc;
-                        rc = new RecordSubCategory();
-                        rc.SubCategoryName = edtSubCategoryName.getEditText().getText().toString();
                         if (actionType.compareTo("EDIT") == 0)
                         {
-                            rc.SubCategoryId = subCategoryId;
-                            rc.CategoryId = categoryId;
-                            MyDB().deleteSubCategory(rc);
+                            pickCategory(null);
                         }
                     }
                     catch(Exception e)
                     {
                         ErrorDialog.Show("Error in activitySubCategoryItem::onClick", e.getMessage());
                     }
-                    finish();
+                }
+            });
+
+            btnMove.setOnClickListener(new View.OnClickListener()
+            {
+                public void onClick(View v)
+                {
+                    try
+                    {
+                        Intent intent = new Intent(getApplicationContext(), activityCategory.class);
+                        intent.putExtra("ACTIONTYPE", "PICK");
+                        startActivityForResult(intent, 1901);
+                    } catch (Exception e)
+                    {
+                        MyLog.WriteExceptionMessage(e);
+                    }
                 }
             });
 
@@ -158,6 +174,7 @@ public class activitySubCategoryItem extends AppCompatActivity
                                 rc.SubCategoryType = RecordSubCategory.mSCTExtraExpense;
                         }
                         rc.Monitor = chkMonitor.isChecked();
+                        rc.Old = chkOld.isChecked();
                         if (actionType.compareTo("ADD") == 0)
                         {
                             MyDB().addSubCategory(rc);
@@ -185,5 +202,65 @@ public class activitySubCategoryItem extends AppCompatActivity
             MyLog.WriteExceptionMessage(e);
         }
     }
+
+    public void pickCategory(View view)
+    {
+        try
+        {
+            Intent intent = new Intent(getApplicationContext(), activityCategory2.class);
+            intent.putExtra("ACTIONTYPE", "EDIT");
+            startActivityForResult(intent, 1969);
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+    }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        try
+        {
+            if (requestCode == 1901)
+            {
+                if (resultCode == RESULT_OK)
+                {
+                    int lNewCategoryId = data.getIntExtra("NEWCATEGORYID", 0);
+                    categoryName = data.getStringExtra("NEWCATEGORYNAME");
+                    categoryId = lNewCategoryId;
+
+                    RecordSubCategory rsc = MyDatabase.MyDB().getSubCategory(subCategoryId);
+                    rsc.CategoryId = lNewCategoryId;
+
+                    MyDB().updateSubCategory(rsc);
+                }
+            }
+            if (requestCode == 1969)
+            {
+                if (resultCode == RESULT_OK)
+                {
+                    String lSubCategoryName = data.getStringExtra("SubCategoryName");
+                    String lSubCategoryId = data.getStringExtra("SubCategoryId" );
+
+                    MyDB().changeSubCategory(subCategoryId, Integer.parseInt(lSubCategoryId));
+
+                    RecordSubCategory rc;
+                    rc = new RecordSubCategory();
+                    rc.SubCategoryName = edtSubCategoryName.getEditText().getText().toString();
+                    rc.SubCategoryId = subCategoryId;
+                    rc.CategoryId = categoryId;
+                    MyDB().deleteSubCategory(rc);
+
+                    finish();
+                }
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+
+    }
+
 
 }

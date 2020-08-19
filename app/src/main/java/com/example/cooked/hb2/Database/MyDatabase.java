@@ -36,7 +36,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 22;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -494,6 +494,10 @@ public class MyDatabase extends SQLiteOpenHelper
         tableSubCategory.deleteSubCategory(rc);
     }
 
+    public void changeSubCategory(int oldSubCategoryId, int newSubCategoryId)
+    {
+        tableSubCategory.changeSubCategory(oldSubCategoryId, newSubCategoryId);
+    }
     public RecordSubCategory getSubCategory(Integer pSubCategoryId)
     {
         return (tableSubCategory.getSubCategory(pSubCategoryId));
@@ -502,6 +506,11 @@ public class MyDatabase extends SQLiteOpenHelper
     public ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId)
     {
         return tableSubCategory.getSubCategoryList(pCategoryId);
+    }
+
+    public ArrayList<RecordSubCategory> getSubCategoryListWithOld(Integer pCategoryId, Boolean pOld)
+    {
+        return tableSubCategory.getSubCategoryListWithOld(pCategoryId, pOld);
     }
 
     //endregion
@@ -676,9 +685,13 @@ public class MyDatabase extends SQLiteOpenHelper
                     rbi.SubCategoryId = scl.get(j).SubCategoryId;
                     rbi.Monitor = scl.get(j).Monitor;
                     rbi.total = rb2.Amount;
-                    if (rb2.AutoMatchTransaction)
-                        if (rbi.spent < -0.0001 || rbi.spent > 0.0001)
+                    rbi.origTotal = rbi.total;
+                    if (rb2.AutoMatchTransaction) {
+                        if (rbi.spent < -0.0001 || rbi.spent > 0.0001) {
                             rbi.total = rbi.spent;
+                            rbi.origTotal = rbi.total;
+                        }
+                    }
 
                     if (!rbi.groupedBudget &&
                             (rbi.spent.floatValue() < 0.00f && rbi.total.floatValue() > rbi.spent.floatValue()) ||
@@ -722,6 +735,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.Monitor = scl.get(j).Monitor;
                         rbi.total = rb2.Amount;
+                        rbi.origTotal = rbi.total;
                         rbi.spent = rb2.Amount;
                         rbi.outstanding = rbi.total - rb2.Amount;
 
@@ -735,6 +749,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 localList.add(rbg);
         }
         rbc.total = 0.00f;
+        rbc.origTotal = rbc.total;
         rbc.spent = 0.00f;
         rbc.outstanding = 0.00f;
         for (int i = 0; i < localList.size(); i++)
@@ -743,6 +758,7 @@ public class MyDatabase extends SQLiteOpenHelper
             if (rbg.groupedBudget == false)
             {
                 rbg.total = 0.00f;
+                rbg.origTotal = 0.00f;
                 rbg.spent = 0.00f;
                 rbg.outstanding = 0.00f;
                 for (int j = 0; j < rbg.budgetItems.size(); j++)
@@ -755,6 +771,7 @@ public class MyDatabase extends SQLiteOpenHelper
             } else
             {
                 rbg.total = 0.00f;
+                rbg.origTotal = 0.00f;
                 rbg.spent = 0.00f;
                 rbg.outstanding = 0.00f;
                 for (int j = 0; j < rbg.budgetItems.size(); j++)
@@ -765,6 +782,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 RecordCategoryBudget rcb = MyDatabase.MyDB().tableCategoryBudget.getCategoryBudget(
                         rbg.CategoryId, pMonth, pYear);
                 rbg.total = rcb.BudgetAmount;
+                rbg.origTotal = rbg.total;
                 if ((rbg.spent < 0.00f && rbg.total > rbg.spent) ||
                         (rbg.spent > 0.00f && rbg.total < rbg.spent))
                 {
@@ -911,9 +929,12 @@ public class MyDatabase extends SQLiteOpenHelper
                     rbi.SubCategoryId = scl.get(j).SubCategoryId;
                     rbi.Monitor = scl.get(j).Monitor;
                     rbi.total = rb2.Amount;
-                    if (rb2.AutoMatchTransaction)
-                        if (rbi.spent < -0.0001 || rbi.spent > 0.0001)
+                    rbi.origTotal = rbi.total;
+                    if (rb2.AutoMatchTransaction) {
+                        if (rbi.spent < -0.0001 || rbi.spent > 0.0001) {
                             rbi.total = rbi.spent;
+                        }
+                    }
 
                     if (!rbi.groupedBudget &&
                             (rbi.spent.floatValue() < 0.00f && rbi.total.floatValue() > rbi.spent.floatValue()) ||
@@ -956,6 +977,7 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.SubCategoryId = scl.get(j).SubCategoryId;
                         rbi.Monitor = scl.get(j).Monitor;
                         rbi.total = rb2.Amount;
+                        rbi.origTotal = rbi.total;
                         rbi.spent = rb2.Amount;
                         rbi.outstanding = rbi.total - rb2.Amount;
 
@@ -969,6 +991,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 localList.add(rbg);
         }
         mainGroup.total = 0.00f;
+        mainGroup.origTotal = 0.00f;
         mainGroup.spent = 0.00f;
         mainGroup.outstanding = 0.00f;
         for (int i = 0; i < localList.size(); i++)
@@ -977,6 +1000,7 @@ public class MyDatabase extends SQLiteOpenHelper
             if (rbg.groupedBudget == false)
             {
                 rbg.total = 0.00f;
+                rbg.origTotal =0.00f;
                 rbg.spent = 0.00f;
                 rbg.outstanding = 0.00f;
                 for (int j = 0; j < rbg.budgetItems.size(); j++)
@@ -989,6 +1013,7 @@ public class MyDatabase extends SQLiteOpenHelper
             } else
             {
                 rbg.total = 0.00f;
+                rbg.origTotal = 0.00f;
                 rbg.spent = 0.00f;
                 rbg.outstanding = 0.00f;
                 for (int j = 0; j < rbg.budgetItems.size(); j++)
@@ -999,6 +1024,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 RecordCategoryBudget rcb = MyDatabase.MyDB().tableCategoryBudget.getCategoryBudget(
                         rbg.CategoryId, pMonth, pYear);
                 rbg.total = rcb.BudgetAmount;
+                rbg.origTotal = rbg.total;
                 if ((rbg.spent < 0.00f && rbg.total > rbg.spent) ||
                         (rbg.spent > 0.00f && rbg.total < rbg.spent))
                 {

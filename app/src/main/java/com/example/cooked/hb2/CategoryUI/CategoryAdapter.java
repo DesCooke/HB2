@@ -18,6 +18,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     private ArrayList<RecordCategory> mDataset;
     private OnItemClickListener mOnItemClickListener;
     private OnItemClickListener mOnShowClickListener;
+    public boolean mPickOnly=false;
 
     public interface OnItemClickListener
     {
@@ -76,28 +77,37 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         rec = mDataset.get(position);
 
         holder.mCategoryName.setText(rec.CategoryName);
-        holder.btnEdit.setOnClickListener(new View.OnClickListener()
+        if(mPickOnly)
         {
-            @Override
-            public void onClick(View view)
-            {
-                if (mOnItemClickListener != null)
-                {
-                    mOnItemClickListener.onItemClick(view, rec);
+            holder.btnEdit.setVisibility(View.INVISIBLE);
+            holder.btnShow.setVisibility(View.INVISIBLE);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(view, rec);
+                    }
                 }
-            }
-        });
-        holder.btnShow.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                if (mOnShowClickListener != null)
-                {
-                    mOnShowClickListener.onItemClick(view, rec);
+            });
+        }
+        else {
+            holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(view, rec);
+                    }
                 }
-            }
-        });
+            });
+            holder.btnShow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mOnShowClickListener != null) {
+                        mOnShowClickListener.onItemClick(view, rec);
+                    }
+                }
+            });
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

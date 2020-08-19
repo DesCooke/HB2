@@ -29,7 +29,8 @@ class TableSubCategory extends TableBase {
                         "   CategoryId INTEGER, " +
                         "   SubCategoryName TEXT, " +
                         "   SubCategoryType INTEGER, " +
-                        "   Monitor TEXT " +
+                        "   Monitor TEXT, " +
+                        "   Old TEXT  " +
                         ") ";
 
         executeSQL(lSql, "TableSubCategory::onCreate", db);
@@ -66,12 +67,17 @@ class TableSubCategory extends TableBase {
         String lMonitor="N";
         if(rc.Monitor)
             lMonitor="Y";
+        String lOld="N";
+        if(rc.Old)
+            lOld="Y";
 
         String lSql =
                 "UPDATE tblSubCategory " +
                         "  SET SubCategoryName = '" + rc.SubCategoryName + "', " +
                         "  SubCategoryType = " + Integer.toString(rc.SubCategoryType) + "," +
-                        "  Monitor = '" + lMonitor + "' " +
+                        "  Monitor = '" + lMonitor + "'," +
+                        "  Old = '" + lOld + "'," +
+                        "  CategoryId =  " + rc.CategoryId + " " +
                         "WHERE SubCategoryId = " + rc.SubCategoryId.toString();
 
         executeSQL(lSql, "TableSubCategory::updateSubCategory", null);
@@ -85,6 +91,28 @@ class TableSubCategory extends TableBase {
         executeSQL(lSql, "TableSubCategory::deleteSubCategory", null);
     }
 
+    void changeSubCategory(int oldSubCategoryId, int newSubCategoryId) {
+        String lSql =
+                "UPDATE tblCommon " +
+                        "SET CategoryId = " + newSubCategoryId + " " +
+                        "WHERE CategoryId = " + oldSubCategoryId;
+
+        executeSQL(lSql, "TableSubCategory::changeSubCategory", null);
+
+        lSql =
+                "UPDATE tblPlanned " +
+                        "SET SubCategoryId = " + newSubCategoryId + " " +
+                        "WHERE SubCategoryId = " + oldSubCategoryId;
+
+        executeSQL(lSql, "TableSubCategory::changeSubCategory", null);
+
+        lSql =
+                "UPDATE tblTransaction " +
+                        "SET CategoryId = " + newSubCategoryId + " " +
+                        "WHERE CategoryId = " + oldSubCategoryId;
+
+        executeSQL(lSql, "TableSubCategory::changeSubCategory", null);
+    }
     ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId) {
         ArrayList<RecordSubCategory> list;
             try (SQLiteDatabase db = helper.getReadableDatabase())
@@ -93,14 +121,16 @@ class TableSubCategory extends TableBase {
                 String l_SQL;
                 if (pCategoryId != 0)
                 {
-                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, a.SubCategoryType, a.Monitor " +
+                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, " +
+                            "  a.SubCategoryType, a.Monitor, a.Old " +
                         "FROM tblSubCategory a, tblCategory b " +
                         "WHERE a.CategoryId = " + pCategoryId.toString() + " " +
                         "AND a.CategoryId = b.CategoryId " +
                         "ORDER BY b.CategoryName, a.SubCategoryName ";
                 } else
                 {
-                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, a.SubCategoryName, b.CategoryName, a.SubCategoryType, a.Monitor " +
+                    l_SQL = "SELECT a.SubCategoryId, a.CategoryId, a.SubCategoryName, b.CategoryName, " +
+                            "  a.SubCategoryType, a.Monitor, a.Old " +
                         "FROM tblSubCategory a, tblCategory b " +
                         "WHERE a.CategoryId = b.CategoryId " +
                         "ORDER BY b.CategoryName, a.SubCategoryName ";
@@ -125,7 +155,8 @@ class TableSubCategory extends TableBase {
                                             Integer.parseInt(cursor.getString(0)),
                                             cursor.getString(2),
                                             Integer.parseInt(cursor.getString(4)),
-                                            cursor.getString(5).compareTo("Y")==0
+                                            cursor.getString(5).compareTo("Y")==0,
+                                                cursor.getString(6).compareTo("Y")==0
                                         )
                                 );
                         } while (cursor.moveToNext());
@@ -140,12 +171,77 @@ class TableSubCategory extends TableBase {
         return list;
     }
 
+    ArrayList<RecordSubCategory> getSubCategoryListWithOld(Integer pCategoryId, Boolean pOld) {
+        ArrayList<RecordSubCategory> list;
+        String lOld=" ";
+        if(!pOld)
+            lOld = " AND a.Old <> 'Y' ";
+
+        try (SQLiteDatabase db = helper.getReadableDatabase())
+        {
+            Cursor cursor;
+            String l_SQL;
+            if (pCategoryId != 0)
+            {
+                l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, " +
+                        "  a.SubCategoryType, a.Monitor, a.Old " +
+                        "FROM tblSubCategory a, tblCategory b " +
+                        "WHERE a.CategoryId = " + pCategoryId.toString() + " " +
+                        "AND a.CategoryId = b.CategoryId " +
+                        lOld +
+                        "ORDER BY b.CategoryName, a.SubCategoryName ";
+            } else
+            {
+                l_SQL = "SELECT a.SubCategoryId, a.CategoryId, a.SubCategoryName, b.CategoryName, " +
+                        "  a.SubCategoryType, a.Monitor, a.Old " +
+                        "FROM tblSubCategory a, tblCategory b " +
+                        "WHERE a.CategoryId = b.CategoryId " +
+                        lOld +
+                        "ORDER BY b.CategoryName, a.SubCategoryName ";
+            }
+            cursor = db.rawQuery(l_SQL, null);
+            try
+            {
+                list = new ArrayList<>();
+                if (cursor != null)
+                {
+                    cursor.moveToFirst();
+                    do
+                    {
+                        if (cursor.getCount() == 0)
+                            break;
+                        list.add
+                                (
+                                        new RecordSubCategory
+                                                (
+                                                        Integer.parseInt(cursor.getString(1)),
+                                                        cursor.getString(3),
+                                                        Integer.parseInt(cursor.getString(0)),
+                                                        cursor.getString(2),
+                                                        Integer.parseInt(cursor.getString(4)),
+                                                        cursor.getString(5).compareTo("Y")==0,
+                                                        cursor.getString(6).compareTo("Y")==0
+                                                )
+                                );
+                    } while (cursor.moveToNext());
+                }
+            }
+            finally
+            {
+                assert cursor != null;
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
     RecordSubCategory getSubCategory(Integer pSubCategoryId) {
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 Cursor cursor;
                 String l_SQL;
-                l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, a.SubCategoryType, a.Monitor " +
+                l_SQL = "SELECT a.SubCategoryId, a.CategoryId, SubCategoryName, b.CategoryName, " +
+                        "  a.SubCategoryType, a.Monitor, a.Old " +
                     "FROM tblSubCategory a, tblCategory b " +
                     "WHERE a.SubCategoryId = " + pSubCategoryId.toString() + " " +
                     "AND a.CategoryId = b.CategoryId " +
@@ -167,7 +263,8 @@ class TableSubCategory extends TableBase {
                                             Integer.parseInt(cursor.getString(0)),
                                             cursor.getString(2),
                                             Integer.parseInt(cursor.getString(4)),
-                                                cursor.getString(5).compareTo("Y")==0
+                                                cursor.getString(5).compareTo("Y")==0,
+                                                cursor.getString(6).compareTo("Y")==0
                                         )
                                 );
                         }
@@ -187,6 +284,7 @@ class TableSubCategory extends TableBase {
                                         pSubCategoryId,
                                         "Unknown SubCategory",
                                         0,
+                                        false,
                                         false
                                 )
                 );
@@ -208,6 +306,11 @@ class TableSubCategory extends TableBase {
             MyLog.WriteLogMessage("Adding Monitor to tblSubCategory");
 
             db.execSQL("ALTER TABLE tblSubCategory ADD COLUMN Monitor TEXT DEFAULT 'N'");
+        }
+        if (oldVersion == 21 && newVersion == 22) {
+            MyLog.WriteLogMessage("Adding Monitor to tblSubCategory");
+
+            db.execSQL("ALTER TABLE tblSubCategory ADD COLUMN Old TEXT DEFAULT 'N'");
         }
     }
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)

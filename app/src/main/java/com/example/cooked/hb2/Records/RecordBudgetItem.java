@@ -9,6 +9,7 @@ public class RecordBudgetItem
     public Integer SubCategoryId;
     public Integer RecCount;
     public Float total;
+    public Float origTotal;
     public Float spent;
     public Float outstanding;
     public Boolean groupedBudget;
@@ -27,5 +28,6 @@ public class RecordBudgetItem
         outstanding = 0.00f;
         groupedBudget = false;
         Monitor=false;
+        origTotal = 0.00f;
     }
 }

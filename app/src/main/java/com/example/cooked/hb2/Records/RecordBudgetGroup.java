@@ -15,6 +15,7 @@ public class RecordBudgetGroup
     public Integer CategoryId;
     public Integer RecCount;
     public Float total;
+    public Float origTotal;
     public Float spent;
     public Float outstanding;
     public Boolean groupedBudget;
@@ -41,5 +42,6 @@ public class RecordBudgetGroup
         groupedBudget = false;
         DefaultBudgetType = RecordCategory.mDBTSameMonthLastYear;
         lMainActivity=null;
+        origTotal = 0.00f;
     }
 }

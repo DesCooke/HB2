@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 /**
@@ -39,15 +40,19 @@ public class activityCategory2 extends AppCompatActivity
     private AnimatedExpandableListView listView;
     private ExampleAdapter adapter;
     public ArrayList<RecordSubCategory> mDataset;
+    public Switch swOld;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
         try
         {
             setContentView(R.layout.activity_category_list2);
             Toolbar toolbar = findViewById(R.id.toolbar);
+            swOld = findViewById(R.id.swOld);
+
             setSupportActionBar(toolbar);
 
             setTitle("Categories");
@@ -64,7 +69,7 @@ public class activityCategory2 extends AppCompatActivity
     {
         try
         {
-            mDataset = MyDatabase.MyDB().getSubCategoryList(0);
+            mDataset = MyDatabase.MyDB().getSubCategoryListWithOld(0, swOld.isChecked());
 
             List<CategoryItem2> items = new ArrayList<CategoryItem2>();
 
@@ -190,6 +195,16 @@ public class activityCategory2 extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void SwitchChange(View view)
+    {
+        try
+        {
+            setupForm();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+    }
     @Override
     public void onResume()
     {  // After a pause OR at startup
@@ -201,7 +216,6 @@ public class activityCategory2 extends AppCompatActivity
         {
             MyLog.WriteExceptionMessage(e);
         }
-
     }
 
 
