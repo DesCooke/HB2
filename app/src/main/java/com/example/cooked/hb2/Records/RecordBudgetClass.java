@@ -14,6 +14,7 @@ public class RecordBudgetClass
     public Integer CategoryId;
     public Integer RecCount;
     public Float total;
+    public Float origTotal;
     public Float spent;
     public Float outstanding;
     public Integer BudgetMonth;
@@ -36,6 +37,7 @@ public class RecordBudgetClass
         outstanding = 0.00f;
         DefaultBudgetType = RecordCategory.mDBTSameMonthLastYear;
         lMainActivity=null;
+        origTotal = 0.00f;
     }
     
     public void ExpandChildren()

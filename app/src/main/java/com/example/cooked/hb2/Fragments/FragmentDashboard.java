@@ -105,7 +105,7 @@ public class FragmentDashboard extends Fragment
                     {
                         RecordBudgetProgress rbp = new RecordBudgetProgress();
                         rbp.mTitle=rbg.budgetGroupName;
-                        rbp.mTotalAmount=rbg.total;
+                        rbp.mTotalAmount=rbg.origTotal;
                         rbp.mLeftAmount=rbg.outstanding;
                         rbp.mSpentAmount=rbg.spent;
 
@@ -151,7 +151,7 @@ public class FragmentDashboard extends Fragment
                         {
                             RecordBudgetProgress rbp = new RecordBudgetProgress();
                             rbp.mTitle=rbg.budgetGroupName + "/" + rbi.budgetItemName;
-                            rbp.mTotalAmount=rbi.total;
+                            rbp.mTotalAmount=rbi.origTotal;
                             rbp.mLeftAmount=rbi.outstanding;
                             rbp.mSpentAmount=rbi.spent;
 

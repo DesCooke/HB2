@@ -20,6 +20,8 @@ import com.example.cooked.hb2.R;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static java.lang.Math.abs;
+
 public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAdapter.ViewHolder>
 {
     private ArrayList<RecordBudgetProgress> mDataset;
@@ -93,9 +95,9 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
         // - replace the contents of the view with that element
         holder.mTitle1.setText(rec.mTitle);
 
-        String lString="£" + String.format("%.2f", rec.mSpentAmount) +
-                " of " + String.format("%.2f", rec.mTotalAmount) +
-                " spent, £" + String.format("%.2f", rec.mLeftAmount) + " left";
+        String lString="£" + String.format("%.2f", abs(rec.mSpentAmount) ) +
+                " of £" + String.format("%.2f", abs(rec.mTotalAmount)) +
+                " spent, £" + String.format("%.2f", abs(rec.mLeftAmount)) + " left";
         holder.mTitle2.setText(lString);
 
         lString=rec.mSpentPerc + "% through budget, " +
