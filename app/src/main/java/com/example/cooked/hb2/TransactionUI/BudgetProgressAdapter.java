@@ -105,7 +105,7 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
         holder.mTitle3.setText(lString);
 
         int lPercInBudget = rec.mSpentPerc;
-        if(lPercInBudget < 71)
+        if(lPercInBudget < 86)
         {
             holder.mProgressBarRed.setVisibility(View.GONE);
             holder.mProgressBarYellow.setVisibility(View.GONE);
@@ -114,7 +114,7 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
         }
         else
         {
-            if(lPercInBudget < 91)
+            if(lPercInBudget < 101)
             {
                 holder.mProgressBarGreen.setVisibility(View.GONE);
                 holder.mProgressBarRed.setVisibility(View.GONE);

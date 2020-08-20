@@ -157,7 +157,7 @@ public class RecordPlanned
         {
             RecordPlannedVariation rpv=variations.get(i);
             if(rpv!=null)
-                if(atDate.compareTo(rpv.mEffDate)>0)
+                if(atDate.compareTo(rpv.mEffDate)>=0)
                     return(rpv.mAmount);
         }
         return(mMatchingTxAmount);

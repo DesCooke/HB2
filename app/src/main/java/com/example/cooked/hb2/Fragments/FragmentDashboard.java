@@ -139,7 +139,7 @@ public class FragmentDashboard extends Fragment
                         }
 
                         rbp.mPercInMonth=lPerc;
-                        float lFloat=rbg.spent / rbg.total * 100.00f;
+                        float lFloat=rbg.spent / rbg.origTotal * 100.00f;
                         rbp.mSpentPerc=(int)lFloat;
                         mDataset.add(rbp);
                     }
@@ -185,7 +185,7 @@ public class FragmentDashboard extends Fragment
                             }
 
                             rbp.mPercInMonth=lPerc;
-                            float lFloat=rbi.spent / rbi.total * 100.00f;
+                            float lFloat=rbi.spent / rbi.origTotal * 100.00f;
                             rbp.mSpentPerc=(int)lFloat;
                             mDataset.add(rbp);
                         }
