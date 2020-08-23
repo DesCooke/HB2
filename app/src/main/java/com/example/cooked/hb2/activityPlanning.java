@@ -4,10 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Switch;
 
@@ -25,6 +29,9 @@ public class activityPlanning extends AppCompatActivity
     private Bundle mPlannedViewState;
     public RecyclerView mPlannedList;
     private final String KEY_RECYCLER_STATE_PLANNED = "recycler_state_planned";
+    private TextInputLayout tilFilter;
+    private TextInputEditText tietFilter;
+    private String currentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,6 +41,31 @@ public class activityPlanning extends AppCompatActivity
         {
             setContentView(R.layout.activity_planning);
             Toolbar toolbar = findViewById(R.id.toolbar);
+            tilFilter = findViewById(R.id.tilFilter);
+            tietFilter = findViewById(R.id.tietFilter);
+            tietFilter.addTextChangedListener
+                    (
+                            new TextWatcher()
+                            {
+                                public void afterTextChanged(Editable s)
+                                {
+
+                                }
+
+                                public void beforeTextChanged(CharSequence s, int start,
+                                              int count, int after)
+                                {
+                                }
+
+                                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count)
+                                {
+                                    currentFilter = tietFilter.getText().toString();
+                                    SetupRecyclerView();
+                                }
+                            }
+                    );
+
             setSupportActionBar(toolbar);
 
             setTitle("Planning");
@@ -61,6 +93,7 @@ public class activityPlanning extends AppCompatActivity
                 }
             });
 
+            currentFilter="";
             SetupRecyclerView();
         } catch (Exception e)
         {
@@ -74,11 +107,31 @@ public class activityPlanning extends AppCompatActivity
         try
         {
             ArrayList<RecordPlanned> mDataset = MyDatabase.MyDB().getPlannedList(swActiveOnly.isChecked());
+            ArrayList<RecordPlanned> mFilteredDataset;
+            if(currentFilter.length()==0)
+            {
+                mFilteredDataset = mDataset;
+            }
+            else
+            {
+                mFilteredDataset = new ArrayList<RecordPlanned>();
+                String lNeedle=currentFilter.toUpperCase();
+                for (int i=0;i<mDataset.size(); i++)
+                {
+                    RecordPlanned rec = mDataset.get(i);
+                    String lHaystack=rec.mPlannedName.toUpperCase();
+
+                    if(lHaystack.contains(lNeedle))
+                    {
+                        mFilteredDataset.add(rec);
+                    }
+                }
+            }
             mPlannedList = findViewById(R.id.plannedList);
             mPlannedList.setHasFixedSize(true);
             RecyclerView.LayoutManager mLayoutManagerCurrent = new LinearLayoutManager(this);
             mPlannedList.setLayoutManager(mLayoutManagerCurrent);
-            PlannedAdapter mPlannedAdapter = new PlannedAdapter(mDataset);
+            PlannedAdapter mPlannedAdapter = new PlannedAdapter(mFilteredDataset);
             mPlannedList.setAdapter(mPlannedAdapter);
             mPlannedAdapter.setOnItemClickListener(new PlannedAdapter.OnItemClickListener()
             {
