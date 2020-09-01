@@ -14,6 +14,7 @@ import com.example.cooked.hb2.Adapters.VariationAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordBudgetProgress;
 import com.example.cooked.hb2.Database.RecordPlannedVariation;
+import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
@@ -113,13 +114,29 @@ public class FragmentDashboard extends Fragment
                         Date date = calendar.getTime();
                         int currentDay = calendar.get(Calendar.DATE);
                         int lPerc=0;
-                        if(currentDay == 26)
+
+                        int lCurrentBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+                        int lCurrentBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+                        boolean lFutureBudget=false;
+                        boolean lPastBudget=false;
+                        if(lCurrentBudgetYear>_rbm.budgetYear ||
+                                (lCurrentBudgetYear == _rbm.budgetYear && lCurrentBudgetMonth > _rbm.budgetMonth) )
+                        {
+                            lPastBudget = true;
+                        }
+                        if(lCurrentBudgetYear<_rbm.budgetYear ||
+                                (lCurrentBudgetYear == _rbm.budgetYear && lCurrentBudgetMonth < _rbm.budgetMonth) )
+                        {
+                            lFutureBudget = true;
+                        }
+
+                        if(currentDay == 26 || lFutureBudget)
                         {
                             lPerc=0;
                         }
                         else
                         {
-                            if(currentDay==25)
+                            if(currentDay==25 || lPastBudget)
                             {
                                 lPerc=100;
                             }
@@ -159,13 +176,29 @@ public class FragmentDashboard extends Fragment
                             Date date = calendar.getTime();
                             int currentDay = calendar.get(Calendar.DATE);
                             int lPerc=0;
-                            if(currentDay == 26)
+
+                            int lCurrentBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
+                            int lCurrentBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
+                            boolean lFutureBudget=false;
+                            boolean lPastBudget=false;
+                            if(lCurrentBudgetYear>_rbm.budgetYear ||
+                                    (lCurrentBudgetYear == _rbm.budgetYear && lCurrentBudgetMonth > _rbm.budgetMonth) )
+                            {
+                                lPastBudget = true;
+                            }
+                            if(lCurrentBudgetYear<_rbm.budgetYear ||
+                                    (lCurrentBudgetYear == _rbm.budgetYear && lCurrentBudgetMonth < _rbm.budgetMonth) )
+                            {
+                                lFutureBudget = true;
+                            }
+
+                            if(currentDay == 26 || lFutureBudget)
                             {
                                 lPerc=0;
                             }
                             else
                             {
-                                if(currentDay==25)
+                                if(currentDay==25 || lPastBudget)
                                 {
                                     lPerc=100;
                                 }
