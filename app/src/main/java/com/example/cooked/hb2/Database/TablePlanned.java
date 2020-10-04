@@ -91,10 +91,10 @@ class TablePlanned extends TableBase
                 "VALUES (" +
                 Integer.toString(rp.mPlannedId) + "," +
                 Integer.toString(rp.mPlannedType) + "," +
-                "'" + rp.mPlannedName + "'," +
+                "'" + rp.mPlannedName.trim() + "'," +
                 Integer.toString(rp.mSubCategoryId) + "," +
-                    "'" + rp.mSortCode + "'," +
-                    "'" + rp.mAccountNo + "'," +
+                    "'" + rp.mSortCode.trim() + "'," +
+                    "'" + rp.mAccountNo.trim() + "'," +
                 Long.toString(DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate)) + "," +
                 Integer.toString(rp.mPlannedMonth) + "," +
                 Integer.toString(rp.mPlannedDay) + "," +
@@ -107,8 +107,8 @@ class TablePlanned extends TableBase
                 Integer.toString(rp.mSunday?1:0) + "," +
                 Long.toString(rp.mStartDate.getTime()) + "," +
                 Long.toString(rp.mEndDate.getTime()) + "," +
-                "'" + rp.mMatchingTxType + "'," +
-                "'" + rp.mMatchingTxDescription + "'," +
+                "'" + rp.mMatchingTxType.trim() + "'," +
+                "'" + rp.mMatchingTxDescription.trim() + "'," +
                 Float.toString(rp.mMatchingTxAmount) + ", " +
                 Integer.toString(rp.mAutoMatchTransaction?1:0) + ", " +
                 Integer.toString(rp.mPaidInParts?1:0) + " " +
@@ -121,10 +121,10 @@ class TablePlanned extends TableBase
         String lSql =
                 "UPDATE tblPlanned " +
                         " SET PlannedType = " + Integer.toString(rp.mPlannedType) + "," +
-                        " PlannedName = '" + rp.mPlannedName + "'," +
+                        " PlannedName = '" + rp.mPlannedName.trim() + "'," +
                         " SubCategoryId = " + Integer.toString(rp.mSubCategoryId) + "," +
-                        " SortCode = '" + rp.mSortCode + "'," +
-                        " AccountNo = '" + rp.mAccountNo + "'," +
+                        " SortCode = '" + rp.mSortCode.trim() + "'," +
+                        " AccountNo = '" + rp.mAccountNo.trim() + "'," +
                         " PlannedDate = " + Long.toString(DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate)) + "," +
                         " PlannedMonth = " + Integer.toString(rp.mPlannedMonth) + "," +
                         " PlannedDay = " + Integer.toString(rp.mPlannedDay) + "," +
@@ -137,8 +137,8 @@ class TablePlanned extends TableBase
                         " Sunday = " + Integer.toString(rp.mSunday ? 1 : 0) + "," +
                         " StartDate = " + Long.toString(rp.mStartDate.getTime()) + "," +
                         " EndDate = " + Long.toString(rp.mEndDate.getTime()) + "," +
-                        " MatchingTxType = '" + rp.mMatchingTxType + "'," +
-                        " MatchingTxDescription = '" + rp.mMatchingTxDescription + "'," +
+                        " MatchingTxType = '" + rp.mMatchingTxType.trim() + "'," +
+                        " MatchingTxDescription = '" + rp.mMatchingTxDescription.trim() + "'," +
                         " MatchingTxAmount = " + Float.toString(rp.mMatchingTxAmount) + ", " +
                         " AutoMatchTransaction = " + Integer.toString(rp.mAutoMatchTransaction ? 1 : 0) + ", " +
                         " PaidInParts = " + Integer.toString(rp.mPaidInParts ? 1 : 0) + " " +
@@ -184,36 +184,36 @@ class TablePlanned extends TableBase
                         if (cursor.getCount() > 0) {
                             cursor.moveToFirst();
                             do {
-                                Long lOrigDate = Long.parseLong(cursor.getString(6));
+                                Long lOrigDate = Long.parseLong(cursor.getString(6).trim());
                                 Date lDate = new Date(lOrigDate);
                                 Long lNewDate = DateUtils.dateUtils().StripTimeElement(lDate);
                                 lDate = new Date(lNewDate);
                                 RecordPlanned lrec =
                                         new RecordPlanned
                                                 (
-                                                        Integer.parseInt(cursor.getString(0)),
-                                                        Integer.parseInt(cursor.getString(1)),
-                                                        cursor.getString(2),
-                                                        Integer.parseInt(cursor.getString(3)),
-                                                        cursor.getString(4),
-                                                        cursor.getString(5),
+                                                        Integer.parseInt(cursor.getString(0).trim()),
+                                                        Integer.parseInt(cursor.getString(1).trim()),
+                                                        cursor.getString(2).trim(),
+                                                        Integer.parseInt(cursor.getString(3).trim()),
+                                                        cursor.getString(4).trim(),
+                                                        cursor.getString(5).trim(),
                                                         lDate,
-                                                        Integer.parseInt(cursor.getString(7)),
-                                                        Integer.parseInt(cursor.getString(8)),
-                                                        Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
-                                                        new Date(Long.parseLong(cursor.getString(16))),
-                                                        new Date(Long.parseLong(cursor.getString(17))),
-                                                        cursor.getString(18),
-                                                        cursor.getString(19),
-                                                        Float.parseFloat(cursor.getString(20)),
-                                                        Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
+                                                        Integer.parseInt(cursor.getString(7).trim()),
+                                                        Integer.parseInt(cursor.getString(8).trim()),
+                                                        Integer.parseInt(cursor.getString(9).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(10).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(11).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(12).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(13).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(14).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(15).trim()) == 1 ? TRUE : FALSE,
+                                                        new Date(Long.parseLong(cursor.getString(16).trim())),
+                                                        new Date(Long.parseLong(cursor.getString(17).trim())),
+                                                        cursor.getString(18).trim(),
+                                                        cursor.getString(19).trim(),
+                                                        Float.parseFloat(cursor.getString(20).trim()),
+                                                        Integer.parseInt(cursor.getString(21).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(22).trim()) == 1 ? TRUE : FALSE
                                                 );
                                 list.add(lrec);
                             } while (cursor.moveToNext());
@@ -259,29 +259,29 @@ class TablePlanned extends TableBase
                                 RecordPlanned lrec =
                                         new RecordPlanned
                                                 (
-                                                        Integer.parseInt(cursor.getString(0)),
-                                                        Integer.parseInt(cursor.getString(1)),
-                                                        cursor.getString(2),
-                                                        Integer.parseInt(cursor.getString(3)),
-                                                        cursor.getString(4),
-                                                        cursor.getString(5),
-                                                        new Date(Long.parseLong(cursor.getString(6))),
-                                                        Integer.parseInt(cursor.getString(7)),
-                                                        Integer.parseInt(cursor.getString(8)),
-                                                        Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
-                                                        new Date(Long.parseLong(cursor.getString(16))),
-                                                        new Date(Long.parseLong(cursor.getString(17))),
-                                                        cursor.getString(18),
-                                                        cursor.getString(19),
-                                                        Float.parseFloat(cursor.getString(20)),
-                                                        Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
+                                                        Integer.parseInt(cursor.getString(0).trim()),
+                                                        Integer.parseInt(cursor.getString(1).trim()),
+                                                        cursor.getString(2).trim(),
+                                                        Integer.parseInt(cursor.getString(3).trim()),
+                                                        cursor.getString(4).trim(),
+                                                        cursor.getString(5).trim(),
+                                                        new Date(Long.parseLong(cursor.getString(6).trim())),
+                                                        Integer.parseInt(cursor.getString(7).trim()),
+                                                        Integer.parseInt(cursor.getString(8).trim()),
+                                                        Integer.parseInt(cursor.getString(9).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(10).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(11).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(12).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(13).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(14).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(15).trim()) == 1 ? TRUE : FALSE,
+                                                        new Date(Long.parseLong(cursor.getString(16).trim())),
+                                                        new Date(Long.parseLong(cursor.getString(17).trim())),
+                                                        cursor.getString(18).trim(),
+                                                        cursor.getString(19).trim(),
+                                                        Float.parseFloat(cursor.getString(20).trim()),
+                                                        Integer.parseInt(cursor.getString(21).trim()) == 1 ? TRUE : FALSE,
+                                                        Integer.parseInt(cursor.getString(22).trim()) == 1 ? TRUE : FALSE
                                                 );
                                 Long lDate = DateUtils.dateUtils().StripTimeElement(lrec.mPlannedDate);
                                 lrec.mPlannedDate = new Date(lDate);
@@ -329,8 +329,8 @@ class TablePlanned extends TableBase
                             {
                                 RecordBudget lrec =
                                     new RecordBudget(
-                                        Integer.parseInt(cursor.getString(0)),
-                                        Float.parseFloat(cursor.getString(1)),
+                                        Integer.parseInt(cursor.getString(0).trim()),
+                                        Float.parseFloat(cursor.getString(1).trim()),
                                        null,
                                        false
                                     );
@@ -455,8 +455,8 @@ class TablePlanned extends TableBase
                             {
                                 RecordBudget lrec =
                                     new RecordBudget(
-                                        Integer.parseInt(cursor.getString(0)),
-                                        Float.parseFloat(cursor.getString(1)),
+                                        Integer.parseInt(cursor.getString(0).trim()),
+                                        Float.parseFloat(cursor.getString(1).trim()),
                                         null,
                                             false
                                     );
@@ -577,8 +577,8 @@ class TablePlanned extends TableBase
                             {
                                 RecordBudget lrec =
                                     new RecordBudget(
-                                        Integer.parseInt(cursor.getString(0)),
-                                        Float.parseFloat(cursor.getString(1)),
+                                        Integer.parseInt(cursor.getString(0).trim()),
+                                        Float.parseFloat(cursor.getString(1).trim()),
                                         null,
                                             false
                                     );
@@ -778,29 +778,29 @@ class TablePlanned extends TableBase
     
                             RecordPlanned rp = new RecordPlanned
                                 (
-                                    Integer.parseInt(cursor.getString(0)),
-                                    Integer.parseInt(cursor.getString(1)),
-                                    cursor.getString(2),
-                                    Integer.parseInt(cursor.getString(3)),
-                                    cursor.getString(4),
-                                    cursor.getString(5),
-                                    new Date(Long.parseLong(cursor.getString(6))),
-                                    Integer.parseInt(cursor.getString(7)),
-                                    Integer.parseInt(cursor.getString(8)),
-                                    Integer.parseInt(cursor.getString(9)) == 1 ? TRUE : FALSE,
-                                    Integer.parseInt(cursor.getString(10)) == 1 ? TRUE : FALSE,
-                                    Integer.parseInt(cursor.getString(11)) == 1 ? TRUE : FALSE,
-                                    Integer.parseInt(cursor.getString(12)) == 1 ? TRUE : FALSE,
-                                    Integer.parseInt(cursor.getString(13)) == 1 ? TRUE : FALSE,
-                                    Integer.parseInt(cursor.getString(14)) == 1 ? TRUE : FALSE,
-                                    Integer.parseInt(cursor.getString(15)) == 1 ? TRUE : FALSE,
-                                    new Date(Long.parseLong(cursor.getString(16))),
-                                    new Date(Long.parseLong(cursor.getString(17))),
-                                    cursor.getString(18),
-                                    cursor.getString(19),
-                                    Float.parseFloat(cursor.getString(20)),
-                                    Integer.parseInt(cursor.getString(21)) == 1 ? TRUE : FALSE,
-                                    Integer.parseInt(cursor.getString(22)) == 1 ? TRUE : FALSE
+                                    Integer.parseInt(cursor.getString(0).trim()),
+                                    Integer.parseInt(cursor.getString(1).trim()),
+                                    cursor.getString(2).trim(),
+                                    Integer.parseInt(cursor.getString(3).trim()),
+                                    cursor.getString(4).trim(),
+                                    cursor.getString(5).trim(),
+                                    new Date(Long.parseLong(cursor.getString(6).trim())),
+                                    Integer.parseInt(cursor.getString(7).trim()),
+                                    Integer.parseInt(cursor.getString(8).trim()),
+                                    Integer.parseInt(cursor.getString(9).trim()) == 1 ? TRUE : FALSE,
+                                    Integer.parseInt(cursor.getString(10).trim()) == 1 ? TRUE : FALSE,
+                                    Integer.parseInt(cursor.getString(11).trim()) == 1 ? TRUE : FALSE,
+                                    Integer.parseInt(cursor.getString(12).trim()) == 1 ? TRUE : FALSE,
+                                    Integer.parseInt(cursor.getString(13).trim()) == 1 ? TRUE : FALSE,
+                                    Integer.parseInt(cursor.getString(14).trim()) == 1 ? TRUE : FALSE,
+                                    Integer.parseInt(cursor.getString(15).trim()) == 1 ? TRUE : FALSE,
+                                    new Date(Long.parseLong(cursor.getString(16).trim())),
+                                    new Date(Long.parseLong(cursor.getString(17).trim())),
+                                    cursor.getString(18).trim(),
+                                    cursor.getString(19).trim(),
+                                    Float.parseFloat(cursor.getString(20).trim()),
+                                    Integer.parseInt(cursor.getString(21).trim()) == 1 ? TRUE : FALSE,
+                                    Integer.parseInt(cursor.getString(22).trim()) == 1 ? TRUE : FALSE
                                 );
                             rp.variations = MyDatabase.MyDB().getVariationList(rp.mPlannedId);
                             Long lDate = DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate);

@@ -104,14 +104,20 @@ public class MyDownloads
                     RecordPlanned rp=recordPlannedList.get(i);
                     if(rp.mAutoMatchTransaction)
                     {
+                        boolean lMatchTxType=false;
+                        if(rp.mMatchingTxType.trim().length()==0 || rt.TxType.contains(rp.mMatchingTxType))
+                            lMatchTxType = true;
+
                         if(rp.mMatchingTxDescription.length()>0)
                         {
                             if(rt.TxDescription.length()>0)
                             {
                                 if(rt.TxDescription.contains(rp.mMatchingTxDescription))
                                 {
-                                    rt.CategoryId=rp.mSubCategoryId;
-                                    break;
+                                    if(lMatchTxType) {
+                                        rt.CategoryId = rp.mSubCategoryId;
+                                        break;
+                                    }
                                 }
                             }
                         }
