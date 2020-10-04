@@ -408,6 +408,18 @@ public class activityPlanningItem extends AppCompatActivity
         }
     }
 
+    public void showHelp(View view)
+    {
+        try
+        {
+            Intent intent = new Intent(getApplicationContext(), activityPlanningItemHelp.class);
+            startActivity(intent);
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+    }
+
     public void pickEndDateTime(View view)
     {
         try

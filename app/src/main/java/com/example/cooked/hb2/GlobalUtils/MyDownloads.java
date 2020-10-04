@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.example.cooked.hb2.Database.MyDatabase;
+import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
@@ -33,6 +34,7 @@ public class MyDownloads
     private String txArchiveDirectory;
     private Pattern pattern;
     private ArrayList<String> mylist = new ArrayList<>();
+    List<RecordPlanned> recordPlannedList = new ArrayList<>();
 
     public static MyDownloads MyDL()
     {
@@ -96,6 +98,32 @@ public class MyDownloads
                 rt.TxSortCode = row[2].substring(1);
                 rt.TxAccountNumber = row[3];
                 rt.TxDescription = row[4].replace("'", "");
+
+                for(int i=0;i<recordPlannedList.size();i++)
+                {
+                    RecordPlanned rp=recordPlannedList.get(i);
+                    if(rp.mAutoMatchTransaction)
+                    {
+                        boolean lMatchTxType=false;
+                        if(rp.mMatchingTxType.trim().length()==0 || rt.TxType.contains(rp.mMatchingTxType))
+                            lMatchTxType = true;
+
+                        if(rp.mMatchingTxDescription.length()>0)
+                        {
+                            if(rt.TxDescription.length()>0)
+                            {
+                                if(rt.TxDescription.contains(rp.mMatchingTxDescription))
+                                {
+                                    if(lMatchTxType) {
+                                        rt.CategoryId = rp.mSubCategoryId;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if (row[5].length() > 0)
                 {
                     rt.TxAmount = Float.parseFloat(row[5]) * -1;
@@ -168,6 +196,7 @@ public class MyDownloads
     {
         try
         {
+            recordPlannedList = MyDatabase.MyDB().getPlannedList(true);
             mylist.clear();
             File f = new File(downloadDirectory);
             File[] fl = f.listFiles();
