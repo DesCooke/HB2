@@ -190,26 +190,7 @@ public class activityPlanningItem extends AppCompatActivity
                     MyDay.Value = mRecordPlanned.mPlannedDay;
                     MySubCategoryId.Value = mRecordPlanned.mSubCategoryId;
                     tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mRecordPlanned.mPlannedType]);
-                    tilPlannedType.getEditText().setText("Oneoff");
-                    if(mRecordPlanned.mFrequencyMultiplier==1)
-                    {
-                        if(mPlannedType.Value==(int)RecordPlanned.mPTMonthly)
-                            tilPlannedType.getEditText().setText("Every month");
-                        if(mPlannedType.Value==(int)RecordPlanned.mPTWeekly)
-                            tilPlannedType.getEditText().setText("Every week");
-                        if(mPlannedType.Value==(int)RecordPlanned.mPTYearly)
-                            tilPlannedType.getEditText().setText("Every year");
-                    }
-                    else
-                    {
-                        if(mPlannedType.Value==(int)RecordPlanned.mPTMonthly)
-                            tilPlannedType.getEditText().setText("Every " + String.valueOf(mRecordPlanned.mFrequencyMultiplier) + " months");
-                        if(mPlannedType.Value==(int)RecordPlanned.mPTWeekly)
-                            tilPlannedType.getEditText().setText("Every " + String.valueOf(mRecordPlanned.mFrequencyMultiplier) + " weeks");
-                        if(mPlannedType.Value==(int)RecordPlanned.mPTYearly)
-                            tilPlannedType.getEditText().setText("Every " + String.valueOf(mRecordPlanned.mFrequencyMultiplier) + " years");
-                    }
-
+                    tilPlannedType.getEditText().setText(DateUtils.dateUtils().PlannedTypeDescription(mRecordPlanned));
                     edtPlannedName.getEditText().setText(mRecordPlanned.mPlannedName);
                     tilSubCategoryName.getEditText().setText(mRecordPlanned.mSubCategoryName);
 

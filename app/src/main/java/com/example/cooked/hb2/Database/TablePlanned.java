@@ -338,7 +338,8 @@ class TablePlanned extends TableBase
                                         Integer.parseInt(cursor.getString(0).trim()),
                                         Float.parseFloat(cursor.getString(1).trim()),
                                        null,
-                                       false
+                                       false,
+                                            -1
                                     );
                                 budgetSpent.add(lrec);
                             } while (cursor.moveToNext());
@@ -464,7 +465,8 @@ class TablePlanned extends TableBase
                                         Integer.parseInt(cursor.getString(0).trim()),
                                         Float.parseFloat(cursor.getString(1).trim()),
                                         null,
-                                            false
+                                            false,
+                                            -1
                                     );
                                 budgetSpent.add(lrec);
                             } while (cursor.moveToNext());
@@ -586,7 +588,8 @@ class TablePlanned extends TableBase
                                         Integer.parseInt(cursor.getString(0).trim()),
                                         Float.parseFloat(cursor.getString(1).trim()),
                                         null,
-                                            false
+                                            false,
+                                            -1
                                     );
                                 budgetSpent.add(lrec);
                             } while (cursor.moveToNext());
@@ -729,10 +732,13 @@ class TablePlanned extends TableBase
                 } while (lCurrentDate.getTime() <= lBudgetEnd.getTime());
                 if (lAtleastOne) {
                     boolean lFound = false;
-                    for (int j = 0; j < budgetFull.size(); j++) {
-                        if (budgetFull.get(j).SubCategoryId == rp.mSubCategoryId) {
-                            budgetFull.get(j).Amount += lAmount;
-                            budgetFull.get(j).NextDueDate = rp.mNextDueDate;
+                    for (int j = 0; j < budgetFull.size(); j++)
+                    {
+                        RecordBudget rb = budgetFull.get(j);
+                        if (rb.SubCategoryId == rp.mSubCategoryId)
+                        {
+                            rb.Amount += lAmount;
+                            rb.NextDueDate = rp.mNextDueDate;
                             lFound = true;
                         }
                     }
@@ -741,10 +747,11 @@ class TablePlanned extends TableBase
                         budgetFull.add(
                             new RecordBudget
                                     (
-                                rp.mSubCategoryId,
-                                lAmount,
-                                rp.mNextDueDate,
-                                rp.mAutoMatchTransaction
+                                        rp.mSubCategoryId,
+                                        lAmount,
+                                        rp.mNextDueDate,
+                                        rp.mAutoMatchTransaction,
+                                        rp.mPlannedId
                                     )
                         );
                     }
