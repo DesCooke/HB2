@@ -36,7 +36,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 22;
+    private static final int DATABASE_VERSION = 23;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -681,7 +681,25 @@ public class MyDatabase extends SQLiteOpenHelper
                         }
                     }
 
-                    rbi.budgetItemName = scl.get(j).SubCategoryName;
+                    String lExtraName="";
+                    if(rb2.mPlannedId>-1)
+                    {
+                        RecordPlanned localrp=MyDB().getSinglePlanned(rb2.mPlannedId);
+                        if(localrp.mPlannedType==RecordPlanned.mPTMonthly && localrp.mFrequencyMultiplier==1)
+                        {
+                            rbi.budgetItemName = scl.get(j).SubCategoryName;
+                        }
+                        else
+                        {
+                            lExtraName = DateUtils.dateUtils().PlannedTypeDescription(localrp);
+                            rbi.budgetItemName = scl.get(j).SubCategoryName + " (" + lExtraName + ")";
+                        }
+                    }
+                    else
+                    {
+                        rbi.budgetItemName = scl.get(j).SubCategoryName;
+                    }
+
                     rbi.SubCategoryId = scl.get(j).SubCategoryId;
                     rbi.Monitor = scl.get(j).Monitor;
                     rbi.total = rb2.Amount;
@@ -897,6 +915,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 rb2 = null;
                 for (int k = 0; k < rb.size(); k++)
                 {
+                    RecordBudget localrbi = rb.get(k);
                     if (rb.get(k).SubCategoryId == scl.get(j).SubCategoryId)
                     {
                         rb2 = rb.get(k);
@@ -913,6 +932,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     rbi.groupedBudget = rbg.groupedBudget;
                     rbi.spent = 0.00f;
 
+
                     for (int l = 0; l < rbspent.size(); l++)
                     {
                         if (rbspent.get(l).SubCategoryId == rb2.SubCategoryId)
@@ -925,7 +945,26 @@ public class MyDatabase extends SQLiteOpenHelper
                         }
                     }
 
-                    rbi.budgetItemName = scl.get(j).SubCategoryName;
+                    RecordSubCategory rsc = scl.get(j);
+
+                    String lExtraName="";
+                    if(rb2.mPlannedId>-1)
+                    {
+                        RecordPlanned localrp=MyDB().getSinglePlanned(rb2.mPlannedId);
+                        if(localrp.mPlannedType!=RecordPlanned.mPTMonthly)
+                        {
+                            lExtraName = DateUtils.dateUtils().PlannedTypeDescription(localrp);
+                            rbi.budgetItemName = scl.get(j).SubCategoryName + " (" + lExtraName + ")";
+                        }
+                        else
+                        {
+                            rbi.budgetItemName = scl.get(j).SubCategoryName;
+                        }
+                    }
+                    else
+                    {
+                        rbi.budgetItemName = scl.get(j).SubCategoryName;
+                    }
                     rbi.SubCategoryId = scl.get(j).SubCategoryId;
                     rbi.Monitor = scl.get(j).Monitor;
                     rbi.total = rb2.Amount;

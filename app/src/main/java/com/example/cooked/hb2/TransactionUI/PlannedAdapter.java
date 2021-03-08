@@ -96,7 +96,8 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mPlannedType.setText(RecordPlanned.mPlannedTypes[rec.mPlannedType]);
+
+        holder.mPlannedType.setText(DateUtils.dateUtils().PlannedTypeDescription(rec));
         holder.mPlannedName.setText("Name: " + rec.mPlannedName);
         holder.mSubcategoryName.setText("Category: " + rec.mSubCategoryName);
 
@@ -113,7 +114,14 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
         holder.mStartDate.setText("Start: " + lMyString.Value);
 
         DateUtils.dateUtils().DateToStr(rec.mEndDate, lMyString);
-        holder.mEndDate.setText("End: " + lMyString.Value);
+        if(lMyString.Value.compareTo("23/05/2069")==0)
+        {
+            holder.mEndDate.setText("End: ");
+        }
+        else
+        {
+            holder.mEndDate.setText("End: " + lMyString.Value);
+        }
 
         holder.mMatchingType.setText("Matching Type: " + rec.mMatchingTxType);
         holder.mMatchingDescription.setText("Matching Description: " + rec.mMatchingTxDescription);

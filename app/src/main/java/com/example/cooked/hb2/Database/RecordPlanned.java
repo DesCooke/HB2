@@ -48,6 +48,8 @@ public class RecordPlanned
 
     public Boolean mPaidInParts;
 
+    public Integer mFrequencyMultiplier;
+
     public ArrayList<RecordPlannedVariation> variations;
 
     RecordPlanned
@@ -78,7 +80,9 @@ public class RecordPlanned
             Float pMatchingTxAmount,
             Boolean pAutoMatchTransaction,
 
-            Boolean pPaidInParts
+            Boolean pPaidInParts,
+
+            Integer pFrequencyMultiplier
 
         ) {
         mPlannedId = pPlannedId;
@@ -114,6 +118,10 @@ public class RecordPlanned
         }
 
         if (mPlannedType == RecordPlanned.mPTYearly) {
+            if(mPlannedDay==0)
+                mPlannedDay=1;
+            if(mPlannedMonth==0)
+                mPlannedMonth=1;
             mPlanned = DateUtils.formatDayAndMonth(mPlannedDay, mPlannedMonth);
         }
 
@@ -144,6 +152,7 @@ public class RecordPlanned
         mNextDueDate = null;
         mAutoMatchTransaction = pAutoMatchTransaction;
         mPaidInParts = pPaidInParts;
+        mFrequencyMultiplier = pFrequencyMultiplier;
 
     }
 
@@ -194,6 +203,7 @@ public class RecordPlanned
         mNextDueDate = null;
         mAutoMatchTransaction = false;
         mPaidInParts = false;
+        mFrequencyMultiplier = 1;
     }
     
 }

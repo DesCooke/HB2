@@ -3,6 +3,7 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.annotation.SuppressLint;
 import android.widget.DatePicker;
 
+import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.R;
 
 import java.text.ParseException;
@@ -29,7 +30,29 @@ public class DateUtils
         return (myDateUtils);
     }
 
-
+    public String PlannedTypeDescription(RecordPlanned rp)
+    {
+        String lDesc = "Oneoff";
+        if(rp.mFrequencyMultiplier==1)
+        {
+            if(rp.mPlannedType==(int) RecordPlanned.mPTMonthly)
+                lDesc="Every month";
+            if(rp.mPlannedType==(int)RecordPlanned.mPTWeekly)
+                lDesc="Every week";
+            if(rp.mPlannedType==(int)RecordPlanned.mPTYearly)
+                lDesc="Every year";
+        }
+        else
+        {
+            if(rp.mPlannedType==(int)RecordPlanned.mPTMonthly)
+                lDesc="Every " + String.valueOf(rp.mFrequencyMultiplier) + " months";
+            if(rp.mPlannedType==(int)RecordPlanned.mPTWeekly)
+                lDesc="Every " + String.valueOf(rp.mFrequencyMultiplier) + " weeks";
+            if(rp.mPlannedType==(int)RecordPlanned.mPTYearly)
+                lDesc="Every " + String.valueOf(rp.mFrequencyMultiplier) + " years";
+        }
+        return(lDesc);
+    }
     public static String formatDayAndMonth(int day, int month)
     {
         String lSuffix="th";
@@ -231,6 +254,12 @@ public class DateUtils
             MyLog.WriteExceptionMessage(e);
         }
         return (new Date());
+    }
+
+    public void GetYear(Date date, MyInt myInt)
+    {
+        String lString = new SimpleDateFormat("yyyy", Locale.ENGLISH).format(date);
+        myInt.Value = Integer.parseInt(lString);
     }
 
     public void GetMonth(Date date, MyInt myInt)

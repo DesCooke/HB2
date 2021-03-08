@@ -117,6 +117,8 @@ public class DialogDatePicker extends Dialog implements View.OnClickListener
             MyString ms = new MyString();
             if (!dateUtils.DatePickerToStr(datePicker, ms))
                 return;
+            if(ms.Value.compareTo(activity.getResources().getString(R.string.date_unknown_string))==0)
+                ms.Value="";
             if (txtStartDate != null)
                 txtStartDate.setText(ms.Value);
             if (tilStartDate != null)

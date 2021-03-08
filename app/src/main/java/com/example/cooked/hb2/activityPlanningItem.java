@@ -79,6 +79,7 @@ public class activityPlanningItem extends AppCompatActivity
     public String mActionType;
     public RecordPlanned mRecordPlanned;
     public CheckBox mPaidInParts;
+    public MyInt mFrequencyMultiplier;
 
     @SuppressLint("CutPasteId")
     @Override
@@ -94,6 +95,7 @@ public class activityPlanningItem extends AppCompatActivity
 
             mRecordPlanned = new RecordPlanned();
             mPlannedType = new MyInt();
+            mFrequencyMultiplier = new MyInt();
             MySubCategoryId = new MyInt();
             MyMonth = new MyInt();
             MyDay = new MyInt();
@@ -163,11 +165,12 @@ public class activityPlanningItem extends AppCompatActivity
                 if (!dateUtils().DateToStr(new Date(), myString))
                     return;
                 tilStartDate.getEditText().setText(myString.Value);
-                tilEndDate.getEditText().setText(R.string.dateEndOfTime);
+                tilEndDate.getEditText().setText("");
                 btnDelete.setVisibility(View.GONE);
                 btnCopyToNew.setVisibility(View.GONE);
                 swAutoMatchTransaction.setChecked(false);
                 mPaidInParts.setChecked(false);
+                mFrequencyMultiplier.Value=1;
             }
             if (mActionType.compareTo("EDIT") == 0)
             {
@@ -179,7 +182,7 @@ public class activityPlanningItem extends AppCompatActivity
                     if (!dateUtils().DateToStr(new Date(), myString))
                         return;
                     tilStartDate.getEditText().setText(myString.Value);
-                    tilEndDate.getEditText().setText(R.string.dateEndOfTime);
+                    tilEndDate.getEditText().setText("");
                 } else
                 {
                     mRecordPlanned = MyDB().getSinglePlanned(lPlannedId);
@@ -187,6 +190,7 @@ public class activityPlanningItem extends AppCompatActivity
                     MyDay.Value = mRecordPlanned.mPlannedDay;
                     MySubCategoryId.Value = mRecordPlanned.mSubCategoryId;
                     tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mRecordPlanned.mPlannedType]);
+                    tilPlannedType.getEditText().setText(DateUtils.dateUtils().PlannedTypeDescription(mRecordPlanned));
                     edtPlannedName.getEditText().setText(mRecordPlanned.mPlannedName);
                     tilSubCategoryName.getEditText().setText(mRecordPlanned.mSubCategoryName);
 
@@ -204,9 +208,18 @@ public class activityPlanningItem extends AppCompatActivity
                     DateUtils.dateUtils().DateToStr(mRecordPlanned.mStartDate, lString);
                     tilStartDate.getEditText().setText(lString.Value);
 
-                    DateUtils.dateUtils().DateToStr(mRecordPlanned.mEndDate, lString);
-                    tilEndDate.getEditText().setText(lString.Value);
-
+                    String unknownDateString=getResources().getString(R.string.date_unknown_millisecs);
+                    long unknownDateLong = Long.parseLong(unknownDateString);
+                    Date unknownDate = new Date(unknownDateLong);
+                    if(mRecordPlanned.mEndDate.getTime()==unknownDate.getTime())
+                    {
+                        tilEndDate.getEditText().setText("");
+                    }
+                    else
+                    {
+                        DateUtils.dateUtils().DateToStr(mRecordPlanned.mEndDate, lString);
+                        tilEndDate.getEditText().setText(lString.Value);
+                    }
                     edtMatchType.getEditText().setText(mRecordPlanned.mMatchingTxType);
                     edtMatchDescription.getEditText().setText(mRecordPlanned.mMatchingTxDescription);
                     String lText = String.format(Locale.UK, "%.2f", mRecordPlanned.mMatchingTxAmount);
@@ -225,6 +238,7 @@ public class activityPlanningItem extends AppCompatActivity
 
                     swAutoMatchTransaction.setChecked(mRecordPlanned.mAutoMatchTransaction);
 
+                    mFrequencyMultiplier.Value = mRecordPlanned.mFrequencyMultiplier;
                 }
             }
         } catch (Exception e)
@@ -267,6 +281,7 @@ public class activityPlanningItem extends AppCompatActivity
             mRecordPlanned.mPlannedName = edtPlannedName.getEditText().getText().toString();
             mRecordPlanned.mSubCategoryId = MySubCategoryId.Value;
             mRecordPlanned.mPaidInParts = mPaidInParts.isChecked();
+            mRecordPlanned.mFrequencyMultiplier = mFrequencyMultiplier.Value;
             if (radCashAccount.isChecked())
             {
                 mRecordPlanned.mSortCode = "Cash";
@@ -340,7 +355,16 @@ public class activityPlanningItem extends AppCompatActivity
 
             mRecordPlanned.mStartDate = dateUtils().StrToDate(tilStartDate.getEditText().getText().toString());
 
-            mRecordPlanned.mEndDate = dateUtils().StrToDate(tilEndDate.getEditText().getText().toString());
+            if(tilEndDate.getEditText().getText().length()==0)
+            {
+                String lunknownDate=getResources().getString(R.string.date_unknown_millisecs);
+                Long lunknownLong=Long.parseLong(lunknownDate);
+                mRecordPlanned.mEndDate = new Date(lunknownLong);
+            }
+            else
+            {
+                mRecordPlanned.mEndDate = dateUtils().StrToDate(tilEndDate.getEditText().getText().toString());
+            }
 
             mRecordPlanned.mMatchingTxType = edtMatchType.getEditText().getText().toString();
             mRecordPlanned.mMatchingTxDescription = edtMatchDescription.getEditText().getText().toString();
@@ -496,6 +520,7 @@ public class activityPlanningItem extends AppCompatActivity
             DialogPlannedTypePicker ppp = new DialogPlannedTypePicker(this);
             ppp.tilPlannedType = tilPlannedType;
             ppp.mPlannedType = mPlannedType;
+            ppp.mFrequencyMultiplier = mFrequencyMultiplier;
             ppp.show();
         } catch (Exception e)
         {
