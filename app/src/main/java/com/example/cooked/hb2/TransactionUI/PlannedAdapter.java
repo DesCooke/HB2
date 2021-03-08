@@ -97,28 +97,7 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        String lFreq="Oneoff";
-        if(rec.mFrequencyMultiplier==1)
-        {
-            if(rec.mPlannedType==(int)RecordPlanned.mPTMonthly)
-                lFreq="Every month";
-            if(rec.mPlannedType==(int)RecordPlanned.mPTWeekly)
-                lFreq="Every week";
-            if(rec.mPlannedType==(int)RecordPlanned.mPTYearly)
-                lFreq="Every year";
-        }
-        else
-        {
-            if(rec.mPlannedType==(int)RecordPlanned.mPTMonthly)
-                lFreq="Every " + String.valueOf(rec.mFrequencyMultiplier) + " months";
-            if(rec.mPlannedType==(int)RecordPlanned.mPTWeekly)
-                lFreq="Every " + String.valueOf(rec.mFrequencyMultiplier) + " weeks";
-            if(rec.mPlannedType==(int)RecordPlanned.mPTYearly)
-                lFreq="Every " + String.valueOf(rec.mFrequencyMultiplier) + " years";
-        }
-        holder.mPlannedType.setText(lFreq);
-
-
+        holder.mPlannedType.setText(DateUtils.dateUtils().PlannedTypeDescription(rec));
         holder.mPlannedName.setText("Name: " + rec.mPlannedName);
         holder.mSubcategoryName.setText("Category: " + rec.mSubCategoryName);
 
