@@ -96,7 +96,29 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mPlannedType.setText(RecordPlanned.mPlannedTypes[rec.mPlannedType]);
+
+        String lFreq="Oneoff";
+        if(rec.mFrequencyMultiplier==1)
+        {
+            if(rec.mPlannedType==(int)RecordPlanned.mPTMonthly)
+                lFreq="Every month";
+            if(rec.mPlannedType==(int)RecordPlanned.mPTWeekly)
+                lFreq="Every week";
+            if(rec.mPlannedType==(int)RecordPlanned.mPTYearly)
+                lFreq="Every year";
+        }
+        else
+        {
+            if(rec.mPlannedType==(int)RecordPlanned.mPTMonthly)
+                lFreq="Every " + String.valueOf(rec.mFrequencyMultiplier) + " months";
+            if(rec.mPlannedType==(int)RecordPlanned.mPTWeekly)
+                lFreq="Every " + String.valueOf(rec.mFrequencyMultiplier) + " weeks";
+            if(rec.mPlannedType==(int)RecordPlanned.mPTYearly)
+                lFreq="Every " + String.valueOf(rec.mFrequencyMultiplier) + " years";
+        }
+        holder.mPlannedType.setText(lFreq);
+
+
         holder.mPlannedName.setText("Name: " + rec.mPlannedName);
         holder.mSubcategoryName.setText("Category: " + rec.mSubCategoryName);
 
@@ -113,7 +135,14 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
         holder.mStartDate.setText("Start: " + lMyString.Value);
 
         DateUtils.dateUtils().DateToStr(rec.mEndDate, lMyString);
-        holder.mEndDate.setText("End: " + lMyString.Value);
+        if(lMyString.Value.compareTo("23/05/2069")==0)
+        {
+            holder.mEndDate.setText("End: ");
+        }
+        else
+        {
+            holder.mEndDate.setText("End: " + lMyString.Value);
+        }
 
         holder.mMatchingType.setText("Matching Type: " + rec.mMatchingTxType);
         holder.mMatchingDescription.setText("Matching Description: " + rec.mMatchingTxDescription);

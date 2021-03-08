@@ -233,6 +233,12 @@ public class DateUtils
         return (new Date());
     }
 
+    public void GetYear(Date date, MyInt myInt)
+    {
+        String lString = new SimpleDateFormat("yyyy", Locale.ENGLISH).format(date);
+        myInt.Value = Integer.parseInt(lString);
+    }
+
     public void GetMonth(Date date, MyInt myInt)
     {
         String lString = new SimpleDateFormat("MM", Locale.ENGLISH).format(date);
