@@ -12,6 +12,7 @@ import com.example.cooked.hb2.GlobalUtils.MyString;
 import com.example.cooked.hb2.Records.RecordTransaction;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -666,21 +667,43 @@ class TablePlanned extends TableBase
             MyString lMyString = new MyString();
             DateUtils.dateUtils().GetDayOfWeek(pDate, lMyString);
             if(lMyString.Value.compareTo("Mon")==0 && !prp.mMonday)
-                return(true);
+                return(false);
             if(lMyString.Value.compareTo("Tue")==0 && !prp.mTuesday)
-                return(true);
+                return(false);
             if(lMyString.Value.compareTo("Wed")==0 && !prp.mWednesday)
-                return(true);
+                return(false);
             if(lMyString.Value.compareTo("Thu")==0 && !prp.mThursday)
-                return(true);
+                return(false);
             if(lMyString.Value.compareTo("Fri")==0 && !prp.mFriday)
-                return(true);
+                return(false);
             if(lMyString.Value.compareTo("Sat")==0 && !prp.mSaturday)
-                return(true);
+                return(false);
             if(lMyString.Value.compareTo("Sun")==0 && !prp.mSunday)
-                return(true);
+                return(false);
 
-            long lDiff=pDate.getTime() - prp.mStartDate.getTime();
+            //
+            // ok - so we know the date we are checking is the correct day
+            // eg. Saturday.  Now we need to work out how many days since the start
+            // but we don't want the start of the planned item - that might not be the
+            // correct date.  We take that date, check to see if it is the correct day.
+            // If it isn't - add 1 day until we get the right day.
+            // So if the planned item started on Sun 26th June, and the
+            // planned item is only on saturdays, and the current date we are checking
+            // is a saturday - we need to count the number of days since the first saturday after
+            // the planned start date
+            //
+            MyString lCurrentDay=new MyString();
+            Date lLoopDate = new Date(prp.mStartDate.getTime());
+            DateUtils.dateUtils().GetDayOfWeek(lLoopDate, lCurrentDay);
+            while(lCurrentDay.Value.compareTo(lMyString.Value)!=0)
+            {
+                Calendar c = Calendar.getInstance();
+                c.setTime(lLoopDate);
+                c.add(Calendar.DATE, 1);
+                lLoopDate.setTime(c.getTime().getTime());
+                DateUtils.dateUtils().GetDayOfWeek(lLoopDate, lCurrentDay);
+            }
+            long lDiff=pDate.getTime() - lLoopDate.getTime();
             long secondsInMilli = 1000;
             long minutesInMilli = secondsInMilli * 60;
             long hoursInMilli = minutesInMilli * 60;
