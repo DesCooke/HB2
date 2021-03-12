@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_category"
+            android:icon="@drawable/category"
+            android:title="@string/captionCategory" />
+        <item
+            android:id="@+id/nav_planning"
+            android:icon="@drawable/plan"
+            android:title="@string/captionPlanning"/>
+        <item
+            android:id="@+id/nav_common"
+            android:icon="@drawable/common"
+            android:title="@string/captionCommon"/>
+        <item
+            android:id="@+id/nav_databasedump"
+            android:icon="@drawable/databasedump"
+            android:title="@string/database_dump" />
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/bankaccount"
+            android:title="@string/accounts" />
+    </group>
+
+    <item
+        android:id="@+id/action_favorite"
+        android:orderInCategory="300"
+        android:title="User"
+        android:icon="@drawable/bankaccount"
+        app:showAsAction="ifRoom"></item>
+</menu>

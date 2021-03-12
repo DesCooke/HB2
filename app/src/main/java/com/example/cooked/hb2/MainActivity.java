@@ -101,6 +101,23 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    protected void RecreateUI()
+    {
+        SetBudget(DateUtils.dateUtils().CurrentBudgetYear(), DateUtils.dateUtils().CurrentBudgetMonth());
+
+        setContentAndGetViews();
+
+        loadFromDB();
+
+        setTheTitle();
+
+        createAdapterAndFragments();
+
+        populateFragments();
+
+        setupNavigationSideBar();
+    }
+
     protected void onCreate(Bundle savedInstanceState)
     {
         MyLog.WriteLogMessage("MainActivity:onCreate:Starting");
@@ -115,19 +132,8 @@ public class MainActivity extends AppCompatActivity
             if (MyDownloads.MyDL().CollectFiles() == FALSE)
                 return;
 
-            SetBudget(DateUtils.dateUtils().CurrentBudgetYear(), DateUtils.dateUtils().CurrentBudgetMonth());
+            RecreateUI();
 
-            setContentAndGetViews();
-
-            loadFromDB();
-
-            setTheTitle();
-
-            createAdapterAndFragments();
-
-            populateFragments();
-
-            setupNavigationSideBar();
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
