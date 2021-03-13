@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("StaticFieldLeak")
     public static Context context;
 
+    private FragmentManager _fragmentManager;
     private ViewPager view_pager;
     private TabLayout tab_layout;
 
@@ -215,7 +219,9 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:createAdapterAndFragments:Starting");
         try
         {
-            adapter = new ViewPagerMainAdapter(getSupportFragmentManager());
+
+            _fragmentManager  = getSupportFragmentManager();
+            adapter = new ViewPagerMainAdapter(_fragmentManager);
 
             _fragmentDashboard = FragmentDashboard.newInstance();
             adapter.addFragment(_fragmentDashboard, "Dashboard");
@@ -233,6 +239,7 @@ public class MainActivity extends AppCompatActivity
                 fa.SetAccount(ra.AcSortCode, ra.AcAccountNumber, ra.AcDescription);
                 _fragmentAccounts.add(fa);
                 adapter.addFragment(fa, ra.AcDescription);
+
             }
             view_pager.setAdapter(adapter);
 
@@ -394,7 +401,8 @@ public class MainActivity extends AppCompatActivity
             int id = item.getItemId();
             if (id == R.id.RefreshDBAndUI)
             {
-                RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
+                //RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
+                createAdapterAndFragments();
             }
             if (id == R.id.showLog)
             {
@@ -440,7 +448,9 @@ public class MainActivity extends AppCompatActivity
             if (id == R.id.nav_account)
             {
                 Intent intent = new Intent(this, activityAccount.class);
-                startActivity(intent);
+                //startActivity(intent);
+                int lRequestCode = getResources().getInteger(R.integer.account_list_return);
+                startActivityForResult(intent, lRequestCode);
             }
 
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -482,4 +492,40 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:onResume:Ending");
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == getResources().getInteger(R.integer.account_list_return))
+        {
+            if(resultCode == RESULT_OK)
+            {
+                boolean lAccountListChanged = data.getBooleanExtra("ACCOUNTLISTCHANGED",false);
+                if(lAccountListChanged)
+                {
+                    // remove fragments from the fragment manager - forces them to be
+                    // recreated
+                    RemoveFragments();
+
+                    // read from db - Dirty ensures everything is read
+                    MyDatabase.MyDB().Dirty=true;
+                    mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
+                            (mCurrentBudgetMonth, mCurrentBudgetYear, true);
+
+                    // Create the fragments
+                    createAdapterAndFragments();
+                    populateFragments();
+                }
+            }
+        }
+    }
+
+    private void RemoveFragments()
+    {
+        for(int i=0;i<_fragmentAccounts.size(); i++)
+        {
+            Fragment f = _fragmentAccounts.get(i);
+            FragmentTransaction trans = _fragmentManager.beginTransaction();
+            trans.remove((Fragment) f);
+            trans.commit();
+        };
+    }
 }

@@ -612,7 +612,8 @@ class TablePlanned extends TableBase
         {
             return prp.mPlannedDate.getTime() == pDate.getTime();
         }
-        if(prp.mPlannedType==mPTYearly) {
+        if(prp.mPlannedType==mPTYearly)
+        {
             MyInt lDay = new MyInt();
             MyInt lMonth = new MyInt();
             DateUtils.dateUtils().GetMonth(pDate, lMonth);

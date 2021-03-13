@@ -1,5 +1,6 @@
 package com.example.cooked.hb2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -58,24 +59,30 @@ public class activityAccountItem extends AppCompatActivity
                 {
                     try
                     {
-                        mRec.AcDescription = mAcDescription.getEditText().getText().toString();
-                        mRec.AcStartingBalance = Float.parseFloat(mAcStartingBalance.getEditText().getText().toString());
-
+                        boolean lAccountListChanged=false;
                         if(  (mRec.AcHidden==0 && mChkHidden.isChecked()) ||
                                 (mRec.AcHidden!=0 && !mChkHidden.isChecked())
-                            )
+                        )
                         {
-                            Toast.makeText(getApplicationContext(),"Please restart to reload UI",Toast.LENGTH_SHORT).show();
+                            lAccountListChanged=true;
                         }
 
+                        mRec.AcDescription = mAcDescription.getEditText().getText().toString();
+                        mRec.AcStartingBalance = Float.parseFloat(mAcStartingBalance.getEditText().getText().toString());
                         mRec.AcHidden=0;
                         if(mChkHidden.isChecked())
                             mRec.AcHidden=1;
                         MyDatabase.MyDB().updateAccount(mRec);
+
+                        Intent intent = new Intent();
+                        intent.putExtra("ACCOUNTLISTCHANGED", lAccountListChanged);
+                        setResult(RESULT_OK, intent);
+
                     } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityAccountItem::onClick", e.getMessage());
                     }
+
                     finish();
                 }
             });

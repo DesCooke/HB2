@@ -38,4 +38,20 @@ public class RecordAccount
         RecordTransactions = new ArrayList<RecordTransaction>();
     }
 
+    public boolean IsSameAs(RecordAccount Other)
+    {
+        if(AcSeqNo!=Other.AcSeqNo)
+            return(false);
+        if(AcSortCode.compareTo(Other.AcSortCode)!=0)
+            return(false);
+        if(AcAccountNumber.compareTo(Other.AcAccountNumber)!=0)
+            return(false);
+        if(AcDescription.compareTo(Other.AcDescription)!=0)
+            return(false);
+        if(AcOrderSeqNo!=Other.AcOrderSeqNo)
+            return(false);
+        if(AcHidden!=Other.AcHidden)
+            return(false);
+        return(true);
+    }
 }

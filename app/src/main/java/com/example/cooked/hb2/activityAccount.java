@@ -26,6 +26,8 @@ public class activityAccount extends AppCompatActivity
     private RecyclerView.LayoutManager mLayoutManagerCurrent;
     private AccountAdapter mAccountAdapter;
     private ArrayList<RecordAccount> mDataset;
+    private ArrayList<RecordAccount> mOriginalDataset;
+    private Boolean mAccountListChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,9 +35,12 @@ public class activityAccount extends AppCompatActivity
         super.onCreate(savedInstanceState);
         try
         {
+            mAccountListChanged = false;
             setContentView(R.layout.activity_account_list);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
+
+            mOriginalDataset = MyDatabase.MyDB().getAccountList();
 
             setTitle("Accounts");
 
@@ -68,7 +73,9 @@ public class activityAccount extends AppCompatActivity
                 {
                     Intent intent = new Intent(getApplicationContext(), activityAccountItem.class);
                     intent.putExtra("AcSeqNo", obj.AcSeqNo);
-                    startActivity(intent);
+                    //startActivity(intent);
+                    int lRequestCode = getResources().getInteger(R.integer.account_item_return);
+                    startActivityForResult(intent, lRequestCode);
                 }
             });
 
@@ -119,6 +126,7 @@ public class activityAccount extends AppCompatActivity
             if (id == R.id.unhideAllAccounts)
             {
                 MyDatabase.MyDB().unhideAllAccounts();
+                SetupRecyclerView();
             }
         } catch (Exception e)
         {
@@ -129,6 +137,31 @@ public class activityAccount extends AppCompatActivity
     }
 
 
+    @Override
+    public void onBackPressed()
+    {
+        if(!mAccountListChanged)
+        {
+            if(mOriginalDataset.size()!=mDataset.size())
+            {
+                mAccountListChanged=true;
+            }
+            else
+            {
+                for(int i=0;i<mOriginalDataset.size();i++)
+                {
+                    if(mOriginalDataset.get(i).IsSameAs(mDataset.get(i)))
+                        continue;
+                    mAccountListChanged=true;
+                    break;
+                }
+            }
+        }
+        Intent intent = new Intent();
+        intent.putExtra("ACCOUNTLISTCHANGED", mAccountListChanged);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
     @Override
     public void onResume()
     {  // After a pause OR at startup
@@ -143,5 +176,16 @@ public class activityAccount extends AppCompatActivity
         }
     }
 
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == getResources().getInteger(R.integer.account_item_return))
+        {
+            if(resultCode == RESULT_OK)
+            {
+                boolean lAccountListChanged = data.getBooleanExtra("ACCOUNTLISTCHANGED",false);
+                if(lAccountListChanged)
+                    mAccountListChanged=true;
+            }
+        }
+    }
 }
