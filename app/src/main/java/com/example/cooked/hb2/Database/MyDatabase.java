@@ -36,7 +36,7 @@ public class MyDatabase extends SQLiteOpenHelper
     // The version - each change - increment by one
     // if the version increases onUpgrade is called - if decreases - onDowngrade is called
     // if current is 0 (does not exist) onCreate is called
-    private static final int DATABASE_VERSION = 23;
+    private static final int DATABASE_VERSION = 24;
     private static MyDatabase myDB;
     private TableTransaction tableTransaction;
     private TableCategory tableCategory;
@@ -46,6 +46,8 @@ public class MyDatabase extends SQLiteOpenHelper
     private TableCommon tableCommon;
     private TableAccount tableAccount;
     private TablePlannedVariation tablePlannedVariation;
+    private TableHelpPage tableHelpPage;
+    private TableHelpParagraph tableHelpParagraph;
     public String Notes;
     public TextView txtNotes;
     public boolean Dirty = true;
@@ -74,6 +76,8 @@ public class MyDatabase extends SQLiteOpenHelper
         tableCommon = new TableCommon(this);
         tableAccount = new TableAccount(this);
         tablePlannedVariation =  new TablePlannedVariation(this);
+        tableHelpPage = new TableHelpPage(this);
+        tableHelpParagraph = new TableHelpParagraph(this);
     }
 
     // called when the current database version is 0
@@ -88,6 +92,8 @@ public class MyDatabase extends SQLiteOpenHelper
         tableCommon.onCreate(db);
         tableAccount.onCreate(db);
         tablePlannedVariation.onCreate(db);
+        tableHelpPage.onCreate(db);
+        tableHelpParagraph.onCreate(db);
     }
 
     private void addToNotes(String comment)
@@ -127,6 +133,8 @@ public class MyDatabase extends SQLiteOpenHelper
         tableCommon.onUpgrade(db, oldVersion, newVersion);
         tableAccount.onUpgrade(db, oldVersion, newVersion);
         tablePlannedVariation.onUpgrade(db, oldVersion, newVersion);
+        tableHelpPage.onUpgrade(db, oldVersion, newVersion);
+        tableHelpParagraph.onUpgrade(db, oldVersion, newVersion);
     }
 
     // called when the version number decreases
@@ -141,6 +149,8 @@ public class MyDatabase extends SQLiteOpenHelper
         tableCommon.onDowngrade(db, oldVersion, newVersion);
         tableAccount.onDowngrade(db, oldVersion, newVersion);
         tablePlannedVariation.onDowngrade(db, oldVersion, newVersion);
+        tableHelpPage.onDowngrade(db, oldVersion, newVersion);
+        tableHelpParagraph.onDowngrade(db, oldVersion, newVersion);
     }
     //endregion
 
@@ -1229,6 +1239,43 @@ public class MyDatabase extends SQLiteOpenHelper
     }
     //endregion
 
+    //region HelpPage Functions
+    public void addHelpPage(RecordHelpPage hp)
+    {
+        tableHelpPage.addHelpPage(hp);
+    }
+
+    public void deleteHelpPage(RecordHelpPage hp)
+    {
+        tableHelpPage.deleteHelpPage(hp);
+    }
+
+    public void updateHelpPage(RecordHelpPage hp)
+    {
+        tableHelpPage.updateHelpPage(hp);
+    }
+
+
+    //endregion
+
+    //region HelpParagraph Functions
+    public void addHelpParagraph(RecordHelpParagraph hp)
+    {
+        tableHelpParagraph.addHelpParagraph(hp);
+    }
+
+    public void deleteHelpParagraph(RecordHelpParagraph hp)
+    {
+        tableHelpParagraph.deleteHelpParagraph(hp);
+    }
+
+    public void updateHelpParagraph(RecordHelpParagraph hp)
+    {
+        tableHelpParagraph.updateHelpParagraph(hp);
+    }
+
+
+    //endregion
 
     //region PlannedVariation Functions
     public void addVariation(RecordPlannedVariation rpv)

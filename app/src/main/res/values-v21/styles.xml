@@ -9,4 +9,7 @@
         <item name="android:textSize">30sp</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>
+        <style name="HelpHeader">
+            <item name="android:background">#303F9F</item>
+        </style>
 </resources>

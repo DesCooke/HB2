@@ -2,21 +2,15 @@ package com.example.cooked.hb2;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
@@ -26,7 +20,6 @@ import com.example.cooked.hb2.GlobalUtils.DialogDayPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogMonthDayPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogPlannedTypePicker;
 import com.example.cooked.hb2.GlobalUtils.DialogWeekDayPicker;
-import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyBoolean;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
@@ -436,7 +429,7 @@ public class activityPlanningItem extends AppCompatActivity
     {
         try
         {
-            Intent intent = new Intent(getApplicationContext(), activityPlanningItemHelp.class);
+            Intent intent = new Intent(getApplicationContext(), activityHelp.class);
             startActivity(intent);
         } catch (Exception e)
         {
