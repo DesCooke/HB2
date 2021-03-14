@@ -9,6 +9,9 @@
     <item
         android:id="@+id/showLog"
         android:title="Show Log" />
+    <item
+        android:id="@+id/help"
+        android:title="Help" />
 
 
 </menu>

@@ -401,12 +401,28 @@ public class MainActivity extends AppCompatActivity
             int id = item.getItemId();
             if (id == R.id.RefreshDBAndUI)
             {
-                //RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
+                // remove fragments from the fragment manager - forces them to be
+                // recreated
+                RemoveFragments();
+
+                // read from db - Dirty ensures everything is read
+                MyDatabase.MyDB().Dirty=true;
+                mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
+                        (mCurrentBudgetMonth, mCurrentBudgetYear, true);
+
+                // Create the fragments
                 createAdapterAndFragments();
+                populateFragments();
             }
             if (id == R.id.showLog)
             {
                 Intent intent = new Intent(this, activityLog.class);
+                startActivity(intent);
+            }
+            if (id == R.id.help)
+            {
+                Intent intent = new Intent(getApplicationContext(), activityHelp.class);
+                intent.putExtra("PAGE", 0);
                 startActivity(intent);
             }
         } catch (Exception e)
