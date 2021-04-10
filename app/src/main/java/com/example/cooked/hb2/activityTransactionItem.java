@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.Database.RecordPlanned;
+import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
 import com.example.cooked.hb2.GlobalUtils.DialogDatePicker;
@@ -54,6 +55,7 @@ public class activityTransactionItem extends AppCompatActivity
     public RecordTransaction originalRecord;
     public int templateSeqNo;
     DialogUpdatePlannedQ dialogUpdatePlannedQ;
+    public TextView tvCategoryLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -77,6 +79,7 @@ public class activityTransactionItem extends AppCompatActivity
             btnOk = findViewById(R.id.btnOk);
             btnDelete = findViewById(R.id.btnDelete);
             btnCreatePlanned = findViewById(R.id.btnPlanned);
+            tvCategoryLabel= findViewById(R.id.lblCategory);
 
             dialogUpdatePlannedQ = new DialogUpdatePlannedQ(this);
 
@@ -91,10 +94,20 @@ public class activityTransactionItem extends AppCompatActivity
                 acSortCode = getIntent().getStringExtra("SORTCODE");
                 acAccountNumber = getIntent().getStringExtra("ACCOUNTNUMBER");
                 acDescription = getIntent().getStringExtra("DESCRIPTION");
+
+                RecordAccount ra = MyDatabase.MyDB().getAccountItemByAccountNumber(acSortCode, acAccountNumber);
+                if(!ra.AcUseCategory)
+                {
+                    tvCategory.setVisibility(GONE);
+                    tvCategoryLabel.setVisibility(GONE);
+                }
+
+
                 originalRecord = new RecordTransaction();
                 setTitle("New Transaction for " + acDescription);
                 btnDelete.setVisibility(GONE);
                 btnCreatePlanned.setVisibility(GONE);
+
                 setDefaults();
                 String lTemplateDesc = getIntent().getStringExtra("TEMPLATEDESC");
                 if (lTemplateDesc != null)
@@ -112,6 +125,13 @@ public class activityTransactionItem extends AppCompatActivity
                 setTitle("Amend Transaction");
                 txSeqNo = getIntent().getIntExtra("TxSeqNo", 0);
                 originalRecord = MyDB().getSingleTransaction(txSeqNo);
+
+                if(!originalRecord.UseCategory)
+                {
+                    tvCategory.setVisibility(GONE);
+                    tvCategoryLabel.setVisibility(GONE);
+                }
+
                 MyString lDateStr = new MyString();
                 dateUtils().DateToStr(originalRecord.TxDate, lDateStr);
                 edtTxDate.setText(lDateStr.Value);
@@ -131,6 +151,8 @@ public class activityTransactionItem extends AppCompatActivity
                 btnDelete.setVisibility(View.VISIBLE);
                 btnCreatePlanned.setVisibility(View.VISIBLE);
             }
+
+
 
 
             edtTxDate.addTextChangedListener(new TextWatcher()

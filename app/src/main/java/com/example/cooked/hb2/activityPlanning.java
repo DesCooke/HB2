@@ -32,6 +32,7 @@ public class activityPlanning extends AppCompatActivity
     private TextInputLayout tilFilter;
     private TextInputEditText tietFilter;
     private String currentFilter;
+    public ArrayList<RecordPlanned> mDataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -94,6 +95,7 @@ public class activityPlanning extends AppCompatActivity
             });
 
             currentFilter="";
+            mDataset = MyDatabase.MyDB().getPlannedList(swActiveOnly.isChecked());
             SetupRecyclerView();
         } catch (Exception e)
         {
@@ -106,7 +108,6 @@ public class activityPlanning extends AppCompatActivity
     {
         try
         {
-            ArrayList<RecordPlanned> mDataset = MyDatabase.MyDB().getPlannedList(swActiveOnly.isChecked());
             ArrayList<RecordPlanned> mFilteredDataset;
             if(currentFilter.length()==0)
             {
@@ -158,6 +159,7 @@ public class activityPlanning extends AppCompatActivity
 
         try
         {
+            mDataset = MyDatabase.MyDB().getPlannedList(swActiveOnly.isChecked());
             SetupRecyclerView();
 
             if (mPlannedViewState != null)

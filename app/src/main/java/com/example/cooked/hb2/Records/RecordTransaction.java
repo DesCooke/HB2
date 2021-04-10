@@ -34,6 +34,7 @@ public class RecordTransaction
     public Float MarkerStartingBalance;
     public Float MarkerEndingBalance;
     public boolean CheckForChange;
+    public boolean UseCategory;
 
     public RecordTransaction
             (
@@ -52,7 +53,8 @@ public class RecordTransaction
                      String pComments,
                      Integer pBudgetYear,
                      Integer pBudgetMonth,
-                     Boolean pHideBalance
+                     Boolean pHideBalance,
+                     Boolean pUseCategory
             )
     {
         TxSeqNo = pTxSeqNo;
@@ -76,6 +78,7 @@ public class RecordTransaction
         BalanceCorrect = true;
         TxBalanceShouldBe = 0.00f;
         CheckForChange = false;
+        UseCategory = pUseCategory;
     }
     public RecordTransaction()
     {
@@ -99,6 +102,8 @@ public class RecordTransaction
         HideBalance = false;
         BalanceCorrect = true;
         TxBalanceShouldBe = 0.00f;
+        UseCategory = true;
+
     }
     public boolean Equals(RecordTransaction recTwo)
     {

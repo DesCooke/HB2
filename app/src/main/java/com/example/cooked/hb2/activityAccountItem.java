@@ -25,6 +25,7 @@ public class activityAccountItem extends AppCompatActivity
     Button mBtnOk;
     Button mBtnCancel;
     CheckBox mChkHidden;
+    CheckBox mChkUseCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +42,7 @@ public class activityAccountItem extends AppCompatActivity
             mBtnOk = findViewById(R.id.btnOk);
             mBtnCancel = findViewById(R.id.btnCancel);
             mChkHidden = findViewById(R.id.chkHidden);
+            mChkUseCategory = findViewById(R.id.chkUseCategory);
 
             mAcSeqNo = getIntent().getIntExtra("AcSeqNo", -1);
             mRec = MyDatabase.MyDB().getAccountItem(mAcSeqNo);
@@ -52,6 +54,7 @@ public class activityAccountItem extends AppCompatActivity
             mChkHidden.setChecked(false);
             if(mRec.AcHidden!=0)
                 mChkHidden.setChecked(true);
+            mChkUseCategory.setChecked(mRec.AcUseCategory);
 
             mBtnOk.setOnClickListener(new View.OnClickListener()
             {
@@ -72,6 +75,7 @@ public class activityAccountItem extends AppCompatActivity
                         mRec.AcHidden=0;
                         if(mChkHidden.isChecked())
                             mRec.AcHidden=1;
+                        mRec.AcUseCategory=mChkUseCategory.isChecked();
                         MyDatabase.MyDB().updateAccount(mRec);
 
                         Intent intent = new Intent();

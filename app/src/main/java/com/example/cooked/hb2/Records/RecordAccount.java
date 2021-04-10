@@ -14,6 +14,7 @@ public class RecordAccount
     public Float AcStartingBalance;
     public Integer AcOrderSeqNo;
     public Integer AcHidden;
+    public Boolean AcUseCategory;
 
     public ArrayList<RecordTransaction> RecordTransactions;
 
@@ -25,7 +26,8 @@ public class RecordAccount
                     String pDescription,
                     Float pStartingBalance,
                     Integer pOrderSeqNo,
-                    Integer pHidden
+                    Integer pHidden,
+                    Boolean pUseCategory
             )
     {
         AcSeqNo = pSeqNo;
@@ -35,6 +37,7 @@ public class RecordAccount
         AcStartingBalance = pStartingBalance;
         AcOrderSeqNo = pOrderSeqNo;
         AcHidden = pHidden;
+        AcUseCategory = pUseCategory;
         RecordTransactions = new ArrayList<RecordTransaction>();
     }
 
@@ -51,6 +54,8 @@ public class RecordAccount
         if(AcOrderSeqNo!=Other.AcOrderSeqNo)
             return(false);
         if(AcHidden!=Other.AcHidden)
+            return(false);
+        if(AcUseCategory!=Other.AcUseCategory)
             return(false);
         return(true);
     }

@@ -282,6 +282,8 @@ class TableTransaction extends TableBase
     ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum)
     {
         ArrayList<RecordTransaction> list;
+        RecordAccount ra = MyDatabase.MyDB().getAccountItemByAccountNumber(sortCode, accountNum);
+
         try (SQLiteDatabase db = helper.getReadableDatabase())
         {
             Cursor cursor = db.query("tblTransaction", new String[]{"TxSeqNo", "TxAdded",
@@ -318,7 +320,8 @@ class TableTransaction extends TableBase
                                                     cursor.getString(12),
                                                     Integer.parseInt(cursor.getString(13)),
                                                     Integer.parseInt(cursor.getString(14)),
-                                                    false
+                                                    false,
+                                                    ra.AcUseCategory
                                             );
                             list.add(lrec);
                         } while (cursor.moveToNext());
@@ -517,6 +520,8 @@ class TableTransaction extends TableBase
         if (mToDate == new Date(0))
             return (new ArrayList<>());
 
+        RecordAccount ra = MyDatabase.MyDB().getAccountItemByAccountNumber(sortCode, accountNum);
+
         try (SQLiteDatabase db = helper.getReadableDatabase())
         {
             String lSql =
@@ -567,7 +572,8 @@ class TableTransaction extends TableBase
                                                         cursor.getString(12),
                                                         Integer.parseInt(cursor.getString(13)),
                                                         Integer.parseInt(cursor.getString(14)),
-                                                        false
+                                                        false,
+                                                        ra.AcUseCategory
                                                 );
                                 if (cursor.getString(15) == null)
                                 {
@@ -628,12 +634,14 @@ class TableTransaction extends TableBase
                             "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
                             "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
                             "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
-                            "  b.SubCategoryName " +
-                            "FROM tblTransaction a " +
+                            "  b.SubCategoryName, c.UseCategory " +
+                            "FROM tblTransaction a, tblAccount c " +
                             "  LEFT OUTER JOIN tblSubCategory b " +
                             "    ON a.CategoryId = b.SubCategoryId " +
                             "WHERE a.BudgetYear = " + pBudgetYear.toString() + " " +
                             "AND a.BudgetMonth = " + pBudgetMonth.toString() + " " +
+                            "AND a.TxSortCode = c.AcSortCode " +
+                            "AND a.TxAccountNumber = c.AcAccountNumber " +
                             "AND a.CategoryId = " + pSubCategoryId.toString() + " " +
                             "ORDER BY TxDate desc, TxLineNo";
             Cursor cursor = db.rawQuery(lSql, null);
@@ -666,7 +674,8 @@ class TableTransaction extends TableBase
                                                     cursor.getString(12),
                                                     Integer.parseInt(cursor.getString(13)),
                                                     Integer.parseInt(cursor.getString(14)),
-                                                    true
+                                                    true,
+                                                    Integer.parseInt(cursor.getString(16))==1
                                             );
                             lrec.SubCategoryName = cursor.getString(15);
                             list.add(lrec);
@@ -730,6 +739,8 @@ class TableTransaction extends TableBase
     ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode,
                                                 String lAccountNumber)
     {
+        RecordAccount ra = MyDatabase.MyDB().getAccountItemByAccountNumber(lSortCode, lAccountNumber);
+
         ArrayList<RecordTransaction> list;
         try (SQLiteDatabase db = helper.getReadableDatabase())
         {
@@ -770,7 +781,8 @@ class TableTransaction extends TableBase
                                                             cursor.getString(12),
                                                             Integer.parseInt(cursor.getString(13)),
                                                             Integer.parseInt(cursor.getString(14)),
-                                                            false
+                                                            false,
+                                                            ra.AcUseCategory
                                                     )
                                     );
                         } while (cursor.moveToNext());
@@ -793,11 +805,13 @@ class TableTransaction extends TableBase
                             "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
                             "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
                             "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
-                            "  b.SubCategoryName " +
-                            "FROM tblTransaction a " +
+                            "  b.SubCategoryName, c.UseCategory " +
+                            "FROM tblTransaction a, tblAccount c " +
                             "  LEFT OUTER JOIN tblSubCategory b " +
                             "    ON a.CategoryId = b.SubCategoryId " +
-                            "WHERE TxSeqNo = " + Integer.toString(pTxSeqNo) + " ";
+                            "WHERE TxSeqNo = " + Integer.toString(pTxSeqNo) + " " +
+                            "AND a.TxSortCode = c.AcSortCode " +
+                            "AND a.TxAccountNumber = c.AcAccountNumber ";
             Cursor cursor = db.rawQuery(lSql, null);
             if (cursor != null)
             {
@@ -823,7 +837,8 @@ class TableTransaction extends TableBase
                                         cursor.getString(12),
                                         Integer.parseInt(cursor.getString(13)),
                                         Integer.parseInt(cursor.getString(14)),
-                                        false
+                                        false,
+                                        Integer.parseInt(cursor.getString(16))==1
                                 );
                         if (cursor.getString(15) == null)
                         {
