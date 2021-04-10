@@ -37,7 +37,8 @@ class TableAccount extends TableBase
                         "   AcDescription TEXT, " +
                         "   AcStartingBalance REAL, " +
                         "   OrderSeqNo INTEGER DEFAULT 0 " +
-                        "   Hidden INTEGER DEFAULT 0 " +
+                        "   Hidden INTEGER DEFAULT 0, " +
+                        "   UseCategory INTEGER DEFAULT 1 " +
                         ") ";
 
         executeSQL(lSql, "TableAccount::onCreate", db);
@@ -62,10 +63,13 @@ class TableAccount extends TableBase
     {
         ra.AcSeqNo = getNextTxSeqNo();
 
+        Integer lUseCategory=0;
+        if(ra.AcUseCategory)
+            lUseCategory=1;
         String lSql =
                 "INSERT INTO tblAccount " +
                         "(AcSeqNo, AcSortCode, " +
-                        "AcAccountNumber, AcDescription, AcStartingBalance, OrderSeqNo, Hidden) " +
+                        "AcAccountNumber, AcDescription, AcStartingBalance, OrderSeqNo, Hidden, UseCategory) " +
                         "VALUES (" +
                         ra.AcSeqNo + "," +
                         "'" + ra.AcSortCode + "'," +
@@ -73,7 +77,8 @@ class TableAccount extends TableBase
                         "'" + ra.AcDescription + "'," +
                         ra.AcStartingBalance.toString() + ", " +
                         ra.AcOrderSeqNo.toString() + ", " +
-                        ra.AcHidden.toString() + " " +
+                        ra.AcHidden.toString() + ", " +
+                        lUseCategory.toString() + " " +
                         ") ";
 
         executeSQL(lSql, "TableAccount::addAccount", null);
@@ -81,12 +86,17 @@ class TableAccount extends TableBase
 
     void updateAccount(RecordAccount ra)
     {
+        Integer lUseCategory=0;
+        if(ra.AcUseCategory)
+            lUseCategory=1;
+
         String lSql =
                     "UPDATE tblAccount " +
                             "SET AcDescription = '" + ra.AcDescription + "', " +
                             " AcStartingBalance = " + ra.AcStartingBalance.toString() + ", " +
                             " OrderSeqNo = " + ra.AcOrderSeqNo.toString() + ", " +
-                            " Hidden = " + ra.AcHidden.toString() + " " +
+                            " Hidden = " + ra.AcHidden.toString() + ", " +
+                            " UseCategory = " + lUseCategory.toString() + " " +
                             "WHERE AcSeqNo = " + ra.AcSeqNo;
 
         executeSQL(lSql, "TableAccount::updateAccount", null);
@@ -108,7 +118,7 @@ class TableAccount extends TableBase
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, " +
-                        "AcStartingBalance, OrderSeqno, Hidden " +
+                        "AcStartingBalance, OrderSeqno, Hidden, UseCategory " +
                         "FROM tblAccount " +
                         "WHERE Hidden = 0 " +
                         "ORDER BY OrderSeqNo, AcSortCode, AcAccountNumber";
@@ -132,7 +142,8 @@ class TableAccount extends TableBase
                                                         cursor.getString(3),
                                                         parseFloat(cursor.getString(4)),
                                                         Integer.parseInt(cursor.getString(5)),
-                                                        Integer.parseInt(cursor.getString(6))
+                                                        Integer.parseInt(cursor.getString(6)),
+                                                        Integer.parseInt(cursor.getString(7))==1
                                                 );
                                 list.add(lrec);
                             } while (cursor.moveToNext());
@@ -161,7 +172,7 @@ class TableAccount extends TableBase
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, " +
-                        "AcStartingBalance, OrderSeqNo, Hidden " +
+                        "AcStartingBalance, OrderSeqNo, Hidden, UseCategory " +
                         "FROM tblAccount " +
                         "WHERE AcSeqNo = " + pAcSeqNo.toString();
                 Cursor cursor = db.rawQuery(lSql, null);
@@ -181,7 +192,8 @@ class TableAccount extends TableBase
                                                 cursor.getString(3),
                                                 parseFloat(cursor.getString(4)),
                                                 Integer.parseInt(cursor.getString(5)),
-                                                Integer.parseInt(cursor.getString(6))
+                                                Integer.parseInt(cursor.getString(6)),
+                                                Integer.parseInt(cursor.getString(7))==1
                                         )
                                 );
                         }
@@ -201,7 +213,7 @@ class TableAccount extends TableBase
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, " +
-                        "AcStartingBalance, OrderSeqNo, Hidden " +
+                        "AcStartingBalance, OrderSeqNo, Hidden, UseCategory " +
                         "FROM tblAccount " +
                         "WHERE AcSortCode = '" + pAcSortCode + "' " +
                         "AND AcAccountNumber = '" + pAcAccountNumber + "'";
@@ -222,7 +234,8 @@ class TableAccount extends TableBase
                                                     cursor.getString(3),
                                                     parseFloat(cursor.getString(4)),
                                                     Integer.parseInt(cursor.getString(5)),
-                                                    Integer.parseInt(cursor.getString(6))
+                                                    Integer.parseInt(cursor.getString(6)),
+                                                    Integer.parseInt(cursor.getString(7))==1
                                             )
                             );
                         }
@@ -282,6 +295,20 @@ class TableAccount extends TableBase
             lSql =
                     "ALTER TABLE tblAccount " +
                             " ADD COLUMN Hidden INTEGER DEFAULT 0 ";
+
+            executeSQL(lSql, "TableAccount::onUpgrade", db);
+        }
+        if (oldVersion == 24 && newVersion == 25)
+        {
+            String lSql =
+                    "ALTER TABLE tblAccount " +
+                    " ADD COLUMN UseCategory INTEGER DEFAULT 1 ";
+
+            executeSQL(lSql, "TableAccount::onUpgrade", db);
+
+            lSql =
+                    "UPDATE tblAccount " +
+                    " SET UseCategory = 1 ";
 
             executeSQL(lSql, "TableAccount::onUpgrade", db);
         }
