@@ -362,6 +362,11 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     dtl.show();
                 }
             });
+            if(rbi.groupedBudget)
+            {
+                view.txtTotal.setVisibility(View.GONE);
+                view.txtOutstanding.setVisibility(View.GONE);
+            }
         }
         else
         {
