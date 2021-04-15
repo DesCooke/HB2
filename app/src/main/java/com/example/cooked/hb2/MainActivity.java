@@ -500,6 +500,8 @@ public class MainActivity extends AppCompatActivity
         try
         {
             super.onResume();
+            if (MyDownloads.MyDL().CollectFiles() == FALSE)
+                return;
             RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
         } catch (Exception e)
         {
