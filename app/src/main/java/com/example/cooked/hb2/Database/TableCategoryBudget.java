@@ -108,6 +108,8 @@ class TableCategoryBudget extends TableBase
     RecordCategoryBudget getCategoryBudget(Integer pCategoryId, Integer pBudgetMonth, Integer pBudgetYear)
     {
         RecordCategoryBudget item;
+        boolean lBudgetAmountFound=false;
+
         try (SQLiteDatabase db = helper.getReadableDatabase())
         {
             try
@@ -125,13 +127,65 @@ class TableCategoryBudget extends TableBase
                     try
                     {
                         cursor.moveToFirst();
-                        item = new RecordCategoryBudget
-                                (
-                                        pCategoryId,
-                                        pBudgetMonth,
-                                        pBudgetYear,
-                                        Float.parseFloat(cursor.getString(0))
-                                );
+                        Float lAmount=Float.parseFloat(cursor.getString(0));
+                        if(lAmount!=0.00f)
+                        {
+                            lBudgetAmountFound=true;
+                            item = new RecordCategoryBudget
+                                    (
+                                            pCategoryId,
+                                            pBudgetMonth,
+                                            pBudgetYear,
+                                            lAmount
+                                            );
+                        }
+                    } finally
+                    {
+                        cursor.close();
+                    }
+                }
+
+                if(!lBudgetAmountFound)
+                {
+                    lString =
+                            "SELECT BudgetAmount " +
+                                    "FROM tblCategoryBudget " +
+                                    "WHERE CategoryId = " + pCategoryId.toString() + " " +
+                                    "ORDER BY BudgetYear DESC, BudgetMonth DESC ";
+                    cursor = db.rawQuery(lString, null);
+                    try
+                    {
+                        cursor.moveToFirst();
+                        Float lTotal=0.00f;
+                        Float lAmount=0.00f;
+                        int lCount=0;
+                        while (cursor != null && !cursor.isLast())
+                        {
+                            lCount++;
+                            lTotal += Float.parseFloat(cursor.getString(0));
+
+                            cursor.moveToNext();
+                            if(lCount>3)
+                                break;
+                        }
+                        if(lCount>0)
+                        {
+                            if(lTotal!=0.00f)
+                            {
+                                lAmount=lTotal / lCount;
+                            }
+                        }
+                        if(lAmount!=0.00f)
+                        {
+                            item = new RecordCategoryBudget
+                                    (
+                                            pCategoryId,
+                                            pBudgetMonth,
+                                            pBudgetYear,
+                                            lAmount
+                                    );
+                            addCategoryBudget(item);
+                        }
                     } finally
                     {
                         cursor.close();

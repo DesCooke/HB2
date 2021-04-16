@@ -11,8 +11,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import static com.example.cooked.hb2.MainActivity.context;
+import static java.lang.Math.abs;
 
 public class DateUtils
 {
@@ -30,26 +32,27 @@ public class DateUtils
         return (myDateUtils);
     }
 
-    public String PlannedTypeDescription(RecordPlanned rp)
+    public String PlannedTypeDescription(RecordPlanned rp, Date pDate)
     {
         String lDesc = "Oneoff";
+        String lAmount = "£" + String.format(Locale.UK, "%.2f", abs(rp.GetAmountAt(pDate)));
         if(rp.mFrequencyMultiplier==1)
         {
             if(rp.mPlannedType==(int) RecordPlanned.mPTMonthly)
-                lDesc="Every month";
+                lDesc=lAmount + " every month";
             if(rp.mPlannedType==(int)RecordPlanned.mPTWeekly)
-                lDesc="Every week";
+                lDesc=lAmount + " every week";
             if(rp.mPlannedType==(int)RecordPlanned.mPTYearly)
-                lDesc="Every year";
+                lDesc=lAmount + " every year";
         }
         else
         {
             if(rp.mPlannedType==(int)RecordPlanned.mPTMonthly)
-                lDesc="Every " + String.valueOf(rp.mFrequencyMultiplier) + " months";
+                lDesc=lAmount + " every " + String.valueOf(rp.mFrequencyMultiplier) + " months";
             if(rp.mPlannedType==(int)RecordPlanned.mPTWeekly)
-                lDesc="Every " + String.valueOf(rp.mFrequencyMultiplier) + " weeks";
+                lDesc=lAmount + " every " + String.valueOf(rp.mFrequencyMultiplier) + " weeks";
             if(rp.mPlannedType==(int)RecordPlanned.mPTYearly)
-                lDesc="Every " + String.valueOf(rp.mFrequencyMultiplier) + " years";
+                lDesc=lAmount + " every " + String.valueOf(rp.mFrequencyMultiplier) + " years";
         }
         return(lDesc);
     }
@@ -79,8 +82,12 @@ public class DateUtils
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-        retDate.setTime(calendar.getTimeInMillis());
+        retDate.setTime(calendar.getTimeInMillis()+getTimeOffset(calendar.getTime().getTime()));
         return (true);
     }
 
@@ -136,7 +143,7 @@ public class DateUtils
         calendar.set(Calendar.HOUR, 0);
         calendar.add(Calendar.DATE, days);
 
-        retDate.setTime(calendar.getTimeInMillis());
+        retDate.setTime(calendar.getTimeInMillis()+getTimeOffset(calendar.getTime().getTime()));
     }
 
     public static Date BudgetStart(int pMonth, int pYear)
@@ -145,6 +152,12 @@ public class DateUtils
         return (StrToDate(lString));
     }
 
+    public static int getTimeOffset(long time)
+    {
+        TimeZone tz = TimeZone.getDefault();
+
+        return tz.getOffset(time);
+    }
     public static Date BudgetEnd(int pMonth, int pYear)
     {
         int lMonth = pMonth;
@@ -248,7 +261,19 @@ public class DateUtils
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try
         {
-            return (dateFormat.parse(string));
+            Date lDate = dateFormat.parse(string);
+            if (dateFormat.getTimeZone().getDSTSavings() == 3600000)
+            {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(lDate);
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                cal.add(Calendar.HOUR, 1);
+                lDate = cal.getTime();
+            }
+            return(lDate);
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
