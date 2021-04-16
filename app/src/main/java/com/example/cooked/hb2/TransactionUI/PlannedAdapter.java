@@ -16,6 +16,7 @@ import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHolder>
 {
@@ -97,7 +98,7 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.mPlannedType.setText(DateUtils.dateUtils().PlannedTypeDescription(rec));
+        holder.mPlannedType.setText(DateUtils.dateUtils().PlannedTypeDescription(rec, new Date()));
         holder.mPlannedName.setText("Name: " + rec.mPlannedName);
         holder.mSubcategoryName.setText("Category: " + rec.mSubCategoryName);
 

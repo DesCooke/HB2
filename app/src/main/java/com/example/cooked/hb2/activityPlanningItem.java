@@ -199,7 +199,7 @@ public class activityPlanningItem extends AppCompatActivity
                     MyDay.Value = mRecordPlanned.mPlannedDay;
                     MySubCategoryId.Value = mRecordPlanned.mSubCategoryId;
                     tilPlannedType.getEditText().setText(RecordPlanned.mPlannedTypes[mRecordPlanned.mPlannedType]);
-                    tilPlannedType.getEditText().setText(DateUtils.dateUtils().PlannedTypeDescription(mRecordPlanned));
+                    tilPlannedType.getEditText().setText(DateUtils.dateUtils().PlannedTypeDescription(mRecordPlanned, new Date()));
                     edtPlannedName.getEditText().setText(mRecordPlanned.mPlannedName);
                     tilSubCategoryName.getEditText().setText(mRecordPlanned.mSubCategoryName);
 
