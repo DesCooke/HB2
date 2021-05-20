@@ -1,5 +1,6 @@
 package com.example.cooked.hb2;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -12,6 +13,7 @@ import android.widget.RadioButton;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordSubCategory;
+import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 
@@ -28,13 +30,15 @@ public class activitySubCategoryItem extends AppCompatActivity
     public CheckBox chkMonitor;
     public CheckBox chkOld;
     public Button btnMove;
-    
+    public Button btnTransactions;
+    public Activity _activity;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         try
         {
+            _activity = this;
             setContentView(R.layout.activity_subcategory_item);
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
@@ -49,6 +53,7 @@ public class activitySubCategoryItem extends AppCompatActivity
             final RadioButton radIncome = findViewById(R.id.radIncome);
             final RadioButton radExpense = findViewById(R.id.radExpense);
             btnMove = findViewById(R.id.btnMove);
+            btnTransactions = findViewById(R.id.btnTransactions);
 
             setTitle("<Unknown>");
             categoryId = getIntent().getIntExtra("CATEGORYID", 0);
@@ -123,6 +128,25 @@ public class activitySubCategoryItem extends AppCompatActivity
                         Intent intent = new Intent(getApplicationContext(), activityCategory.class);
                         intent.putExtra("ACTIONTYPE", "PICK");
                         startActivityForResult(intent, 1901);
+                    } catch (Exception e)
+                    {
+                        MyLog.WriteExceptionMessage(e);
+                    }
+                }
+            });
+
+            btnTransactions.setOnClickListener(new View.OnClickListener()
+            {
+                public void onClick(View v)
+                {
+                    try
+                    {
+                        DialogTransactionList dtl = new DialogTransactionList(_activity);
+                        dtl.budgetMonth = 0;
+                        dtl.budgetYear = 0;
+                        dtl.subCategoryId = subCategoryId;
+                        dtl.GetTrans();
+                        dtl.show();
                     } catch (Exception e)
                     {
                         MyLog.WriteExceptionMessage(e);

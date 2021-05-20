@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.Database.RecordPlanned;
+import com.example.cooked.hb2.Database.RecordSubCategory;
 import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.GlobalUtils.CategoryPicker;
@@ -56,6 +57,7 @@ public class activityTransactionItem extends AppCompatActivity
     public int templateSeqNo;
     DialogUpdatePlannedQ dialogUpdatePlannedQ;
     public TextView tvCategoryLabel;
+    public Button btnViewCat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -80,6 +82,7 @@ public class activityTransactionItem extends AppCompatActivity
             btnDelete = findViewById(R.id.btnDelete);
             btnCreatePlanned = findViewById(R.id.btnPlanned);
             tvCategoryLabel= findViewById(R.id.lblCategory);
+            btnViewCat = findViewById(R.id.btnViewCat);
 
             dialogUpdatePlannedQ = new DialogUpdatePlannedQ(this);
 
@@ -107,6 +110,7 @@ public class activityTransactionItem extends AppCompatActivity
                 setTitle("New Transaction for " + acDescription);
                 btnDelete.setVisibility(GONE);
                 btnCreatePlanned.setVisibility(GONE);
+                btnViewCat.setVisibility(GONE);
 
                 setDefaults();
                 String lTemplateDesc = getIntent().getStringExtra("TEMPLATEDESC");
@@ -150,6 +154,8 @@ public class activityTransactionItem extends AppCompatActivity
 
                 btnDelete.setVisibility(View.VISIBLE);
                 btnCreatePlanned.setVisibility(View.VISIBLE);
+                btnViewCat.setVisibility(View.VISIBLE);
+
             }
 
 
@@ -291,13 +297,33 @@ public class activityTransactionItem extends AppCompatActivity
                     finish();
                 }
             });
-            btnCreatePlanned.setOnClickListener(new View.OnClickListener()
+            btnDelete.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v)
                 {
                     try
                     {
-                        createPlanned(v);
+                        MyDB().deleteTransaction(originalRecord);
+                    } catch (Exception e)
+                    {
+                        ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());
+                    }
+                    finish();
+                }
+            });
+            btnViewCat.setOnClickListener(new View.OnClickListener()
+            {
+                public void onClick(View v)
+                {
+                    try
+                    {
+                        RecordSubCategory rsc = MyDatabase.MyDB().getSubCategory(originalRecord.CategoryId);
+                        Intent intent = new Intent(getApplicationContext(), activitySubCategoryItem.class);
+                        intent.putExtra("ACTIONTYPE", "EDIT");
+                        intent.putExtra("SUBCATEGORYID", originalRecord.CategoryId);
+                        intent.putExtra("CATEGORYID", rsc.CategoryId);
+                        intent.putExtra("SUBCATEGORYNAME", originalRecord.SubCategoryName);
+                        startActivity(intent);
                     } catch (Exception e)
                     {
                         ErrorDialog.Show("Error in activityCategoryItem::onClick", e.getMessage());

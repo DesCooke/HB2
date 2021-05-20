@@ -28,11 +28,12 @@
 
     <Button
         android:id="@+id/btnOk"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/ok"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chkMonitor" />
 
@@ -78,11 +79,12 @@
 
     <Button
         android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
+        android:layout_width="75dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/delete"
+        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/btnOk"
         app:layout_constraintTop_toBottomOf="@+id/chkMonitor" />
 
@@ -120,11 +122,12 @@
 
     <Button
         android:id="@+id/btnMove"
-        android:layout_width="wrap_content"
+        android:layout_width="75dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Move"
+        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/btnDelete"
         app:layout_constraintTop_toBottomOf="@+id/chkMonitor" />
 
@@ -137,5 +140,15 @@
         android:text="Old"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radExtra" />
+
+    <Button
+        android:id="@+id/btnTransactions"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/transactions"
+        app:layout_constraintEnd_toStartOf="@+id/btnMove"
+        app:layout_constraintTop_toBottomOf="@+id/chkMonitor" />
 
 </android.support.constraint.ConstraintLayout>
