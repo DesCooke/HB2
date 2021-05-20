@@ -629,6 +629,13 @@ class TableTransaction extends TableBase
         ArrayList<RecordTransaction> list;
         try (SQLiteDatabase db = helper.getReadableDatabase())
         {
+            String lBudgetString="";
+            if(pBudgetYear!=0)
+            {
+                lBudgetString=
+                        " a.BudgetYear = " + pBudgetYear.toString() + " AND " +
+                        " a.BudgetMonth = " + pBudgetMonth.toString() + " AND ";
+            }
             String lSql =
                     "SELECT " +
                             "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
@@ -638,9 +645,7 @@ class TableTransaction extends TableBase
                             "FROM tblTransaction a, tblAccount c " +
                             "  LEFT OUTER JOIN tblSubCategory b " +
                             "    ON a.CategoryId = b.SubCategoryId " +
-                            "WHERE a.BudgetYear = " + pBudgetYear.toString() + " " +
-                            "AND a.BudgetMonth = " + pBudgetMonth.toString() + " " +
-                            "AND a.TxSortCode = c.AcSortCode " +
+                            "WHERE " + lBudgetString + " a.TxSortCode = c.AcSortCode " +
                             "AND a.TxAccountNumber = c.AcAccountNumber " +
                             "AND a.CategoryId = " + pSubCategoryId.toString() + " " +
                             "ORDER BY TxDate desc, TxLineNo";
