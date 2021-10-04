@@ -13,8 +13,10 @@ import android.widget.TextView;
 import com.example.cooked.hb2.Adapters.VariationAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordBudgetProgress;
+import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.Database.RecordPlannedVariation;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
+import com.example.cooked.hb2.GlobalUtils.MyInt;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
@@ -24,12 +26,14 @@ import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.TransactionUI.BudgetProgressAdapter;
 import com.example.cooked.hb2.activityPlanningVariationItem;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
 import static java.lang.Math.abs;
 
 public class FragmentDashboard extends Fragment
@@ -226,25 +230,58 @@ public class FragmentDashboard extends Fragment
                 }
             }
 
+            ArrayList<RecordPlanned> pl = MyDatabase.MyDB().getPlannedList(true);
+            for (int i=0; i<pl.size(); i++)
+            {
+              RecordPlanned rp = pl.get(i);
+              if(rp.mHighlight30DaysBeforeAnniversary)
+              {
+                  MyInt lDay = new MyInt();
+                  MyInt lMonth = new MyInt();
+                  MyInt lYear = new MyInt();
+
+                  DateUtils.dateUtils().GetDay(rp.mStartDate, lDay);
+                  DateUtils.dateUtils().GetMonth(rp.mStartDate, lMonth);
+                  DateUtils.dateUtils().GetYear(DateUtils.dateUtils().GetNow(), lYear);
+
+                  Calendar calendar = DateUtils.dateUtils().GetCalendar();
+                  calendar.set(lYear.Value, lMonth.Value-1, lDay.Value);
+                  calendar.set(Calendar.HOUR_OF_DAY, 0);
+                  calendar.set(Calendar.MINUTE, 0);
+                  calendar.set(Calendar.SECOND, 0);
+                  calendar.set(Calendar.MILLISECOND, 0);
+                  if(calendar.getTimeInMillis() < Calendar.getInstance().getTimeInMillis())
+                  {
+                      calendar.add(Calendar.YEAR, 1);
+                  }
+
+                  // anniv
+                  long lAnnivLong = DateUtils.dateUtils().SecsFromCalendar(calendar);
+                  long lNowLong = DateUtils.dateUtils().SecsFromCalendar(Calendar.getInstance());
+
+                  long lDiffInSecs=lAnnivLong-lNowLong;
+                  long lDiffInDays = lDiffInSecs / 86400;
+                  if(lDiffInDays < 31)
+                  {
+                      RecordBudgetProgress rbp = new RecordBudgetProgress();
+                      rbp.mTitle="Planned item due soon: " + rp.mPlannedName + " due in " +
+                        lDiffInDays + " day(s)";
+                      rbp.mTotalAmount=0.00f;
+                      rbp.mLeftAmount=0.00f;
+                      rbp.mSpentAmount=0.00f;
+                      rbp.mPercInMonth=0;
+                      rbp.mSpentPerc=0;
+                      mDataset.add(rbp);
+                  }
+              }
+            }
+
             mBudgetProgressList = _root.findViewById(R.id.budgetProgressList);
             mBudgetProgressList.setHasFixedSize(true);
             mLayoutManagerCurrent = new LinearLayoutManager(_root.getContext());
             mBudgetProgressList.setLayoutManager(mLayoutManagerCurrent);
             mBudgetProgressAdapter = new BudgetProgressAdapter(mDataset);
             mBudgetProgressList.setAdapter(mBudgetProgressAdapter);
-/*
-            mBudgetProgressAdapter.setOnItemClickListener(new VariationAdapter.OnItemClickListener()
-            {
-                @Override
-                public void onItemClick(View view, RecordPlannedVariation obj)
-                {
-                    Intent intent = new Intent(getApplicationContext(), activityPlanningVariationItem.class);
-                    intent.putExtra("ACTIONTYPE", "EDIT");
-                    intent.putExtra("VARIATIONID", obj.mVariationId);
-                    startActivity(intent);
-                }
-            });
- */
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);

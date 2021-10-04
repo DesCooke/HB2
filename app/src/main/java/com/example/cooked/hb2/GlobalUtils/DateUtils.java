@@ -56,6 +56,7 @@ public class DateUtils
         }
         return(lDesc);
     }
+
     public static String formatDayAndMonth(int day, int month)
     {
         String lSuffix="th";
@@ -68,14 +69,44 @@ public class DateUtils
         return(String.valueOf(day) + lSuffix + ", " + MonthNames[month-1]);
     }
 
-    //
-    // getDateFromDatePicker
-    //   Description: accepts a DatePicker and extracts the date element
-    //                and passes back through retDate
-    //   Returns: true(worked)/false(failed)
-    //
+    public Date GetNow()
+    {
+        return(GetCalendar().getTime());
+    }
+
+    public Calendar GetCalendar()
+    {
+        return(Calendar.getInstance());
+    }
+
+    public long MilliSecsFromCalendar(Calendar pCalendar)
+    {
+        return(pCalendar.getTimeInMillis()+getTimeOffset(pCalendar.getTime().getTime()));
+    }
+
+    public long MilliSecsFromDate(Date pDate)
+    {
+        return(pDate.getTime() + getTimeOffset(pDate.getTime()));
+    }
+
+    public long SecsFromCalendar(Calendar pCalendar)
+    {
+        return(MilliSecsFromCalendar(pCalendar) / 1000);
+    }
+
+    public long SecsFromDate(Date pDate)
+    {
+        return(MilliSecsFromDate(pDate) / 1000);
+    }
+
     private boolean getDateFromDatePicker(DatePicker datePicker, Date retDate)
     {
+        //
+        // getDateFromDatePicker
+        //   Description: accepts a DatePicker and extracts the date element
+        //                and passes back through retDate
+        //   Returns: true(worked)/false(failed)
+        //
         int day = datePicker.getDayOfMonth();
         int month = datePicker.getMonth();
         int year = datePicker.getYear();
@@ -87,7 +118,7 @@ public class DateUtils
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        retDate.setTime(calendar.getTimeInMillis()+getTimeOffset(calendar.getTime().getTime()));
+        retDate.setTime(MilliSecsFromCalendar(calendar));
         return (true);
     }
 
@@ -127,14 +158,14 @@ public class DateUtils
         return (MonthAsText(pBudgetMonth) + " " + pBudgetYear.toString());
     }
 
-    //
-    // AddDays
-    //   Description: accepts date - if this is equal to the rogue value 'unknown'
-    //                then the retBoolean is returned true, else false
-    //   Returns: true(worked)/false(failed)
-    //
     public void AddDays(Date date, int days, Date retDate)
     {
+        //
+        // AddDays
+        //   Description: accepts date - if this is equal to the rogue value 'unknown'
+        //                then the retBoolean is returned true, else false
+        //   Returns: true(worked)/false(failed)
+        //
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.MILLISECOND, 0);
@@ -143,7 +174,7 @@ public class DateUtils
         calendar.set(Calendar.HOUR, 0);
         calendar.add(Calendar.DATE, days);
 
-        retDate.setTime(calendar.getTimeInMillis()+getTimeOffset(calendar.getTime().getTime()));
+        retDate.setTime(MilliSecsFromCalendar(calendar));
     }
 
     public static Date BudgetStart(int pMonth, int pYear)
@@ -158,6 +189,7 @@ public class DateUtils
 
         return tz.getOffset(time);
     }
+
     public static Date BudgetEnd(int pMonth, int pYear)
     {
         int lMonth = pMonth;
@@ -251,13 +283,13 @@ public class DateUtils
         return (lMonth + 1);
     }
 
-    //
-    // StrToDate
-    //   Description: accepts string and sets retDate to the date equivalent
-    //   Returns: true(worked)/false(failed)
-    //
     public static Date StrToDate(String string)
     {
+        //
+        // StrToDate
+        //   Description: accepts string and sets retDate to the date equivalent
+        //   Returns: true(worked)/false(failed)
+        //
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try
         {
@@ -304,21 +336,20 @@ public class DateUtils
         myString.Value = new SimpleDateFormat("EEE", Locale.ENGLISH).format(date);
     }
 
-    //
-    // DatePickerToStr
-    //   Description: accepts a DatePicker and extracts the date element
-    //                and passes back the text version vases on the current
-    //                date format through a MyString object
-    //   Returns: true(worked)/false(failed)
-    //
     boolean DatePickerToStr(DatePicker datePicker, MyString retString)
     {
+        //
+        // DatePickerToStr
+        //   Description: accepts a DatePicker and extracts the date element
+        //                and passes back the text version vases on the current
+        //                date format through a MyString object
+        //   Returns: true(worked)/false(failed)
+        //
         retString.Value = "";
 
         Date date = new Date();
         return getDateFromDatePicker(datePicker, date) && (DateToStr(date, retString));
     }
-
 
     public boolean DateTo_ddd_ddmmyyyy(Date date, MyString retString)
     {

@@ -88,6 +88,7 @@ public class activityPlanningItem extends AppCompatActivity
     public String mActionType;
     public RecordPlanned mRecordPlanned;
     public CheckBox mPaidInParts;
+    public CheckBox mHighlight30DaysBeforeAnniversary;
     public MyInt mFrequencyMultiplier;
 
     @SuppressLint("CutPasteId")
@@ -132,6 +133,7 @@ public class activityPlanningItem extends AppCompatActivity
             btnCopyToNew = findViewById(R.id.btnCopyToNew);
             swAutoMatchTransaction = findViewById(R.id.swAutoMatchTransaction);
             mPaidInParts = findViewById(R.id.chkPaidInParts);
+            mHighlight30DaysBeforeAnniversary = findViewById(R.id.chkHighlight30DaysBeforeAnniversary);
 
             cp = new CategoryPicker(this);
             cp.MySubCategoryId = MySubCategoryId;
@@ -180,6 +182,7 @@ public class activityPlanningItem extends AppCompatActivity
                 swAutoMatchTransaction.setChecked(false);
                 mPaidInParts.setChecked(false);
                 mFrequencyMultiplier.Value=1;
+                mHighlight30DaysBeforeAnniversary.setChecked(false);
             }
             if (mActionType.compareTo("EDIT") == 0)
             {
@@ -211,6 +214,7 @@ public class activityPlanningItem extends AppCompatActivity
                     tilPlanned.getEditText().setText(mRecordPlanned.mPlanned);
 
                     mPaidInParts.setChecked(mRecordPlanned.mPaidInParts);
+                    mHighlight30DaysBeforeAnniversary.setChecked(mRecordPlanned.mHighlight30DaysBeforeAnniversary);
 
                     MyString lString = new MyString();
 
@@ -290,6 +294,7 @@ public class activityPlanningItem extends AppCompatActivity
             mRecordPlanned.mPlannedName = edtPlannedName.getEditText().getText().toString();
             mRecordPlanned.mSubCategoryId = MySubCategoryId.Value;
             mRecordPlanned.mPaidInParts = mPaidInParts.isChecked();
+            mRecordPlanned.mHighlight30DaysBeforeAnniversary = mHighlight30DaysBeforeAnniversary.isChecked();
             mRecordPlanned.mFrequencyMultiplier = mFrequencyMultiplier.Value;
             if (radCashAccount.isChecked())
             {
