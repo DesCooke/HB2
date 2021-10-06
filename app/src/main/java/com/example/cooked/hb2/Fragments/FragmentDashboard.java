@@ -1,20 +1,21 @@
 package com.example.cooked.hb2.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.cooked.hb2.Adapters.VariationAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordBudgetProgress;
 import com.example.cooked.hb2.Database.RecordPlanned;
-import com.example.cooked.hb2.Database.RecordPlannedVariation;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
@@ -24,16 +25,13 @@ import com.example.cooked.hb2.Records.RecordBudgetItem;
 import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.TransactionUI.BudgetProgressAdapter;
-import com.example.cooked.hb2.activityPlanningVariationItem;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
 import static java.lang.Math.abs;
 
 public class FragmentDashboard extends Fragment

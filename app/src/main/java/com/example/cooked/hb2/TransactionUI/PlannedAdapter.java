@@ -1,8 +1,13 @@
 package com.example.cooked.hb2.TransactionUI;
 
 import android.annotation.SuppressLint;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
-import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 import com.example.cooked.hb2.R;
 

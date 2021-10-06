@@ -2,12 +2,14 @@ package com.example.cooked.hb2.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +17,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Adapters.TransactionListAdapter;
-import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCommon;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.Tools;
-import com.example.cooked.hb2.ImageAdapter;
 import com.example.cooked.hb2.Records.RecordBudgetMonth;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.activityTransactionItem;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 

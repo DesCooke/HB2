@@ -1,27 +1,25 @@
 package com.example.cooked.hb2;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
-import android.widget.Toast;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.github.barteksc.pdfviewer.PDFView;
-
-import java.io.File;
+import com.google.android.material.navigation.NavigationView;
 
 public class activityHelp extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener

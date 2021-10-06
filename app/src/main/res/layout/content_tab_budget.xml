@@ -8,7 +8,7 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -62,7 +62,7 @@
             app:layout_constraintStart_toEndOf="@+id/imgLeft"
             app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ExpandableListView
         android:id="@+id/budgetList"
