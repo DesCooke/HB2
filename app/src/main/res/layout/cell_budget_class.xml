@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -71,7 +71,7 @@
             android:layout_height="@dimen/cell_height_large"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/bt_expand"
-            android:tint="@color/grey_40"
+            app:tint="@color/grey_40"
             app:srcCompat="@drawable/ic_expand_arrow" />
 
         <View
@@ -80,4 +80,4 @@
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

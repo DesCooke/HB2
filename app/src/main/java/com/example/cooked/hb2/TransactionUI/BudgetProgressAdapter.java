@@ -1,9 +1,13 @@
 package com.example.cooked.hb2.TransactionUI;
 
 import android.annotation.SuppressLint;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +16,9 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordBudgetProgress;
 import com.example.cooked.hb2.Database.RecordPlanned;
-import com.example.cooked.hb2.GlobalUtils.DateUtils;
-import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
-import com.example.cooked.hb2.GlobalUtils.MyString;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import static java.lang.Math.abs;
 
@@ -91,42 +91,47 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
 
         rec = mDataset.get(position);
 
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.mTitle1.setText(rec.mTitle);
-
-        String lString="£" + String.format("%.2f", abs(rec.mSpentAmount) ) +
-                " of £" + String.format("%.2f", abs(rec.mTotalAmount)) +
-                " spent, £" + String.format("%.2f", abs(rec.mLeftAmount)) + " left";
-        holder.mTitle2.setText(lString);
-
-        lString=rec.mSpentPerc + "% through budget, " +
-                rec.mPercInMonth + "% through month";
-        holder.mTitle3.setText(lString);
-
-        int lPercInBudget = rec.mSpentPerc;
-        if(rec.mSpentPerc <= rec.mPercInMonth)
+        if(rec.mTitle.startsWith("Planned item due soon"))
         {
+            holder.mTitle1.setText(rec.mTitle);
+            holder.mTitle2.setText("");
+            holder.mTitle3.setText("");
             holder.mProgressBarRed.setVisibility(View.GONE);
             holder.mProgressBarYellow.setVisibility(View.GONE);
-            holder.mProgressBarGreen.setVisibility(View.VISIBLE);
-            holder.mProgressBarGreen.setProgress(lPercInBudget);
+            holder.mProgressBarGreen.setVisibility(View.GONE);
         }
-        else
-        {
-            if(rec.mSpentPerc <= (rec.mPercInMonth+25))
-            {
-                holder.mProgressBarGreen.setVisibility(View.GONE);
+        else {
+            // - get element from your dataset at this position
+            // - replace the contents of the view with that element
+            holder.mTitle1.setText(rec.mTitle);
+
+            String lString = "£" + String.format("%.2f", abs(rec.mSpentAmount)) +
+                    " of £" + String.format("%.2f", abs(rec.mTotalAmount)) +
+                    " spent, £" + String.format("%.2f", abs(rec.mLeftAmount)) + " left";
+            holder.mTitle2.setText(lString);
+
+            lString = rec.mSpentPerc + "% through budget, " +
+                    rec.mPercInMonth + "% through month";
+            holder.mTitle3.setText(lString);
+
+            int lPercInBudget = rec.mSpentPerc;
+            if (rec.mSpentPerc <= rec.mPercInMonth) {
                 holder.mProgressBarRed.setVisibility(View.GONE);
-                holder.mProgressBarYellow.setVisibility(View.VISIBLE);
-                holder.mProgressBarYellow.setProgress(lPercInBudget);
-            }
-            else
-            {
-                holder.mProgressBarGreen.setVisibility(View.GONE);
                 holder.mProgressBarYellow.setVisibility(View.GONE);
-                holder.mProgressBarRed.setVisibility(View.VISIBLE);
-                holder.mProgressBarRed.setProgress(lPercInBudget);
+                holder.mProgressBarGreen.setVisibility(View.VISIBLE);
+                holder.mProgressBarGreen.setProgress(lPercInBudget);
+            } else {
+                if (rec.mSpentPerc <= (rec.mPercInMonth + 25)) {
+                    holder.mProgressBarGreen.setVisibility(View.GONE);
+                    holder.mProgressBarRed.setVisibility(View.GONE);
+                    holder.mProgressBarYellow.setVisibility(View.VISIBLE);
+                    holder.mProgressBarYellow.setProgress(lPercInBudget);
+                } else {
+                    holder.mProgressBarGreen.setVisibility(View.GONE);
+                    holder.mProgressBarYellow.setVisibility(View.GONE);
+                    holder.mProgressBarRed.setVisibility(View.VISIBLE);
+                    holder.mProgressBarRed.setProgress(lPercInBudget);
+                }
             }
         }
 

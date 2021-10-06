@@ -50,6 +50,8 @@ public class RecordPlanned
 
     public Integer mFrequencyMultiplier;
 
+    public Boolean mHighlight30DaysBeforeAnniversary;
+
     public ArrayList<RecordPlannedVariation> variations;
 
     RecordPlanned
@@ -82,7 +84,9 @@ public class RecordPlanned
 
             Boolean pPaidInParts,
 
-            Integer pFrequencyMultiplier
+            Integer pFrequencyMultiplier,
+
+            Boolean pHighlight30DaysBeforeAnniversary
 
         ) {
         mPlannedId = pPlannedId;
@@ -153,6 +157,7 @@ public class RecordPlanned
         mAutoMatchTransaction = pAutoMatchTransaction;
         mPaidInParts = pPaidInParts;
         mFrequencyMultiplier = pFrequencyMultiplier;
+        mHighlight30DaysBeforeAnniversary = pHighlight30DaysBeforeAnniversary;
 
     }
 
@@ -171,6 +176,7 @@ public class RecordPlanned
         }
         return(mMatchingTxAmount);
     }
+
     public RecordPlanned()
     {
         mPlannedId = 0;
@@ -204,6 +210,7 @@ public class RecordPlanned
         mAutoMatchTransaction = false;
         mPaidInParts = false;
         mFrequencyMultiplier = 1;
+        mHighlight30DaysBeforeAnniversary = false;
     }
     
 }

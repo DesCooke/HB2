@@ -3,7 +3,12 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -12,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.R;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 

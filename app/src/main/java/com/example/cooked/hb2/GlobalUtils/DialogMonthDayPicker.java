@@ -3,7 +3,6 @@ package com.example.cooked.hb2.GlobalUtils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
+import com.google.android.material.textfield.TextInputLayout;
 
 
 public class DialogMonthDayPicker extends Dialog implements View.OnClickListener,

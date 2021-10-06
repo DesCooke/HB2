@@ -67,7 +67,8 @@ class TablePlanned extends TableBase
                 "   MatchingTxAmount FLOAT, " +
                 "   AutoMatchTransaction INTEGER, " +
                 "   PaidInParts INTEGER, " +
-                "   FrequencyMultiplier INTEGER " +
+                "   FrequencyMultiplier INTEGER," +
+                "   Highlight30DaysBeforeAnniversary INTEGER " +
                 ") ";
         
         executeSQL(lSql, "TablePlanned::onCreate", db);
@@ -89,7 +90,7 @@ class TablePlanned extends TableBase
                 "(PlannedId, PlannedType, PlannedName, SubCategoryId, SortCode, AccountNo, PlannedDate, PlannedMonth, PlannedDay, Monday, " +
                 "Tuesday, Wednesday, Thursday, Friday, Saturday, " +
                 "Sunday, StartDate, EndDate, MatchingTxType, MatchingTxDescription, " +
-                "MatchingTxAmount, AutoMatchTransaction, PaidInParts, FrequencyMultiplier ) " +
+                "MatchingTxAmount, AutoMatchTransaction, PaidInParts, FrequencyMultiplier, Highlight30DaysBeforeAnniversary ) " +
                 "VALUES (" +
                 Integer.toString(rp.mPlannedId) + "," +
                 Integer.toString(rp.mPlannedType) + "," +
@@ -114,7 +115,8 @@ class TablePlanned extends TableBase
                 Float.toString(rp.mMatchingTxAmount) + ", " +
                 Integer.toString(rp.mAutoMatchTransaction?1:0) + ", " +
                 Integer.toString(rp.mPaidInParts?1:0) + ", " +
-                Integer.toString(rp.mFrequencyMultiplier) + " " +
+                Integer.toString(rp.mFrequencyMultiplier) + "," +
+                Integer.toString(rp.mHighlight30DaysBeforeAnniversary?1:0) + " " +
         ") ";
         
         executeSQL(lSql, "TablePlanned::addPlanned", null);
@@ -145,7 +147,8 @@ class TablePlanned extends TableBase
                         " MatchingTxAmount = " + Float.toString(rp.mMatchingTxAmount) + ", " +
                         " AutoMatchTransaction = " + Integer.toString(rp.mAutoMatchTransaction ? 1 : 0) + ", " +
                         " PaidInParts = " + Integer.toString(rp.mPaidInParts ? 1 : 0) + ", " +
-                        " FrequencyMultiplier = " + Integer.toString(rp.mFrequencyMultiplier) + " " +
+                        " FrequencyMultiplier = " + Integer.toString(rp.mFrequencyMultiplier) + "," +
+                        " Highlight30DaysBeforeAnniversary = " + Integer.toString(rp.mHighlight30DaysBeforeAnniversary ? 1 : 0) + " " +
                         "WHERE PlannedId = " + Integer.toString(rp.mPlannedId);
 
         executeSQL(lSql, "TablePlanned::updatePlanned", null);
@@ -167,7 +170,7 @@ class TablePlanned extends TableBase
                     "SortCode, AccountNo, PlannedDate, PlannedMonth,PlannedDay,Monday, " +
                     "Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, StartDate, " +
                     "EndDate, MatchingTxType, MatchingTxDescription, MatchingTxAmount, " +
-                    "AutoMatchTransaction, PaidInParts, FrequencyMultiplier " +
+                    "AutoMatchTransaction, PaidInParts, FrequencyMultiplier, Highlight30DaysBeforeAnniversary " +
                     " FROM tblPlanned ";
             if (activeOnly) {
                 Integer lCurrBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
@@ -219,7 +222,8 @@ class TablePlanned extends TableBase
                                                         Float.parseFloat(cursor.getString(20).trim()),
                                                         Integer.parseInt(cursor.getString(21).trim()) == 1 ? TRUE : FALSE,
                                                         Integer.parseInt(cursor.getString(22).trim()) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(23).trim())
+                                                        Integer.parseInt(cursor.getString(23).trim()),
+                                                        Integer.parseInt(cursor.getString(24).trim()) == 1 ? TRUE : FALSE
                                                 );
                                 list.add(lrec);
                             } while (cursor.moveToNext());
@@ -252,7 +256,7 @@ class TablePlanned extends TableBase
                             "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
                             "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "StartDate",
                             "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount",
-                            "AutoMatchTransaction", "PaidInParts", "FrequencyMultiplier"},
+                            "AutoMatchTransaction", "PaidInParts", "FrequencyMultiplier", "Highlight30DaysBeforeAnniversary"},
                     "SubCategoryId=?",
                     new String[]{Integer.toString(pSubCategoryId)},
                     null, null, "PlannedName", null)) {
@@ -288,7 +292,8 @@ class TablePlanned extends TableBase
                                                         Float.parseFloat(cursor.getString(20).trim()),
                                                         Integer.parseInt(cursor.getString(21).trim()) == 1 ? TRUE : FALSE,
                                                         Integer.parseInt(cursor.getString(22).trim()) == 1 ? TRUE : FALSE,
-                                                        Integer.parseInt(cursor.getString(23).trim())
+                                                        Integer.parseInt(cursor.getString(23).trim()),
+                                                        Integer.parseInt(cursor.getString(24).trim()) == 1 ? TRUE: FALSE
                                                 );
                                 Long lDate = DateUtils.dateUtils().StripTimeElement(lrec.mPlannedDate);
                                 lrec.mPlannedDate = new Date(lDate);
@@ -852,7 +857,7 @@ class TablePlanned extends TableBase
                         "PlannedMonth", "PlannedDay", "Monday", "Tuesday",
                         "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "StartDate",
                         "EndDate", "MatchingTxType", "MatchingTxDescription", "MatchingTxAmount",
-                        "AutoMatchTransaction", "PaidInParts", "FrequencyMultiplier"},
+                        "AutoMatchTransaction", "PaidInParts", "FrequencyMultiplier", "Highlight30DaysBeforeAnniversary"},
                     "PlannedId=?",
                     new String[]{pPlannedId.toString()}, null, null, null, null);
                 if (cursor != null)
@@ -888,7 +893,8 @@ class TablePlanned extends TableBase
                                     Float.parseFloat(cursor.getString(20).trim()),
                                     Integer.parseInt(cursor.getString(21).trim()) == 1 ? TRUE : FALSE,
                                     Integer.parseInt(cursor.getString(22).trim()) == 1 ? TRUE : FALSE,
-                                    Integer.parseInt(cursor.getString(23).trim())
+                                    Integer.parseInt(cursor.getString(23).trim()),
+                                    Integer.parseInt(cursor.getString(24).trim()) == 1 ? TRUE : FALSE
                                 );
                             rp.variations = MyDatabase.MyDB().getVariationList(rp.mPlannedId);
                             Long lDate = DateUtils.dateUtils().StripTimeElement(rp.mPlannedDate);
@@ -917,13 +923,12 @@ class TablePlanned extends TableBase
             MyLog.WriteLogMessage("Altering tblPlanned - adding column AutoMatchTransaction");
             db.execSQL("ALTER TABLE tblPlanned ADD COLUMN AutoMatchTransaction INTEGER DEFAULT 0");
         }
-        if (oldVersion == 22 && newVersion == 23)
+        if (oldVersion == 25 && newVersion == 26)
         {
-            MyLog.WriteLogMessage("Altering tblPlanned - adding column FrequencyMultiplier");
-            db.execSQL("ALTER TABLE tblPlanned ADD COLUMN FrequencyMultiplier INTEGER DEFAULT 1");
-            db.execSQL("UPDATE tblPlanned set FrequencyMultiplier=1");
-        }
-    }
+            MyLog.WriteLogMessage("Altering tblPlanned - adding column Highlight30DaysBeforeAnniversary");
+            db.execSQL("ALTER TABLE tblPlanned ADD COLUMN Highlight30DaysBeforeAnniversary INTEGER DEFAULT 0");
+            db.execSQL("UPDATE tblPlanned set Highlight30DaysBeforeAnniversary=0");
+        } }
 
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
