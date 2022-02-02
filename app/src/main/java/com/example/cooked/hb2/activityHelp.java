@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
-import com.github.barteksc.pdfviewer.PDFView;
 import com.google.android.material.navigation.NavigationView;
+import com.shockwave.pdfium.PdfiumCore;
 
 public class activityHelp extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -36,15 +36,19 @@ public class activityHelp extends AppCompatActivity
         super.onCreate(savedInstanceState);
         try
         {
+            /*
             setContentView(R.layout.activity_help);
 
             int lPage = getIntent().getIntExtra("PAGE", 0);
 
+            PdfiumCore
             PDFView pdfView = findViewById(R.id.pdfView);
             pdfView.fromAsset("HomeBudgetHelp.pdf")
                     .password(null) // if password protected, then write password
                     .defaultPage(lPage) // set the default page to open
                     .load();
+
+             */
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
