@@ -850,15 +850,16 @@ public class MyDatabase extends SQLiteOpenHelper
                 rbg.origTotal = rbg.total;
 
 
-                if ( !rbg.Monitor &&
-                        ((rbg.spent < 0.00f && rbg.total > rbg.spent) ||
+                if (  ((rbg.spent < 0.00f && rbg.total > rbg.spent) ||
                         (rbg.spent > 0.00f && rbg.total < rbg.spent)))
                 {
-                    String lLine =
-                            "Gone over budget on " + rbg.budgetGroupName + ", " +
-                                    "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbg.total) +
-                                    ", New " + String.format(Locale.ENGLISH, "£%.2f", rbg.spent);
-                    addToNotes(lLine);
+                    if (!rbg.Monitor) {
+                        String lLine =
+                                "Gone over budget on " + rbg.budgetGroupName + ", " +
+                                        "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbg.total) +
+                                        ", New " + String.format(Locale.ENGLISH, "£%.2f", rbg.spent);
+                        addToNotes(lLine);
+                    }
                     rbg.total = rbg.spent;
                 }
                 rbg.outstanding = rbg.total - rbg.spent;

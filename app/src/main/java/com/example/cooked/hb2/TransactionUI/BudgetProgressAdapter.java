@@ -91,46 +91,58 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
 
         rec = mDataset.get(position);
 
-        if(rec.mTitle.startsWith("Planned item due soon"))
+        if(rec.mJustANote)
         {
             holder.mTitle1.setText(rec.mTitle);
+            holder.mTitle1.setTextColor(rec.mNoteColor);
             holder.mTitle2.setText("");
+            holder.mTitle2.setVisibility(View.GONE);
             holder.mTitle3.setText("");
+            holder.mTitle3.setVisibility(View.GONE);
             holder.mProgressBarRed.setVisibility(View.GONE);
             holder.mProgressBarYellow.setVisibility(View.GONE);
             holder.mProgressBarGreen.setVisibility(View.GONE);
         }
         else {
-            // - get element from your dataset at this position
-            // - replace the contents of the view with that element
-            holder.mTitle1.setText(rec.mTitle);
-
-            String lString = "£" + String.format("%.2f", abs(rec.mSpentAmount)) +
-                    " of £" + String.format("%.2f", abs(rec.mTotalAmount)) +
-                    " spent, £" + String.format("%.2f", abs(rec.mLeftAmount)) + " left";
-            holder.mTitle2.setText(lString);
-
-            lString = rec.mSpentPerc + "% through budget, " +
-                    rec.mPercInMonth + "% through month";
-            holder.mTitle3.setText(lString);
-
-            int lPercInBudget = rec.mSpentPerc;
-            if (rec.mSpentPerc <= rec.mPercInMonth) {
+            if (rec.mTitle.startsWith("Planned item due soon")) {
+                holder.mTitle1.setText(rec.mTitle);
+                holder.mTitle2.setText("");
+                holder.mTitle3.setText("");
                 holder.mProgressBarRed.setVisibility(View.GONE);
                 holder.mProgressBarYellow.setVisibility(View.GONE);
-                holder.mProgressBarGreen.setVisibility(View.VISIBLE);
-                holder.mProgressBarGreen.setProgress(lPercInBudget);
+                holder.mProgressBarGreen.setVisibility(View.GONE);
             } else {
-                if (rec.mSpentPerc <= (rec.mPercInMonth + 25)) {
-                    holder.mProgressBarGreen.setVisibility(View.GONE);
+                // - get element from your dataset at this position
+                // - replace the contents of the view with that element
+                holder.mTitle1.setText(rec.mTitle);
+
+                String lString = "£" + String.format("%.2f", abs(rec.mSpentAmount)) +
+                        " of £" + String.format("%.2f", abs(rec.mTotalAmount)) +
+                        " spent, £" + String.format("%.2f", abs(rec.mLeftAmount)) + " left";
+                holder.mTitle2.setText(lString);
+
+                lString = rec.mSpentPerc + "% through budget, " +
+                        rec.mPercInMonth + "% through month";
+                holder.mTitle3.setText(lString);
+
+                int lPercInBudget = rec.mSpentPerc;
+                if (rec.mSpentPerc <= rec.mPercInMonth) {
                     holder.mProgressBarRed.setVisibility(View.GONE);
-                    holder.mProgressBarYellow.setVisibility(View.VISIBLE);
-                    holder.mProgressBarYellow.setProgress(lPercInBudget);
-                } else {
-                    holder.mProgressBarGreen.setVisibility(View.GONE);
                     holder.mProgressBarYellow.setVisibility(View.GONE);
-                    holder.mProgressBarRed.setVisibility(View.VISIBLE);
-                    holder.mProgressBarRed.setProgress(lPercInBudget);
+                    holder.mProgressBarGreen.setVisibility(View.VISIBLE);
+                    holder.mProgressBarGreen.setProgress(lPercInBudget);
+                } else {
+                    if (rec.mSpentPerc <= (rec.mPercInMonth + 25)) {
+                        holder.mProgressBarGreen.setVisibility(View.GONE);
+                        holder.mProgressBarRed.setVisibility(View.GONE);
+                        holder.mProgressBarYellow.setVisibility(View.VISIBLE);
+                        holder.mProgressBarYellow.setProgress(lPercInBudget);
+                    } else {
+                        holder.mProgressBarGreen.setVisibility(View.GONE);
+                        holder.mProgressBarYellow.setVisibility(View.GONE);
+                        holder.mProgressBarRed.setVisibility(View.VISIBLE);
+                        holder.mProgressBarRed.setProgress(lPercInBudget);
+                    }
                 }
             }
         }
