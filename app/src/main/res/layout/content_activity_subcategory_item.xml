@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.cooked.hb2.activitySubCategoryItem"
     tools:showIn="@layout/activity_subcategory_item">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/edtSubCategoryName"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginEnd="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -26,129 +24,67 @@
             android:hint="@string/captionSubCategoryName" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btnOk"
-        android:layout_width="50dp"
+    <Spinner
+        android:id="@+id/spnSubCategoryType"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/ok"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chkMonitor" />
-
-    <RadioButton
-        android:id="@+id/radMonthly"
-        android:layout_width="150dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Recurring"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView15" />
-
-    <RadioButton
-        android:id="@+id/radExtra"
-        android:layout_width="150dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Oneoff"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radMonthly" />
-
-    <RadioButton
-        android:id="@+id/radIncome"
-        android:layout_width="150dp"
-        android:layout_height="31dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/income"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView16" />
-
-    <RadioButton
-        android:id="@+id/radExpense"
-        android:layout_width="150dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/expense"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radIncome" />
-
-    <Button
-        android:id="@+id/btnDelete"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/delete"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/btnOk"
-        app:layout_constraintTop_toBottomOf="@+id/chkMonitor" />
-
-    <TextView
-        android:id="@+id/textView15"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Recurring/One Off"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName"
-        tools:visibility="gone" />
-
-    <TextView
-        android:id="@+id/textView16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Income/Expense"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtSubCategoryName"
-        tools:visibility="gone" />
+        android:entries="@array/SubCategoryTypes" />
 
     <CheckBox
         android:id="@+id/chkMonitor"
-        android:layout_width="150dp"
-        android:layout_height="29dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Monitor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chkOld" />
-
-    <Button
-        android:id="@+id/btnMove"
-        android:layout_width="75dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Move"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/btnDelete"
-        app:layout_constraintTop_toBottomOf="@+id/chkMonitor" />
+        android:text="Monitor" />
 
     <CheckBox
         android:id="@+id/chkOld"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Old"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radExtra" />
+        android:text="Old" />
 
-    <Button
-        android:id="@+id/btnTransactions"
-        android:layout_width="130dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/transactions"
-        app:layout_constraintEnd_toStartOf="@+id/btnMove"
-        app:layout_constraintTop_toBottomOf="@+id/chkMonitor" />
+        android:orientation="horizontal">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/ok"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/delete"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnMove"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Move"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnTransactions"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/transactions" />
+    </LinearLayout>
+
+
+</LinearLayout>

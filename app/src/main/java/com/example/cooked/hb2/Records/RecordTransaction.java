@@ -25,6 +25,7 @@ public class RecordTransaction
     public Status TxStatus;
     public Integer CategoryId;
     public String SubCategoryName;
+    public String CategoryName;
     public String Comments;
     public Integer BudgetYear;
     public Integer BudgetMonth;
@@ -96,6 +97,7 @@ public class RecordTransaction
         TxStatus = Status.NEW;
         CategoryId = 0;
         SubCategoryName = "";
+        CategoryName="";
         Comments = "";
         BudgetYear = 0;
         BudgetMonth = 0;
@@ -103,6 +105,33 @@ public class RecordTransaction
         BalanceCorrect = true;
         TxBalanceShouldBe = 0.00f;
         UseCategory = true;
+
+    }
+
+    public String GetFullyQualifiedName()
+    {
+        if(CategoryName.length()==0)
+        {
+            if(SubCategoryName.length()==0)
+            {
+                return("<No Category Assigned>");
+            }
+            else
+            {
+                return(SubCategoryName);
+            }
+        }
+        else
+        {
+            if(SubCategoryName.length()==0)
+            {
+                return(CategoryName);
+            }
+            else
+            {
+                return(CategoryName + "/" + SubCategoryName);
+            }
+        }
 
     }
     public boolean Equals(RecordTransaction recTwo)

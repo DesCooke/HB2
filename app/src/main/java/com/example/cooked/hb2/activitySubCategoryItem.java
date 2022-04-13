@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordSubCategory;
@@ -37,6 +38,7 @@ public class activitySubCategoryItem extends AppCompatActivity
     public Button btnMove;
     public Button btnTransactions;
     public Activity _activity;
+    public Spinner spnSubCategoryType;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -52,11 +54,8 @@ public class activitySubCategoryItem extends AppCompatActivity
             Button btnDelete = findViewById(R.id.btnDelete);
             chkMonitor = findViewById(R.id.chkMonitor);
             chkOld = findViewById(R.id.chkOld);
+            spnSubCategoryType = findViewById(R.id.spnSubCategoryType);
 
-            final RadioButton radMonthly = findViewById(R.id.radMonthly);
-            final RadioButton radExtra = findViewById(R.id.radExtra);
-            final RadioButton radIncome = findViewById(R.id.radIncome);
-            final RadioButton radExpense = findViewById(R.id.radExpense);
             btnMove = findViewById(R.id.btnMove);
             btnTransactions = findViewById(R.id.btnTransactions);
 
@@ -84,26 +83,7 @@ public class activitySubCategoryItem extends AppCompatActivity
                 RecordSubCategory rsc= MyDatabase.MyDB().getSubCategory(subCategoryId);
                 chkMonitor.setChecked(rsc.Monitor);
                 chkOld.setChecked(rsc.Old);
-                if(rsc.SubCategoryType==RecordSubCategory.mSCTMonthlyExpense)
-                {
-                    radMonthly.setChecked(true);
-                    radExpense.setChecked(true);
-                }
-                if(rsc.SubCategoryType==RecordSubCategory.mSCTMonthlyIncome)
-                {
-                    radMonthly.setChecked(true);
-                    radIncome.setChecked(true);
-                }
-                if(rsc.SubCategoryType==RecordSubCategory.mSCTExtraExpense)
-                {
-                    radExtra.setChecked(true);
-                    radExpense.setChecked(true);
-                }
-                if(rsc.SubCategoryType==RecordSubCategory.mSCTExtraIncome)
-                {
-                    radExtra.setChecked(true);
-                    radIncome.setChecked(true);
-                }
+                spnSubCategoryType.setSelection(rsc.SubCategoryType);
             }
 
             btnDelete.setOnClickListener(new View.OnClickListener()
@@ -159,23 +139,6 @@ public class activitySubCategoryItem extends AppCompatActivity
                 }
             });
 
-            radMonthly.setOnClickListener(new View.OnClickListener()
-            {
-                public void onClick(View v) { radExtra.setChecked(false);}
-            });
-            radExtra.setOnClickListener(new View.OnClickListener()
-            {
-                public void onClick(View v) { radMonthly.setChecked(false);}
-            });
-            radIncome.setOnClickListener(new View.OnClickListener()
-            {
-                public void onClick(View v) { radExpense.setChecked(false);}
-            });
-            radExpense.setOnClickListener(new View.OnClickListener()
-            {
-                public void onClick(View v) { radIncome.setChecked(false);}
-            });
-
             final Button button = findViewById(R.id.btnOk);
             button.setOnClickListener(new View.OnClickListener()
             {
@@ -187,21 +150,7 @@ public class activitySubCategoryItem extends AppCompatActivity
                         rc = new RecordSubCategory();
                         rc.CategoryId = categoryId;
                         rc.SubCategoryName = edtSubCategoryName.getEditText().getText().toString();
-                        if(radMonthly.isChecked())
-                        {
-                            if(radIncome.isChecked())
-                                rc.SubCategoryType = RecordSubCategory.mSCTMonthlyIncome;
-                            else
-                                rc.SubCategoryType = RecordSubCategory.mSCTMonthlyExpense;
-
-                        }
-                        else
-                        {
-                            if(radIncome.isChecked())
-                                rc.SubCategoryType = RecordSubCategory.mSCTExtraIncome;
-                            else
-                                rc.SubCategoryType = RecordSubCategory.mSCTExtraExpense;
-                        }
+                        rc.SubCategoryType = spnSubCategoryType.getSelectedItemPosition();
                         rc.Monitor = chkMonitor.isChecked();
                         rc.Old = chkOld.isChecked();
                         if (actionType.compareTo("ADD") == 0)
@@ -244,7 +193,6 @@ public class activitySubCategoryItem extends AppCompatActivity
             MyLog.WriteExceptionMessage(e);
         }
     }
-
 
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {

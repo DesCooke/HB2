@@ -25,11 +25,13 @@ public class activityHelp extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
 
+    //region Members
     private Toolbar mTopToolbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
