@@ -529,10 +529,12 @@ class TableTransaction extends TableBase
                             "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
                             "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
                             "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
-                            "  b.SubCategoryName " +
+                            "  b.SubCategoryName, c.CategoryName " +
                             "FROM tblTransaction a " +
                             "  LEFT OUTER JOIN tblSubCategory b " +
                             "    ON a.CategoryId = b.SubCategoryId " +
+                            "  LEFT OUTER JOIN tblCategory c " +
+                            "    ON b.CategoryId = c.CategoryId " +
                             "WHERE a.TxSortCode = '" + sortCode + "' " +
                             "AND a.TxAccountNumber = '" + accountNum + "' " +
                             "AND a.TxDate BETWEEN " + Long.toString(mFromDate.getTime()) + " " +
@@ -581,6 +583,13 @@ class TableTransaction extends TableBase
                                 } else
                                 {
                                     lrec.SubCategoryName = cursor.getString(15);
+                                }
+                                if (cursor.getString(16) == null)
+                                {
+                                    lrec.CategoryName = MyResources.R().getString(R.string.not_set);
+                                } else
+                                {
+                                    lrec.CategoryName = cursor.getString(16);
                                 }
                                 list.add(lrec);
                             }

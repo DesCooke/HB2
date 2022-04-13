@@ -51,6 +51,8 @@ import static java.lang.Math.abs;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
+
+    //region Members
     @SuppressLint("StaticFieldLeak")
     public static Context context;
 
@@ -80,7 +82,227 @@ public class MainActivity extends AppCompatActivity
 
     private Integer mCurrentBudgetYear;
     private Integer mCurrentBudgetMonth;
+    //endregion
 
+    //region Constructors/Destructors
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        MyLog.WriteLogMessage("MainActivity:onCreate:Starting");
+        super.onCreate(savedInstanceState);
+
+        setupStatics(this);
+
+        MyPermission.EnsureAccessToExternalDrive(this);
+
+        try
+        {
+            if(MyPermission.AccessAllowed()) {
+
+                if (MyDownloads.MyDL().CollectFiles() == FALSE)
+                    return;
+
+                RecreateUI();
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
+    }
+    //endregion
+
+    //region Form Functions
+    @Override
+    public void onBackPressed()
+    {
+        MyLog.WriteLogMessage("MainActivity:onBackPressed:Starting");
+        try
+        {
+            if(MyPermission.AccessAllowed()) {
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else {
+                    super.onBackPressed();
+                }
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("MainActivity:onBackPressed:Ending");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MyLog.WriteLogMessage("MainActivity:onCreateOptionsMenu:Starting");
+        try
+        {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.main, menu);
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("MainActivity:onCreateOptionsMenu:Ending");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        MyLog.WriteLogMessage("MainActivity:onOptionsItemSelected:Starting");
+        try
+        {
+            if(MyPermission.AccessAllowed()) {
+
+                // Handle action bar item clicks here. The action bar will
+                // automatically handle clicks on the Home/Up button, so long
+                // as you specify a parent activity in AndroidManifest.xml.
+                int id = item.getItemId();
+                if (id == R.id.RefreshDBAndUI) {
+                    // remove fragments from the fragment manager - forces them to be
+                    // recreated
+                    RemoveFragments();
+
+                    // read from db - Dirty ensures everything is read
+                    MyDatabase.MyDB().Dirty = true;
+                    mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
+                            (mCurrentBudgetMonth, mCurrentBudgetYear, true);
+
+                    // Create the fragments
+                    createAdapterAndFragments();
+                    populateFragments();
+                }
+                if (id == R.id.showLog) {
+                    Intent intent = new Intent(this, activityLog.class);
+                    startActivity(intent);
+                }
+                if (id == R.id.help) {
+                    Intent intent = new Intent(getApplicationContext(), activityHelp.class);
+                    intent.putExtra("PAGE", 0);
+                    startActivity(intent);
+                }
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("MainActivity:onOptionsItemSelected:Ending");
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item)
+    {
+        MyLog.WriteLogMessage("MainActivity:onNavigationItemSelected:Starting");
+        try
+        {
+            if(MyPermission.AccessAllowed()) {
+
+                // Handle navigation view item clicks here.
+                int id = item.getItemId();
+
+                if (id == R.id.nav_category) {
+                    Intent intent = new Intent(this, activityCategory.class);
+                    startActivity(intent);
+                }
+                if (id == R.id.nav_planning) {
+                    Intent intent = new Intent(this, activityPlanning.class);
+                    startActivity(intent);
+                }
+                if (id == R.id.nav_common) {
+                    Intent intent = new Intent(this, activityCommon.class);
+                    startActivity(intent);
+                }
+                if (id == R.id.nav_databasedump) {
+                    MyDatabase.MyDB().dumpDatabase();
+                }
+                if (id == R.id.nav_account) {
+                    Intent intent = new Intent(this, activityAccount.class);
+                    //startActivity(intent);
+                    int lRequestCode = getResources().getInteger(R.integer.account_list_return);
+                    startActivityForResult(intent, lRequestCode);
+                }
+
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("MainActivity:onNavigationItemSelected:Ending");
+        return true;
+    }
+
+    @Override
+    protected void onPause()
+    {
+        MyLog.WriteLogMessage("MainActivity:onPause:Starting");
+        try
+        {
+            if(MyPermission.AccessAllowed()) {
+
+                super.onPause();
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("MainActivity:onPause:Ending");
+    }
+
+    @Override
+    public void onResume()
+    {
+        MyLog.WriteLogMessage("MainActivity:onResume:Starting");
+        try
+        {
+            if(MyPermission.AccessAllowed()) {
+
+                super.onResume();
+                if (MyDownloads.MyDL().CollectFiles() == FALSE)
+                    return;
+                RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
+            }
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("MainActivity:onResume:Ending");
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(MyPermission.AccessAllowed()) {
+
+            if (requestCode == getResources().getInteger(R.integer.account_list_return)) {
+                if (resultCode == RESULT_OK) {
+                    boolean lAccountListChanged = data.getBooleanExtra("ACCOUNTLISTCHANGED", false);
+                    if (lAccountListChanged) {
+                        // remove fragments from the fragment manager - forces them to be
+                        // recreated
+                        RemoveFragments();
+
+                        // read from db - Dirty ensures everything is read
+                        MyDatabase.MyDB().Dirty = true;
+                        mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
+                                (mCurrentBudgetMonth, mCurrentBudgetYear, true);
+
+                        // Create the fragments
+                        createAdapterAndFragments();
+                        populateFragments();
+                    }
+                }
+            }
+        }
+    }
+
+    //endregion
+
+    //region Other functions
     public void RefreshFragments(int budgetYear, int budgetMonth)
     {
         try
@@ -121,31 +343,6 @@ public class MainActivity extends AppCompatActivity
 
             setupNavigationSideBar();
         }
-    }
-
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        MyLog.WriteLogMessage("MainActivity:onCreate:Starting");
-        super.onCreate(savedInstanceState);
-
-        setupStatics(this);
-
-        MyPermission.EnsureAccessToExternalDrive(this);
-
-        try
-        {
-            if(MyPermission.AccessAllowed()) {
-
-                if (MyDownloads.MyDL().CollectFiles() == FALSE)
-                    return;
-
-                RecreateUI();
-            }
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:setupStatics:Ending");
     }
 
     private void SetBudget(int pBudgetYear, int pBudgetMonth)
@@ -347,27 +544,6 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:setContentAndGetViews:Ending");
     }
 
-    @Override
-    public void onBackPressed()
-    {
-        MyLog.WriteLogMessage("MainActivity:onBackPressed:Starting");
-        try
-        {
-            if(MyPermission.AccessAllowed()) {
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                if (drawer.isDrawerOpen(GravityCompat.START)) {
-                    drawer.closeDrawer(GravityCompat.START);
-                } else {
-                    super.onBackPressed();
-                }
-            }
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:onBackPressed:Ending");
-    }
-
     private void setupNavigationSideBar()
     {
         MyLog.WriteLogMessage("MainActivity:setupNavigationSideBar:Starting");
@@ -390,173 +566,6 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:setupNavigationSideBar:Ending");
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        MyLog.WriteLogMessage("MainActivity:onCreateOptionsMenu:Starting");
-        try
-        {
-            // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.main, menu);
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:onCreateOptionsMenu:Ending");
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        MyLog.WriteLogMessage("MainActivity:onOptionsItemSelected:Starting");
-        try
-        {
-            if(MyPermission.AccessAllowed()) {
-
-                // Handle action bar item clicks here. The action bar will
-                // automatically handle clicks on the Home/Up button, so long
-                // as you specify a parent activity in AndroidManifest.xml.
-                int id = item.getItemId();
-                if (id == R.id.RefreshDBAndUI) {
-                    // remove fragments from the fragment manager - forces them to be
-                    // recreated
-                    RemoveFragments();
-
-                    // read from db - Dirty ensures everything is read
-                    MyDatabase.MyDB().Dirty = true;
-                    mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
-                            (mCurrentBudgetMonth, mCurrentBudgetYear, true);
-
-                    // Create the fragments
-                    createAdapterAndFragments();
-                    populateFragments();
-                }
-                if (id == R.id.showLog) {
-                    Intent intent = new Intent(this, activityLog.class);
-                    startActivity(intent);
-                }
-                if (id == R.id.help) {
-                    Intent intent = new Intent(getApplicationContext(), activityHelp.class);
-                    intent.putExtra("PAGE", 0);
-                    startActivity(intent);
-                }
-            }
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:onOptionsItemSelected:Ending");
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item)
-    {
-        MyLog.WriteLogMessage("MainActivity:onNavigationItemSelected:Starting");
-        try
-        {
-            if(MyPermission.AccessAllowed()) {
-
-                // Handle navigation view item clicks here.
-                int id = item.getItemId();
-
-                if (id == R.id.nav_category) {
-                    Intent intent = new Intent(this, activityCategory.class);
-                    startActivity(intent);
-                }
-                if (id == R.id.nav_planning) {
-                    Intent intent = new Intent(this, activityPlanning.class);
-                    startActivity(intent);
-                }
-                if (id == R.id.nav_common) {
-                    Intent intent = new Intent(this, activityCommon.class);
-                    startActivity(intent);
-                }
-                if (id == R.id.nav_databasedump) {
-                    MyDatabase.MyDB().dumpDatabase();
-                }
-                if (id == R.id.nav_account) {
-                    Intent intent = new Intent(this, activityAccount.class);
-                    //startActivity(intent);
-                    int lRequestCode = getResources().getInteger(R.integer.account_list_return);
-                    startActivityForResult(intent, lRequestCode);
-                }
-
-                DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
-            }
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:onNavigationItemSelected:Ending");
-        return true;
-    }
-
-    @Override
-    protected void onPause()
-    {
-        MyLog.WriteLogMessage("MainActivity:onPause:Starting");
-        try
-        {
-            if(MyPermission.AccessAllowed()) {
-
-                super.onPause();
-            }
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:onPause:Ending");
-    }
-
-    @Override
-    public void onResume()
-    {
-        MyLog.WriteLogMessage("MainActivity:onResume:Starting");
-        try
-        {
-            if(MyPermission.AccessAllowed()) {
-
-                super.onResume();
-                if (MyDownloads.MyDL().CollectFiles() == FALSE)
-                    return;
-                RefreshFragments(mCurrentBudgetYear, mCurrentBudgetMonth);
-            }
-        } catch (Exception e)
-        {
-            MyLog.WriteExceptionMessage(e);
-        }
-        MyLog.WriteLogMessage("MainActivity:onResume:Ending");
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(MyPermission.AccessAllowed()) {
-
-            if (requestCode == getResources().getInteger(R.integer.account_list_return)) {
-                if (resultCode == RESULT_OK) {
-                    boolean lAccountListChanged = data.getBooleanExtra("ACCOUNTLISTCHANGED", false);
-                    if (lAccountListChanged) {
-                        // remove fragments from the fragment manager - forces them to be
-                        // recreated
-                        RemoveFragments();
-
-                        // read from db - Dirty ensures everything is read
-                        MyDatabase.MyDB().Dirty = true;
-                        mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
-                                (mCurrentBudgetMonth, mCurrentBudgetYear, true);
-
-                        // Create the fragments
-                        createAdapterAndFragments();
-                        populateFragments();
-                    }
-                }
-            }
-        }
-    }
-
     private void RemoveFragments()
     {
         if(MyPermission.AccessAllowed()) {
@@ -570,4 +579,7 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+
+    //endregion
+
 }

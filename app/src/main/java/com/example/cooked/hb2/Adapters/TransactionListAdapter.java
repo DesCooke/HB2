@@ -164,7 +164,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             } else {
                 view.mTxDescription.setVisibility(View.GONE);
             }
-            view.mSubCategoryName.setText("Category: " + rti.SubCategoryName);
+            view.mSubCategoryName.setText("Category: " + rti.GetFullyQualifiedName());
             if (!rti.UseCategory)
                 view.mSubCategoryName.setVisibility(View.GONE);
 

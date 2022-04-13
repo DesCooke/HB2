@@ -432,7 +432,8 @@
                             android:layout_weight="1"
                             android:text=""
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
-                            android:textColor="@color/grey_40" />
+                            android:textColor="@color/grey_40"
+                            android:textSize="10sp" />
 
                         <View
                             android:layout_width="@dimen/spacing_large"

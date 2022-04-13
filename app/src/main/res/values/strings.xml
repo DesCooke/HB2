@@ -17,6 +17,8 @@
     <string name="budget_header_monthly_income">MONTHLY INCOME</string>
     <string name="budget_header_extra_expenses">EXTRA EXPENSES</string>
     <string name="budget_header_extra_income">EXTRA INCOME</string>
+    <string name="budget_header_unplanned_expenses">UNPLANNED EXPENSES</string>
+    <string name="budget_header_unplanned_income">UNPLANNED INCOME</string>
     <string name="DayCaption">Day: %s</string>
     <string name="DaysCaption">Days: %s</string>
     <string name="DayAndMonth">Day: %s, Month: %s</string>
@@ -172,6 +174,16 @@
         <item>Same Month Last Year</item>
         <item>Last Month</item>
         <item>Average</item>
+    </string-array>
+    <string-array name="SubCategoryTypes">
+        <item>Monthly Expense (appears in budget)</item>
+        <item>Monthly Income (appears in budget)</item>
+        <item>Extra Expense (appears in budget)</item>
+        <item>Extra Income (appears in budget)</item>
+        <item>Unplanned Expense (appears in budget)</item>
+        <item>Unplanned Income (appears in budget)</item>
+        <item>Ignore Expense (does not appear in budget)</item>
+        <item>Ignore Income (does not appear in budget)</item>
     </string-array>
     <string name="title_activity_planning_variation_item">activityPlanningVariationItem</string>
     <!-- Strings used for fragments for navigation -->
