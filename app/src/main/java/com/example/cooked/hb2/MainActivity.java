@@ -1,6 +1,7 @@
 package com.example.cooked.hb2;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +9,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -80,8 +83,10 @@ public class MainActivity extends AppCompatActivity
 
     public ViewPagerMainAdapter adapter;
 
-    private Integer mCurrentBudgetYear;
-    private Integer mCurrentBudgetMonth;
+    private int mCurrentBudgetYear;
+    private int mCurrentBudgetMonth;
+    private int mPrevBudgetYear;
+    private int mPrevBudgetMonth;
     //endregion
 
     //region Constructors/Destructors
@@ -96,7 +101,13 @@ public class MainActivity extends AppCompatActivity
 
         try
         {
-            if(MyPermission.AccessAllowed()) {
+            if(MyPermission.AccessAllowed())
+            {
+                if (MyDownloads.MyDL().FileCountToProcess()>0)
+                {
+                    Toast toast = Toast.makeText(this, "Processing Bank Files", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
 
                 if (MyDownloads.MyDL().CollectFiles() == FALSE)
                     return;
@@ -164,10 +175,10 @@ public class MainActivity extends AppCompatActivity
                 if (id == R.id.RefreshDBAndUI) {
                     // remove fragments from the fragment manager - forces them to be
                     // recreated
+                    MyDatabase.MyDB().Dirty=true;
+
                     RemoveFragments();
 
-                    // read from db - Dirty ensures everything is read
-                    MyDatabase.MyDB().Dirty = true;
                     mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
                             (mCurrentBudgetMonth, mCurrentBudgetYear, true);
 
@@ -287,7 +298,6 @@ public class MainActivity extends AppCompatActivity
                         RemoveFragments();
 
                         // read from db - Dirty ensures everything is read
-                        MyDatabase.MyDB().Dirty = true;
                         mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
                                 (mCurrentBudgetMonth, mCurrentBudgetYear, true);
 
@@ -352,8 +362,15 @@ public class MainActivity extends AppCompatActivity
             if(MyPermission.AccessAllowed()) {
                 mCurrentBudgetYear = pBudgetYear;
                 mCurrentBudgetMonth = pBudgetMonth;
-                MyDatabase.MyDB().Dirty = true;
-                uiDirty = true;
+
+                if(mPrevBudgetYear!=mCurrentBudgetYear || mPrevBudgetMonth!=  mCurrentBudgetMonth)
+                {
+                    MyDatabase.MyDB().Dirty = true;
+                    uiDirty = true;
+                }
+                mPrevBudgetYear = mCurrentBudgetYear;
+                mPrevBudgetMonth = mCurrentBudgetMonth;
+
             }
         } catch (Exception e)
         {
@@ -384,10 +401,17 @@ public class MainActivity extends AppCompatActivity
         MyLog.WriteLogMessage("MainActivity:loadFromDB:Starting");
         try
         {
-            if(MyPermission.AccessAllowed()) {
+            if(MyPermission.AccessAllowed())
+            {
+                if (MyDatabase.MyDB().Dirty)
+                {
+                    Toast toast = Toast.makeText(this, "Recalculating Budget", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
 
                 mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
-                        (mCurrentBudgetMonth, mCurrentBudgetYear, true);
+                    (mCurrentBudgetMonth, mCurrentBudgetYear, true);
+
             }
         } catch (Exception e)
         {

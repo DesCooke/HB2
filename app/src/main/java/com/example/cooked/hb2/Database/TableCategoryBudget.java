@@ -63,6 +63,7 @@ class TableCategoryBudget extends TableBase
                         ") ";
 
         executeSQL(lSql, "TableCategoryBudget::addCategoryBudget", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void updateCategoryBudget(RecordCategoryBudget rcb)
@@ -75,6 +76,7 @@ class TableCategoryBudget extends TableBase
                         "and BudgetYear = " + rcb.BudgetYear.toString() + " ";
 
         executeSQL(lSql, "TableCategoryBudget::updateCategoryBudget", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void deleteCategoryBudget(RecordCategoryBudget rcb)
@@ -86,6 +88,7 @@ class TableCategoryBudget extends TableBase
                         "and BudgetYear = " + rcb.BudgetYear.toString() + " ";
 
         executeSQL(lSql, "TableCategoryBudget::deleteCategoryBudget", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void deleteAllForCategory(Integer pCategoryId)
@@ -95,6 +98,7 @@ class TableCategoryBudget extends TableBase
                         "WHERE CategoryId = " + pCategoryId.toString();
 
         executeSQL(lSql, "TableCategoryBudget::deleteAllForCategory", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void deleteAll()
@@ -103,6 +107,7 @@ class TableCategoryBudget extends TableBase
                 "DELETE FROM tblCategoryBudget ";
 
         executeSQL(lSql, "TableCategoryBudget::deleteAll", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     RecordCategoryBudget getCategoryBudget(Integer pCategoryId, Integer pBudgetMonth, Integer pBudgetYear)

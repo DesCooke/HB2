@@ -696,7 +696,7 @@ public class MyDatabase extends SQLiteOpenHelper
                     // frequency in brackets at the end
                     //
                     String lExtraName="";
-                    if(rb2.mPlannedId>-1)
+                    if(rb2.mPlannedId>-1 || rb2.AnnualBudget)
                     {
                         RecordPlanned localrp=MyDB().getSinglePlanned(rb2.mPlannedId);
                         if(localrp.mPlannedType==RecordPlanned.mPTMonthly && localrp.mFrequencyMultiplier==1)
@@ -720,60 +720,69 @@ public class MyDatabase extends SQLiteOpenHelper
                     rbi.total = rb2.Amount;
                     rbi.origTotal = rbi.total;
 
-                    //
-                    // Handle overbudget
-                    // don't mention if the budget or budget group are already being monitored
-                    //
-                    if (!rbi.groupedBudget && !rbi.Monitor && !rbg.Monitor &&
+                    if(
+                        (rb2.AnnualBudget && !rb2.DueThisMonth && rbi.spent < -0.0001f) ||
+                            (rb2.AnnualBudget && rb2.DueThisMonth ) ||
+                            (!rb2.AnnualBudget))
+                    {
+                        //
+                        // Handle overbudget
+                        // don't mention if the budget or budget group are already being monitored
+                        //
+                        if (!rbi.groupedBudget && !rbi.Monitor && !rbg.Monitor &&
                             (rbi.spent.floatValue() < 0.00f && rbi.total.floatValue() > rbi.spent.floatValue()) ||
                             (rbi.spent.floatValue() > 0.00f && rbi.total.floatValue() < rbi.spent.floatValue()))
-                    {
-                        String lLine =
+                        {
+                            String lLine =
                                 "Over budget on " + rbi.budgetItemName + ", " +
-                                        "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbi.total) +
-                                        ", New " + String.format(Locale.ENGLISH, "£%.2f", rbi.spent);
-                        addToNotes(lLine);
+                                    "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbi.total) +
+                                    ", New " + String.format(Locale.ENGLISH, "£%.2f", rbi.spent);
+                            addToNotes(lLine);
 
-                        rbi.total = rbi.spent;
-                    }
+                            rbi.total = rbi.spent;
+                        }
 
-                    //
-                    // Handle underbudget
-                    // don't mention if the budget or budget group are already being monitored
-                    //
-                    if (!rbi.groupedBudget && !rbi.Monitor && !rbg.Monitor &&
+                        //
+                        // Handle underbudget
+                        // don't mention if the budget or budget group are already being monitored
+                        //
+                        if (!rbi.groupedBudget && !rbi.Monitor && !rbg.Monitor &&
                             (rbi.spent.floatValue() < 0.00f && rbi.total.floatValue() < rbi.spent.floatValue()) ||
                             (rbi.spent.floatValue() > 0.00f && rbi.total.floatValue() > rbi.spent.floatValue()))
-                    {
-                        String lLine =
-                                "Under budget on " + rbi.budgetItemName + ", " +
+                        {
+                            if(!rb2.AnnualBudget)
+                            {
+                                String lLine =
+                                    "Under budget on " + rbi.budgetItemName + ", " +
                                         "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbi.total) +
                                         ", New " + String.format(Locale.ENGLISH, "£%.2f", rbi.spent);
-                        addToNotes(lLine);
+                                addToNotes(lLine);
 
-                        rbi.total = rbi.spent;
-                    }
-
-                    //
-                    // If auto match transaction then replace the budget amount
-                    // with the transaction amount always
-                    // we still want to know about it - hence this is placed after
-                    // the over budget bit
-                    //
-                    if (rb2.AutoMatchTransaction) {
-                        if (rbi.spent < -0.0001 || rbi.spent > 0.0001) {
-                            rbi.total = rbi.spent;
-                            rbi.origTotal = rbi.total;
+                                rbi.total = rbi.spent;
+                            }
                         }
+
+                        //
+                        // If auto match transaction then replace the budget amount
+                        // with the transaction amount always
+                        // we still want to know about it - hence this is placed after
+                        // the over budget bit
+                        //
+                        if (rb2.AutoMatchTransaction)
+                        {
+                            if (rbi.spent < -0.0001 || rbi.spent > 0.0001)
+                            {
+                                rbi.total = rbi.spent;
+                                rbi.origTotal = rbi.total;
+                            }
+                        }
+
+
+                        rbi.outstanding = rbi.total - rbi.spent;
+
+                        rbi.RecCount = 0;
+                        rbg.budgetItems.add(rbi);
                     }
-
-
-
-
-                    rbi.outstanding = rbi.total - rbi.spent;
-
-                    rbi.RecCount = 0;
-                    rbg.budgetItems.add(rbi);
                 } else
                 {
                     /*
@@ -789,7 +798,6 @@ public class MyDatabase extends SQLiteOpenHelper
                     }
                     if (rb2 != null)
                     {
-
                         rbi = new RecordBudgetItem();
 
                         rbi.BudgetClassId = rbc.BudgetClassId;
@@ -805,7 +813,14 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.outstanding = rbi.total - rb2.Amount;
 
                         rbi.RecCount = 0;
-                        rbg.budgetItems.add(rbi);
+
+                        if(
+                            (rb2.AnnualBudget && !rb2.DueThisMonth && (rbi.spent < -0.0001f || rbi.spent > 0.0001f)) ||
+                                (rb2.AnnualBudget && rb2.DueThisMonth ) ||
+                                (!rb2.AnnualBudget))
+                        {
+                            rbg.budgetItems.add(rbi);
+                        }
                     }
                 }
 
@@ -850,15 +865,16 @@ public class MyDatabase extends SQLiteOpenHelper
                 rbg.origTotal = rbg.total;
 
 
-                if ( !rbg.Monitor &&
-                        ((rbg.spent < 0.00f && rbg.total > rbg.spent) ||
+                if (  ((rbg.spent < 0.00f && rbg.total > rbg.spent) ||
                         (rbg.spent > 0.00f && rbg.total < rbg.spent)))
                 {
-                    String lLine =
-                            "Gone over budget on " + rbg.budgetGroupName + ", " +
-                                    "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbg.total) +
-                                    ", New " + String.format(Locale.ENGLISH, "£%.2f", rbg.spent);
-                    addToNotes(lLine);
+                    if (!rbg.Monitor) {
+                        String lLine =
+                                "Gone over budget on " + rbg.budgetGroupName + ", " +
+                                        "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbg.total) +
+                                        ", New " + String.format(Locale.ENGLISH, "£%.2f", rbg.spent);
+                        addToNotes(lLine);
+                    }
                     rbg.total = rbg.spent;
                 }
                 rbg.outstanding = rbg.total - rbg.spent;
@@ -925,6 +941,20 @@ public class MyDatabase extends SQLiteOpenHelper
         rbm.budgetClasses.add(rbc);
         rbc.budgetGroups = new ArrayList<>();
         ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTMonthlyIncome);
+
+        rbc = new RecordBudgetClass();
+        rbc.BudgetClassId = rbm.budgetClasses.size() + 1;
+        rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_annual_expenses);
+        rbm.budgetClasses.add(rbc);
+        rbc.budgetGroups = new ArrayList<>();
+        ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTAnnualExpense);
+
+        rbc = new RecordBudgetClass();
+        rbc.BudgetClassId = rbm.budgetClasses.size() + 1;
+        rbc.budgetClassName = MainActivity.context.getString(R.string.budget_header_annual_income);
+        rbm.budgetClasses.add(rbc);
+        rbc.budgetGroups = new ArrayList<>();
+        ProcessGroup(pMonth, pYear, cl, rb, rbspent, rbc, rbc.budgetGroups, RecordSubCategory.mSCTAnnualIncome);
 
         rbc = new RecordBudgetClass();
         rbc.BudgetClassId = rbm.budgetClasses.size() + 1;

@@ -1,5 +1,6 @@
 package com.example.cooked.hb2.Fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
@@ -47,7 +48,6 @@ public class FragmentDashboard extends Fragment
     private TextView _extraLeft;
     private TextView _lblExtraLeft;
     private TextView _finalBudgetBalanceThisMonth;
-    private TextView _notes;
     private RecordBudgetMonth _rbm;
 
     public ArrayList<RecordBudgetProgress> mDataset;
@@ -79,7 +79,6 @@ public class FragmentDashboard extends Fragment
             _extraLeft = root.findViewById(R.id.dbbs_ExtraLeft);
             _lblExtraLeft = root.findViewById(R.id.dbbs_lblExtraLeft);
             _finalBudgetBalanceThisMonth = root.findViewById(R.id.dbbs_FinalBudgetBalanceThisMonth);
-            _notes = root.findViewById(R.id.dbbs_Notes);
             _root=root;
 
         } catch (Exception e)
@@ -97,6 +96,17 @@ public class FragmentDashboard extends Fragment
                 return;
 
             mDataset = new ArrayList<RecordBudgetProgress>();
+
+            String lNotes = _rbm.notes;
+            String lines[] = lNotes.split("\\r?\\n");
+            for (int i = 0; i < lines.length; ++i)
+            {
+                RecordBudgetProgress rbp = new RecordBudgetProgress();
+                rbp.mJustANote = true;
+                rbp.mTitle=lines[i];
+                rbp.mNoteColor= Color.RED;
+                mDataset.add(rbp);
+            }
 
             for(int i=0;i<_rbm.budgetClasses.size();i++)
             {
@@ -284,7 +294,6 @@ public class FragmentDashboard extends Fragment
         {
             MyLog.WriteExceptionMessage(e);
         }
-
     }
 
 
@@ -384,7 +393,6 @@ public class FragmentDashboard extends Fragment
 
             _finalBudgetBalanceThisMonth.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.finalBudgetBalanceThisMonth));
 
-            _notes.setText(_rbm.notes);
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);

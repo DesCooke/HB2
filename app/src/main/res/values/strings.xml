@@ -19,6 +19,8 @@
     <string name="budget_header_extra_income">EXTRA INCOME</string>
     <string name="budget_header_unplanned_expenses">UNPLANNED EXPENSES</string>
     <string name="budget_header_unplanned_income">UNPLANNED INCOME</string>
+    <string name="budget_header_annual_expenses">ANNUAL EXPENSES</string>
+    <string name="budget_header_annual_income">ANNUAL INCOME</string>
     <string name="DayCaption">Day: %s</string>
     <string name="DaysCaption">Days: %s</string>
     <string name="DayAndMonth">Day: %s, Month: %s</string>
@@ -184,6 +186,8 @@
         <item>Unplanned Income (appears in budget)</item>
         <item>Ignore Expense (does not appear in budget)</item>
         <item>Ignore Income (does not appear in budget)</item>
+        <item>Annual Expense (appears in budget)</item>
+        <item>Annual Income (appears in budget)</item>
     </string-array>
     <string name="title_activity_planning_variation_item">activityPlanningVariationItem</string>
     <!-- Strings used for fragments for navigation -->

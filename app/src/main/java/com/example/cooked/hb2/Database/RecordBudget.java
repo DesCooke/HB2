@@ -9,6 +9,8 @@ class RecordBudget
     Date NextDueDate;
     Boolean AutoMatchTransaction;
     int mPlannedId;
+    public Boolean AnnualBudget;
+    public Boolean DueThisMonth;
 
     RecordBudget
             (
@@ -19,6 +21,8 @@ class RecordBudget
                     int pPlannedId
             )
     {
+        AnnualBudget = false;
+        DueThisMonth = false;
         SubCategoryId = pSubCategoryId;
         Amount = pAmount;
         NextDueDate = pNextDueDate;

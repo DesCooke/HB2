@@ -119,6 +119,7 @@ class TableTransaction extends TableBase
                         ") ";
 
         executeSQL(lSql, "TableTransaction::addTransaction", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void updateTransaction(RecordTransaction rt)
@@ -169,6 +170,7 @@ class TableTransaction extends TableBase
                 }
             }
         }
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void updateFilenameLineNo(RecordTransaction dbRec, RecordTransaction fileRec)
@@ -180,6 +182,7 @@ class TableTransaction extends TableBase
                         "WHERE TxSeqNo = " + dbRec.TxSeqNo.toString();
 
         executeSQL(lSql, "TableTransaction::updateFilenameLineNo", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void deleteTransaction(RecordTransaction rec)
@@ -189,6 +192,7 @@ class TableTransaction extends TableBase
                         "WHERE TxSeqNo = " + rec.TxSeqNo.toString();
 
         executeSQL(lSql, "TableTransaction::deleteTransaction", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void dumpTransactionTable()
@@ -748,6 +752,7 @@ class TableTransaction extends TableBase
                 }
             }
         }
+        MyDatabase.MyDB().Dirty=true;
     }
 
     ArrayList<RecordTransaction> getTxDateRange(Date lFrom, Date lTo, String lSortCode,
