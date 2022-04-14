@@ -76,6 +76,7 @@ class TablePlannedVariation extends TableBase
                         ") ";
 
         executeSQL(lSql, "TablePlannedVariation::addVariation", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void updateVariation(RecordPlannedVariation rpv) {
@@ -87,6 +88,7 @@ class TablePlannedVariation extends TableBase
                         "WHERE VariationId = " + Integer.toString(rpv.mVariationId);
 
         executeSQL(lSql, "TablePlannedVariation::updateVariation", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void deleteVariation(RecordPlannedVariation rpv)
@@ -96,6 +98,7 @@ class TablePlannedVariation extends TableBase
                         "WHERE VariationId = " + Integer.toString(rpv.mVariationId);
 
         executeSQL(lSql, "TablePlannedVariation::deleteVariation", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
 
@@ -106,6 +109,7 @@ class TablePlannedVariation extends TableBase
                         "WHERE PlannedId = " + Integer.toString(pPlannedId);
 
         executeSQL(lSql, "TablePlannedVariation::deleteVariationForPlannedId", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     ArrayList<RecordPlannedVariation> getVariationList(int pPlannedId)

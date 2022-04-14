@@ -141,5 +141,12 @@ public class RecordBudgetMonth
         extraExpense = l_BCEExpense;
         extraLeft = l_BCEIncome - l_BCEExpense;
     }
+
+    public void SaveBudgetToDB()
+    {
+
+
+
+    }
 }
 

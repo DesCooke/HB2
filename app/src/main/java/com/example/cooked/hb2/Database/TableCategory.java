@@ -67,6 +67,8 @@ class TableCategory extends TableBase
                 ") ";
         
         executeSQL(lSql, "TableCategory::addCategory", null);
+
+        MyDatabase.MyDB().Dirty=true;
     }
     
     void updateCategory(RecordCategory rc)
@@ -88,6 +90,7 @@ class TableCategory extends TableBase
                 "WHERE CategoryId = " + rc.CategoryId.toString();
         
         executeSQL(lSql, "TableCategory::updateCategory", null);
+        MyDatabase.MyDB().Dirty=true;
     }
     
     void deleteCategory(RecordCategory rc)
@@ -97,6 +100,7 @@ class TableCategory extends TableBase
                 "WHERE CategoryId = " + rc.CategoryId.toString();
         
         executeSQL(lSql, "TableCategory::deleteCategory", null);
+        MyDatabase.MyDB().Dirty=true;
     }
     
     ArrayList<RecordCategory> getCategoryList()

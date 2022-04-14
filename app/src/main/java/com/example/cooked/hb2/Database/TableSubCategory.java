@@ -60,6 +60,7 @@ class TableSubCategory extends TableBase {
                         "'" + lMonitor + "' ) ";
 
         executeSQL(lSql, "TableSubCategory::addSubCategory", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void updateSubCategory(RecordSubCategory rc)
@@ -81,6 +82,7 @@ class TableSubCategory extends TableBase {
                         "WHERE SubCategoryId = " + rc.SubCategoryId.toString();
 
         executeSQL(lSql, "TableSubCategory::updateSubCategory", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void deleteSubCategory(RecordSubCategory rc) {
@@ -89,6 +91,7 @@ class TableSubCategory extends TableBase {
                         "WHERE SubCategoryId = " + rc.SubCategoryId.toString();
 
         executeSQL(lSql, "TableSubCategory::deleteSubCategory", null);
+        MyDatabase.MyDB().Dirty=true;
     }
 
     void changeSubCategory(int oldSubCategoryId, int newSubCategoryId) {
@@ -112,6 +115,7 @@ class TableSubCategory extends TableBase {
                         "WHERE CategoryId = " + oldSubCategoryId;
 
         executeSQL(lSql, "TableSubCategory::changeSubCategory", null);
+        MyDatabase.MyDB().Dirty=true;
     }
     ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId) {
         ArrayList<RecordSubCategory> list;

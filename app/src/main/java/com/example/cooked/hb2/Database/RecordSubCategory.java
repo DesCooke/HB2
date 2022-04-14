@@ -10,6 +10,8 @@ public class RecordSubCategory
     public static int mSCTUnplannedIncome = 5;
     public static int mSCTIgnoreExpense = 6;
     public static int mSCTIgnoreIncome = 7;
+    public static int mSCTAnnualExpense = 8;
+    public static int mSCTAnnualIncome = 9;
 
     public Integer CategoryId;
     public String CategoryName;

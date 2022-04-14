@@ -69,6 +69,7 @@ class TableCommon extends TableBase
         ") ";
         
         executeSQL(lSql, "TableCommon::addCommon", null);
+        MyDatabase.MyDB().Dirty=true;
     }
     
     void updateTransaction(RecordCommon rt)
@@ -83,6 +84,7 @@ class TableCommon extends TableBase
                     "WHERE TxSeqNo = " + Integer.toString(rt.TxSeqNo);
             
         executeSQL(lSql, "TableCommon::updateCommon", null);
+        MyDatabase.MyDB().Dirty=true;
     }
     
     void deleteTransaction(RecordCommon rec)
@@ -92,6 +94,7 @@ class TableCommon extends TableBase
                 "WHERE TxSeqNo = " + rec.TxSeqNo.toString();
         
         executeSQL(lSql, "TableCommon::deleteCommon", null);
+        MyDatabase.MyDB().Dirty=true;
     }
     
     ArrayList<RecordCommon> getTransactionList()

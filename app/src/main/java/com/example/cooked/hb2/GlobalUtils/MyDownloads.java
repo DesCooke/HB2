@@ -221,4 +221,26 @@ public class MyDownloads
         return (TRUE);
     }
 
+    public int FileCountToProcess()
+    {
+        try
+        {
+            File f = new File(downloadDirectory);
+            File[] fl = f.listFiles();
+            int c=0;
+            for (File aFl : fl)
+            {
+                if (isBankFile(aFl.getName()))
+                {
+                    c++;
+                }
+            }
+            return(c);
+        } catch (Exception e)
+        {
+            ErrorDialog.Show("Error in MyDownloads::CollectFiles", e.getMessage());
+            return(0);
+        }
+    }
+
 }
