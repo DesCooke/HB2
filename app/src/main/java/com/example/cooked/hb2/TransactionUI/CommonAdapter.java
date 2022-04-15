@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordCommon;
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
 
@@ -108,13 +109,7 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.ViewHolder
         {
             holder.mComments.setVisibility(View.GONE);
         }
-        if (rec.TxAmount < 0.00)
-        {
-            holder.mTxAmount.setText("Amount -£" + String.format("%.2f", rec.TxAmount * -1));
-        } else
-        {
-            holder.mTxAmount.setText("Amount £" + String.format("%.2f", rec.TxAmount));
-        }
+        holder.mTxAmount.setText("Amount " + Tools.moneyFormat(rec.TxAmount));
         holder.mFull.setOnClickListener(new View.OnClickListener()
         {
             @Override

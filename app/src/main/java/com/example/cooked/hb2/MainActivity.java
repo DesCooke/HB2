@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentDashboard _fragmentDashboard;
     private FragmentBudget _fragmentBudget;
     private ArrayList<FragmentAccount> _fragmentAccounts;
+    private FragmentAccount _fragmentAnnualBills;
 
     private RecordBudgetMonth mDatasetBudgetMonth;
 
@@ -329,6 +330,7 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0; i < _fragmentAccounts.size(); i++) {
                     _fragmentAccounts.get(i).RefreshForm(mDatasetBudgetMonth.accounts.get(i).RecordTransactions, mDatasetBudgetMonth);
                 }
+                _fragmentAnnualBills.RefreshForm(mDatasetBudgetMonth.mAnnualBills, mDatasetBudgetMonth);
             }
         } catch (Exception e)
         {
@@ -345,6 +347,8 @@ public class MainActivity extends AppCompatActivity
 
             loadFromDB();
 
+            MyLog.WriteLogMessage("MainActivity:RecreateUI:Starting");
+
             setTheTitle();
 
             createAdapterAndFragments();
@@ -352,6 +356,9 @@ public class MainActivity extends AppCompatActivity
             populateFragments();
 
             setupNavigationSideBar();
+
+            MyLog.WriteLogMessage("MainActivity:RecreateUI:Ending");
+
         }
     }
 
@@ -409,8 +416,10 @@ public class MainActivity extends AppCompatActivity
                     toast.show();
                 }
 
+                MyLog.WriteLogMessage("MainActivity:loadFromDB:Calling MyDatabase.MyDB().getDatasetBudgetMonth");
                 mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
                     (mCurrentBudgetMonth, mCurrentBudgetYear, true);
+                MyLog.WriteLogMessage("MainActivity:loadFromDB:Returned from MyDatabase.MyDB().getDatasetBudgetMonth");
 
             }
         } catch (Exception e)
@@ -474,6 +483,11 @@ public class MainActivity extends AppCompatActivity
                     adapter.addFragment(fa, ra.AcDescription);
 
                 }
+
+                _fragmentAnnualBills = FragmentAccount.newInstance();
+                _fragmentAnnualBills.SetAccount("", "", "Annual Bills");
+                adapter.addFragment(_fragmentAnnualBills, "Annual Bills");
+
                 view_pager.setAdapter(adapter);
 
                 tab_layout.setupWithViewPager(view_pager);
@@ -501,6 +515,7 @@ public class MainActivity extends AppCompatActivity
                         fa.RefreshForm(ra.RecordTransactions, mDatasetBudgetMonth);
                     }
                 }
+                _fragmentAnnualBills.RefreshForm(mDatasetBudgetMonth.mAnnualBills, mDatasetBudgetMonth);
             }
         } catch (Exception e)
         {

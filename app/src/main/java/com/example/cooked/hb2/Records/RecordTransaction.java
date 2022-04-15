@@ -34,6 +34,9 @@ public class RecordTransaction
     public Float TxBalanceShouldBe;
     public Float MarkerStartingBalance;
     public Float MarkerEndingBalance;
+    public Float MarkerTotal;
+    public Float MarkerTotalSpent;
+    public Float MarkerTotalOutstanding;
     public boolean CheckForChange;
     public boolean UseCategory;
 

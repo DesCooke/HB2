@@ -9,6 +9,7 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyResources;
 import com.example.cooked.hb2.GlobalUtils.MyString;
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.Records.RecordTransaction;
@@ -17,9 +18,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.DateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
+import static com.example.cooked.hb2.Database.RecordPlanned.mPTYearly;
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -634,6 +638,102 @@ class TableTransaction extends TableBase
                 }
             }
         }
+        return list;
+    }
+
+    ArrayList<RecordTransaction> GetAnnualBills(int budgetYear)
+    {
+        float lMLeftOver=0.00f;
+        float lMTotal=0.00f;
+        float lMSpent = 0.00f;
+        float lTotal=0.00f;
+        float lSpent = 0.00f;
+        ArrayList<RecordTransaction> list= new ArrayList<>();;
+
+        ArrayList<RecordPlanned> pta = MyDatabase.MyDB().GetAnnualPlannedList(true);
+
+        for(int i=0;i< pta.size();i++)
+        {
+            lTotal = pta.get(i).GetAmountAt(Calendar.getInstance().getTime());
+            lSpent = 0.00f;
+
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                String lSql = "SELECT sum(a.TxAmount) " +
+                    "FROM tblTransaction a, tblSubCategory b, tblCategory c " +
+                    "WHERE a.BudgetYear = " + budgetYear + " " +
+                    "AND a.CategoryId = " + pta.get(i).mSubCategoryId + " " +
+                    "AND a.CategoryId = b.SubCategoryId " +
+                    "AND b.CategoryId = c.CategoryId " +
+                    "AND c.CategoryName ='Annual Bills' " +
+                    "AND a.TxAmount < 0.00 ";
+                Cursor cursor = db.rawQuery(lSql, null);
+                if (cursor != null)
+                {
+                    try
+                    {
+                        int c = cursor.getCount();
+                        if (c > 0)
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                lSpent = cursor.getFloat(0);
+                            } while (cursor.moveToNext());
+
+                        }
+                    } finally
+                    {
+                        cursor.close();
+                    }
+
+
+                }
+
+                float lLeftOver = lTotal - lSpent;
+                lMTotal += lTotal;
+                lMSpent += lSpent;
+                lMLeftOver += lLeftOver;
+                RecordTransaction lrec =
+                    new RecordTransaction
+                        (
+                            0,
+                            new Date(),
+                            "",
+                            0,
+                            new Date(),
+                            "",
+                            "",
+                            "",
+                            "",
+                            0.00f,
+                            0.00f,
+                            0,
+                            "",
+                            0,
+                            0,
+                            true,
+                            false
+                        );
+
+                lrec.Comments = "Total " + Tools.moneyFormat(lTotal * -1) +
+                    ", Spent " + Tools.moneyFormat(lSpent * -1) +
+                    ", LeftOver " + Tools.moneyFormat(lLeftOver * -1);
+
+                lrec.CategoryName = pta.get(i).mPlannedName;
+                lrec.TxFilename = pta.get(i).mPlannedDay + DateUtils.DaySuffix(pta.get(i).mPlannedDay) + " " + DateUtils.MonthNames[pta.get(i).mPlannedMonth-1];
+
+                list.add(lrec);
+
+            }
+        }
+
+        RecordTransaction r2 = new RecordTransaction();
+        r2.MarkerTotal = lMTotal*-1;
+        r2.MarkerTotalSpent = lMSpent*-1;
+        r2.MarkerTotalOutstanding = lMLeftOver*-1;
+        list.add(r2);
+
         return list;
     }
 

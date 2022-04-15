@@ -20,6 +20,7 @@ import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
 import com.example.cooked.hb2.Records.RecordBudgetItem;
@@ -351,9 +352,9 @@ public class FragmentDashboard extends Fragment
         {
             CreateRecyclerView();
 
-            _monthlyIncome.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.monthlyIncome));
-            _monthlyExpense.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.monthlyExpense));
-            _amountLeft.setText(String.format(Locale.ENGLISH, "£%.2f", abs(_rbm.amountLeft)));
+            _monthlyIncome.setText(Tools.moneyFormat(_rbm.monthlyIncome));
+            _monthlyExpense.setText(Tools.moneyFormat(_rbm.monthlyExpense));
+            _amountLeft.setText(Tools.moneyFormat(abs(_rbm.amountLeft)));
             if ((_rbm.amountLeft) > 0.00f)
             {
                 _lblAmountLeft.setText("Monthly Underspend by...");
@@ -370,9 +371,9 @@ public class FragmentDashboard extends Fragment
                 }
             }
 
-            _extraIncome.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.extraIncome));
-            _extraExpense.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.extraExpense));
-            _extraLeft.setText(String.format(Locale.ENGLISH, "£%.2f", abs(_rbm.extraLeft)));
+            _extraIncome.setText(Tools.moneyFormat(_rbm.extraIncome));
+            _extraExpense.setText(Tools.moneyFormat(_rbm.extraExpense));
+            _extraLeft.setText(Tools.moneyFormat(abs(_rbm.extraLeft)));
             if ((_rbm.extraLeft) > 0.00f)
             {
                 _lblExtraLeft.setText("Extra Underspend by...");
@@ -389,9 +390,9 @@ public class FragmentDashboard extends Fragment
                 }
             }
 
-            _startingBalance.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.startingBalance));
+            _startingBalance.setText(Tools.moneyFormat(_rbm.startingBalance));
 
-            _finalBudgetBalanceThisMonth.setText(String.format(Locale.ENGLISH, "£%.2f", _rbm.finalBudgetBalanceThisMonth));
+            _finalBudgetBalanceThisMonth.setText(Tools.moneyFormat(_rbm.finalBudgetBalanceThisMonth));
 
         } catch (Exception e)
         {

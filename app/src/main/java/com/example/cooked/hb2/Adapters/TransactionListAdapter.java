@@ -2,6 +2,7 @@ package com.example.cooked.hb2.Adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,21 +42,23 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public OnItemClickListener mItemClickListener;
     RecordBudgetMonth _rbm;
 
-    public interface OnItemClickListener {
+    public interface OnItemClickListener
+    {
         void onItemClick(View view, RecordTransaction obj);
     }
 
-    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mItemClickListener=mItemClickListener;
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener)
+    {
+        this.mItemClickListener = mItemClickListener;
     }
 
     private void addTransactionToList(RecordTransaction argrt, List<RecordTransactionListItem> items)
     {
         MyLog.WriteLogMessage("TransactionListAdapter:addTransactionToList:Starting");
 
-        Resources r= Objects.requireNonNull(MyResources.R());
+        Resources r = Objects.requireNonNull(MyResources.R());
 
-        RecordTransactionListItem rtli=new RecordTransactionListItem();
+        RecordTransactionListItem rtli = new RecordTransactionListItem();
         rtli.ItemType = r.getInteger(R.integer.item_type_transaction_item);
         rtli.Data = argrt;
         items.add(rtli);
@@ -66,7 +70,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     {
         MyLog.WriteLogMessage("TransactionListAdapter:addTransactionBalanceToList:Starting");
 
-        RecordTransactionListItem rtli=new RecordTransactionListItem();
+        RecordTransactionListItem rtli = new RecordTransactionListItem();
         Resources r = Objects.requireNonNull(MyResources.R());
 
         rtli.ItemType = r.getInteger(R.integer.item_type_transaction_balance);
@@ -80,10 +84,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     {
         MyLog.WriteLogMessage("TransactionListAdapter:createListFromTransactionList:Starting");
         List<RecordTransactionListItem> items = new ArrayList<>();
-        for(int i = 0; i< rtl.size(); i++)
+        for (int i = 0; i < rtl.size(); i++)
         {
             RecordTransaction rt = rtl.get(i);
-            if(rt.MarkerStartingBalance != null || rt.MarkerEndingBalance!=null)
+            if (rt.MarkerStartingBalance != null || rt.MarkerEndingBalance != null || rt.MarkerTotalOutstanding !=null )
             {
                 addTransactionBalanceToList(rt, items);
             }
@@ -93,7 +97,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
         MyLog.WriteLogMessage("TransactionListAdapter:createListFromTransactionList:Starting");
-        return(items);
+        return (items);
     }
 
     public void UpdateList(List<RecordTransaction> rtl)
@@ -102,7 +106,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         notifyDataSetChanged();
     }
 
-    public TransactionListAdapter(Context context, List<RecordTransaction> rtl, RecordBudgetMonth rbm) {
+    public TransactionListAdapter(Context context, List<RecordTransaction> rtl, RecordBudgetMonth rbm)
+    {
         _context = context;
         _items = createListFromTransactionList(rtl);
         _rbm = rbm;
@@ -116,21 +121,26 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         MyLog.WriteLogMessage("TransactionListAdapter:onCreateViewHolder:Starting");
 
-        Resources r=Objects.requireNonNull(MyResources.R());
+        Resources r = Objects.requireNonNull(MyResources.R());
 
-        if (viewType == r.getInteger(R.integer.item_type_transaction_item)) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_transaction_item, parent, false);
+        if (viewType == r.getInteger(R.integer.item_type_transaction_item))
+        {
+            View v =
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_transaction_item, parent, false);
             vh = new ViewHolderTransactionItem(v);
         }
         else
         {
             if (viewType == r.getInteger(R.integer.item_type_transaction_balance))
             {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_balance, parent, false);
+                View v =
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_balance, parent, false);
                 vh = new ViewHolderTransactionBalance(v);
-            } else
+            }
+            else
             {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_balance, parent, false);
+                View v =
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.cell_balance, parent, false);
                 vh = new ViewHolderTransactionBalance(v);
             }
         }
@@ -147,84 +157,109 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         MyLog.WriteLogMessage("TransactionListAdapter:onBindViewHolder:Starting");
 
         final RecordTransactionListItem rtli = _items.get(position);
-        final RecordTransaction rti = (RecordTransaction)rtli.Data;
-        if (holder instanceof ViewHolderTransactionItem) {
+        final RecordTransaction rti = (RecordTransaction) rtli.Data;
+        if (holder instanceof ViewHolderTransactionItem)
+        {
             final ViewHolderTransactionItem view = (ViewHolderTransactionItem) holder;
 
-            view.mTxSeqNo.setText(IntUtils.IntToStr(rti.TxSeqNo));
-            view.mTxAdded.setText(rti.TxAdded.toString());
-            view.mTxFilename.setText(rti.TxFilename);
-            view.mTxLineNo.setText(IntUtils.IntToStr(rti.TxLineNo));
-            view.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rti.TxDate));
-            view.mTxType.setText(rti.TxType);
-            view.mBankAccount.setText(rti.TxSortCode + " " + rti.TxAccountNumber);
-            if (rti.TxDescription.length() > 0) {
-                view.mTxDescription.setVisibility(View.VISIBLE);
-                view.mTxDescription.setText("Description: " + rti.TxDescription);
-            } else {
-                view.mTxDescription.setVisibility(View.GONE);
-            }
-            view.mSubCategoryName.setText("Category: " + rti.GetFullyQualifiedName());
-            if (!rti.UseCategory)
-                view.mSubCategoryName.setVisibility(View.GONE);
-
-            if (rti.Comments.length() > 0) {
-                view.mComments.setVisibility(View.VISIBLE);
-                view.mComments.setText("Comments: " + rti.Comments);
-            } else {
+            if(rti.BudgetYear==0)
+            {
+                view.mTxSeqNo.setVisibility(View.GONE);
+                view.mTxAdded.setVisibility(View.GONE);
+                view.mTxFilename.setVisibility(View.GONE);
+                view.mTxLineNo.setVisibility(View.GONE);
+                view.mTxType.setVisibility(View.GONE);
+                view.mBankAccount.setVisibility(View.GONE);
                 view.mComments.setVisibility(View.GONE);
-            }
-            view.mBudget.setText(dateUtils().BudgetAsString(rti.BudgetYear, rti.BudgetMonth));
-            if (rti.TxAmount < 0.00) {
-                view.mTxAmount.setText("Amount -£" + String.format("%.2f", rti.TxAmount * -1));
-            } else {
-                view.mTxAmount.setText("Amount £" + String.format("%.2f", rti.TxAmount));
-            }
-            if (rti.HideBalance) {
-                view.mTxBalance.setVisibility(View.INVISIBLE);
-            } else {
-                view.mTxBalance.setVisibility(View.VISIBLE);
-                if (rti.TxBalance < 0.00) {
-                    view.mTxBalance.setText("Balance -£" + String.format("%.2f", rti.TxBalance * -1));
-                } else {
-                    view.mTxBalance.setText("Balance £" + String.format("%.2f", rti.TxBalance));
-                }
-            }
-            view.mFull.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mItemClickListener != null) {
-                        mItemClickListener.onItemClick(view, rti);
-                    }
-                }
-            });
-            int lColor = MainActivity.context.getResources().getColor(R.color.textNormal);
-            if (rti.TxType.compareTo("Planned") == 0)
-                lColor = MainActivity.context.getResources().getColor(R.color.textLowLight);
+                view.mTxBalance.setVisibility(View.GONE);
+                view.mBudget.setVisibility(View.GONE);
+                view.mTxAmount.setVisibility(View.GONE);
 
-            view.mTxSeqNo.setTextColor(lColor);
-            view.mTxAdded.setTextColor(lColor);
-            view.mTxFilename.setTextColor(lColor);
-            view.mTxLineNo.setTextColor(lColor);
-            view.mTxDate.setTextColor(lColor);
-            view.mTxType.setTextColor(lColor);
-            view.mBankAccount.setTextColor(lColor);
-            view.mTxDescription.setTextColor(lColor);
-            view.mTxAmount.setTextColor(lColor);
-            view.mTxBalance.setTextColor(lColor);
-            view.mSubCategoryName.setTextColor(lColor);
-            view.mComments.setTextColor(lColor);
-            view.mBudget.setTextColor(lColor);
 
-            if (!rti.BalanceCorrect) {
-                //holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
-                //holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
-                if (view.mTxBalance.getVisibility() == View.VISIBLE) {
-                    if (rti.TxBalance < 0.00) {
-                        view.mTxBalance.setText("Balance -£" + String.format("%.2f", rti.TxBalance * -1));
-                    } else {
-                        view.mTxBalance.setText("Balance £" + String.format("%.2f", rti.TxBalance));
+                view.mTxDate.setVisibility(View.VISIBLE);
+                view.mTxDate.setText(rti.TxFilename);
+                view.mTxDescription.setVisibility(View.VISIBLE);
+                view.mTxDescription.setText(rti.Comments);
+                view.mSubCategoryName.setVisibility(View.VISIBLE);
+                view.mSubCategoryName.setText("Category: " + rti.CategoryName);
+            }
+            else
+            {
+                view.mTxSeqNo.setText(IntUtils.IntToStr(rti.TxSeqNo));
+                view.mTxAdded.setText(rti.TxAdded.toString());
+                view.mTxFilename.setText(rti.TxFilename);
+                view.mTxLineNo.setText(IntUtils.IntToStr(rti.TxLineNo));
+                view.mTxDate.setText(android.text.format.DateFormat.format("EEE, dd/MM/yyyy", rti.TxDate));
+                view.mTxType.setText(rti.TxType);
+                view.mBankAccount.setText(rti.TxSortCode + " " + rti.TxAccountNumber);
+                if (rti.TxDescription.length() > 0)
+                {
+                    view.mTxDescription.setVisibility(View.VISIBLE);
+                    view.mTxDescription.setText("Description: " + rti.TxDescription);
+                }
+                else
+                {
+                    view.mTxDescription.setVisibility(View.GONE);
+                }
+                view.mSubCategoryName.setText("Category: " + rti.GetFullyQualifiedName());
+                if (!rti.UseCategory)
+                    view.mSubCategoryName.setVisibility(View.GONE);
+
+                if (rti.Comments.length() > 0)
+                {
+                    view.mComments.setVisibility(View.VISIBLE);
+                    view.mComments.setText("Comments: " + rti.Comments);
+                }
+                else
+                {
+                    view.mComments.setVisibility(View.GONE);
+                }
+                view.mBudget.setText(dateUtils().BudgetAsString(rti.BudgetYear, rti.BudgetMonth));
+                view.mTxAmount.setText("Amount " + Tools.moneyFormat(rti.TxAmount));
+                if (rti.HideBalance)
+                {
+                    view.mTxBalance.setVisibility(View.INVISIBLE);
+                }
+                else
+                {
+                    view.mTxBalance.setVisibility(View.VISIBLE);
+                    view.mTxBalance.setText("Balance " + Tools.moneyFormat(rti.TxBalance));
+                }
+                view.mFull.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View view)
+                    {
+                        if (mItemClickListener != null)
+                        {
+                            mItemClickListener.onItemClick(view, rti);
+                        }
                     }
+                });
+                int lColor = MainActivity.context.getResources().getColor(R.color.textNormal);
+                if (rti.TxType.compareTo("Planned") == 0)
+                    lColor = MainActivity.context.getResources().getColor(R.color.textLowLight);
+
+                view.mTxSeqNo.setTextColor(lColor);
+                view.mTxAdded.setTextColor(lColor);
+                view.mTxFilename.setTextColor(lColor);
+                view.mTxLineNo.setTextColor(lColor);
+                view.mTxDate.setTextColor(lColor);
+                view.mTxType.setTextColor(lColor);
+                view.mBankAccount.setTextColor(lColor);
+                view.mTxDescription.setTextColor(lColor);
+                view.mTxAmount.setTextColor(lColor);
+                view.mTxBalance.setTextColor(lColor);
+                view.mSubCategoryName.setTextColor(lColor);
+                view.mComments.setTextColor(lColor);
+                view.mBudget.setTextColor(lColor);
+
+                if (!rti.BalanceCorrect)
+                {
+                    //holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+                    //holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
+                    if (view.mTxBalance.getVisibility() == View.VISIBLE)
+                        view.mTxAmount.setText("Balance " + Tools.moneyFormat(rti.TxBalance));
                 }
             }
         }
@@ -234,13 +269,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             MyLog.WriteLogMessage("TransactionListAdapter:onBindViewHolder:Starting");
             final ViewHolderTransactionBalance view = (ViewHolderTransactionBalance) holder;
 
-            if(rti.MarkerStartingBalance!=null)
+            if (rti.MarkerStartingBalance != null)
                 view.mCellInfo.setText(context.getString(R.string.starting_balance_full,
-                        Tools.moneyFormat(rti.MarkerStartingBalance)));
+                    Tools.moneyFormat(rti.MarkerStartingBalance)));
 
-            if(rti.MarkerEndingBalance!=null)
+            if (rti.MarkerEndingBalance != null)
                 view.mCellInfo.setText(context.getString(R.string.final_balance_full,
-                        Tools.moneyFormat(rti.MarkerEndingBalance)));
+                    Tools.moneyFormat(rti.MarkerEndingBalance)));
+
+            if (rti.MarkerTotalOutstanding != null)
+            {
+                String lLine = "Total " + Tools.moneyFormat(rti.MarkerTotal) + ", " +
+                        "Spent " + Tools.moneyFormat(rti.MarkerTotalSpent) + ", " +
+                        "O/S " + Tools.moneyFormat(rti.MarkerTotalOutstanding);
+                view.mCellInfo.setText(lLine);
+            }
         }
 
         MyLog.WriteLogMessage("TransactionListAdapter:onBindViewHolder:Ending");

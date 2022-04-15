@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
@@ -162,26 +163,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 vh1.mComments.setVisibility(View.GONE);
             }
             vh1.mBudget.setText(dateUtils().BudgetAsString(rec.BudgetYear, rec.BudgetMonth));
-            if (rec.TxAmount < 0.00)
-            {
-                vh1.mTxAmount.setText("Amount -£" + String.format("%.2f", rec.TxAmount * -1));
-            } else
-            {
-                vh1.mTxAmount.setText("Amount £" + String.format("%.2f", rec.TxAmount));
-            }
+            vh1.mTxAmount.setText("Amount " + Tools.moneyFormat(rec.TxAmount));
             if (rec.HideBalance)
             {
                 vh1.mTxBalance.setVisibility(View.INVISIBLE);
             } else
             {
                 vh1.mTxBalance.setVisibility(View.VISIBLE);
-                if (rec.TxBalance < 0.00)
-                {
-                    vh1.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1));
-                } else
-                {
-                    vh1.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance));
-                }
+                vh1.mTxBalance.setText("Balance " + rec.TxBalance);
             }
             vh1.mFull.setOnClickListener(new View.OnClickListener()
             {
@@ -217,19 +206,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 //holder.mTxAmount.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
                 //holder.mTxBalance.setTextColor(MainActivity.context.getResources().getColor(R.color.textError));
                 if (vh1.mTxBalance.getVisibility() == View.VISIBLE)
-                {
-                    if (rec.TxBalance < 0.00)
-                    {
-//                      holder.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1) + " -> " +
-//                        ", -£" + String.format("%.2f", rec.TxBalanceShouldBe * -1));
-                        vh1.mTxBalance.setText("Balance -£" + String.format("%.2f", rec.TxBalance * -1));
-                    } else
-                    {
-//                      holder.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance) + " -> " +
-//                        "£" + String.format("%.2f", rec.TxBalanceShouldBe));
-                        vh1.mTxBalance.setText("Balance £" + String.format("%.2f", rec.TxBalance));
-                    }
-                }
+                    vh1.mTxBalance.setText("Balance " + Tools.moneyFormat(rec.TxBalance));
             }
         }
         if (holder.getItemViewType() == 2)
@@ -242,12 +219,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 lStartingOrEnding = "Ending";
 
             if (lBalance < 0.00f)
-            {
-                vh2.mTxDescription.setText(lStartingOrEnding + " Balance -£" + String.format("%.2f", lBalance * -1));
-            } else
-            {
-                vh2.mTxDescription.setText(lStartingOrEnding + " Balance £" + String.format("%.2f", lBalance));
-            }
+                vh2.mTxDescription.setText(lStartingOrEnding + " Balance " + Tools.moneyFormat(lBalance));
         }
     }
 

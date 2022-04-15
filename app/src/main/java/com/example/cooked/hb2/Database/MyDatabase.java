@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.TextView;
 
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
@@ -584,6 +585,22 @@ public class MyDatabase extends SQLiteOpenHelper
         tablePlanned.updatePlanned(rp);
     }
 
+
+    public ArrayList<RecordPlanned> GetAnnualPlannedList(boolean activeOnly)
+    {
+        ArrayList<RecordPlanned> rpa = tablePlanned.GetAnnualPlannedList(activeOnly);
+        if (rpa != null)
+        {
+            for (int i = 0; i < rpa.size(); i++)
+            {
+                RecordSubCategory sc = tableSubCategory.getSubCategory(rpa.get(i).mSubCategoryId);
+                if (sc != null)
+                    rpa.get(i).mSubCategoryName = sc.SubCategoryName;
+            }
+        }
+        return (rpa);
+    }
+
     public ArrayList<RecordPlanned> getPlannedList(boolean activeOnly)
     {
         ArrayList<RecordPlanned> rpa = tablePlanned.getPlannedList(activeOnly);
@@ -735,8 +752,8 @@ public class MyDatabase extends SQLiteOpenHelper
                         {
                             String lLine =
                                 "Over budget on " + rbi.budgetItemName + ", " +
-                                    "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbi.total) +
-                                    ", New " + String.format(Locale.ENGLISH, "£%.2f", rbi.spent);
+                                    "Orig " + Tools.moneyFormat(rbi.total) +
+                                    ", New " + Tools.moneyFormat(rbi.spent);
                             addToNotes(lLine);
 
                             rbi.total = rbi.spent;
@@ -754,8 +771,8 @@ public class MyDatabase extends SQLiteOpenHelper
                             {
                                 String lLine =
                                     "Under budget on " + rbi.budgetItemName + ", " +
-                                        "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbi.total) +
-                                        ", New " + String.format(Locale.ENGLISH, "£%.2f", rbi.spent);
+                                        "Orig " + Tools.moneyFormat(rbi.total) +
+                                        ", New " + Tools.moneyFormat(rbi.spent);
                                 addToNotes(lLine);
 
                                 rbi.total = rbi.spent;
@@ -871,8 +888,8 @@ public class MyDatabase extends SQLiteOpenHelper
                     if (!rbg.Monitor) {
                         String lLine =
                                 "Gone over budget on " + rbg.budgetGroupName + ", " +
-                                        "Orig " + String.format(Locale.ENGLISH, "£%.2f", rbg.total) +
-                                        ", New " + String.format(Locale.ENGLISH, "£%.2f", rbg.spent);
+                                        "Orig " + Tools.moneyFormat(rbg.total) +
+                                        ", New " + Tools.moneyFormat(rbg.spent);
                         addToNotes(lLine);
                     }
                     rbg.total = rbg.spent;
@@ -902,6 +919,8 @@ public class MyDatabase extends SQLiteOpenHelper
         rbm.budgetYear = pYear;
 
         rbm.mCommonDataset = MyDatabase.MyDB().getCommonTransactionList();
+
+        rbm.mAnnualBills = tableTransaction.GetAnnualBills(pYear);
 
         rbm.accounts = tableAccount.getAccountList();
         for (int i = 0; i < rbm.accounts.size(); i++)

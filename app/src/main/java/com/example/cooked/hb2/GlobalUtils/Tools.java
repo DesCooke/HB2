@@ -16,6 +16,11 @@ public class Tools
 {
     public static String moneyFormat(Float value)
     {
+        if(value > -0.0005 && value < 0.0005)
+            return(String.format(Locale.ENGLISH, "£%.2f", 0.00));
+        if(value < -0.0005)
+            return(String.format(Locale.ENGLISH, "-£%.2f", Math.abs(value)));
+
         return(String.format(Locale.ENGLISH, "£%.2f", value));
     }
 
