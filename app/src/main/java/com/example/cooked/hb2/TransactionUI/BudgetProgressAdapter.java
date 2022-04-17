@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.cooked.hb2.Database.RecordBudgetProgress;
 import com.example.cooked.hb2.Database.RecordPlanned;
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
@@ -116,9 +117,9 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
                 // - replace the contents of the view with that element
                 holder.mTitle1.setText(rec.mTitle);
 
-                String lString = "£" + String.format("%.2f", abs(rec.mSpentAmount)) +
-                        " of £" + String.format("%.2f", abs(rec.mTotalAmount)) +
-                        " spent, £" + String.format("%.2f", abs(rec.mLeftAmount)) + " left";
+                String lString = Tools.moneyFormat(abs(rec.mSpentAmount)) +
+                        " of " + Tools.moneyFormat(abs(rec.mTotalAmount)) +
+                        " spent, " + Tools.moneyFormat(abs(rec.mLeftAmount)) + " left";
                 holder.mTitle2.setText(lString);
 
                 lString = rec.mSpentPerc + "% through budget, " +

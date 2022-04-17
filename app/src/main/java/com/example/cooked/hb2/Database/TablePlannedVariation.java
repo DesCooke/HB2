@@ -101,7 +101,6 @@ class TablePlannedVariation extends TableBase
         MyDatabase.MyDB().Dirty=true;
     }
 
-
     void deleteVariationForPlannedId(int pPlannedId)
     {
         String lSql =

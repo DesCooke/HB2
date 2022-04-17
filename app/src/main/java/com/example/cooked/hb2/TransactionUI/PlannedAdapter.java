@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.MyString;
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.R;
 
 import java.util.ArrayList;
@@ -131,13 +132,7 @@ public class PlannedAdapter extends RecyclerView.Adapter<PlannedAdapter.ViewHold
         holder.mMatchingType.setText("Matching Type: " + rec.mMatchingTxType);
         holder.mMatchingDescription.setText("Matching Description: " + rec.mMatchingTxDescription);
         Float lAmount = rec.GetAmountAt(Calendar.getInstance().getTime());
-        if (lAmount < 0.00)
-        {
-            holder.mMatchingAmount.setText("Amount: -£" + String.format("%.2f", lAmount * -1));
-        } else
-        {
-            holder.mMatchingAmount.setText("Amount: £" + String.format("%.2f", lAmount));
-        }
+        holder.mMatchingAmount.setText("Amount: " + Tools.moneyFormat(lAmount * -1));
         holder.mFull.setOnClickListener(new View.OnClickListener()
         {
             @Override

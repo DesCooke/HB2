@@ -35,7 +35,7 @@ public class DateUtils
     public String PlannedTypeDescription(RecordPlanned rp, Date pDate)
     {
         String lDesc = "Oneoff";
-        String lAmount = "£" + String.format(Locale.UK, "%.2f", abs(rp.GetAmountAt(pDate)));
+        String lAmount = Tools.moneyFormat(abs(rp.GetAmountAt(pDate)));
         if(rp.mFrequencyMultiplier==1)
         {
             if(rp.mPlannedType==(int) RecordPlanned.mPTMonthly)
@@ -177,6 +177,28 @@ public class DateUtils
         retDate.setTime(MilliSecsFromCalendar(calendar));
     }
 
+    public static Date YearStart(int pYear)
+    {
+        String lString = "01/01/" + pYear;
+        return (StrToDate(lString));
+    }
+
+    public static Date YearEnd(int pYear)
+    {
+        String lString = "31/12/" + pYear;
+        return (StrToDate(lString));
+    }
+
+    public static String DaySuffix(int pDay)
+    {
+        if(pDay==1 || pDay==21 || pDay==31)
+            return("st");
+        if(pDay==2 || pDay==22)
+            return("nd");
+        if(pDay==3 || pDay==23)
+            return("rd");
+        return("th");
+    }
     public static Date BudgetStart(int pMonth, int pYear)
     {
         String lString = "26/" + pMonth + "/" + pYear;

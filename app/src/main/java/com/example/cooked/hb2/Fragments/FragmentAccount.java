@@ -72,7 +72,6 @@ public class FragmentAccount extends Fragment
         try
         {
             AcSortCode = acSortCode;
-
             AcAccountNumber = acAccountNumber;
             AcDescription = acDescription;
         } catch (Exception e)
@@ -178,6 +177,15 @@ public class FragmentAccount extends Fragment
                 startActivity(intent);
             }
         });
+
+        if(AcDescription.compareTo("Annual Bills")==0)
+        {
+            fab.setVisibility(View.GONE);
+        }
+        else
+        {
+            fab.setVisibility(View.VISIBLE);
+        }
 
         recyclerView.setAdapter(mAdapter);
     }

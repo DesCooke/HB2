@@ -33,6 +33,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -227,7 +228,7 @@ public class activityPlanningItem extends AppCompatActivity
                     }
                     edtMatchType.getEditText().setText(mRecordPlanned.mMatchingTxType);
                     edtMatchDescription.getEditText().setText(mRecordPlanned.mMatchingTxDescription);
-                    String lText = String.format(Locale.UK, "%.2f", mRecordPlanned.mMatchingTxAmount);
+                    String lText = String.format(Locale.UK, "%.2f", mRecordPlanned.GetAmountAt(Calendar.getInstance().getTime()));
                     edtMatchAmount.getEditText().setText(lText);
 
                     MyMonday.Value = mRecordPlanned.mMonday;

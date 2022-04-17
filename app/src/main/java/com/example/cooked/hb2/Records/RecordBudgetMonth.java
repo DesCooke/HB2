@@ -22,6 +22,7 @@ public class RecordBudgetMonth
     public Integer budgetMonth;
     public Integer budgetYear;
     public ArrayList<RecordCommon> mCommonDataset;
+    public ArrayList<RecordTransaction> mAnnualBills;
 
     public RecordBudgetMonth()
     {
@@ -36,6 +37,7 @@ public class RecordBudgetMonth
         budgetClasses = new ArrayList<RecordBudgetClass>();
         notes="";
         accounts = new ArrayList<RecordAccount>();
+        mAnnualBills = new ArrayList<RecordTransaction>();
     }
 
     public RecordAccount FindAccount(String acSortCode, String acAccountNumber)
@@ -142,11 +144,5 @@ public class RecordBudgetMonth
         extraLeft = l_BCEIncome - l_BCEExpense;
     }
 
-    public void SaveBudgetToDB()
-    {
-
-
-
-    }
 }
 
