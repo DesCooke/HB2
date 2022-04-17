@@ -281,8 +281,7 @@ class TablePlanned extends TableBase
                 " WHERE a.PlannedType = " + mPTYearly + " " +
                 "AND a.SubCategoryId = b.SubCategoryId " +
                 "AND b.CategoryId = c.CategoryId " +
-                "AND c.CategoryName ='Annual Bills' " +
-                " ORDER BY PlannedMonth, PlannedDay ";
+                "AND c.CategoryName ='Annual Bills' ";
             if (activeOnly)
             {
                 Integer lCurrBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
@@ -295,6 +294,8 @@ class TablePlanned extends TableBase
                 l_SQL = l_SQL + "AND StartDate < " + Long.toString(lBudgetEnd.getTime()) +
                     " AND EndDate > " + Long.toString(lBudgetStart.getTime()) + " ";
             }
+
+            l_SQL = l_SQL + " ORDER BY PlannedMonth, PlannedDay ";
 
             Cursor cursor = db.rawQuery(l_SQL, null);
             try

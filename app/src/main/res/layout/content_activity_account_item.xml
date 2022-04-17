@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="8dp"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activityAccountItem"
@@ -34,8 +35,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberSigned|number|numberDecimal"
-            android:hint="@string/accountStartingBalance" />
+            android:hint="@string/accountStartingBalance"
+            android:inputType="numberSigned|number|numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <CheckBox
