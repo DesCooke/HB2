@@ -928,7 +928,21 @@ public class MyDatabase extends SQLiteOpenHelper
             RecordAccount ra = rbm.accounts.get(i);
             ra.RecordTransactions = tableTransaction.getTransactionList(ra.AcSortCode,
                     ra.AcAccountNumber, pMonth, pYear, pIncludeThisBudgetOnly);
+            if(ra.AcDescription.compareTo("General Savings")==0)
+            {
+                if(ra.RecordTransactions.size()>0)
+                {
+                    RecordTransaction rt = ra.RecordTransactions.get(0);
+                    if(rt.MarkerEndingBalance != null)
+                    {
+                        if(rt.MarkerEndingBalance < 1500.00)
+                        addToNotes("General Savings shortfall.  Balance " + Tools.moneyFormat(rt.MarkerEndingBalance) + ", " +
+                            "Ideal £1500.00, Shortfall " + Tools.moneyFormat(1500 - rt.MarkerEndingBalance));
+                    }
+                }
+            }
         }
+
 
         ArrayList<RecordBudget> rb = tablePlanned.getBudgetList(pMonth, pYear);
         ArrayList<RecordBudget> rbspent = tablePlanned.getBudgetSpent(pMonth, pYear);
