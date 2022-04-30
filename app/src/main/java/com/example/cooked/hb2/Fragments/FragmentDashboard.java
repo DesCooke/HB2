@@ -158,7 +158,7 @@ public class FragmentDashboard extends Fragment
                                 if(currentDay>26)
                                 {
                                     int lDays=currentDay-26;
-                                    lPerc=(int)(lDays/30 * 100);
+                                    lPerc=(int)((lDays*100)/30);
                                 }
                                 else
                                 {
@@ -220,7 +220,7 @@ public class FragmentDashboard extends Fragment
                                     if(currentDay>26)
                                     {
                                         int lDays=currentDay-26;
-                                        lPerc=(int)(lDays/30 * 100);
+                                        lPerc=(int)((lDays*100)/30);
                                     }
                                     else
                                     {
