@@ -6,8 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.Records.RecordSubCategoryByMonth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class TableSubCategory extends TableBase {
     TableSubCategory(SQLiteOpenHelper argHelper) {
@@ -117,6 +119,7 @@ class TableSubCategory extends TableBase {
         executeSQL(lSql, "TableSubCategory::changeSubCategory", null);
         MyDatabase.MyDB().Dirty=true;
     }
+
     ArrayList<RecordSubCategory> getSubCategoryList(Integer pCategoryId) {
         ArrayList<RecordSubCategory> list;
             try (SQLiteDatabase db = helper.getReadableDatabase())
@@ -294,7 +297,6 @@ class TableSubCategory extends TableBase {
                 );
     }
 
-
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion == 4 && newVersion == 5) {
             MyLog.WriteLogMessage("Creating table tblSubCategory");
@@ -317,6 +319,7 @@ class TableSubCategory extends TableBase {
             db.execSQL("ALTER TABLE tblSubCategory ADD COLUMN Old TEXT DEFAULT 'N'");
         }
     }
+
     void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         MyLog.WriteLogMessage("DB Version " + Integer.toString(db.getVersion()) + ". " +

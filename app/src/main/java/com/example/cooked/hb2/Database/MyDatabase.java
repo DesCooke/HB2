@@ -15,6 +15,7 @@ import com.example.cooked.hb2.GlobalUtils.DateUtils;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.MainActivity;
 import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.Records.RecordSubCategoryByMonth;
 import com.example.cooked.hb2.Records.RecordTransaction;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
@@ -291,6 +293,24 @@ public class MyDatabase extends SQLiteOpenHelper
         return (rta);
     }
 
+
+    public ArrayList<RecordTransaction> getCategoryBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pCatgegoryId)
+    {
+        ArrayList<RecordTransaction> rta = tableTransaction.getCategoryBudgetTrans(pBudgetYear, pBudgetMonth, pCatgegoryId);
+        Float lTotal = 0.00f;
+        int lRecTotal = 0;
+        if (rta != null)
+        {
+            for (int i = 0; i < rta.size(); i++)
+            {
+                lTotal += rta.get(i).TxAmount;
+            }
+        }
+
+        return (rta);
+
+    }
+
     public ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCatgegoryId)
     {
         ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pSubCatgegoryId);
@@ -524,6 +544,15 @@ public class MyDatabase extends SQLiteOpenHelper
         return tableSubCategory.getSubCategoryListWithOld(pCategoryId, pOld);
     }
 
+    public List<RecordSubCategoryByMonth> getSubCategoryTotalByMonth(Integer subCategoryId)
+    {
+        return tableTransaction.getSubCategoryTotalByMonth(subCategoryId);
+    }
+
+    public List<RecordSubCategoryByMonth> getCategoryTotalByMonth(Integer subCategoryId)
+    {
+        return tableTransaction.getCategoryTotalByMonth(subCategoryId);
+    }
     //endregion
 
     //region Planned Functions
