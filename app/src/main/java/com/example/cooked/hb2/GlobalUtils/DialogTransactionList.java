@@ -29,6 +29,7 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
     public Integer budgetYear;
     public Integer budgetMonth;
     public Integer subCategoryId;
+    public Integer categoryId;
 
     public DialogTransactionList(Activity a)
     {
@@ -40,7 +41,14 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
 
     public void GetTrans()
     {
-        pList = MyDatabase.MyDB().getBudgetTrans(budgetYear, budgetMonth, subCategoryId);
+        if(categoryId==0)
+        {
+            pList = MyDatabase.MyDB().getBudgetTrans(budgetYear, budgetMonth, subCategoryId);
+        }
+        else
+        {
+            pList = MyDatabase.MyDB().getCategoryBudgetTrans(budgetYear, budgetMonth, categoryId);
+        }
     }
 
     private void ShowError(String argFunction, String argMessage)

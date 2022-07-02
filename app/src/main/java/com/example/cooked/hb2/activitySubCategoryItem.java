@@ -16,15 +16,19 @@ import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 
+import com.example.cooked.hb2.Adapters.SubCategoryByMonthAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordSubCategory;
 import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.Records.RecordSubCategoryByMonth;
 import com.google.android.material.textfield.TextInputLayout;
 
 import static android.view.View.GONE;
 import static com.example.cooked.hb2.Database.MyDatabase.MyDB;
+
+import java.util.List;
 
 public class activitySubCategoryItem extends AppCompatActivity
 {
@@ -39,6 +43,10 @@ public class activitySubCategoryItem extends AppCompatActivity
     public Button btnTransactions;
     public Activity _activity;
     public Spinner spnSubCategoryType;
+    public RecyclerView SubCategoryByMonthList;
+    public LinearLayoutManager SubCategoryByMonthLayoutManager;
+    public SubCategoryByMonthAdapter subCategoryByMonthAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -63,6 +71,7 @@ public class activitySubCategoryItem extends AppCompatActivity
             categoryId = getIntent().getIntExtra("CATEGORYID", 0);
             categoryName = getIntent().getStringExtra("CATEGORYNAME");
 
+
             actionType = getIntent().getStringExtra("ACTIONTYPE");
             if (actionType.compareTo("ADD") == 0)
             {
@@ -84,6 +93,17 @@ public class activitySubCategoryItem extends AppCompatActivity
                 chkMonitor.setChecked(rsc.Monitor);
                 chkOld.setChecked(rsc.Old);
                 spnSubCategoryType.setSelection(rsc.SubCategoryType);
+
+
+                List<RecordSubCategoryByMonth> list = MyDatabase.MyDB().getSubCategoryTotalByMonth(subCategoryId);
+                SubCategoryByMonthList = (RecyclerView) findViewById(R.id.SubCategoryByMonthList);
+                SubCategoryByMonthList.setHasFixedSize(true);
+                SubCategoryByMonthLayoutManager = new LinearLayoutManager(this);
+                SubCategoryByMonthList.setLayoutManager(SubCategoryByMonthLayoutManager);
+                subCategoryByMonthAdapter = new SubCategoryByMonthAdapter(_activity, list);
+                SubCategoryByMonthList.setAdapter(subCategoryByMonthAdapter);
+
+
             }
 
             btnDelete.setOnClickListener(new View.OnClickListener()
