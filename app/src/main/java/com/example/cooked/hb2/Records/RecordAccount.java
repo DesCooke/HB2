@@ -41,6 +41,21 @@ public class RecordAccount
         RecordTransactions = new ArrayList<RecordTransaction>();
     }
 
+    public RecordAccount
+        (
+        )
+    {
+        AcSeqNo = 0;
+        AcSortCode = "";
+        AcAccountNumber = "";
+        AcDescription = "";
+        AcStartingBalance = 0.00f;
+        AcOrderSeqNo = 0;
+        AcHidden = 0;
+        AcUseCategory = Boolean.FALSE;
+        RecordTransactions = new ArrayList<RecordTransaction>();
+    }
+
     public boolean IsSameAs(RecordAccount Other)
     {
         if(AcSeqNo!=Other.AcSeqNo)

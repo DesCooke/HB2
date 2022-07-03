@@ -20,17 +20,22 @@ import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.w3c.dom.Text;
+
 public class activityAccountItem extends AppCompatActivity
 {
 
     int mAcSeqNo;
     RecordAccount mRec;
+    TextInputLayout mAcSortCode;
+    TextInputLayout mAcAccountNumber;
     TextInputLayout mAcDescription;
     TextInputLayout mAcStartingBalance;
     Button mBtnOk;
     Button mBtnCancel;
     CheckBox mChkHidden;
     CheckBox mChkUseCategory;
+    String mActionType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,6 +47,8 @@ public class activityAccountItem extends AppCompatActivity
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
+            mAcSortCode = findViewById(R.id.tilAcSortCode);
+            mAcAccountNumber = findViewById(R.id.tilAcNumber);
             mAcDescription = findViewById(R.id.tilAcDescription);
             mAcStartingBalance = findViewById(R.id.tilAcStartingBalance);
             mBtnOk = findViewById(R.id.btnOk);
@@ -49,17 +56,36 @@ public class activityAccountItem extends AppCompatActivity
             mChkHidden = findViewById(R.id.chkHidden);
             mChkUseCategory = findViewById(R.id.chkUseCategory);
 
-            mAcSeqNo = getIntent().getIntExtra("AcSeqNo", -1);
-            mRec = MyDatabase.MyDB().getAccountItem(mAcSeqNo);
+            mActionType = getIntent().getStringExtra("ACTIONTYPE");
 
-            setTitle("Account " + mRec.AcSortCode + " " + mRec.AcAccountNumber);
+            if(mActionType.compareTo("ADD")==0)
+            {
+                mAcSeqNo = -1; // gets created when inserting
+                mRec = new RecordAccount();
+                setTitle("New Account");
 
-            mAcDescription.getEditText().setText(mRec.AcDescription);
-            mAcStartingBalance.getEditText().setText(mRec.AcStartingBalance.toString());
-            mChkHidden.setChecked(false);
-            if(mRec.AcHidden!=0)
-                mChkHidden.setChecked(true);
-            mChkUseCategory.setChecked(mRec.AcUseCategory);
+                mAcSortCode.getEditText().setText("");
+                mAcAccountNumber.getEditText().setText("");
+                mAcDescription.getEditText().setText("");
+                mAcStartingBalance.getEditText().setText("");
+                mChkHidden.setChecked(false);
+                mChkUseCategory.setChecked(false);
+            }
+            else
+            {
+                mAcSeqNo = getIntent().getIntExtra("AcSeqNo", -1);
+                mRec = MyDatabase.MyDB().getAccountItem(mAcSeqNo);
+                setTitle("Account " + mRec.AcSortCode + " " + mRec.AcAccountNumber);
+
+                mAcSortCode.getEditText().setText(mRec.AcSortCode);
+                mAcAccountNumber.getEditText().setText(mRec.AcAccountNumber);
+                mAcDescription.getEditText().setText(mRec.AcDescription);
+                mAcStartingBalance.getEditText().setText(mRec.AcStartingBalance.toString());
+                mChkHidden.setChecked(false);
+                if(mRec.AcHidden!=0)
+                    mChkHidden.setChecked(true);
+                mChkUseCategory.setChecked(mRec.AcUseCategory);
+            }
 
             mBtnOk.setOnClickListener(new View.OnClickListener()
             {
@@ -75,13 +101,22 @@ public class activityAccountItem extends AppCompatActivity
                             lAccountListChanged=true;
                         }
 
+                        mRec.AcSortCode = mAcSortCode.getEditText().getText().toString();
+                        mRec.AcAccountNumber = mAcAccountNumber.getEditText().getText().toString();
                         mRec.AcDescription = mAcDescription.getEditText().getText().toString();
                         mRec.AcStartingBalance = Float.parseFloat(mAcStartingBalance.getEditText().getText().toString());
                         mRec.AcHidden=0;
                         if(mChkHidden.isChecked())
                             mRec.AcHidden=1;
                         mRec.AcUseCategory=mChkUseCategory.isChecked();
-                        MyDatabase.MyDB().updateAccount(mRec);
+                        if(mActionType.compareTo("EDIT")==0)
+                        {
+                            MyDatabase.MyDB().updateAccount(mRec);
+                        }
+                        else
+                        {
+                            MyDatabase.MyDB().addAccount(mRec);
+                        }
 
                         Intent intent = new Intent();
                         intent.putExtra("ACCOUNTLISTCHANGED", lAccountListChanged);
