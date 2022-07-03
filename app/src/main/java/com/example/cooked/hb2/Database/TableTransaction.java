@@ -1039,6 +1039,10 @@ class TableTransaction extends TableBase
                 {
                     if (cursor.getCount() > 0)
                     {
+                        Boolean useCategory=false;
+                        if(ra!=null)
+                            if(ra.AcUseCategory!=null)
+                                useCategory=ra.AcUseCategory;
                         cursor.moveToFirst();
                         do
                         {
@@ -1062,7 +1066,7 @@ class TableTransaction extends TableBase
                                                             Integer.parseInt(cursor.getString(13)),
                                                             Integer.parseInt(cursor.getString(14)),
                                                             false,
-                                                            ra.AcUseCategory
+                                                            useCategory
                                                     )
                                     );
                         } while (cursor.moveToNext());

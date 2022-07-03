@@ -44,7 +44,7 @@ class TableAccount extends TableBase
         executeSQL(lSql, "TableAccount::onCreate", db);
     }
 
-    private int getNextTxSeqNo()
+    private int getNextAcSeqNo()
     {
         String lSql = "SELECT MAX(AcSeqNo) FROM tblAccount ";
 
@@ -61,7 +61,7 @@ class TableAccount extends TableBase
 
     void addAccount(RecordAccount ra)
     {
-        ra.AcSeqNo = getNextTxSeqNo();
+        ra.AcSeqNo = getNextAcSeqNo();
 
         Integer lUseCategory=0;
         if(ra.AcUseCategory)
@@ -93,6 +93,8 @@ class TableAccount extends TableBase
         String lSql =
                     "UPDATE tblAccount " +
                             "SET AcDescription = '" + ra.AcDescription + "', " +
+                            " AcSortCode = '" + ra.AcSortCode + "', " +
+                            " AcAccountNumber = '" + ra.AcAccountNumber + "', " +
                             " AcStartingBalance = " + ra.AcStartingBalance.toString() + ", " +
                             " OrderSeqNo = " + ra.AcOrderSeqNo.toString() + ", " +
                             " Hidden = " + ra.AcHidden.toString() + ", " +

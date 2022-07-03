@@ -41,7 +41,7 @@ public class DialogTransactionList extends Dialog implements View.OnClickListene
 
     public void GetTrans()
     {
-        if(categoryId==0)
+        if(categoryId == null || categoryId==0)
         {
             pList = MyDatabase.MyDB().getBudgetTrans(budgetYear, budgetMonth, subCategoryId);
         }

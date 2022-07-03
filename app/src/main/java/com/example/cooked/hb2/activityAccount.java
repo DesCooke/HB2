@@ -18,6 +18,7 @@ import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordAccount;
 import com.example.cooked.hb2.TransactionUI.AccountAdapter;
 import com.example.cooked.hb2.helper.DragItemTouchHelper;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,20 @@ public class activityAccount extends AppCompatActivity
             mOriginalDataset = MyDatabase.MyDB().getAccountList();
 
             setTitle("Accounts");
+
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    Intent intent = new Intent(getApplicationContext(), activityAccountItem.class);
+                    intent.putExtra("ACTIONTYPE", "ADD");
+                    int lRequestCode = getResources().getInteger(R.integer.account_item_return);
+                    startActivityForResult(intent, lRequestCode);
+                }
+            });
+
 
             SetupRecyclerView();
         } catch (Exception e)
@@ -74,8 +89,8 @@ public class activityAccount extends AppCompatActivity
                 public void onItemClick(View view, RecordAccount obj)
                 {
                     Intent intent = new Intent(getApplicationContext(), activityAccountItem.class);
+                    intent.putExtra("ACTIONTYPE", "EDIT");
                     intent.putExtra("AcSeqNo", obj.AcSeqNo);
-                    //startActivity(intent);
                     int lRequestCode = getResources().getInteger(R.integer.account_item_return);
                     startActivityForResult(intent, lRequestCode);
                 }

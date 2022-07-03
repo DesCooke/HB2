@@ -291,21 +291,20 @@ public class MainActivity extends AppCompatActivity
         if(MyPermission.AccessAllowed()) {
 
             if (requestCode == getResources().getInteger(R.integer.account_list_return)) {
-                if (resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK)
+                {
                     boolean lAccountListChanged = data.getBooleanExtra("ACCOUNTLISTCHANGED", false);
-                    if (lAccountListChanged) {
-                        // remove fragments from the fragment manager - forces them to be
-                        // recreated
-                        RemoveFragments();
+                    // remove fragments from the fragment manager - forces them to be
+                    // recreated
+                    RemoveFragments();
 
-                        // read from db - Dirty ensures everything is read
-                        mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
-                                (mCurrentBudgetMonth, mCurrentBudgetYear, true);
+                    // read from db - Dirty ensures everything is read
+                    mDatasetBudgetMonth = MyDatabase.MyDB().getDatasetBudgetMonth
+                        (mCurrentBudgetMonth, mCurrentBudgetYear, true);
 
-                        // Create the fragments
-                        createAdapterAndFragments();
-                        populateFragments();
-                    }
+                    // Create the fragments
+                    createAdapterAndFragments();
+                    populateFragments();
                 }
             }
         }
@@ -477,11 +476,13 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0; i < mDatasetBudgetMonth.accounts.size(); i++) {
                     RecordAccount ra = mDatasetBudgetMonth.accounts.get(i);
 
-                    FragmentAccount fa = FragmentAccount.newInstance();
-                    fa.SetAccount(ra.AcSortCode, ra.AcAccountNumber, ra.AcDescription);
-                    _fragmentAccounts.add(fa);
-                    adapter.addFragment(fa, ra.AcDescription);
-
+                    if(ra.AcHidden==0)
+                    {
+                        FragmentAccount fa = FragmentAccount.newInstance();
+                        fa.SetAccount(ra.AcSortCode, ra.AcAccountNumber, ra.AcDescription);
+                        _fragmentAccounts.add(fa);
+                        adapter.addFragment(fa, ra.AcDescription);
+                    }
                 }
 
                 _fragmentAnnualBills = FragmentAccount.newInstance();

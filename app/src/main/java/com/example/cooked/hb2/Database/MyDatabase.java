@@ -418,17 +418,6 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public ArrayList<RecordAccount> getAccountList()
     {
-        ArrayList<RecordAccount> raa = tableAccount.getAccountList();
-        for (int i = 0; i < raa.size(); i++)
-        {
-            RecordAccount ra = raa.get(i);
-            if (tableAccount.accountExists(ra.AcSortCode, ra.AcAccountNumber) == false)
-            {
-                ra.AcDescription = "<notset>";
-                ra.AcStartingBalance = 0.00f;
-                tableAccount.addAccount(ra);
-            }
-        }
         return (tableAccount.getAccountList());
     }
 
@@ -964,9 +953,22 @@ public class MyDatabase extends SQLiteOpenHelper
                     RecordTransaction rt = ra.RecordTransactions.get(0);
                     if(rt.MarkerEndingBalance != null)
                     {
-                        if(rt.MarkerEndingBalance < 1500.00)
+                        if(rt.MarkerEndingBalance < 1000.00)
                         addToNotes("General Savings shortfall.  Balance " + Tools.moneyFormat(rt.MarkerEndingBalance) + ", " +
-                            "Ideal £1500.00, Shortfall " + Tools.moneyFormat(1500 - rt.MarkerEndingBalance));
+                            "Ideal £1000.00, Shortfall " + Tools.moneyFormat(1000 - rt.MarkerEndingBalance));
+                    }
+                }
+            }
+            if(ra.AcDescription.compareTo("Emergency Savings")==0)
+            {
+                if(ra.RecordTransactions.size()>0)
+                {
+                    RecordTransaction rt = ra.RecordTransactions.get(0);
+                    if(rt.MarkerEndingBalance != null)
+                    {
+                        if(rt.MarkerEndingBalance < 4000.00)
+                            addToNotes("Emergency Savings shortfall.  Balance " + Tools.moneyFormat(rt.MarkerEndingBalance) + ", " +
+                                "Ideal £4000.00, Shortfall " + Tools.moneyFormat(4000 - rt.MarkerEndingBalance));
                     }
                 }
             }
