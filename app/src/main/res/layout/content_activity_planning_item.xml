@@ -192,22 +192,21 @@
 
     <Button
         android:id="@+id/btnOk"
-        android:layout_width="88dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
         android:onClick="saveItem"
         android:text="@string/ok"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/btnDelete"
+        app:layout_constraintTop_toBottomOf="@+id/swAutoMatchTransaction" />
 
     <Button
         android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
         android:onClick="deleteItem"
-        android:text="@string/delete"
+        android:text="Del"
+        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/btnCopyToNew"
         app:layout_constraintTop_toBottomOf="@+id/swAutoMatchTransaction" />
 
@@ -215,10 +214,10 @@
         android:id="@+id/btnCopyToNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
         android:onClick="copyToNew"
-        android:text="@string/copy_to_new"
-        app:layout_constraintEnd_toStartOf="@+id/btnDelete"
+        android:text="Copy2New"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/btnVariations"
         app:layout_constraintTop_toBottomOf="@+id/swAutoMatchTransaction" />
 
     <Switch
@@ -239,17 +238,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Paid In Parts"
+        android:textSize="10sp"
         app:layout_constraintStart_toEndOf="@+id/tilEndDate"
         app:layout_constraintTop_toBottomOf="@+id/tilSubCategoryName" />
 
     <Button
         android:id="@+id/btnVariations"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_marginStart="8dp"
         android:onClick="showVariations"
-        android:text="Variations"
-        app:layout_constraintEnd_toStartOf="@+id/btnCopyToNew"
+        android:text="Vars"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/swAutoMatchTransaction" />
 
@@ -261,6 +261,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="Highlight 30 Days"
+        android:textSize="10sp"
         app:layout_constraintBottom_toTopOf="@+id/tilPlannedType"
         app:layout_constraintStart_toEndOf="@+id/tilEndDate"
         app:layout_constraintTop_toBottomOf="@+id/chkPaidInParts" />

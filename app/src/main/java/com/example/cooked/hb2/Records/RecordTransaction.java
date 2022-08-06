@@ -39,6 +39,8 @@ public class RecordTransaction
     public Float MarkerTotalOutstanding;
     public boolean CheckForChange;
     public boolean UseCategory;
+    public String Comment="";
+    public boolean ShowExpenseAsRed=false;
 
     public RecordTransaction
             (

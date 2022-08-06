@@ -122,8 +122,9 @@
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:text="@string/celltx_txdescription"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_SubCategoryName"/>
+        app:layout_constraintTop_toBottomOf="@+id/celltx_SubCategoryName" />
 
     <TextView
         android:id="@+id/celltx_TxAmount"
@@ -145,8 +146,9 @@
         android:layout_marginTop="4dp"
         android:layout_weight="1"
         android:text="@string/celltx_comments"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDescription"/>
+        app:layout_constraintTop_toBottomOf="@+id/celltx_TxDescription" />
 
     <TextView
         android:id="@+id/celltx_TxBalance"
