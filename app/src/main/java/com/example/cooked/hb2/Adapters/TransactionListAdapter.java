@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -261,6 +262,28 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     if (view.mTxBalance.getVisibility() == View.VISIBLE)
                         view.mTxAmount.setText("Balance " + Tools.moneyFormat(rti.TxBalance));
                 }
+            }
+            if(rti.ShowExpenseAsRed)
+            {
+                int lColor = _context.getColor(R.color.DEBIT);
+                if(rti.TxAmount > 0.00f)
+                    lColor = _context.getColor(R.color.CREDIT);
+
+                view.mTxSeqNo.setTextColor(lColor);
+                view.mTxAdded.setTextColor(lColor);
+                view.mTxFilename.setTextColor(lColor);
+                view.mTxLineNo.setTextColor(lColor);
+                view.mTxDate.setTextColor(lColor);
+                view.mTxType.setTextColor(lColor);
+                view.mBankAccount.setTextColor(lColor);
+                view.mTxDescription.setTextColor(lColor);
+                view.mTxAmount.setTextColor(lColor);
+                view.mTxBalance.setTextColor(lColor);
+                view.mSubCategoryName.setTextColor(lColor);
+                view.mComments.setTextColor(lColor);
+                view.mBudget.setTextColor(lColor);
+
+
             }
         }
 

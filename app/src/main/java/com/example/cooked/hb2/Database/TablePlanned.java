@@ -11,6 +11,7 @@ import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
 import com.example.cooked.hb2.Records.RecordTransaction;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -266,41 +267,17 @@ class TablePlanned extends TableBase
         return list;
     }
 
-    public ArrayList<RecordPlanned> GetAnnualPlannedList(boolean activeOnly)
+    public int GetPlannedIdFromName(String name)
     {
-        ArrayList<RecordPlanned> list;
-        ArrayList<RecordPlanned> before26thJanList= new ArrayList<>();
         try (SQLiteDatabase db = helper.getReadableDatabase())
         {
-            String l_SQL = "SELECT a.PlannedId, a.PlannedType, a.PlannedName, a.SubCategoryId, " +
-                "a.SortCode, a.AccountNo, a.PlannedDate, a.PlannedMonth,a.PlannedDay,a.Monday, " +
-                "a.Tuesday, a.Wednesday, a.Thursday, a.Friday, a.Saturday, a.Sunday, a.StartDate, " +
-                "a.EndDate, a.MatchingTxType, a.MatchingTxDescription, a.MatchingTxAmount, " +
-                "a.AutoMatchTransaction, a.PaidInParts, a.FrequencyMultiplier, a.Highlight30DaysBeforeAnniversary " +
-                " FROM tblPlanned a, tblSubCategory b, tblCategory c " +
-                " WHERE a.PlannedType = " + mPTYearly + " " +
-                "AND a.SubCategoryId = b.SubCategoryId " +
-                "AND b.CategoryId = c.CategoryId " +
-                "AND c.CategoryName ='Annual Bills' ";
-            if (activeOnly)
-            {
-                Integer lCurrBudgetMonth = DateUtils.dateUtils().CurrentBudgetMonth();
-                Integer lCurrBudgetYear = DateUtils.dateUtils().CurrentBudgetYear();
-                Date lBudgetStart =
-                    DateUtils.dateUtils().BudgetStart(lCurrBudgetMonth, lCurrBudgetYear);
-                Date lBudgetEnd =
-                    DateUtils.dateUtils().BudgetEnd(lCurrBudgetMonth, lCurrBudgetYear);
-
-                l_SQL = l_SQL + "AND StartDate < " + Long.toString(lBudgetEnd.getTime()) +
-                    " AND EndDate > " + Long.toString(lBudgetStart.getTime()) + " ";
-            }
-
-            l_SQL = l_SQL + " ORDER BY PlannedMonth, PlannedDay ";
+            String l_SQL = "SELECT PlannedId " +
+                "FROM tblPlanned " +
+                "WHERE PlannedName = '" + name + "' " ;
 
             Cursor cursor = db.rawQuery(l_SQL, null);
             try
             {
-                list = new ArrayList<>();
                 if (cursor != null)
                 {
                     try
@@ -308,52 +285,7 @@ class TablePlanned extends TableBase
                         if (cursor.getCount() > 0)
                         {
                             cursor.moveToFirst();
-                            do
-                            {
-                                Long lOrigDate = Long.parseLong(cursor.getString(6).trim());
-                                Date lDate = new Date(lOrigDate);
-                                Long lNewDate = DateUtils.dateUtils().StripTimeElement(lDate);
-                                lDate = new Date(lNewDate);
-                                String lstring = cursor.getString(23);
-                                RecordPlanned lrec =
-                                    new RecordPlanned
-                                        (
-                                            Integer.parseInt(cursor.getString(0).trim()),
-                                            Integer.parseInt(cursor.getString(1).trim()),
-                                            cursor.getString(2).trim(),
-                                            Integer.parseInt(cursor.getString(3).trim()),
-                                            cursor.getString(4).trim(),
-                                            cursor.getString(5).trim(),
-                                            lDate,
-                                            Integer.parseInt(cursor.getString(7).trim()),
-                                            Integer.parseInt(cursor.getString(8).trim()),
-                                            Integer.parseInt(cursor.getString(9).trim()) == 1 ? TRUE : FALSE,
-                                            Integer.parseInt(cursor.getString(10).trim()) == 1 ? TRUE : FALSE,
-                                            Integer.parseInt(cursor.getString(11).trim()) == 1 ? TRUE : FALSE,
-                                            Integer.parseInt(cursor.getString(12).trim()) == 1 ? TRUE : FALSE,
-                                            Integer.parseInt(cursor.getString(13).trim()) == 1 ? TRUE : FALSE,
-                                            Integer.parseInt(cursor.getString(14).trim()) == 1 ? TRUE : FALSE,
-                                            Integer.parseInt(cursor.getString(15).trim()) == 1 ? TRUE : FALSE,
-                                            new Date(Long.parseLong(cursor.getString(16).trim())),
-                                            new Date(Long.parseLong(cursor.getString(17).trim())),
-                                            cursor.getString(18).trim(),
-                                            cursor.getString(19).trim(),
-                                            Float.parseFloat(cursor.getString(20).trim()),
-                                            Integer.parseInt(cursor.getString(21).trim()) == 1 ? TRUE : FALSE,
-                                            Integer.parseInt(cursor.getString(22).trim()) == 1 ? TRUE : FALSE,
-                                            Integer.parseInt(cursor.getString(23).trim()),
-                                            Integer.parseInt(cursor.getString(24).trim()) == 1 ? TRUE : FALSE
-                                        );
-
-                                if(lrec.mPlannedMonth==1 && lrec.mPlannedDay<26)
-                                {
-                                    before26thJanList.add(lrec);
-                                }
-                                else
-                                {
-                                    list.add(lrec);
-                                }
-                            } while (cursor.moveToNext());
+                            return(Integer.parseInt(cursor.getString(0).trim()));
                         }
                     } finally
                     {
@@ -362,26 +294,70 @@ class TablePlanned extends TableBase
                 }
             } catch (Exception e)
             {
-                list = new ArrayList<>();
                 ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
             }
+        } catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
+        }
+      return(-1);
+    }
+    public ArrayList<RecordPlanned> GetAnnualPlannedList()
+    {
+        ArrayList<RecordPlanned> list;
+        list = new ArrayList<>();
+
+        int lDay=DateUtils.dateUtils().GetDayAsInt(DateUtils.dateUtils().GetNow());
+        int lMonth=DateUtils.dateUtils().GetMonthAsInt(DateUtils.dateUtils().GetNow());
+
+        try (SQLiteDatabase db = helper.getReadableDatabase())
+        {
+            String l_SQL = "SELECT a.PlannedId, a.PlannedType, a.PlannedName, a.SubCategoryId, " +
+                "a.SortCode, a.AccountNo, a.PlannedDate, a.PlannedMonth,a.PlannedDay,a.Monday, " +
+                "a.Tuesday, a.Wednesday, a.Thursday, a.Friday, a.Saturday, a.Sunday, a.StartDate, " +
+                "a.EndDate, a.MatchingTxType, a.MatchingTxDescription, a.MatchingTxAmount, " +
+                "a.AutoMatchTransaction, a.PaidInParts, a.FrequencyMultiplier, a.Highlight30DaysBeforeAnniversary " +
+                "FROM tblPlanned a, tblSubCategory b, tblCategory c " +
+                "WHERE a.PlannedType = " + mPTYearly + " " +
+                "AND ( " +
+                "      ( a.PlannedMonth = " + lMonth + " and a.PlannedDay >= " + lDay + " ) " +
+                "      OR " +
+                "      ( a.PlannedMonth > " + lMonth + " ) " +
+                "    ) " +
+                "AND a.SubCategoryId = b.SubCategoryId " +
+                "AND b.CategoryId = c.CategoryId " +
+                "AND c.CategoryName ='Annual Bills' ";
+
+            l_SQL = l_SQL + " ORDER BY PlannedMonth, PlannedDay ";
+
+            PopulateList(db, l_SQL, list);
+
+            l_SQL = "SELECT a.PlannedId, a.PlannedType, a.PlannedName, a.SubCategoryId, " +
+                "a.SortCode, a.AccountNo, a.PlannedDate, a.PlannedMonth,a.PlannedDay,a.Monday, " +
+                "a.Tuesday, a.Wednesday, a.Thursday, a.Friday, a.Saturday, a.Sunday, a.StartDate, " +
+                "a.EndDate, a.MatchingTxType, a.MatchingTxDescription, a.MatchingTxAmount, " +
+                "a.AutoMatchTransaction, a.PaidInParts, a.FrequencyMultiplier, a.Highlight30DaysBeforeAnniversary " +
+                "FROM tblPlanned a, tblSubCategory b, tblCategory c " +
+                "WHERE a.PlannedType = " + mPTYearly + " " +
+                "AND ( " +
+                "      ( a.PlannedMonth = " + lMonth + " and a.PlannedDay < " + lDay + " ) " +
+                "      OR " +
+                "      ( a.PlannedMonth < " + lMonth + " ) " +
+                "    ) " +
+                "AND a.SubCategoryId = b.SubCategoryId " +
+                "AND b.CategoryId = c.CategoryId " +
+                "AND c.CategoryName ='Annual Bills' ";
+
+            l_SQL = l_SQL + " ORDER BY PlannedMonth, PlannedDay ";
+
+            PopulateList(db, l_SQL, list);
+
         } catch (Exception e)
         {
             list = new ArrayList<>();
             ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
         }
 
-        /*
-        ** period 1 of any ear starts on 26th Jan, so any planned items before this
-        ** ie. Sams birthday - will actually be in the previous year - but will appear in the list
-        ** first.  So we need to take any before 26th and add it to the end of the list
-        ** because Sams birthday is actually period 12
-        ** so each Annual Bills list actually range from 26th Jan -> 25th Jan
-        */
-        for(int i=0;i<before26thJanList.size();i++)
-        {
-            list.add(before26thJanList.get(i));
-        }
         for (int i = 0; i < list.size(); i++)
         {
             list.get(i).variations = MyDatabase.MyDB().getVariationList(list.get(i).mPlannedId);
@@ -389,6 +365,68 @@ class TablePlanned extends TableBase
         return list;
     }
 
+    public void PopulateList(SQLiteDatabase db, String sql, ArrayList<RecordPlanned>list)
+    {
+        Cursor cursor = db.rawQuery(sql, null);
+        try
+        {
+            if (cursor != null)
+            {
+                try
+                {
+                    if (cursor.getCount() > 0)
+                    {
+                        cursor.moveToFirst();
+                        do
+                        {
+                            Long lOrigDate = Long.parseLong(cursor.getString(6).trim());
+                            Date lDate = new Date(lOrigDate);
+                            Long lNewDate = DateUtils.dateUtils().StripTimeElement(lDate);
+                            lDate = new Date(lNewDate);
+                            String lstring = cursor.getString(23);
+                            RecordPlanned lrec =
+                                new RecordPlanned
+                                    (
+                                        Integer.parseInt(cursor.getString(0).trim()),
+                                        Integer.parseInt(cursor.getString(1).trim()),
+                                        cursor.getString(2).trim(),
+                                        Integer.parseInt(cursor.getString(3).trim()),
+                                        cursor.getString(4).trim(),
+                                        cursor.getString(5).trim(),
+                                        lDate,
+                                        Integer.parseInt(cursor.getString(7).trim()),
+                                        Integer.parseInt(cursor.getString(8).trim()),
+                                        Integer.parseInt(cursor.getString(9).trim()) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(10).trim()) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(11).trim()) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(12).trim()) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(13).trim()) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(14).trim()) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(15).trim()) == 1 ? TRUE : FALSE,
+                                        new Date(Long.parseLong(cursor.getString(16).trim())),
+                                        new Date(Long.parseLong(cursor.getString(17).trim())),
+                                        cursor.getString(18).trim(),
+                                        cursor.getString(19).trim(),
+                                        Float.parseFloat(cursor.getString(20).trim()),
+                                        Integer.parseInt(cursor.getString(21).trim()) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(22).trim()) == 1 ? TRUE : FALSE,
+                                        Integer.parseInt(cursor.getString(23).trim()),
+                                        Integer.parseInt(cursor.getString(24).trim()) == 1 ? TRUE : FALSE
+                                    );
+
+                            list.add(lrec);
+                        } while (cursor.moveToNext());
+                    }
+                } finally
+                {
+                    cursor.close();
+                }
+            }
+        } catch (Exception e)
+        {
+            ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
+        }
+    }
     public ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId)
     {
         ArrayList<RecordPlanned> list;
@@ -1097,6 +1135,16 @@ class TablePlanned extends TableBase
         }
 
         return (budgetTrans);
+    }
+
+    RecordPlanned GetAnnualSavingsPlannedItem()
+    {
+        int lPlannedId = GetPlannedIdFromName("Annual Bills Savings");
+        if(lPlannedId>=0)
+        {
+            return (getSinglePlanned(lPlannedId));
+        }
+        return(null);
     }
 
     RecordPlanned getSinglePlanned(Integer pPlannedId)

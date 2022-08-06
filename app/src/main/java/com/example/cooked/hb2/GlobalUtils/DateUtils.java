@@ -342,16 +342,41 @@ public class DateUtils
         myInt.Value = Integer.parseInt(lString);
     }
 
+    public int GetYearAsInt(Date date)
+    {
+        String lString = new SimpleDateFormat("yyyy", Locale.ENGLISH).format(date);
+        return(Integer.parseInt(lString));
+    }
+
+    public Date AddMonthsToDate(Date date, int months)
+    {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.MONTH, months);
+        return c.getTime();
+    }
     public void GetMonth(Date date, MyInt myInt)
     {
         String lString = new SimpleDateFormat("MM", Locale.ENGLISH).format(date);
         myInt.Value = Integer.parseInt(lString);
     }
 
+    public int GetMonthAsInt(Date date)
+    {
+        String lString = new SimpleDateFormat("MM", Locale.ENGLISH).format(date);
+        return(Integer.parseInt(lString));
+    }
+
     public void GetDay(Date date, MyInt myInt)
     {
         String lString = new SimpleDateFormat("dd", Locale.ENGLISH).format(date);
         myInt.Value = Integer.parseInt(lString);
+    }
+
+    public int GetDayAsInt(Date date)
+    {
+        String lString = new SimpleDateFormat("dd", Locale.ENGLISH).format(date);
+        return Integer.parseInt(lString);
     }
 
     public void GetDayOfWeek(Date date, MyString myString)

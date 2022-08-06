@@ -194,6 +194,11 @@ public class MyDatabase extends SQLiteOpenHelper
         return (tableTransaction.getCategoryBudgetAverage(pCategoryId));
     }
 
+    public RecordTransaction getLatestTransaction(String sortCode, String accountNum)
+    {
+        return tableTransaction.getLatestTransaction(sortCode, accountNum);
+    }
+
     public ArrayList<RecordTransaction> getTransactionList(String sortCode, String accountNum, boolean showPlanned)
     {
         ArrayList<RecordTransaction> rta = tableTransaction.getTransactionList(sortCode, accountNum);
@@ -406,11 +411,13 @@ public class MyDatabase extends SQLiteOpenHelper
     {
         tableAccount.accountResequence(raa);
     }
+
     public void unhideAllAccounts()
     {
         tableAccount.unhideAllAccounts();
 
     }
+
     public void updateAccount(RecordAccount ra)
     {
         tableAccount.updateAccount(ra);
@@ -604,9 +611,9 @@ public class MyDatabase extends SQLiteOpenHelper
     }
 
 
-    public ArrayList<RecordPlanned> GetAnnualPlannedList(boolean activeOnly)
+    public ArrayList<RecordPlanned> GetAnnualPlannedList()
     {
-        ArrayList<RecordPlanned> rpa = tablePlanned.GetAnnualPlannedList(activeOnly);
+        ArrayList<RecordPlanned> rpa = tablePlanned.GetAnnualPlannedList();
         if (rpa != null)
         {
             for (int i = 0; i < rpa.size(); i++)
@@ -660,6 +667,12 @@ public class MyDatabase extends SQLiteOpenHelper
         }
         return (rp);
     }
+
+    public RecordPlanned GetAnnualSavingsPlannedItem()
+    {
+        return(tablePlanned.GetAnnualSavingsPlannedItem());
+    }
+
 
     private void ProcessGroup(Integer pMonth, Integer pYear,
                               ArrayList<RecordCategory> cl, ArrayList<RecordBudget> rb,

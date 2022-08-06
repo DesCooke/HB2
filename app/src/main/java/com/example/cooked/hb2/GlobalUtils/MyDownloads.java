@@ -180,11 +180,7 @@ public class MyDownloads
             }
 
             File f1 = new File(inputFile);
-            File f2 = new File(archiveFile);
-            if (f2.exists())
-                f2.delete();
-
-            f1.renameTo(f2);
+            f1.delete();
         } catch (Exception e)
         {
             MyLog.WriteExceptionMessage(e);
