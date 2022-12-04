@@ -833,6 +833,14 @@ class TableTransaction extends TableBase
             }
             lEarliestTxDate = DateUtils.dateUtils().AddMonthsToDate(lLatestTxDate, -8);
 
+            // ignore planned item if earliest tx date is after the end date of planned item
+            if(lEarliestTxDate.compareTo(p.mEndDate)>0)
+                continue;
+
+            // ignore planned item if earliest tx date is before the start date of planned item
+            if(lEarliestTxDate.compareTo(p.mStartDate)<0)
+                continue;
+
             try (SQLiteDatabase db = helper.getReadableDatabase())
             {
                 String lSql = "SELECT sum(a.TxAmount) " +
