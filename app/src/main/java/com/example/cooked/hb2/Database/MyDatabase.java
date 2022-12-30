@@ -160,6 +160,7 @@ public class MyDatabase extends SQLiteOpenHelper
     //region Dump database
     public void dumpDatabase()
     {
+        tableAccount.dump();
         tableTransaction.dumpTransactionTable();
     }
 
@@ -318,44 +319,49 @@ public class MyDatabase extends SQLiteOpenHelper
 
     public ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCatgegoryId)
     {
-        ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pSubCatgegoryId);
-        Float lTotal = 0.00f;
-        int lRecTotal = 0;
-        if (rta != null)
-        {
-            for (int i = 0; i < rta.size(); i++)
-            {
-                lTotal += rta.get(i).TxAmount;
-            }
-        }
+        // Called by activityCategoryItem - SubCategoryByMonth list
 
-        Float lCount = 0.00f;
+        // First get all the appropriate transactions - ie. what we've spent
+        // normally negative - as an expense is negative
+        ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pSubCatgegoryId);
+        Float lTotalSpent = 0.00f;
+        if (rta != null)
+            for (int i = 0; i < rta.size(); i++)
+                lTotalSpent += rta.get(i).TxAmount;
+
+        // Now get the list of planned transactions for this budget period
+        // there could be multiple (ie. weekly planned item)
         ArrayList<RecordTransaction> rpl = tablePlanned.getPlannedTransForSubCategoryId(pBudgetMonth, pBudgetYear, pSubCatgegoryId);
-        for (int i = 0; i < rpl.size(); i++)
+
+        // Now go through each planned item - and change the TxAmount (budget amount)
+        // by the amount we have already spent - so the TxAmount left is the budget not yet spent
+        Float lTotalLeftToSpend = lTotalSpent;
+        if(rpl != null)
         {
-            if (rta.size() == 0)
+            for (int i = 0; i < rpl.size(); i++)
             {
-                rta.add(rpl.get(i));
-            } else
-            {
-                lCount += rpl.get(i).TxAmount;
-                if (lTotal > 0.00f)
+                if(lTotalLeftToSpend < 0.00f)
                 {
-                    if (lCount > (lTotal + 0.00005f))
-                        rta.add(rpl.get(i));
-                } else
-                {
-                    if (lTotal < 0.00f)
+                    if(lTotalLeftToSpend < rpl.get(i).TxAmount)
                     {
-                        if (lCount < (lTotal - 0.00005f))
-                            rta.add(rpl.get(i));
-                    } else
+                        lTotalLeftToSpend -= rpl.get(i).TxAmount;
+                        rpl.get(i).TxAmount = 0.00f;
+                    }
+                    else
                     {
-                        rta.add(rpl.get(i));
+                        rpl.get(i).TxAmount -= lTotalLeftToSpend;
+                        break;
                     }
                 }
             }
         }
+
+        // now - add in all the planned items which still have some budget left
+        for (int i = 0; i < rpl.size(); i++)
+            if(rpl.get(i).TxAmount < -0.000005)
+                rta.add(rpl.get(i));
+
+        // sort by date - so the planned items can be sorted with the transactions
         Collections.sort(rta, new Comparator<RecordTransaction>()
         {
             public int compare(RecordTransaction o1, RecordTransaction o2)
@@ -363,6 +369,7 @@ public class MyDatabase extends SQLiteOpenHelper
                 return o2.TxDate.compareTo(o1.TxDate);
             }
         });
+
         return (rta);
 
     }
@@ -673,6 +680,10 @@ public class MyDatabase extends SQLiteOpenHelper
         return(tablePlanned.GetAnnualSavingsPlannedItem());
     }
 
+    public RecordTransaction GetLastTransactionForPlannedItem(int pSubCategoryItem)
+    {
+        return(tablePlanned.getLastTransactionForPlannedItem(pSubCategoryItem));
+    }
 
     private void ProcessGroup(Integer pMonth, Integer pYear,
                               ArrayList<RecordCategory> cl, ArrayList<RecordBudget> rb,

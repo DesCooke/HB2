@@ -3,23 +3,20 @@ package com.example.cooked.hb2;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.example.cooked.hb2.Adapters.SubCategoryByMonthAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordSubCategory;
-import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordSubCategoryByMonth;
@@ -94,16 +91,7 @@ public class activitySubCategoryItem extends AppCompatActivity
                 chkOld.setChecked(rsc.Old);
                 spnSubCategoryType.setSelection(rsc.SubCategoryType);
 
-
-                List<RecordSubCategoryByMonth> list = MyDatabase.MyDB().getSubCategoryTotalByMonth(subCategoryId);
-                SubCategoryByMonthList = (RecyclerView) findViewById(R.id.SubCategoryByMonthList);
-                SubCategoryByMonthList.setHasFixedSize(true);
-                SubCategoryByMonthLayoutManager = new LinearLayoutManager(this);
-                SubCategoryByMonthList.setLayoutManager(SubCategoryByMonthLayoutManager);
-                subCategoryByMonthAdapter = new SubCategoryByMonthAdapter(_activity, list);
-                SubCategoryByMonthList.setAdapter(subCategoryByMonthAdapter);
-
-
+                RefreshPage();
             }
 
             btnDelete.setOnClickListener(new View.OnClickListener()
@@ -146,12 +134,12 @@ public class activitySubCategoryItem extends AppCompatActivity
                 {
                     try
                     {
-                        DialogTransactionList dtl = new DialogTransactionList(_activity);
-                        dtl.budgetMonth = 0;
-                        dtl.budgetYear = 0;
-                        dtl.subCategoryId = subCategoryId;
-                        dtl.GetTrans();
-                        dtl.show();
+                        Intent intent = new Intent(getApplicationContext(), activityTransactionList.class);
+                        intent.putExtra("CAPTION", "Transactions for " + categoryName + "/" + edtSubCategoryName.getEditText().getText());
+                        intent.putExtra("BUDGETYEAR", 0);
+                        intent.putExtra("BUDGETMONTH", 0);
+                        intent.putExtra("SUBCATEGORYID", subCategoryId);
+                        startActivity(intent);
                     } catch (Exception e)
                     {
                         MyLog.WriteExceptionMessage(e);
@@ -199,6 +187,32 @@ public class activitySubCategoryItem extends AppCompatActivity
         {
             MyLog.WriteExceptionMessage(e);
         }
+    }
+
+    private void RefreshPage()
+    {
+        List<RecordSubCategoryByMonth> list = MyDatabase.MyDB().getSubCategoryTotalByMonth(subCategoryId);
+        SubCategoryByMonthList = (RecyclerView) findViewById(R.id.SubCategoryByMonthList);
+        SubCategoryByMonthList.setHasFixedSize(true);
+        SubCategoryByMonthLayoutManager = new LinearLayoutManager(this);
+        SubCategoryByMonthList.setLayoutManager(SubCategoryByMonthLayoutManager);
+        subCategoryByMonthAdapter = new SubCategoryByMonthAdapter(_activity, list);
+        SubCategoryByMonthList.setAdapter(subCategoryByMonthAdapter);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        MyLog.WriteLogMessage("activitySubCategoryItem:onResume:Starting");
+        try
+        {
+            RefreshPage();
+        } catch (Exception e)
+        {
+            MyLog.WriteExceptionMessage(e);
+        }
+        MyLog.WriteLogMessage("activitySubCategoryItem:onResume:Ending");
     }
 
     public void pickCategory(View view)
@@ -258,6 +272,5 @@ public class activitySubCategoryItem extends AppCompatActivity
         }
 
     }
-
 
 }

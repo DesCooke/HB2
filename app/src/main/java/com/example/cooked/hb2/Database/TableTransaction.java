@@ -704,11 +704,12 @@ class TableTransaction extends TableBase
         {
             Cursor cursor;
             String l_SQL;
-            l_SQL = "SELECT BudgetYear, BudgetMonth, Sum(TxAmount), Count(*) " +
-                "FROM tblTransaction " +
-                "WHERE CategoryId = " + pCategoryId.toString() + " " +
-                "GROUP BY BudgetYear, BudgetMonth " +
-                "ORDER BY BudgetYear DESC, BudgetMonth DESC ";
+            l_SQL = "SELECT a.BudgetYear, a.BudgetMonth, b.SubCategoryName, Sum(a.TxAmount), Count(*) " +
+                "FROM tblTransaction a, tblSubCategory b " +
+                "WHERE a.CategoryId = " + pCategoryId.toString() + " " +
+                "AND a.CategoryId = b.SubCategoryId " +
+                "GROUP BY BudgetYear, BudgetMonth, SubCategoryName " +
+                "ORDER BY BudgetYear DESC, BudgetMonth DESC, SubCategoryName ";
 
             cursor = db.rawQuery(l_SQL, null);
             try
@@ -726,8 +727,9 @@ class TableTransaction extends TableBase
                         rec.SubCategoryId = pCategoryId;
                         rec.BudgetYear = Integer.parseInt(cursor.getString(0));
                         rec.BudgetMonth = Integer.parseInt(cursor.getString(1));
-                        rec.Total = Float.parseFloat(cursor.getString(2));
-                        rec.TransactionCount = Integer.parseInt(cursor.getString(3));
+                        rec.Caption = cursor.getString(2).trim();
+                        rec.Total = Float.parseFloat(cursor.getString(3));
+                        rec.TransactionCount = Integer.parseInt(cursor.getString(4));
                         list.add(rec);
                     } while (cursor.moveToNext());
                 }
@@ -748,12 +750,12 @@ class TableTransaction extends TableBase
         {
             Cursor cursor;
             String l_SQL;
-            l_SQL = "SELECT b.BudgetYear, b.BudgetMonth, Sum(b.TxAmount), Count(*) " +
+            l_SQL = "SELECT b.BudgetYear, b.BudgetMonth, a.SubCategoryName, Sum(b.TxAmount), Count(*) " +
                 "FROM tblSubCategory a, tblTransaction b " +
                 "WHERE a.CategoryId = " + pCategoryId + " " +
                 "AND a.SubCategoryId = b.CategoryId " +
-                "GROUP BY BudgetYear, BudgetMonth " +
-                "ORDER BY BudgetYear DESC, BudgetMonth DESC ";
+                "GROUP BY BudgetYear, BudgetMonth, SubCategoryname " +
+                "ORDER BY BudgetYear DESC, BudgetMonth, SubCategoryName DESC ";
 
             cursor = db.rawQuery(l_SQL, null);
             try
@@ -771,8 +773,9 @@ class TableTransaction extends TableBase
                         rec.SubCategoryId = pCategoryId;
                         rec.BudgetYear = Integer.parseInt(cursor.getString(0));
                         rec.BudgetMonth = Integer.parseInt(cursor.getString(1));
-                        rec.Total = Float.parseFloat(cursor.getString(2));
-                        rec.TransactionCount = Integer.parseInt(cursor.getString(3));
+                        rec.Caption = cursor.getString(2).trim();
+                        rec.Total = Float.parseFloat(cursor.getString(3));
+                        rec.TransactionCount = Integer.parseInt(cursor.getString(4));
                         list.add(rec);
                     } while (cursor.moveToNext());
                 }
@@ -793,21 +796,36 @@ class TableTransaction extends TableBase
         float lMSpent = 0.00f;
         float lTotal = 0.00f;
         float lSpent = 0.00f;
+
         ArrayList<RecordTransaction> list = new ArrayList<>();
 
-        ArrayList<RecordPlanned> pta = MyDatabase.MyDB().GetAnnualPlannedList();
-
+        //
+        // Get the first element of the list - the 'starting balance'
+        //
         RecordTransaction rt = MyDatabase.MyDB().getLatestTransaction("11-03-95", "10187165");
-
-        RecordPlanned lAnnualSavings = MyDatabase.MyDB().GetAnnualSavingsPlannedItem();
-
         if (rt != null)
         {
             RecordTransaction r100 = new RecordTransaction();
             r100.MarkerStartingBalance = rt.TxBalance;
+            r100.TxDate = rt.TxDate;
             list.add(r100);
         }
 
+
+        //
+        // In this order
+        //    today -> 31st December
+        //    1st Jan -> today
+        //
+        ArrayList<RecordPlanned> pta = MyDatabase.MyDB().GetAnnualPlannedList();
+
+        // Get the regular Annual Savings planned item
+        RecordPlanned lAnnualSavings = MyDatabase.MyDB().GetAnnualSavingsPlannedItem();
+
+
+        //
+        // Get the transactions for each planned item
+        //
         int lThisDay = DateUtils.dateUtils().GetDayAsInt(DateUtils.dateUtils().GetNow());
         int lThisMonth = DateUtils.dateUtils().GetMonthAsInt(DateUtils.dateUtils().GetNow());
         int lThisYear = DateUtils.dateUtils().GetYearAsInt(DateUtils.dateUtils().GetNow());
@@ -815,11 +833,20 @@ class TableTransaction extends TableBase
         Date lEarliestTxDate;
         for (int i = 0; i < pta.size(); i++)
         {
+            // p is the current planned item we are looking at
             RecordPlanned p = pta.get(i);
 
+            // get the current amount of this planned item
             lTotal = p.GetAmountAt(Calendar.getInstance().getTime());
+
             lSpent = 0.00f;
 
+            //
+            // Need to get all the transactions for this planned item
+            // If the planned item in the future then collect all tx between now and
+            // 8 months ago
+            // If planned item has occurred this year - then add 1 year to it - then take 8 months
+            //
             if ((p.mPlannedMonth == lThisMonth && p.mPlannedDay >= lThisDay) ||
                 (p.mPlannedMonth > lThisMonth))
             {
@@ -832,6 +859,7 @@ class TableTransaction extends TableBase
                     DateUtils.dateUtils().DateFromComponents(lThisYear + 1, p.mPlannedMonth, p.mPlannedDay);
             }
             lEarliestTxDate = DateUtils.dateUtils().AddMonthsToDate(lLatestTxDate, -8);
+
 
             // ignore planned item if earliest tx date is after the end date of planned item
             if(lEarliestTxDate.compareTo(p.mEndDate)>0)
@@ -920,78 +948,96 @@ class TableTransaction extends TableBase
         ArrayList<RecordTransaction> finalList = new ArrayList<>();
         finalList.add(list.get(0));
 
+        //
+        // .get(0) is the latest transaction in the annual savings account
+        // it could be the last regular savings amount or the last spent item
+        //
         Float lBalance = list.get(0).MarkerStartingBalance;
-        Date lFirstDate = list.get(0).TxDate;
-        int lDay = DateUtils.dateUtils().GetDayAsInt(lFirstDate);
-        lFirstDate =
-            DateUtils.DateFromComponents(DateUtils.dateUtils().GetYearAsInt(lFirstDate),
-                DateUtils.dateUtils().GetMonthAsInt(lFirstDate),
-                27);
-        if (lDay > 27)
-            lFirstDate = DateUtils.dateUtils().AddMonthsToDate(lFirstDate, 1);
 
+        // This is the last savings transaction + 1 month - ie. the next savings amount
+        // Make sure it has the correct 'day' - the last savings date may have been 28th cos
+        // of a weekend
+        RecordTransaction rt1 = MyDatabase.MyDB().GetLastTransactionForPlannedItem(lAnnualSavings.mSubCategoryId);
+        Date lTempDate = DateUtils.dateUtils().AddMonthsToDate(rt1.TxDate, 1);
+        Date lFirstDate = DateUtils.dateUtils().SetDay(lTempDate, 27);
+
+        // Last date if the date of the last transaction - no need to go beyond that
         Date lLastDate = list.get(list.size() - 1).TxDate;
 
-        for (int j = 1; j < list.size() ; j++)
+
+        //
+        // Ok - so what we do here is take a bill and its next bill, then see if we need to
+        // put any savings items in between
+        // this does not work if we need to put an annual savings item in before the first bill
+        // so the first iteration - we take the last transaction date of the annual savings account
+        // and the tx date of the first bill - if we need to put a savings amount in - we will
+        // but - we do not add the current item to the final list (because this is the
+        // statement opening balance
+        //
+
+        for (int j = 0; j < list.size()-1 ; j++)
         {
-            if(j>1)
+            Date lCurrDate = lFirstDate;
+            if (j > 0)
             {
-                Date lCurrDate = lFirstDate;
-                for (int i = 0; i < 15; i++)
-                {
-                    if ((lCurrDate.getTime() <= list.get(j).TxDate.getTime()) &&
-                        (lCurrDate.getTime() > list.get(j - 1).TxDate.getTime()) &&
-                        (lCurrDate.getTime() <= lLastDate.getTime()))
-                    {
-                        RecordTransaction lrec =
-                            new RecordTransaction
-                                (
-                                    0,
-                                    new Date(),
-                                    "",
-                                    0,
-                                    new Date(),
-                                    "",
-                                    "",
-                                    "",
-                                    "",
-                                    0.00f,
-                                    0.00f,
-                                    0,
-                                    "",
-                                    0,
-                                    0,
-                                    true,
-                                    false
-                                );
+                list.get(j).Comments = list.get(j).Comments + ", Bal " +
+                    Tools.moneyFormat(lBalance + (list.get(j).TxAmount));
+                lBalance += list.get(j).TxAmount;
 
-                        Float lAnnualSavingsAmount = lAnnualSavings.GetAmountAt(lCurrDate);
-
-                        lrec.Comments = "Savings " +
-                            "+ " + Tools.moneyFormat(lAnnualSavingsAmount * -1) + " = " +
-                            " Bal " + Tools.moneyFormat(lBalance + (lAnnualSavingsAmount * -1));
-
-                        lrec.TxAmount = lAnnualSavingsAmount * -1;
-                        lrec.CategoryName = "Monthly Savings:";
-                        lrec.TxDate = lCurrDate;
-                        lrec.TxFilename =
-                            "27th " + DateUtils.MonthNames[DateUtils.dateUtils().GetMonthAsInt(lCurrDate) - 1];
-
-                        lBalance += (lAnnualSavingsAmount * -1);
-                        lrec.ShowExpenseAsRed = true;
-                        finalList.add(lrec);
-                    }
-                    lCurrDate = DateUtils.dateUtils().AddMonthsToDate(lCurrDate, 1);
-                }
+                list.get(j).ShowExpenseAsRed = true;
+                finalList.add(list.get(j));
             }
-            list.get(j).Comments = list.get(j).Comments + ", Bal " +
-                Tools.moneyFormat(lBalance + (list.get(j).TxAmount));
-            lBalance += list.get(j).TxAmount;
+            for (int i = 0; i < 15; i++)
+            {
+                if ((lCurrDate.getTime() <= list.get(j+1).TxDate.getTime()) &&
+                    (lCurrDate.getTime() > list.get(j).TxDate.getTime()) &&
+                    (lCurrDate.getTime() <= lLastDate.getTime()))
+                {
+                    RecordTransaction lrec =
+                        new RecordTransaction
+                            (
+                                0,
+                                new Date(),
+                                "",
+                                0,
+                                new Date(),
+                                "",
+                                "",
+                                "",
+                                "",
+                                0.00f,
+                                0.00f,
+                                0,
+                                "",
+                                0,
+                                0,
+                                true,
+                                false
+                            );
 
-            list.get(j).ShowExpenseAsRed=true;
-            finalList.add(list.get(j));
+                    Float lAnnualSavingsAmount = lAnnualSavings.GetAmountAt(lCurrDate);
 
+                    lrec.Comments = "Savings " +
+                        "+ " + Tools.moneyFormat(lAnnualSavingsAmount * -1) + " = " +
+                        " Bal " + Tools.moneyFormat(lBalance + (lAnnualSavingsAmount * -1));
+
+                    lrec.TxAmount = lAnnualSavingsAmount * -1;
+                    lrec.CategoryName = "Monthly Savings:";
+                    lrec.TxDate = lCurrDate;
+                    lrec.TxFilename =
+                        "27th " + DateUtils.MonthNames[DateUtils.dateUtils().GetMonthAsInt(lCurrDate) - 1];
+
+                    lBalance += (lAnnualSavingsAmount * -1);
+                    lrec.ShowExpenseAsRed = true;
+                    finalList.add(lrec);
+                }
+                lCurrDate = DateUtils.dateUtils().AddMonthsToDate(lCurrDate, 1);
+            }
         }
+        list.get(list.size()-1).Comments = list.get(list.size()-1).Comments + ", Bal " +
+            Tools.moneyFormat(lBalance + (list.get(list.size()-1).TxAmount));
+        list.get(list.size()-1).ShowExpenseAsRed = true;
+        finalList.add(list.get(list.size()-1));
 
         RecordTransaction r2 = new RecordTransaction();
         r2.MarkerTotal = lMTotal * -1;

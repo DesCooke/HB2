@@ -191,11 +191,6 @@ public class MainActivity extends AppCompatActivity
                     Intent intent = new Intent(this, activityLog.class);
                     startActivity(intent);
                 }
-                if (id == R.id.help) {
-                    Intent intent = new Intent(getApplicationContext(), activityHelp.class);
-                    intent.putExtra("PAGE", 0);
-                    startActivity(intent);
-                }
             }
         } catch (Exception e)
         {
