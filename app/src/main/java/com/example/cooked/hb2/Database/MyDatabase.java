@@ -358,8 +358,7 @@ public class MyDatabase extends SQLiteOpenHelper
 
         // now - add in all the planned items which still have some budget left
         for (int i = 0; i < rpl.size(); i++)
-            if(rpl.get(i).TxAmount < -0.000005)
-                rta.add(rpl.get(i));
+            rta.add(rpl.get(i));
 
         // sort by date - so the planned items can be sorted with the transactions
         Collections.sort(rta, new Comparator<RecordTransaction>()
