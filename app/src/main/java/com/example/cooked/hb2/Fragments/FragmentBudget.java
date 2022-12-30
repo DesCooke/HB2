@@ -82,7 +82,6 @@ public class FragmentBudget extends Fragment
 
     }
 
-
     public static FragmentBudget newInstance()
     {
         FragmentBudget fragment = new FragmentBudget();

@@ -2,15 +2,12 @@ package com.example.cooked.hb2.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.cooked.hb2.GlobalUtils.DialogTransactionList;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.Records.RecordBudgetClass;
 import com.example.cooked.hb2.Records.RecordBudgetGroup;
@@ -34,6 +30,7 @@ import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetClass;
 import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetGroup;
 import com.example.cooked.hb2.ViewHolders.ViewHolderBudgetItem;
+import com.example.cooked.hb2.activityTransactionList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -359,12 +356,13 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 @Override
                 public void onClick(View v)
                 {
-                    DialogTransactionList dtl = new DialogTransactionList(lMainActivity);
-                    dtl.budgetMonth = _rbm.budgetMonth;
-                    dtl.budgetYear = _rbm.budgetYear;
-                    dtl.subCategoryId = rbi.SubCategoryId;
-                    dtl.GetTrans();
-                    dtl.show();
+                    Intent intent = new Intent(_context, activityTransactionList.class);
+                    intent.putExtra("CAPTION", "Transactions for " + rbli.ItemName + " for " +
+                        _rbm.budgetMonth + "/" + _rbm.budgetYear);
+                    intent.putExtra("BUDGETYEAR", _rbm.budgetYear);
+                    intent.putExtra("BUDGETMONTH", _rbm.budgetMonth);
+                    intent.putExtra("SUBCATEGORYID", rbi.SubCategoryId);
+                    _context.startActivity(intent);
                 }
             });
             if(rbi.groupedBudget)

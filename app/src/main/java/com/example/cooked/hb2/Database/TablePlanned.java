@@ -9,6 +9,7 @@ import com.example.cooked.hb2.GlobalUtils.ErrorDialog;
 import com.example.cooked.hb2.GlobalUtils.MyInt;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.MyString;
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.Records.RecordTransaction;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import static com.example.cooked.hb2.Database.RecordPlanned.mPTYearly;
 import static com.example.cooked.hb2.Database.RecordPlanned.mPlannedTypes;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.lang.Float.parseFloat;
 
 class TablePlanned extends TableBase
 {
@@ -302,6 +304,12 @@ class TablePlanned extends TableBase
         }
       return(-1);
     }
+
+    //
+    // Get planned items in a certain order..
+    //   those due today onwards upto the end of the year
+    //   then those starting from Jan 1st upto today
+    //
     public ArrayList<RecordPlanned> GetAnnualPlannedList()
     {
         ArrayList<RecordPlanned> list;
@@ -312,6 +320,7 @@ class TablePlanned extends TableBase
 
         try (SQLiteDatabase db = helper.getReadableDatabase())
         {
+            // get all annual planned items starting from today going forward
             String l_SQL = "SELECT a.PlannedId, a.PlannedType, a.PlannedName, a.SubCategoryId, " +
                 "a.SortCode, a.AccountNo, a.PlannedDate, a.PlannedMonth,a.PlannedDay,a.Monday, " +
                 "a.Tuesday, a.Wednesday, a.Thursday, a.Friday, a.Saturday, a.Sunday, a.StartDate, " +
@@ -332,6 +341,8 @@ class TablePlanned extends TableBase
 
             PopulateList(db, l_SQL, list);
 
+            // then add all the annual planned items which have been paid this year
+            // and add to the end.
             l_SQL = "SELECT a.PlannedId, a.PlannedType, a.PlannedName, a.SubCategoryId, " +
                 "a.SortCode, a.AccountNo, a.PlannedDate, a.PlannedMonth,a.PlannedDay,a.Monday, " +
                 "a.Tuesday, a.Wednesday, a.Thursday, a.Friday, a.Saturday, a.Sunday, a.StartDate, " +
@@ -427,6 +438,7 @@ class TablePlanned extends TableBase
             ErrorDialog.Show("Error in TablePlanned.getPlannedList", e.getMessage());
         }
     }
+
     public ArrayList<RecordPlanned> getPlannedListForSubCategory(int pSubCategoryId)
     {
         ArrayList<RecordPlanned> list;
@@ -1135,6 +1147,61 @@ class TablePlanned extends TableBase
         }
 
         return (budgetTrans);
+    }
+
+    RecordTransaction getLastTransactionForPlannedItem(int pSubCategoryId)
+    {
+        try (SQLiteDatabase db = helper.getReadableDatabase())
+        {
+            String lSql =
+                "  SELECT " +
+                    "    a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
+                    "    a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
+                    "    a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth " +
+                    "FROM tblTransaction a " +
+                    "WHERE a.CategoryId = " + pSubCategoryId + " " +
+                    "ORDER BY TxDate DESC ";
+            Cursor cursor = db.rawQuery(lSql, null);
+            if (cursor != null)
+            {
+                try
+                {
+                    int c = cursor.getCount();
+                    if (c > 0)
+                    {
+                        cursor.moveToFirst();
+                        RecordTransaction lrec =
+                            new RecordTransaction
+                                (
+                                    Integer.parseInt(cursor.getString(0)),
+                                    new Date(Long.parseLong(cursor.getString(1))),
+                                    cursor.getString(2),
+                                    Integer.parseInt(cursor.getString(3)),
+                                    new Date(Long.parseLong(cursor.getString(4))),
+                                    cursor.getString(5),
+                                    cursor.getString(6),
+                                    cursor.getString(7),
+                                    cursor.getString(8),
+                                    parseFloat(cursor.getString(9)),
+                                    0.00f,
+                                    Integer.parseInt(cursor.getString(11)),
+                                    cursor.getString(12),
+                                    Integer.parseInt(cursor.getString(13)),
+                                    Integer.parseInt(cursor.getString(14)),
+                                    false,
+                                    true
+                                );
+                        return (lrec);
+                    }
+                } finally
+                {
+                    cursor.close();
+                }
+
+
+            }
+        }
+        return (null);
     }
 
     RecordPlanned GetAnnualSavingsPlannedItem()

@@ -89,6 +89,7 @@ public class activitySubCategory extends AppCompatActivity
                     intent.putExtra("ACTIONTYPE", "EDIT");
                     intent.putExtra("SUBCATEGORYID", obj.SubCategoryId);
                     intent.putExtra("CATEGORYID", obj.CategoryId);
+                    intent.putExtra("CATEGORYNAME", categoryName);
                     intent.putExtra("SUBCATEGORYNAME", obj.SubCategoryName);
                     startActivity(intent);
                 }

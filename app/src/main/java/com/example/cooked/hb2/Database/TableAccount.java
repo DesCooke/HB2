@@ -1,14 +1,25 @@
 package com.example.cooked.hb2.Database;
 
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.GlobalUtils.MyResources;
+import com.example.cooked.hb2.GlobalUtils.MyString;
+import com.example.cooked.hb2.R;
 import com.example.cooked.hb2.Records.RecordAccount;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import static java.lang.Boolean.TRUE;
 import static java.lang.Float.parseFloat;
 
 class TableAccount extends TableBase
@@ -335,4 +346,80 @@ class TableAccount extends TableBase
         }
     }
 
+    public void dump()
+    {
+        if (MyResources.R() == null)
+            return;
+
+        String homeDirectory = MyResources.R().getString(R.string.home_directory);
+        String dumpFilename = "tblAccount.csv";
+
+        // create a File object from it
+        File file = new File(homeDirectory + '/' + dumpFilename);
+        if (file.exists())
+            file.delete();
+
+        File dir = new File(homeDirectory);
+        if (!dir.exists())
+            dir.mkdir();
+
+        try
+        {
+            if (!file.createNewFile())
+                throw new Exception("file.CreateNewFile() returned false");
+
+            String timeStamp = DateFormat.getDateTimeInstance().format(new Date());
+
+            FileWriter fw = new FileWriter(file, /*append*/ TRUE);
+
+
+            try (SQLiteDatabase db = helper.getReadableDatabase())
+            {
+                try
+                {
+                    BufferedWriter bw = new BufferedWriter(fw);
+
+                    bw.write("AcSeqNo,AcSortCode,AcAccountNumber,AcDescription," +
+                        "AcStartingBalance,OrderSeqNo,Hidden,UseCategory\n");
+
+                    String lSql = "select AcSeqNo, AcSortCode, AcAccountNumber, AcDescription, " +
+                        "AcStartingBalance, OrderSeqNo, Hidden, UseCategory " +
+                        "FROM tblAccount " +
+                        "ORDER BY OrderSeqNo";
+                    Cursor cursor = db.rawQuery(lSql, null);
+                    if (cursor != null)
+                    {
+                        try
+                        {
+                            cursor.moveToFirst();
+                            do
+                            {
+                                bw.write(cursor.getString(0) + "," +
+                                    "\"" + cursor.getString(1) + "\"," +
+                                    "\"" + cursor.getString(2) + "\"," +
+                                    "\"" + cursor.getString(3) + "\"," +
+                                    cursor.getString(4) + "," +
+                                    cursor.getString(5) + "," +
+                                    cursor.getString(6) + "," +
+                                    cursor.getString(7) + "\n"
+                                );
+                            }
+                            while (cursor.moveToNext());
+                        } finally
+                        {
+                            cursor.close();
+                        }
+                    }
+                    bw.flush();
+                    bw.close();
+                } finally
+                {
+                    db.close();
+                }
+            }
+        } catch (Exception e)
+        {
+
+        }
+    }
 }

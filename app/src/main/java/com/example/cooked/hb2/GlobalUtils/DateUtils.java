@@ -227,6 +227,15 @@ public class DateUtils
         return (StrToDate(lString));
     }
 
+    public static Date SetDay(Date pDate, int pDay)
+    {
+        int lMonth = dateUtils().GetMonthAsInt(pDate);
+        int lYear = dateUtils().GetYearAsInt(pDate);
+        int lDay = pDay;
+        String lString = lDay + "/" + lMonth + "/" + lYear;
+        return (StrToDate(lString));
+    }
+
     public static String BudgetStartAsStr(int pMonth, int pYear)
     {
         return (DateUtils.DateToString(DateUtils.BudgetStart(pMonth, pYear)));
@@ -317,7 +326,7 @@ public class DateUtils
         try
         {
             Date lDate = dateFormat.parse(string);
-            if (dateFormat.getTimeZone().getDSTSavings() == 3600000)
+            if (dateFormat.getTimeZone().inDaylightTime(lDate) )
             {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(lDate);
