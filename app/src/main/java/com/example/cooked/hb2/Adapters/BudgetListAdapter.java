@@ -357,8 +357,9 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 public void onClick(View v)
                 {
                     Intent intent = new Intent(_context, activityTransactionList.class);
-                    intent.putExtra("CAPTION", "Transactions for " + rbli.ItemName + " for " +
-                        _rbm.budgetMonth + "/" + _rbm.budgetYear);
+                    intent.putExtra("CAPTION", "Transactions");
+                    intent.putExtra("LINE1", "For Category " + rbli.ItemName);
+                    intent.putExtra("LINE2", "For Budget " + _rbm.budgetMonth + "/" + _rbm.budgetYear);
                     intent.putExtra("BUDGETYEAR", _rbm.budgetYear);
                     intent.putExtra("BUDGETMONTH", _rbm.budgetMonth);
                     intent.putExtra("SUBCATEGORYID", rbi.SubCategoryId);

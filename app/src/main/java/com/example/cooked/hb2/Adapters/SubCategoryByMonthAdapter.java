@@ -70,8 +70,9 @@ public class SubCategoryByMonthAdapter extends RecyclerView.Adapter<RecyclerView
                 public void onClick(View v)
                 {
                     Intent intent = new Intent(_context, activityTransactionList.class);
-                    intent.putExtra("CAPTION", "Transactions for " + rscbm.Caption + " for " +
-                        rscbm.BudgetMonth + "/" + rscbm.BudgetYear);
+                    intent.putExtra("CAPTION", "Transactions");
+                    intent.putExtra("LINE1", "For Category " + rscbm.Caption);
+                    intent.putExtra("LINE2", "For Budget Period " + rscbm.BudgetMonth + "/" + rscbm.BudgetYear);
                     intent.putExtra("BUDGETYEAR", rscbm.BudgetYear);
                     intent.putExtra("BUDGETMONTH", rscbm.BudgetMonth);
                     intent.putExtra("SUBCATEGORYID", rscbm.SubCategoryId);

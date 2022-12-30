@@ -36,6 +36,12 @@ public class activityTransactionList extends AppCompatActivity
     private Integer mSubCategoryId;
     private String mCaption;
     private RecyclerView mBudgetList;
+    public TextView mTextInfo1;
+    public TextView mTextInfo2;
+    public TextView mTextInfo3;
+    public String mLine1;
+    public String mLine2;
+    public String mLine3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,15 +52,25 @@ public class activityTransactionList extends AppCompatActivity
             mTransactionListChanged = false;
             setContentView(R.layout.activity_transaction_list);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            mTextInfo1 = (TextView) findViewById(R.id.textInfo1);
+            mTextInfo2 = (TextView) findViewById(R.id.textInfo2);
+            mTextInfo3 = (TextView) findViewById(R.id.textInfo3);
+
             setSupportActionBar(toolbar);
 
             mCaption = getIntent().getStringExtra("CAPTION");
             mBudgetYear = getIntent().getIntExtra("BUDGETYEAR", 0);
             mBudgetMonth = getIntent().getIntExtra("BUDGETMONTH", 0);
             mSubCategoryId = getIntent().getIntExtra("SUBCATEGORYID", 0);
+            mLine1 = getIntent().getStringExtra("LINE1");
+            mLine2 = getIntent().getStringExtra("LINE2");
+            mLine3 = getIntent().getStringExtra("LINE3");
 
-            ((TextView) toolbar.getChildAt(0)).setTextSize(12);
             setTitle(mCaption);
+
+            HandleTextLine(mLine1, mTextInfo1);
+            HandleTextLine(mLine2, mTextInfo2);
+            HandleTextLine(mLine3, mTextInfo3);
 
             mBudgetList = findViewById(R.id.budgetList);
             mBudgetList.setHasFixedSize(true);
@@ -69,6 +85,18 @@ public class activityTransactionList extends AppCompatActivity
         }
     }
 
+    private void HandleTextLine(String line, TextView textView)
+    {
+        if(line == null || line.length()==0)
+        {
+            textView.setVisibility(View.GONE);
+        }
+        else
+        {
+            textView.setText(line);
+            textView.setVisibility(View.VISIBLE);
+        }
+    }
     private void setupRecyclerView()
     {
         mDataset = MyDatabase.MyDB().getBudgetTrans(mBudgetYear, mBudgetMonth, mSubCategoryId);

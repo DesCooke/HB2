@@ -135,7 +135,9 @@ public class activitySubCategoryItem extends AppCompatActivity
                     try
                     {
                         Intent intent = new Intent(getApplicationContext(), activityTransactionList.class);
-                        intent.putExtra("CAPTION", "Transactions for " + categoryName + "/" + edtSubCategoryName.getEditText().getText());
+                        intent.putExtra("CAPTION", "Transactions");
+                        intent.putExtra("LINE1", "For Category " + categoryName);
+                        intent.putExtra("LINE2", "For Sub Category " + edtSubCategoryName.getEditText().getText());
                         intent.putExtra("BUDGETYEAR", 0);
                         intent.putExtra("BUDGETMONTH", 0);
                         intent.putExtra("SUBCATEGORYID", subCategoryId);
