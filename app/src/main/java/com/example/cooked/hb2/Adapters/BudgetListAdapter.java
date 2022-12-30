@@ -362,6 +362,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     intent.putExtra("LINE2", "For Budget " + _rbm.budgetMonth + "/" + _rbm.budgetYear);
                     intent.putExtra("BUDGETYEAR", _rbm.budgetYear);
                     intent.putExtra("BUDGETMONTH", _rbm.budgetMonth);
+                    intent.putExtra("CATEGORYID", 0);
                     intent.putExtra("SUBCATEGORYID", rbi.SubCategoryId);
                     _context.startActivity(intent);
                 }

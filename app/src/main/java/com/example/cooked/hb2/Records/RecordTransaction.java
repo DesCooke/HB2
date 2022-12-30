@@ -23,7 +23,8 @@ public class RecordTransaction
     public Float TxAmount;
     public Float TxBalance;
     public Status TxStatus;
-    public Integer CategoryId;
+    public Integer CategoryId; // really SubCategoryId
+    public Integer RealCategoryId; // really CategoryId
     public String SubCategoryName;
     public String CategoryName;
     public String Comments;

@@ -22,4 +22,13 @@
 
     <include layout="@layout/content_activity_transaction" />
 
+    <TextView
+        android:id="@+id/txtTotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/colorPrimary"
+        android:text="TextView"
+        android:textColor="@color/design_default_color_background" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -515,6 +515,44 @@ class TablePlanned extends TableBase
         return list;
     }
 
+    public ArrayList<RecordPlanned> getPlannedListForCategory(int pCategoryId)
+    {
+        ArrayList<RecordPlanned> list = new ArrayList<>();
+        try (SQLiteDatabase db = helper.getReadableDatabase())
+        {
+            // get all annual planned items starting from today going forward
+            String l_SQL =
+                "SELECT a.PlannedId, a.PlannedType, a.PlannedName, a.SubCategoryId, " +
+                "a.SortCode, a.AccountNo, a.PlannedDate, a.PlannedMonth,a.PlannedDay,a.Monday, " +
+                "a.Tuesday, a.Wednesday, a.Thursday, a.Friday, a.Saturday, a.Sunday, a.StartDate, " +
+                "a.EndDate, a.MatchingTxType, a.MatchingTxDescription, a.MatchingTxAmount, " +
+                "a.AutoMatchTransaction, a.PaidInParts, a.FrequencyMultiplier, a.Highlight30DaysBeforeAnniversary " +
+                "FROM tblPlanned a, tblSubCategory b, tblCategory c " +
+                "WHERE a.SubCategoryId = b.SubCategoryId " +
+                "AND b.CategoryId = c.CategoryId " +
+                "AND b.CategoryId = " + pCategoryId;
+
+            l_SQL = l_SQL + " ORDER BY PlannedName ";
+
+            PopulateList(db, l_SQL, list);
+
+        } catch (Exception e)
+        {
+            list = new ArrayList<>();
+            ErrorDialog.Show("Error in TablePlanned.getPlannedListForCategory", e.getMessage());
+        }
+
+        for (int i = 0; i < list.size(); i++)
+        {
+            Long lDate = DateUtils.dateUtils().StripTimeElement(list.get(i).mPlannedDate);
+            list.get(i).mPlannedDate = new Date(lDate);
+
+            list.get(i).variations = MyDatabase.MyDB().getVariationList(list.get(i).mPlannedId);
+        }
+
+        return list;
+    }
+
     ArrayList<RecordTransaction> getOutstandingList(String pSortCode, String pAccountNum, int pMonth, int pYear)
     {
         ArrayList<RecordBudget> budgetSpent;
@@ -1131,6 +1169,66 @@ class TablePlanned extends TableBase
                             rt.CategoryId = pSubCategoryId;
                             rt.SubCategoryName =
                                 MyDatabase.MyDB().getSubCategory(pSubCategoryId).SubCategoryName;
+                            rt.Comments = "planned";
+                            rt.BudgetYear = pYear;
+                            rt.BudgetMonth = pMonth;
+                            rt.HideBalance = true;
+                            budgetTrans.add(rt);
+                        }
+                    }
+
+                    Date lNewDate = new Date();
+                    DateUtils.dateUtils().AddDays(lCurrentDate, 1, lNewDate);
+                    lCurrentDate = lNewDate;
+                } while (lCurrentDate.getTime() <= lBudgetEnd.getTime());
+            }
+        }
+
+        return (budgetTrans);
+    }
+
+    ArrayList<RecordTransaction> getPlannedTransForCategoryId(int pMonth, int pYear, int pCategoryId)
+    {
+        ArrayList<RecordPlanned> plannedList;
+        ArrayList<RecordTransaction> budgetTrans = new ArrayList<>();
+
+        Date lBudgetStart = DateUtils.dateUtils().BudgetStart(pMonth, pYear);
+        Date lBudgetEnd = DateUtils.dateUtils().BudgetEnd(pMonth, pYear);
+        Date lCurrentDate;
+
+        plannedList = getPlannedListForCategory(pCategoryId);
+        for (int i = 0; i < plannedList.size(); i++)
+        {
+            RecordPlanned rp = plannedList.get(i);
+
+            if (rp.mStartDate.getTime() <= lBudgetEnd.getTime() &&
+                rp.mEndDate.getTime() >= lBudgetStart.getTime())
+            {
+                lCurrentDate = lBudgetStart;
+                Float lAmount = 0.00f;
+                Boolean lAtleastOne = false;
+                do
+                {
+                    if (lCurrentDate.getTime() >= rp.mStartDate.getTime() &&
+                        lCurrentDate.getTime() <= rp.mEndDate.getTime())
+                    {
+                        if (isDue(rp, lCurrentDate))
+                        {
+                            RecordTransaction rt = new RecordTransaction();
+                            rt.TxSeqNo = rp.mPlannedId;
+                            rt.TxAdded = new Date();
+                            rt.TxFilename = "Planned";
+                            rt.TxLineNo = 0;
+                            rt.TxDate = lCurrentDate;
+                            rt.TxType = "Planned";
+                            rt.TxSortCode = rp.mSortCode;
+                            rt.TxAccountNumber = rp.mAccountNo;
+                            rt.TxDescription = rp.mPlannedName;
+                            rt.TxAmount = rp.GetAmountAt(lCurrentDate);
+                            rt.TxBalance = 0.00f;
+                            rt.CategoryId = rp.mSubCategoryId;
+                            rt.RealCategoryId = pCategoryId;
+                            rt.SubCategoryName = rp.mSubCategoryName;
                             rt.Comments = "planned";
                             rt.BudgetYear = pYear;
                             rt.BudgetMonth = pMonth;

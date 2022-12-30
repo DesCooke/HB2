@@ -8,5 +8,6 @@ public class RecordSubCategoryByMonth
     public Integer BudgetMonth;
     public Integer TransactionCount;
     public Float Total;
-    public String Caption;
+    public String CategoryName;
+    public String SubCategoryName;
 }

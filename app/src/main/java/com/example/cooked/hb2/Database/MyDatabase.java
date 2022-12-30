@@ -317,13 +317,14 @@ public class MyDatabase extends SQLiteOpenHelper
 
     }
 
-    public ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCatgegoryId)
+    public ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth,
+                                                       Integer pCategoryId, Integer pSubCatgegoryId)
     {
         // Called by activityCategoryItem - SubCategoryByMonth list
 
         // First get all the appropriate transactions - ie. what we've spent
         // normally negative - as an expense is negative
-        ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pSubCatgegoryId);
+        ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pCategoryId, pSubCatgegoryId);
         Float lTotalSpent = 0.00f;
         if (rta != null)
             for (int i = 0; i < rta.size(); i++)
@@ -331,7 +332,15 @@ public class MyDatabase extends SQLiteOpenHelper
 
         // Now get the list of planned transactions for this budget period
         // there could be multiple (ie. weekly planned item)
-        ArrayList<RecordTransaction> rpl = tablePlanned.getPlannedTransForSubCategoryId(pBudgetMonth, pBudgetYear, pSubCatgegoryId);
+        ArrayList<RecordTransaction> rpl;
+        if(pCategoryId == 0)
+        {
+            rpl=tablePlanned.getPlannedTransForSubCategoryId(pBudgetMonth, pBudgetYear, pSubCatgegoryId);
+        }
+        else
+        {
+            rpl=tablePlanned.getPlannedTransForCategoryId(pBudgetMonth, pBudgetYear, pCategoryId);
+        }
 
         // Now go through each planned item - and change the TxAmount (budget amount)
         // by the amount we have already spent - so the TxAmount left is the budget not yet spent
@@ -358,7 +367,8 @@ public class MyDatabase extends SQLiteOpenHelper
 
         // now - add in all the planned items which still have some budget left
         for (int i = 0; i < rpl.size(); i++)
-            rta.add(rpl.get(i));
+            if(rpl.get(i).TxDescription.compareTo("Dummy")!=0)
+                rta.add(rpl.get(i));
 
         // sort by date - so the planned items can be sorted with the transactions
         Collections.sort(rta, new Comparator<RecordTransaction>()

@@ -14,4 +14,12 @@ public class RecordBudgetProgress
     public int mPercInMonth;
     public boolean mJustANote;
     public int mNoteColor;
+    public int mBudgetYear;
+    public int mBudgetMonth;
+    public int mCategoryId;
+    public int mSubCategoryId;
+    public String mCaption;
+    public String mLine1;
+    public String mLine2;
+    public String mLine3;
 }
