@@ -106,6 +106,8 @@ public class FragmentDashboard extends Fragment
                 rbp.mJustANote = true;
                 rbp.mTitle=lines[i];
                 rbp.mNoteColor= Color.RED;
+                rbp.mCategoryId=0;
+                rbp.mSubCategoryId=0;
                 mDataset.add(rbp);
             }
 
@@ -122,6 +124,15 @@ public class FragmentDashboard extends Fragment
                         rbp.mTotalAmount=rbg.origTotal;
                         rbp.mLeftAmount=rbg.outstanding;
                         rbp.mSpentAmount=rbg.spent;
+                        rbp.mBudgetYear=_rbm.budgetYear;
+                        rbp.mBudgetMonth=_rbm.budgetMonth;
+                        rbp.mCategoryId = rbg.CategoryId;
+                        rbp.mSubCategoryId = 0;
+                        rbp.mCaption = "Transactions";
+                        rbp.mLine1 = "For Category " + rbg.budgetGroupName;
+                        rbp.mLine2 = "For Budget " + _rbm.budgetMonth + "/" + _rbm.budgetYear;
+                        rbp.mLine3 = "";
+
 
                         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
                         Date date = calendar.getTime();
@@ -184,6 +195,14 @@ public class FragmentDashboard extends Fragment
                             rbp.mTotalAmount=rbi.origTotal;
                             rbp.mLeftAmount=rbi.outstanding;
                             rbp.mSpentAmount=rbi.spent;
+                            rbp.mBudgetYear=_rbm.budgetYear;
+                            rbp.mBudgetMonth=_rbm.budgetMonth;
+                            rbp.mCategoryId = 0;
+                            rbp.mSubCategoryId = rbi.SubCategoryId;
+                            rbp.mCaption = "Transactions";
+                            rbp.mLine1 = "For Category " + rbg.budgetGroupName;
+                            rbp.mLine2 = "For SubCategory " + rbi.budgetItemName;
+                            rbp.mLine3 = "For Budget " + _rbm.budgetMonth + "/" + _rbm.budgetYear;
 
                             Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
                             Date date = calendar.getTime();
@@ -280,6 +299,8 @@ public class FragmentDashboard extends Fragment
                       rbp.mSpentAmount=0.00f;
                       rbp.mPercInMonth=0;
                       rbp.mSpentPerc=0;
+                      rbp.mCategoryId=0;
+                      rbp.mSubCategoryId=0;
                       mDataset.add(rbp);
                   }
               }
@@ -289,7 +310,7 @@ public class FragmentDashboard extends Fragment
             mBudgetProgressList.setHasFixedSize(true);
             mLayoutManagerCurrent = new LinearLayoutManager(_root.getContext());
             mBudgetProgressList.setLayoutManager(mLayoutManagerCurrent);
-            mBudgetProgressAdapter = new BudgetProgressAdapter(mDataset);
+            mBudgetProgressAdapter = new BudgetProgressAdapter(_root.getContext(), mDataset);
             mBudgetProgressList.setAdapter(mBudgetProgressAdapter);
         } catch (Exception e)
         {

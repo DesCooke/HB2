@@ -5,7 +5,9 @@ import android.os.Bundle;
 
 import com.example.cooked.hb2.Adapters.TransactionListAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
+import com.example.cooked.hb2.Database.RecordCategoryBudget;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
+import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.Records.RecordTransaction;
 import com.example.cooked.hb2.TransactionUI.TransactionAdapter;
 
@@ -33,6 +35,7 @@ public class activityTransactionList extends AppCompatActivity
     private Boolean mTransactionListChanged;
     private Integer mBudgetYear;
     private Integer mBudgetMonth;
+    private Integer mCategoryId;
     private Integer mSubCategoryId;
     private String mCaption;
     private RecyclerView mBudgetList;
@@ -42,6 +45,7 @@ public class activityTransactionList extends AppCompatActivity
     public String mLine1;
     public String mLine2;
     public String mLine3;
+    public TextView mTextTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,12 +59,14 @@ public class activityTransactionList extends AppCompatActivity
             mTextInfo1 = (TextView) findViewById(R.id.textInfo1);
             mTextInfo2 = (TextView) findViewById(R.id.textInfo2);
             mTextInfo3 = (TextView) findViewById(R.id.textInfo3);
+            mTextTotal = (TextView) findViewById(R.id.txtTotal);
 
             setSupportActionBar(toolbar);
 
             mCaption = getIntent().getStringExtra("CAPTION");
             mBudgetYear = getIntent().getIntExtra("BUDGETYEAR", 0);
             mBudgetMonth = getIntent().getIntExtra("BUDGETMONTH", 0);
+            mCategoryId = getIntent().getIntExtra("CATEGORYID", 0);
             mSubCategoryId = getIntent().getIntExtra("SUBCATEGORYID", 0);
             mLine1 = getIntent().getStringExtra("LINE1");
             mLine2 = getIntent().getStringExtra("LINE2");
@@ -99,7 +105,42 @@ public class activityTransactionList extends AppCompatActivity
     }
     private void setupRecyclerView()
     {
-        mDataset = MyDatabase.MyDB().getBudgetTrans(mBudgetYear, mBudgetMonth, mSubCategoryId);
+        mDataset = MyDatabase.MyDB().getBudgetTrans(mBudgetYear, mBudgetMonth, mCategoryId, mSubCategoryId);
+
+        Float mBudgetLeft=0.00f;
+        Float mTransactionTotal=0.00f;
+        Boolean mAtleastOneBudgetDisplayed=false;
+        for(int i=0;i<mDataset.size();i++)
+        {
+            RecordTransaction rec=mDataset.get(i);
+            if(rec.TxType.compareTo("Planned") == 0)
+            {
+                mBudgetLeft += rec.TxAmount;
+                mAtleastOneBudgetDisplayed=true;
+            }
+            else
+            {
+                mTransactionTotal += rec.TxAmount;
+            }
+        }
+        if(mCategoryId>0)
+        {
+            RecordCategoryBudget rec1=MyDatabase.MyDB().getCategoryBudget(mCategoryId, mBudgetMonth, mBudgetYear);
+            if(rec1!=null)
+            {
+                mBudgetLeft = rec1.BudgetAmount - mTransactionTotal;
+                mAtleastOneBudgetDisplayed=true;
+            }
+        }
+        if(mAtleastOneBudgetDisplayed)
+        {
+            mTextTotal.setText("Tx Total " + Tools.moneyFormat(mTransactionTotal*-1) +
+                ", Budget Left " + Tools.moneyFormat(mBudgetLeft*-1));
+        }
+        else
+        {
+            mTextTotal.setText("Tx Total " + Tools.moneyFormat(mTransactionTotal*-1));
+        }
 
         TransactionAdapter mTransactionAdapterCurrent = new TransactionAdapter(mDataset);
         mBudgetList.setAdapter(mTransactionAdapterCurrent);

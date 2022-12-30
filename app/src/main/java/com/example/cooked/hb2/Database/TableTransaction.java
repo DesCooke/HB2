@@ -697,19 +697,20 @@ class TableTransaction extends TableBase
         return list;
     }
 
-    List<RecordSubCategoryByMonth> getSubCategoryTotalByMonth(Integer pCategoryId)
+    List<RecordSubCategoryByMonth> getSubCategoryTotalByMonth(Integer pSubCategoryId)
     {
         List<RecordSubCategoryByMonth> list;
         try (SQLiteDatabase db = helper.getReadableDatabase())
         {
             Cursor cursor;
             String l_SQL;
-            l_SQL = "SELECT a.BudgetYear, a.BudgetMonth, b.SubCategoryName, Sum(a.TxAmount), Count(*) " +
-                "FROM tblTransaction a, tblSubCategory b " +
-                "WHERE a.CategoryId = " + pCategoryId.toString() + " " +
-                "AND a.CategoryId = b.SubCategoryId " +
-                "GROUP BY BudgetYear, BudgetMonth, SubCategoryName " +
-                "ORDER BY BudgetYear DESC, BudgetMonth DESC, SubCategoryName ";
+            l_SQL = "SELECT b.BudgetYear, b.BudgetMonth, c.CategoryName, a.SubCategoryName, Sum(b.TxAmount), Count(*) " +
+                "FROM tblSubCategory a, tblTransaction b, tblCategory c " +
+                "WHERE a.SubCategoryId = " + pSubCategoryId + " " +
+                "AND a.SubCategoryId = b.CategoryId " +
+                "AND a.CategoryId = c.CategoryId " +
+                "GROUP BY BudgetYear, BudgetMonth, CategoryName, SubCategoryName " +
+                "ORDER BY BudgetYear DESC, BudgetMonth, CategoryName, SubCategoryName DESC ";
 
             cursor = db.rawQuery(l_SQL, null);
             try
@@ -724,12 +725,13 @@ class TableTransaction extends TableBase
                             break;
                         RecordSubCategoryByMonth rec = new RecordSubCategoryByMonth();
                         rec.CategoryId=0;
-                        rec.SubCategoryId = pCategoryId;
+                        rec.SubCategoryId = pSubCategoryId;
                         rec.BudgetYear = Integer.parseInt(cursor.getString(0));
                         rec.BudgetMonth = Integer.parseInt(cursor.getString(1));
-                        rec.Caption = cursor.getString(2).trim();
-                        rec.Total = Float.parseFloat(cursor.getString(3));
-                        rec.TransactionCount = Integer.parseInt(cursor.getString(4));
+                        rec.CategoryName = cursor.getString(2).trim();
+                        rec.SubCategoryName = cursor.getString(3).trim();
+                        rec.Total = Float.parseFloat(cursor.getString(4));
+                        rec.TransactionCount = Integer.parseInt(cursor.getString(5));
                         list.add(rec);
                     } while (cursor.moveToNext());
                 }
@@ -750,12 +752,13 @@ class TableTransaction extends TableBase
         {
             Cursor cursor;
             String l_SQL;
-            l_SQL = "SELECT b.BudgetYear, b.BudgetMonth, a.SubCategoryName, Sum(b.TxAmount), Count(*) " +
-                "FROM tblSubCategory a, tblTransaction b " +
+            l_SQL = "SELECT b.BudgetYear, b.BudgetMonth, c.CategoryName, a.SubCategoryName, Sum(b.TxAmount), Count(*) " +
+                "FROM tblSubCategory a, tblTransaction b, tblCategory c " +
                 "WHERE a.CategoryId = " + pCategoryId + " " +
                 "AND a.SubCategoryId = b.CategoryId " +
-                "GROUP BY BudgetYear, BudgetMonth, SubCategoryname " +
-                "ORDER BY BudgetYear DESC, BudgetMonth, SubCategoryName DESC ";
+                "AND a.CategoryId = c.CategoryId " +
+                "GROUP BY BudgetYear, BudgetMonth, CategoryName, SubCategoryName " +
+                "ORDER BY BudgetYear DESC, BudgetMonth, CategoryName, SubCategoryName DESC ";
 
             cursor = db.rawQuery(l_SQL, null);
             try
@@ -773,9 +776,10 @@ class TableTransaction extends TableBase
                         rec.SubCategoryId = pCategoryId;
                         rec.BudgetYear = Integer.parseInt(cursor.getString(0));
                         rec.BudgetMonth = Integer.parseInt(cursor.getString(1));
-                        rec.Caption = cursor.getString(2).trim();
-                        rec.Total = Float.parseFloat(cursor.getString(3));
-                        rec.TransactionCount = Integer.parseInt(cursor.getString(4));
+                        rec.CategoryName = cursor.getString(2).trim();
+                        rec.SubCategoryName = cursor.getString(3).trim();
+                        rec.Total = Float.parseFloat(cursor.getString(4));
+                        rec.TransactionCount = Integer.parseInt(cursor.getString(5));
                         list.add(rec);
                     } while (cursor.moveToNext());
                 }
@@ -1048,7 +1052,9 @@ class TableTransaction extends TableBase
         return finalList;
     }
 
-    ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pSubCategoryId)
+    // pCategoryId and pSubCategoryId are mutually exclusive
+    ArrayList<RecordTransaction> getBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth,
+                                                Integer pCategoryId, Integer pSubCategoryId)
     {
         ArrayList<RecordTransaction> list;
         try (SQLiteDatabase db = helper.getReadableDatabase())
@@ -1060,19 +1066,37 @@ class TableTransaction extends TableBase
                         " a.BudgetYear = " + pBudgetYear.toString() + " AND " +
                         " a.BudgetMonth = " + pBudgetMonth.toString() + " AND ";
             }
-            String lSql =
-                    "SELECT " +
-                            "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
-                            "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
-                            "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
-                            "  b.SubCategoryName, c.UseCategory " +
-                            "FROM tblTransaction a, tblAccount c " +
-                            "  LEFT OUTER JOIN tblSubCategory b " +
-                            "    ON a.CategoryId = b.SubCategoryId " +
-                            "WHERE " + lBudgetString + " a.TxSortCode = c.AcSortCode " +
-                            "AND a.TxAccountNumber = c.AcAccountNumber " +
-                            "AND a.CategoryId = " + pSubCategoryId.toString() + " " +
-                            "ORDER BY TxDate desc, TxLineNo";
+            String lSql;
+            if(pSubCategoryId > 0)
+            {
+                lSql = "SELECT " +
+                    "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
+                    "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
+                    "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
+                    "  b.SubCategoryName, c.UseCategory " +
+                    "FROM tblTransaction a, tblAccount c " +
+                    "  LEFT OUTER JOIN tblSubCategory b " +
+                    "    ON a.CategoryId = b.SubCategoryId " +
+                    "WHERE " + lBudgetString + " a.TxSortCode = c.AcSortCode " +
+                    "AND a.TxAccountNumber = c.AcAccountNumber " +
+                    "AND a.CategoryId = " + pSubCategoryId.toString() + " " +
+                    "ORDER BY TxDate desc, TxLineNo";
+            }
+            else
+            {
+                lSql = "SELECT " +
+                    "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
+                    "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
+                    "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
+                    "  b.SubCategoryName, c.UseCategory " +
+                    "FROM tblTransaction a, tblAccount c " +
+                    "  LEFT OUTER JOIN tblSubCategory b " +
+                    "    ON a.CategoryId = b.SubCategoryId " +
+                    "WHERE " + lBudgetString + " a.TxSortCode = c.AcSortCode " +
+                    "AND a.TxAccountNumber = c.AcAccountNumber " +
+                    "AND b.CategoryId = " + pCategoryId.toString() + " " +
+                    "ORDER BY TxDate desc, TxLineNo";
+            }
             Cursor cursor = db.rawQuery(lSql, null);
 
             list = new ArrayList<>();

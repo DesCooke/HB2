@@ -140,6 +140,7 @@ public class activitySubCategoryItem extends AppCompatActivity
                         intent.putExtra("LINE2", "For Sub Category " + edtSubCategoryName.getEditText().getText());
                         intent.putExtra("BUDGETYEAR", 0);
                         intent.putExtra("BUDGETMONTH", 0);
+                        intent.putExtra("CATEGORYID", 0);
                         intent.putExtra("SUBCATEGORYID", subCategoryId);
                         startActivity(intent);
                     } catch (Exception e)

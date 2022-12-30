@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,8 @@ import com.example.cooked.hb2.Database.RecordBudgetProgress;
 import com.example.cooked.hb2.Database.RecordPlanned;
 import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.R;
+import com.example.cooked.hb2.Records.RecordBudgetListItem;
+import com.example.cooked.hb2.activityTransactionList;
 
 import java.util.ArrayList;
 
@@ -25,6 +30,7 @@ import static java.lang.Math.abs;
 
 public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAdapter.ViewHolder>
 {
+    private Context _context;
     private ArrayList<RecordBudgetProgress> mDataset;
     private OnItemClickListener mOnItemClickListener;
 
@@ -67,8 +73,9 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public BudgetProgressAdapter(ArrayList<RecordBudgetProgress> lDataset)
+    public BudgetProgressAdapter(Context context, ArrayList<RecordBudgetProgress> lDataset)
     {
+        _context = context;
         mDataset = lDataset;
     }
 
@@ -86,11 +93,11 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
     // Replace the contents of a view (invoked by the layout manager)
     @SuppressLint({"DefaultLocale", "SetTextI18n"})
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position)
+    public void onBindViewHolder(ViewHolder holder, int position)
     {
         final RecordBudgetProgress rec;
 
-        rec = mDataset.get(position);
+        rec = mDataset.get(holder.getBindingAdapterPosition());
 
         if(rec.mJustANote)
         {
@@ -148,20 +155,29 @@ public class BudgetProgressAdapter extends RecyclerView.Adapter<BudgetProgressAd
             }
         }
 
-/*
         holder.mFull.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                if (mOnItemClickListener != null)
+                final RecordBudgetProgress rec = mDataset.get(holder.getBindingAdapterPosition());
+
+                if(rec.mSubCategoryId>0 || rec.mCategoryId > 0)
                 {
-                    mOnItemClickListener.onItemClick(view, rec);
+                    Intent intent = new Intent(_context, activityTransactionList.class);
+
+                    intent.putExtra("CAPTION", rec.mCaption);
+                    intent.putExtra("LINE1", rec.mLine1);
+                    intent.putExtra("LINE2", rec.mLine2);
+                    intent.putExtra("LINE3", rec.mLine3);
+                    intent.putExtra("BUDGETYEAR", rec.mBudgetYear);
+                    intent.putExtra("BUDGETMONTH", rec.mBudgetMonth);
+                    intent.putExtra("CATEGORYID", rec.mCategoryId);
+                    intent.putExtra("SUBCATEGORYID", rec.mSubCategoryId);
+                    _context.startActivity(intent);
                 }
             }
         });
-
- */
     }
 
     // Return the size of your dataset (invoked by the layout manager)
