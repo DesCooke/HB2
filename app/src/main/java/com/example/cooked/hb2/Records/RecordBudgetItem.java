@@ -6,6 +6,9 @@ public class RecordBudgetItem
     public Integer BudgetGroupId;
     public Integer BudgetItemId;
     public String budgetItemName;
+    public String BudgetGroupName;
+    public String CategoryName;
+    public String SubCategoryName;
     public Integer SubCategoryId;
     public Integer RecCount;
     public Float total;
@@ -29,5 +32,8 @@ public class RecordBudgetItem
         groupedBudget = false;
         Monitor=false;
         origTotal = 0.00f;
+        BudgetGroupName = "";
+        CategoryName="";
+        SubCategoryName="";
     }
 }

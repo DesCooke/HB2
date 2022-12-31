@@ -91,11 +91,11 @@
 
     <TextView
         android:id="@+id/edtCategory"
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
         android:layout_height="57dp"
         android:layout_marginStart="8dp"
         android:onClick="pickCategory"
-        android:text="Sky"
+        android:text="TheCategoryItem"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblCategory"

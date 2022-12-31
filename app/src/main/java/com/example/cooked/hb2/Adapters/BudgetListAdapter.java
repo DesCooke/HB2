@@ -131,6 +131,7 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         for(int k=0;k<rbg.budgetItems.size();k++)
                         {
                             RecordBudgetItem rbi = rbg.budgetItems.get(k);
+                            rbi.BudgetGroupName = rbg.budgetGroupName;
 
                             addItemToList(-1, rbi, items);
                         }
@@ -196,6 +197,8 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 for (int i = rbg.budgetItems.size() - 1; i >= 0; i--)
                 {
                     RecordBudgetItem rbi = rbg.budgetItems.get(i);
+                    rbi.BudgetGroupName = rbg.budgetGroupName;
+
                     addItemToList(pos + 1, rbi, _items);
                     notifyItemInserted(pos + 1);
                 }
@@ -358,8 +361,9 @@ public class BudgetListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 {
                     Intent intent = new Intent(_context, activityTransactionList.class);
                     intent.putExtra("CAPTION", "Transactions");
-                    intent.putExtra("LINE1", "For Category " + rbli.ItemName);
-                    intent.putExtra("LINE2", "For Budget " + _rbm.budgetMonth + "/" + _rbm.budgetYear);
+                    intent.putExtra("LINE1", "For Category " + rbi.CategoryName);
+                    intent.putExtra("LINE2", "For Sub Category " + rbi.SubCategoryName);
+                    intent.putExtra("LINE3", "For Budget " + _rbm.budgetMonth + "/" + _rbm.budgetYear);
                     intent.putExtra("BUDGETYEAR", _rbm.budgetYear);
                     intent.putExtra("BUDGETMONTH", _rbm.budgetMonth);
                     intent.putExtra("CATEGORYID", 0);
