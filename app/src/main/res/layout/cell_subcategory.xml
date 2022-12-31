@@ -7,8 +7,8 @@
 
     <ImageButton
         android:id="@+id/btnEdit"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="#00000000"
@@ -16,19 +16,19 @@
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_edit"/>
+        app:srcCompat="@android:drawable/ic_menu_edit" />
 
     <TextView
         android:id="@+id/cellcat_SubCategoryName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:paddingLeft="5sp"
         android:paddingRight="5sp"
         android:text="@string/captionSubCategoryName"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="14sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnEdit"
