@@ -110,7 +110,7 @@ public class activityTransactionList extends AppCompatActivity
     private void setupRecyclerView()
     {
         mDataset = null;
-        if(mSubCategoryId > 0)
+        if(mSubCategoryId > 0 && mBudgetYear > 0)
         {
             RecordSubCategory rsc = MyDatabase.MyDB().getSubCategory(mSubCategoryId);
             if(rsc.SubCategoryType == mSCTAnnualExpense || rsc.SubCategoryType == mSCTAnnualIncome)
