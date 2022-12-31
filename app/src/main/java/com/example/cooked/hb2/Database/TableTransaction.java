@@ -1143,6 +1143,93 @@ class TableTransaction extends TableBase
         return list;
     }
 
+    // pCategoryId and pSubCategoryId are mutually exclusive
+    ArrayList<RecordTransaction> getAnnualBudgetTrans(Date pStartDate, Date pEndDate,
+                                                Integer pCategoryId, Integer pSubCategoryId)
+    {
+        ArrayList<RecordTransaction> list;
+        try (SQLiteDatabase db = helper.getReadableDatabase())
+        {
+            String lBudgetString="";
+            String lSql;
+            if(pSubCategoryId > 0)
+            {
+                lSql = "SELECT " +
+                    "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
+                    "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
+                    "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
+                    "  b.SubCategoryName, c.UseCategory " +
+                    "FROM tblTransaction a, tblAccount c " +
+                    "  LEFT OUTER JOIN tblSubCategory b " +
+                    "    ON a.CategoryId = b.SubCategoryId " +
+                    "WHERE a.TxDate BETWEEN " + Long.toString(pStartDate.getTime()) + " AND " + Long.toString(pEndDate.getTime()) + " " +
+                    "AND a.TxSortCode = c.AcSortCode " +
+                    "AND a.TxAccountNumber = c.AcAccountNumber " +
+                    "AND a.CategoryId = " + pSubCategoryId.toString() + " " +
+                    "ORDER BY TxDate desc, TxLineNo";
+            }
+            else
+            {
+                lSql = "SELECT " +
+                    "  a.TxSeqNo, a.TxAdded, a.TxFilename, a.TxLineNo, a.TxDate, a.TxType, a.TxSortCode, " +
+                    "  a.TxAccountNumber, a.TxDescription, a.TxAmount, a.TxBalance, " +
+                    "  a.CategoryId, a.Comments, a.BudgetYear, a.BudgetMonth, " +
+                    "  b.SubCategoryName, c.UseCategory " +
+                    "FROM tblTransaction a, tblAccount c " +
+                    "  LEFT OUTER JOIN tblSubCategory b " +
+                    "    ON a.CategoryId = b.SubCategoryId " +
+                    "WHERE a.TxDate BETWEEN " + Long.toString(pStartDate.getTime()) + " AND " + Long.toString(pEndDate.getTime()) + " " +
+                    "AND a.TxSortCode = c.AcSortCode " +
+                    "AND a.TxAccountNumber = c.AcAccountNumber " +
+                    "AND b.CategoryId = " + pCategoryId.toString() + " " +
+                    "ORDER BY TxDate desc, TxLineNo";
+            }
+            Cursor cursor = db.rawQuery(lSql, null);
+
+            list = new ArrayList<>();
+            if (cursor != null)
+            {
+                try
+                {
+                    if (cursor.getCount() > 0)
+                    {
+                        cursor.moveToFirst();
+                        do
+                        {
+                            RecordTransaction lrec =
+                                new RecordTransaction
+                                    (
+                                        Integer.parseInt(cursor.getString(0)),
+                                        new Date(Long.parseLong(cursor.getString(1))),
+                                        cursor.getString(2),
+                                        Integer.parseInt(cursor.getString(3)),
+                                        new Date(Long.parseLong(cursor.getString(4))),
+                                        cursor.getString(5),
+                                        cursor.getString(6),
+                                        cursor.getString(7),
+                                        cursor.getString(8),
+                                        parseFloat(cursor.getString(9)),
+                                        parseFloat(cursor.getString(10)),
+                                        Integer.parseInt(cursor.getString(11)),
+                                        cursor.getString(12),
+                                        Integer.parseInt(cursor.getString(13)),
+                                        Integer.parseInt(cursor.getString(14)),
+                                        true,
+                                        Integer.parseInt(cursor.getString(16))==1
+                                    );
+                            lrec.SubCategoryName = cursor.getString(15);
+                            list.add(lrec);
+                        } while (cursor.moveToNext());
+                    }
+                } finally
+                {
+                    cursor.close();
+                }
+            }
+        }
+        return list;
+    }
+
     ArrayList<RecordTransaction> getCategoryBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth, Integer pCategoryId)
     {
         ArrayList<RecordTransaction> list;

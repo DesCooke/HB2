@@ -1,6 +1,7 @@
 package com.example.cooked.hb2;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;

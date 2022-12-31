@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static com.example.cooked.hb2.Database.RecordPlanned.mPTYearly;
+import static com.example.cooked.hb2.GlobalUtils.DateUtils.DateFromComponents;
 import static com.example.cooked.hb2.GlobalUtils.DateUtils.dateUtils;
 import static java.lang.Math.abs;
 
@@ -322,15 +324,7 @@ public class MyDatabase extends SQLiteOpenHelper
     {
         // Called by activityCategoryItem - SubCategoryByMonth list
 
-        // First get all the appropriate transactions - ie. what we've spent
-        // normally negative - as an expense is negative
-        ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pCategoryId, pSubCatgegoryId);
-        Float lTotalSpent = 0.00f;
-        if (rta != null)
-            for (int i = 0; i < rta.size(); i++)
-                lTotalSpent += rta.get(i).TxAmount;
-
-        // Now get the list of planned transactions for this budget period
+        // First get the list of planned transactions for this budget period
         // there could be multiple (ie. weekly planned item)
         ArrayList<RecordTransaction> rpl;
         if(pCategoryId == 0)
@@ -341,6 +335,15 @@ public class MyDatabase extends SQLiteOpenHelper
         {
             rpl=tablePlanned.getPlannedTransForCategoryId(pBudgetMonth, pBudgetYear, pCategoryId);
         }
+
+        // Next get all the appropriate transactions - ie. what we've spent
+        // normally negative - as an expense is negative
+        ArrayList<RecordTransaction> rta = tableTransaction.getBudgetTrans(pBudgetYear, pBudgetMonth, pCategoryId, pSubCatgegoryId);
+        Float lTotalSpent = 0.00f;
+        if (rta != null)
+            for (int i = 0; i < rta.size(); i++)
+                lTotalSpent += rta.get(i).TxAmount;
+
 
         // Now go through each planned item - and change the TxAmount (budget amount)
         // by the amount we have already spent - so the TxAmount left is the budget not yet spent
@@ -369,6 +372,133 @@ public class MyDatabase extends SQLiteOpenHelper
         for (int i = 0; i < rpl.size(); i++)
             if(rpl.get(i).TxDescription.compareTo("Dummy")!=0)
                 rta.add(rpl.get(i));
+
+        // sort by date - so the planned items can be sorted with the transactions
+        Collections.sort(rta, new Comparator<RecordTransaction>()
+        {
+            public int compare(RecordTransaction o1, RecordTransaction o2)
+            {
+                return o2.TxDate.compareTo(o1.TxDate);
+            }
+        });
+
+        return (rta);
+
+    }
+
+    public ArrayList<RecordTransaction> getAnnualBudgetTrans(Integer pBudgetYear, Integer pBudgetMonth,
+                                                       Integer pCategoryId, Integer pSubCategoryId,
+                                                             TextView textView)
+    {
+        ArrayList<RecordTransaction> returnList = new ArrayList<>();
+
+        Date selectedBudgetStartDate = DateUtils.BudgetStart(pBudgetMonth, pBudgetYear);
+        Integer lBudgetDay = DateUtils.dateUtils().GetDayAsInt(selectedBudgetStartDate);
+        Integer lBudgetMonth = DateUtils.dateUtils().GetMonthAsInt(selectedBudgetStartDate);
+        Integer lBudgetYear = DateUtils.dateUtils().GetYearAsInt(selectedBudgetStartDate);
+
+        // Get the planned transaction - usuallly just one record, this will contain
+        // the date and time of the planned transaction effective for the budget year/month
+        ArrayList<RecordPlanned> rpl;
+        if(pCategoryId == 0)
+        {
+            rpl=tablePlanned.getPlannedListForSubCategory(pSubCategoryId);
+        }
+        else
+        {
+            rpl=tablePlanned.getPlannedListForCategory(pCategoryId);
+        }
+        if(rpl==null)
+            return returnList;
+        if(rpl.size()==0)
+            return returnList;
+        if(rpl.get(0).mPlannedType!=mPTYearly)
+            return returnList;
+        Integer lPlannedDay = rpl.get(0).mPlannedDay;
+        Integer lPlannedMonth = rpl.get(0).mPlannedMonth;
+
+        Integer lTxEndDay = lPlannedDay;
+        Integer lTxEndMonth = lPlannedMonth;
+        Integer lTxEndYear = lBudgetYear;
+
+        if(lBudgetMonth>lPlannedMonth)
+        {
+            lTxEndYear++;
+        }
+        else
+        {
+            if(lBudgetMonth==lPlannedMonth)
+            {
+                if(lBudgetDay > lPlannedDay)
+                    lTxEndYear++;
+            }
+        }
+        Date lTxEndDate = DateFromComponents(lTxEndYear, lTxEndMonth, lTxEndDay);
+        Date lTxStartDate = DateUtils.dateUtils().AddMonthsToDate(lTxEndDate, -12);
+        lTxStartDate = DateUtils.dateUtils().AddDaysToDate(lTxStartDate, 1);
+
+        textView.setText("For budget period " + DateUtils.DateToString(lTxStartDate) + " to " +
+            DateUtils.DateToString(lTxEndDate));
+
+        // Next get all the appropriate transactions - based on the annual tx start/end date
+        // instead of current budget- ie. what we've spent
+        // normally negative - as an expense is negative
+        ArrayList<RecordTransaction> rta = tableTransaction.getAnnualBudgetTrans(lTxStartDate, lTxEndDate, pCategoryId, pSubCategoryId);
+        Float lTotalSpent = 0.00f;
+        if (rta != null)
+            for (int i = 0; i < rta.size(); i++)
+                lTotalSpent += rta.get(i).TxAmount;
+
+        // Now go through each planned item - and change the TxAmount (budget amount)
+        // by the amount we have already spent - so the TxAmount left is the budget not yet spent
+        Float lTotalLeftToSpend = lTotalSpent;
+        if(rpl != null)
+        {
+            for (int i = 0; i < rpl.size(); i++)
+            {
+                if(lTotalLeftToSpend < 0.00f)
+                {
+                    if(lTotalLeftToSpend < rpl.get(i).mMatchingTxAmount)
+                    {
+                        lTotalLeftToSpend -= rpl.get(i).mMatchingTxAmount;
+                        rpl.get(i).mMatchingTxAmount = 0.00f;
+                    }
+                    else
+                    {
+                        rpl.get(i).mMatchingTxAmount -= lTotalLeftToSpend;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // now - add in all the planned items which still have some budget left
+        for (int i = 0; i < rpl.size(); i++)
+            if(rpl.get(i).mPlannedName.compareTo("Dummy")!=0)
+            {
+                RecordPlanned rp = rpl.get(0);
+                RecordTransaction rt = new RecordTransaction();
+                rt.TxSeqNo = rp.mPlannedId;
+                rt.TxAdded = new Date();
+                rt.TxFilename = "Planned";
+                rt.TxLineNo = 0;
+                rt.TxDate = lTxEndDate;
+                rt.TxType = "Planned";
+                rt.TxSortCode = rp.mSortCode;
+                rt.TxAccountNumber = rp.mAccountNo;
+                rt.TxDescription = rp.mPlannedName;
+                rt.TxAmount = rp.GetAmountAt(lTxEndDate);
+                rt.TxBalance = 0.00f;
+                rt.CategoryId = pSubCategoryId;
+                rt.SubCategoryName =
+                    MyDatabase.MyDB().getSubCategory(pSubCategoryId).SubCategoryName;
+                rt.Comments = "planned";
+                rt.BudgetYear = dateUtils().GetBudgetYear(lTxEndDate);
+                rt.BudgetMonth = dateUtils().GetBudgetMonth(lTxEndDate);
+                rt.HideBalance = true;
+
+                rta.add(rt);
+            }
 
         // sort by date - so the planned items can be sorted with the transactions
         Collections.sort(rta, new Comparator<RecordTransaction>()
@@ -746,6 +876,8 @@ public class MyDatabase extends SQLiteOpenHelper
                     rbi.BudgetItemId = rbg.budgetItems.size() + 1;
                     rbi.groupedBudget = rbg.groupedBudget;
                     rbi.spent = 0.00f;
+                    rbi.SubCategoryName = scl.get(j).SubCategoryName;
+                    rbi.CategoryName = cl.get(i).CategoryName;
 
                     for (int l = 0; l < rbspent.size(); l++)
                     {
@@ -879,6 +1011,8 @@ public class MyDatabase extends SQLiteOpenHelper
                         rbi.origTotal = rbi.total;
                         rbi.spent = rb2.Amount;
                         rbi.outstanding = rbi.total - rb2.Amount;
+                        rbi.SubCategoryName = scl.get(j).SubCategoryName;
+                        rbi.CategoryName = cl.get(i).CategoryName;
 
                         rbi.RecCount = 0;
 
@@ -987,8 +1121,10 @@ public class MyDatabase extends SQLiteOpenHelper
                     if(rt.MarkerEndingBalance != null)
                     {
                         if(rt.MarkerEndingBalance < 1000.00)
-                        addToNotes("General Savings shortfall.  Balance " + Tools.moneyFormat(rt.MarkerEndingBalance) + ", " +
-                            "Ideal £1000.00, Shortfall " + Tools.moneyFormat(1000 - rt.MarkerEndingBalance));
+                        {
+                            addToNotes("General Savings shortfall.  Balance " + Tools.moneyFormat(rt.MarkerEndingBalance) + ", " +
+                                "Ideal £1000.00, Shortfall " + Tools.moneyFormat(1000 - rt.MarkerEndingBalance));
+                        }
                     }
                 }
             }

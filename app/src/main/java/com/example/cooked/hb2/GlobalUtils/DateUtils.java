@@ -364,6 +364,15 @@ public class DateUtils
         c.add(Calendar.MONTH, months);
         return c.getTime();
     }
+
+    public Date AddDaysToDate(Date date, int days)
+    {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, days);
+        return c.getTime();
+    }
+
     public void GetMonth(Date date, MyInt myInt)
     {
         String lString = new SimpleDateFormat("MM", Locale.ENGLISH).format(date);
@@ -449,7 +458,7 @@ public class DateUtils
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
+        return cal.getTime() /*+ getTimeOffset(cal.getTime())*/;
     }
 
     public static String DateToString(Date date)

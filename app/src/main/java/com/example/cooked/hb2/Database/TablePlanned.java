@@ -866,7 +866,7 @@ class TablePlanned extends TableBase
             if(nxtMonth>12)
                 nxtMonth=1;
 
-            /* Now get the spent amounts for annual bills */
+            // Now get the spent amounts for annual bills
             String l_SQL =
                 "SELECT a.CategoryId, c.CategoryName, b.SubCategoryName, SUM(TxAmount) " +
                     "FROM tblTransaction a, tblSubCategory b, tblCategory c " +
@@ -877,7 +877,7 @@ class TablePlanned extends TableBase
                     "AND " +
                     "  ( " +
 
-                    /* Include if there is atleast one transaction in this period */
+                    // Include if there is atleast one transaction in this period
                     "    0 < " +
                     "      ( " +
                     "        SELECT COUNT(*) from tblTransaction d " +
@@ -886,7 +886,7 @@ class TablePlanned extends TableBase
                     "        AND a.CategoryId = d.CategoryId " +
                     "      ) OR " +
 
-                    /* Include if the budget is planned for the current month */
+                    // Include if the budget is planned for the current month
                     "    0 < " +
                     "      ( " +
                     "        SELECT COUNT(*) from tblPlanned e " +

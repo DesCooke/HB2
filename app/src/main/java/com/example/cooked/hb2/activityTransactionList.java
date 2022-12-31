@@ -1,11 +1,15 @@
 package com.example.cooked.hb2;
 
+import static com.example.cooked.hb2.Database.RecordSubCategory.mSCTAnnualExpense;
+import static com.example.cooked.hb2.Database.RecordSubCategory.mSCTAnnualIncome;
+
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.cooked.hb2.Adapters.TransactionListAdapter;
 import com.example.cooked.hb2.Database.MyDatabase;
 import com.example.cooked.hb2.Database.RecordCategoryBudget;
+import com.example.cooked.hb2.Database.RecordSubCategory;
 import com.example.cooked.hb2.GlobalUtils.MyLog;
 import com.example.cooked.hb2.GlobalUtils.Tools;
 import com.example.cooked.hb2.Records.RecordTransaction;
@@ -105,7 +109,15 @@ public class activityTransactionList extends AppCompatActivity
     }
     private void setupRecyclerView()
     {
-        mDataset = MyDatabase.MyDB().getBudgetTrans(mBudgetYear, mBudgetMonth, mCategoryId, mSubCategoryId);
+        mDataset = null;
+        if(mSubCategoryId > 0)
+        {
+            RecordSubCategory rsc = MyDatabase.MyDB().getSubCategory(mSubCategoryId);
+            if(rsc.SubCategoryType == mSCTAnnualExpense || rsc.SubCategoryType == mSCTAnnualIncome)
+                mDataset = MyDatabase.MyDB().getAnnualBudgetTrans(mBudgetYear, mBudgetMonth, mCategoryId, mSubCategoryId, mTextInfo3);
+        }
+        if(mDataset==null || mDataset.size()==0)
+            mDataset = MyDatabase.MyDB().getBudgetTrans(mBudgetYear, mBudgetMonth, mCategoryId, mSubCategoryId);
 
         Float mBudgetLeft=0.00f;
         Float mTransactionTotal=0.00f;
